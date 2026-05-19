@@ -1,15 +1,14 @@
-import { createContext, useState } from "react";
 
-// eslint-disable-next-line
+import { createContext, useState } from "react";
+//eslint-disable-next-line
 export const RoleContext = createContext();
 
 export const RoleProvider = ({ children }) => {
+  const [roles, setRoles] = useState(() => {
+    const stored = localStorage.getItem("roles");
+    return stored ? JSON.parse(stored) : ["admin"]; 
+  });
 
-  const storedRoles = JSON.parse(localStorage.getItem("roles")) || ["volunteer_incubated"];
-
-  const [roles, setRoles] = useState(storedRoles);
-
-  
   const updateRoles = (newRoles) => {
     setRoles(newRoles);
     localStorage.setItem("roles", JSON.stringify(newRoles));

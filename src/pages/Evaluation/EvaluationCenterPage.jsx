@@ -7,21 +7,24 @@ import NavLinkUniversal from "../../components/NavLinkUniversal";
 const FALLBACK_PROJECTS = [
   {
     id: 1,
+    idea_id:1,
     title: "اسم المشروع",
-    productType: "منصة برمجية (SaaS) وتطبيق ويب",
-    sector: "التقنية المالية (FinTech) والتجارة الإلكترونية",
+    product_type: "منصة برمجية (SaaS) وتطبيق ويب",
+    target_audience: "التقنية المالية (FinTech) والتجارة الإلكترونية",
   },
   {
     id: 2,
+    idea_id:2,
     title: "مشروع آخر",
-    productType: "تطبيق جوال",
-    sector: "الصحة الرقمية (HealthTech)",
+    product_type: "تطبيق جوال",
+    target_audience: "الصحة الرقمية (HealthTech)",
   },
   {
     id: 3,
+    idea_id:3,
     title: "منصة تعليمية",
-    productType: "منصة ويب",
-    sector: "التعليم الإلكتروني (EdTech)",
+    product_type: "منصة ويب",
+    target_audience: "التعليم الإلكتروني (EdTech)",
   }
 ];
 

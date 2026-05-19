@@ -6,10 +6,10 @@ import Button from '../../components/Button';
 // import { useParams } from 'react-router-dom';
 
 const NotesPage = () => {
-  // TODO: بعد الربط هذا السطر لجلب projectId
-  // const { projectId } = useParams();
+  // TODO: بعد الربط هذا السطر لجلب idea_id
+  // const { idea_id } = useParams();
   // const userId = useSelector((state) => state.auth.userId);
-  // const { data: notesFromApi, isLoading, error, refetch } = useGetNotesQuery(projectId);
+  // const { data: notesFromApi, isLoading, error, refetch } = useGetNotesQuery(idea_id);
   // const [addNote, { isLoading: isSending }] = useAddNoteMutation();
 
   const [note, setNote] = useState("");
@@ -30,7 +30,7 @@ const NotesPage = () => {
     // TODO: بعد الربط هذا الكود
     // try {
     //   await addNote({
-    //     projectId: projectId,
+    //     idea_id: idea_id,
     //     userId: userId,
     //     note: note
     //   }).unwrap();
@@ -46,7 +46,6 @@ const NotesPage = () => {
     setNote("");
   };
 
-  // TODO: بعد الربط شغلي حالة التحميل
   // if (isLoading) {
   //   return (
   //     <div className="min-h-screen bg-white-color md:p-15 flex flex-col">

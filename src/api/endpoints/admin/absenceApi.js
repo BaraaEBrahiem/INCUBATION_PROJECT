@@ -1,15 +1,15 @@
 // src/api/endpoints/absenceApi.js
-import { apiSlice } from "../apiSlice";
+import { apiSlice } from "../../apiSlice";
 
 export const absenceApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
 
      // نقطة نهاية موحدة للقبول والتحذير
     decideAbsence: builder.mutation({
-      query: ({ requestId, action }) => ({
-        url: `/admin/bootcamp/absence/${requestId}/decide/`,
+      query: ({ pk, decision }) => ({
+        url: `/admin/bootcamp/absence/${pk}/decide/`,
         method: 'POST',
-        body: { action },
+        body: { decision },
       }),
       invalidatesTags: ['AbsenceRequests'],
     }),

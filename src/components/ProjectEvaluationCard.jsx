@@ -11,12 +11,12 @@ const ProjectEvaluationCard = ({ project, onViewDetails}) => {
 
       <p className="text-gray-700 mb-2">
         <span className="font-bold">نوع المنتج: </span>
-        {project.productType}
+        {project.product_type}
       </p>
 
       <p className="text-gray-700 mb-4">
         <span className="font-bold">القطاع المستهدف: </span>
-        {project.sector}
+        {project.target_audience}
       </p>
 
       <div className="flex justify-center items-center mt-4">

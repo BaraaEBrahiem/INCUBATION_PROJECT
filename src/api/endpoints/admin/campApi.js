@@ -6,7 +6,7 @@ export const campApi = apiSlice.injectEndpoints({
 
     // إنهاء المعسكر وإرسال إشعارات للجميع
     endCamp: builder.mutation({
-      query: (season_id) => ({
+      query: ( season_id ) => ({
         url: `/admin/bootcamp/decisions/end-camp/${season_id}/`,
         method: 'POST',
       }),

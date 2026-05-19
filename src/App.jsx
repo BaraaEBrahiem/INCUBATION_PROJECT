@@ -1,14 +1,15 @@
 import AppRoutes from "./components/AppRoutes";
 import { FavoritesProvider } from "./Context/FavoritesContext";
 import { RoleProvider } from "./Context/RoleContext";
-import { Provider, useDispatch } from "react-redux";
+import { Provider } from "react-redux";
 import { useEffect, useRef } from "react";
 import store from "./redux/store";
+import { useDispatch, /*useSelector*/ } from "react-redux";
 import { setNotifications } from "./redux/notificationsSlice";
 import logo from "./assets/images/logo.png";
 import { Toaster } from "react-hot-toast";
 
-// TODO: بعد الربط استخدمي هذه الـ hooks
+// TODO: بعد الربط هذه الـ hooks
 // import { useGetNotificationsQuery } from "./api/endpoints/notificationsApi";
 // import { connectWebSocket } from "./api/websocket";
 // import { useRole } from "./hooks/useRole";
@@ -17,8 +18,7 @@ function NotificationsLoader({ children }) {
   const dispatch = useDispatch();
   const hasLoaded = useRef(false);
 
-  // TODO: بعد الربط استخدمي token من useRole
-  // const { token } = useRole();
+  // const token = useSelector(state => state.auth?.token);
 
   // TODO: بعد الربط استخدمي هذا السطر لجلب الإشعارات من API
   // const { data: apiNotifications } = useGetNotificationsQuery(undefined, {
@@ -34,19 +34,6 @@ function NotificationsLoader({ children }) {
 
   useEffect(() => {
     async function loadNotifications() {
-      // =========================================
-      // TODO: بعد الربط الحقيقي هذا الكود:
-      // =========================================
-      // if (apiNotifications && apiNotifications.length > 0) {
-      //   dispatch(setNotifications(apiNotifications));
-      // } else if (!hasLoaded.current) {
-      //   // بيانات ثابتة احتياطية في حال كان API فارغ
-      //   dispatch(setNotifications(initialNotifications));
-      // }
-
-      // =========================================
-      // حالياً: بيانات ثابتة
-      // =========================================
       if (!hasLoaded.current) {
         const initialNotifications = [
           {
@@ -86,14 +73,12 @@ function NotificationsLoader({ children }) {
             action: { label: "عرض التقييم", link: "/evaluation-center" },
           },
         ];
-
         dispatch(setNotifications(initialNotifications));
-        hasLoaded.current = true; //  منع التحميل مرة ثانية
+        hasLoaded.current = true;
       }
     }
-
     loadNotifications();
-  }, [dispatch]); //  إزالة notifications.length من الـ dependencies
+  }, [dispatch]);
 
   return children;
 }
@@ -104,7 +89,7 @@ function App() {
       <RoleProvider>
         <FavoritesProvider>
           <NotificationsLoader>
-          <Toaster
+            <Toaster
               position="top-center"
               reverseOrder={false}
               gutter={8}
@@ -128,15 +113,15 @@ function App() {
                     secondary: '#fff',
                   },
                 },
-                  error: {
+                error: {
                   duration: 3000,
                   iconTheme: {
                     primary: '#ef4444',
                     secondary: '#fff',
                   },
-            },
-        }}
-        />
+                },
+              }}
+            />
             <AppRoutes />
           </NotificationsLoader>
         </FavoritesProvider>

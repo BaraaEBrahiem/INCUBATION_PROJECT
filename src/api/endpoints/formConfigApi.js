@@ -10,16 +10,46 @@ export const formConfigApi = apiSlice.injectEndpoints({
       providesTags: ['FormConfig'],
     }),
 
-   
-    //عرض تصميم النموذج season
+    
+   createSeasonForm: builder.mutation({
+  query: ({ season_id, title }) => ({
+    url: `/admin/ideas/forms/${season_id}/create/`,
+    method: 'POST',
+    body: { title }, 
+    description: `نموذج تقديم خاص بالموسم رقم ${season_id}`,
+  }),
+  invalidatesTags: (result, error, { season_id }) => [{ type: 'SeasonForm', id: season_id }],
+}),
+
+    // حفظ تصميم النموذج (builder) – تحديث
+    saveSeasonFormDesign: builder.mutation({
+      query: ({ season_id, formConfig }) => ({
+        url: `/admin/ideas/forms/${season_id}/builder/`,
+        method: 'PUT',
+        body: formConfig,
+      }),
+      invalidatesTags: (result, error, { season_id }) => [{ type: 'SeasonForm', id: season_id }],
+    }),
+
+    // عرض تصميم النموذج season
     getSeasonFormDesign: builder.query({
       query: (id) => `/admin/seasons/${id}/form-design/`,
       providesTags: ['IncubationSeasons'],
     }),
+
+    // عرض النموذج لصاحب الفكرة عند تقديم الفكرة
+   getIdeaFormDesign: builder.query({
+  query: (seasonId) => `/seasons/${seasonId}/ideas/create/`,
+  providesTags: (result, error, seasonId) => [{ type: 'IncubationSeasons', id: seasonId }],
+}),
+
   }),
 });
 
 export const {
   useGetExhibitionFormConfigQuery,
   useGetSeasonFormDesignQuery,
+  useGetIdeaFormDesignQuery,
+  useCreateSeasonFormMutation,
+  useSaveSeasonFormDesignMutation,
 } = formConfigApi;

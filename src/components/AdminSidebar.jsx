@@ -145,18 +145,18 @@ const AdminSidebar = ({ adminName, email }) => {
       </aside>
 
       {/* تحسين للشاشات الكبيرة - عدم وجود مشاكل في التمرير */}
-      <style jsx>{`
-        @media (min-width: 768px) {
-          .w-90 {
-            width: 280px;
-          }
+     <style>{`
+      @media (min-width: 768px) {
+        .w-90 {
+          width: 280px;
         }
-        @media (min-width: 1024px) {
-          .w-90 {
-            width: 300px;
-          }
+      }
+      @media (min-width: 1024px) {
+        .w-90 {
+          width: 300px;
         }
-      `}</style>
+      }
+    `}</style>
     </>
   );
 };

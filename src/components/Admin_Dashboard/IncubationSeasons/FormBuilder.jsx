@@ -5,14 +5,14 @@ import Select from "../../Select";
 import { useGetSeasonFormDesignQuery } from "../../../api/endpoints/formConfigApi";
 
 const FormBuilder = ({ season }) => {
- 
   const isOpen = season?.phase === "SUBMISSION";
 
-  const { data: formConfig, isLoading } = useGetSeasonFormDesignQuery(season?.id);
+  const seasonId = season?.id || season?.pk;
+  const { data: formConfig, isLoading } = useGetSeasonFormDesignQuery(seasonId, {
+    skip: !seasonId,
+  });
 
-  // -----------------------------
-  // بيانات ثابتة (fallback) إلى حين الربط
-  // -----------------------------
+  // بيانات ثابتة (fallback) – تتحذف بعد الربط
   const fallbackFields = [
     { name: "name", label: "الاسم", type: "text", required: true, placeholder: "اكتب اسمك الكامل" },
     { name: "phone", label: "رقم الهاتف", type: "text", required: true, placeholder: "09xxxxxxxx" },
@@ -28,10 +28,15 @@ const FormBuilder = ({ season }) => {
     { name: "ideaDescription", label: "وصف الفكرة", type: "textarea", required: true, rows: 4, placeholder: "اكتب وصفاً مختصراً عن فكرتك" },
   ];
 
-  const formFields = formConfig?.fields || fallbackFields;
+  let formFields = fallbackFields;
+  if (formConfig?.fields) {
+    formFields = formConfig.fields;
+  } else if (formConfig?.idea_form?.fields) {
+    formFields = formConfig.idea_form.fields;
+  }
+
   const [formValues, setFormValues] = useState({});
 
-  // تهيئة الفورم بالقيم الافتراضية
   useEffect(() => {
     const initialValues = {};
     formFields.forEach(field => {
@@ -67,13 +72,12 @@ const FormBuilder = ({ season }) => {
     }
   };
 
-  // حالة التحميل
   if (isLoading) {
     return (
       <div className="flex gap-6">
         <div className="flex-1 p-5">
           <div className="text-center py-10">
-            <p className="text-gray-500">جاري تحميل النموذج...</p>
+            <p className="text-gray-500">جاري تحميل تصميم النموذج...</p>
           </div>
         </div>
       </div>
@@ -82,32 +86,27 @@ const FormBuilder = ({ season }) => {
 
   return (
     <div className="flex gap-6">
-      {/* العمود الأيمن */}
       <div className="flex-1 p-5">
         <h1 className="text-lg font-bold mb-6">
           {season?.title || season?.name}
           <span className="text-sm text-gray-500 mr-2">(تصميم النموذج)</span>
         </h1>
 
-        {/* الحقول الديناميكية (نصية في عمودين) */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
           {formFields.filter(f => f.type !== "textarea" && f.type !== "select").map(renderField)}
         </div>
 
-        {/* حقول select و textarea */}
         <div className="space-y-4">
           {formFields.filter(f => f.type === "select").map(renderField)}
           {formFields.filter(f => f.type === "textarea").map(renderField)}
         </div>
       </div>
 
-      {/* العمود الأيسر - إحصائيات */}
       <div className="w-64 h-fit border border-second-color bg-white rounded-lg shadow p-4 flex flex-col gap-2">
         <p className="text-sm">
           <span className="font-semibold">عدد الطلبات المستلمة: </span>
           {season?.ideas_count || 0}
         </p>
-
         {isOpen && (
           <p className="text-sm">
             <span className="font-semibold">المتبقي لإغلاق التقديم: </span>

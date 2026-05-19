@@ -25,7 +25,7 @@ const UserDetailsPage = () => {
   const fallbackUser = {
     id,
     name: "مايا المحمد",
-    role: "محتضن",
+    role: "متطوع",
     email: "ahmadalmo12@gmail.com",
     phone: "093883273883",
     joinedAt: "12/3/2025",

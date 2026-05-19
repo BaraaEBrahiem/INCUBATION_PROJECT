@@ -203,7 +203,7 @@ const AppRoutes = () => {
            <Route path="/workshopinfo/:id" element={<WorkshopInfoPage />} />
            <Route path="/schedule-page" element={<ScheduleManagementPage />} />
             <Route path="/evaluationform" element={<EvaluationFormPage />} />
-            <Route path="/notes" element={<NotesPage />} />
+            <Route path="/notes/:id" element={<NotesPage />} />
            <Route path="/assigned-projects-page" element={<AssignedProjectsPage />} />
           <Route path="/volunteer-request/:id" element={<VolunteerRequestDetailsPage />} />
         </Route>
@@ -263,8 +263,8 @@ const AppRoutes = () => {
           <Route path="/incubation-seasons/:id" element={<SeasonDetailsPage />} />
           <Route path="/admin/create-season" element={<CreateSeasonPage />} />
           <Route path="/admin/preview-form" element={<PreviewFormPage />} />
-          <Route path="/admin/add-session" element={<AddSessionPage />} />
-          <Route path="/admin/camp-management" element={<CampManagementPage />} />
+          <Route path="/admin/add-session/:id" element={<AddSessionPage />} />
+          <Route path="/admin/camp-management/:id" element={<CampManagementPage />} />
           <Route path="/admin/incubated" element={<IncubatedPage />} />
           <Route path="/admin/workshops" element={<WorkshopsTablePage />} />
           <Route path="/workshops/:id" element={<WorkshopDetailsPage />} />

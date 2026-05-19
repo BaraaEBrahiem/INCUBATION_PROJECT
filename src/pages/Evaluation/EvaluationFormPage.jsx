@@ -3,56 +3,48 @@ import { useParams } from 'react-router-dom';
 import { BiMinus, BiPlus } from 'react-icons/bi';
 import Button from '../../components/Button';
 import NavLinkUniversal from '../../components/NavLinkUniversal';
-
+import { showSuccess, showError } from '../../Utils/toast';
 // import { useGetCriteriaQuery } from '../../api/endpoints/evaluationApi';
 // import { useSubmitEvaluationMutation } from '../../api/endpoints/evaluationApi';
 
 const EvaluationFormPage = () => {
-  // جلب projectId من الرابط
-  const  projectId = useParams();
+  const { idea_id } = useParams();
 
+ 
   // const { data: criteriaFromApi, isLoading, error } = useGetCriteriaQuery();
   // const [submitEvaluation, { isLoading: isSubmitting }] = useSubmitEvaluationMutation();
 
+ 
   const fallbackCriteria = [
-    { id: 1, name: 'وضوح الفرصة السّوقية (Market Opportunity)' },
-    { id: 2, name: 'وضوح مقترح القيمة (Value Proposition)' },
-    { id: 3, name: 'وضوح نموذج الأعمال (Business Model)' },
-    { id: 4, name: 'وضوح العتبة التنافسية (Competitive Advantage)' },
-    { id: 5, name: 'وضوح الترويج في السوق (Marketing)' },
-    { id: 6, name: 'وضوح آليات الوصول للزبائن (Sales)' },
-    { id: 7, name: 'اكتمال النموذج الأولي (Prototype/MVP)' },
-    { id: 8, name: 'اكتمال الشكل القانوني للشركة' },
-    { id: 9, name: 'تقييم الخطة والإنجاز والمخاطر' },
-    { id: 10, name: 'تقييم تجانس الفريق' },
+    { id: 1, title: 'وضوح الفرصة السّوقية (Market Opportunity)', max_score : 5 },
+    { id: 2, title: 'وضوح مقترح القيمة (Value Proposition)', max_score : 5 },
+    { id: 3, title: 'وضوح نموذج الأعمال (Business Model)', max_score : 5 },
+    { id: 4, title: 'وضوح العتبة التنافسية (Competitive Advantage)', max_score : 5 },
+    { id: 5, title: 'وضوح الترويج في السوق (Marketing)', max_score : 5 },
+    { id: 6, title: 'وضوح آليات الوصول للزبائن (Sales)', max_score : 5 },
+    { id: 7, title: 'اكتمال النموذج الأولي (Prototype/MVP)', max_score : 5 },
+    { id: 8, title: 'اكتمال الشكل القانوني للشركة', max_score : 5 },
+    { id: 9, title: 'تقييم الخطة والإنجاز والمخاطر', max_score : 5 },
+    { id: 10, title: 'تقييم تجانس الفريق', max_score : 5 },
   ];
 
   // تحويل المعايير الثابتة إلى الشكل المطلوب للتقييم
-  const initialScores = fallbackCriteria.map((item, /*index*/) => ({
+  const initialScores = fallbackCriteria.map((item) => ({
     id: item.id,
-    label: item.name,
-    value: 0
+    title: item.title,
+    max_score: item.max_score,
+    value: 0,
   }));
 
   const [scores, setScores] = useState(initialScores);
-  const [submitError, setSubmitError] = useState('');
-  const [submitSuccess, setSubmitSuccess] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // useEffect
-  // useEffect(() => {
-  //   if (criteriaFromApi) {
-  //     const apiScores = criteriaFromApi.map((item) => ({
-  //       id: item.id,
-  //       label: item.name,
-  //       value: 0
-  //     }));
-  //     setScores(apiScores);
-  //   }
-  // }, [criteriaFromApi]);
+  // بعد الربط، سيتم تحديدها بناءً على وجود criteriaFromApi
+  const isFormPublished = true; // سيُستبدل بـ !!criteriaFromApi?.length
 
   const updateScore = (id, delta) => {
-    setScores(prevScores =>
-      prevScores.map(item => {
+    setScores((prevScores) =>
+      prevScores.map((item) => {
         if (item.id === id) {
           const newValue = item.value + delta;
           if (newValue >= 0 && newValue <= 5) {
@@ -67,30 +59,35 @@ const EvaluationFormPage = () => {
   const totalScore = scores.reduce((sum, item) => sum + item.value, 0);
 
   const handleSubmit = async () => {
-    setSubmitError('');
-    setSubmitSuccess('');
+    if (!isFormPublished) {
+      showError('لم تقم الإدارة بنشر نموذج التقييم بعد. يرجى الانتظار.');
+      return;
+    }
 
-    // try {
-    //   const evaluationData = {
-    //     projectId: projectId,
-    //     seasonId: seasonId,
-    //     scores: scores.map(s => ({ criteriaId: s.id, score: s.value })),
-    //     totalScore: totalScore,
-    //   };
-    //   await submitEvaluation(evaluationData).unwrap();
-    //   setSubmitSuccess('تم إرسال التقييم بنجاح');
-    //   setTimeout(() => setSubmitSuccess(''), 3000);
-    // } catch (error) {
-    //   console.error('Error submitting evaluation:', error);
-    //   setSubmitError(error?.data?.message || 'حدث خطأ في إرسال التقييم');
-    // }
+    setIsSubmitting(true);
 
-    console.log('Evaluation submitted:', { projectId, scores, totalScore });
-    setSubmitSuccess('تم إرسال التقييم بنجاح (محاكاة)');
-    setTimeout(() => setSubmitSuccess(''), 3000);
+    try {
+      // const evaluationData = {
+      //   idea_id: idea_id,
+      //   scores: scores.map(s => ({ criteriaId: s.id, score: s.value })),
+      //   totalScore: totalScore,
+      // };
+      // await submitEvaluation(evaluationData).unwrap();
+
+      // محاكاة نجاح العملية (تتحذف عند الربط)
+      await new Promise((resolve) => setTimeout(resolve, 500));
+
+      showSuccess('تم إرسال التقييم بنجاح');
+      // يمكن إعادة تعيين الدرجات إذا أردت
+      // setScores(initialScores);
+    } catch (err) {
+      console.error(err);
+      showError(err?.data?.message || 'حدث خطأ في إرسال التقييم');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
-  // TODO: بعد الربط شغلي حالة التحميل
   // if (isLoading) {
   //   return (
   //     <div className="bg-white-color p-4 flex flex-col items-center justify-center">
@@ -117,57 +114,64 @@ const EvaluationFormPage = () => {
   //   );
   // }
 
- return (
+  if (!isFormPublished) {
+    return (
+      <div className="bg-white-color p-4 flex flex-col items-center justify-center">
+        <div className="container text-center py-20">
+          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6 max-w-md mx-auto">
+            <p className="text-yellow-700 text-lg font-semibold mb-2">
+              ⏳ لم يتم نشر نموذج التقييم بعد
+            </p>
+            <p className="text-gray-600">
+              الرجاء انتظار قيام الإدارة بنشر معايير التقييم الخاصة بهذا المشروع.
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
     <div className="bg-white-color p-4 flex flex-col items-center justify-center">
       <div className="container">
         <h1 className="text-2xl font-bold text-second-color mb-10 text-right">
           نموذج التقييم
         </h1>
 
-        {/* رسائل النجاح والخطأ */}
-        {submitError && (
-          <div className="bg-red-100 text-red-700 p-3 rounded mb-4 text-center">
-            {submitError}
-          </div>
-        )}
-        {submitSuccess && (
-          <div className="bg-green-100 text-green-700 p-3 rounded mb-4 text-center">
-            {submitSuccess}
-          </div>
-        )}
-
         <div className="p-6 md:p-8 bg-white font-bold text-2xl">
-          <div className="flex justify-between mb-8 text-black" dir='ltr'>
-            <span className="text-center">الدرجة (الحد الأقصى 5)</span>
+          <div className="flex justify-between mb-8 text-black" dir="ltr">
+            <span className="text-center">الدرجة (الحد الأقصى {fallbackCriteria[0].max_score})</span>
             <span className="text-center">بند التقييم</span>
           </div>
 
           <div className="space-y-4">
             {scores.map((item) => (
-              <div key={item.id} className="flex items-center justify-between group" dir='ltr'>
+              <div key={item.id} className="flex items-center justify-between group" dir="ltr">
                 <div className="flex items-center justify-between bg-gray-100 rounded-md px-3 py-1.5 w-50">
-                  <button 
+                  <button
                     onClick={() => updateScore(item.id, -1)}
                     className="text-black border-2 border-black rounded-full transition-colors hover:bg-gray-200 p-1"
+                    aria-label="إنقاص الدرجة"
                   >
                     <BiMinus size={18} />
                   </button>
                   <span className="text-main-color font-bold text-lg">{item.value}</span>
-                  <button 
+                  <button
                     onClick={() => updateScore(item.id, 1)}
                     className="text-black border-2 border-black rounded-full transition-colors hover:bg-gray-200 p-1"
+                    aria-label="زيادة الدرجة"
                   >
                     <BiPlus size={18} />
                   </button>
                 </div>
-                <div className="text-right text-xs md:text-xl text-black " dir='rtl'>
-                  {item.id}. {item.label}
+                <div className="text-right text-xs md:text-xl text-black" dir="rtl">
+                  {item.id}. {item.title}
                 </div>
               </div>
             ))}
           </div>
 
-          <div className='flex gap-2 justify-between pt-2'>
+          <div className="flex gap-2 justify-between pt-2">
             <div className="w-40 text-black rounded-md font-bold text-center text-xl">
               المجموع
             </div>
@@ -178,14 +182,15 @@ const EvaluationFormPage = () => {
         </div>
 
         <div className="flex items-start gap-3 mt-6 text-xl">
-          <Button 
-            label="ارسال للادارة" 
-            className='bg-main-color'
+          <Button
+            label={isSubmitting ? 'جاري الإرسال...' : 'إرسال للإدارة'}
+            className="bg-main-color mt-1"
             onClick={handleSubmit}
+            disabled={isSubmitting}
           />
-          <NavLinkUniversal 
-            label={<Button label="كتابة ملاحظات" className='bg-main-color'/>}
-            to={`/notes/${projectId}`}
+          <NavLinkUniversal
+            label={<Button label="كتابة ملاحظات" className="bg-main-color text-xl" />}
+            to={`/notes/${idea_id}`}
           />
         </div>
       </div>

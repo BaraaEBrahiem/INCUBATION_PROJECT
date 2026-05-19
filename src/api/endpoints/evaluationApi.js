@@ -36,8 +36,8 @@ export const evaluationApi = apiSlice.injectEndpoints({
 
     // إرسال تقييم مشروع
     submitEvaluation: builder.mutation({
-      query: (evaluationData) => ({
-        url: '/evaluation/submit/',
+      query: ({ idea_id, ...evaluationData }) => ({
+        url: `/evaluations/idea/${idea_id}/evaluate/`,
         method: 'POST',
         body: evaluationData,
       }),
@@ -71,7 +71,7 @@ export const evaluationApi = apiSlice.injectEndpoints({
 
     // جلب معايير التقييم (ثابتة)
     getCriteria: builder.query({
-      query: () => `/evaluation/criteria/`,
+      query: () => `/evaluations/evaluation-form/`,
       providesTags: ['Criteria'],
     }),
 
@@ -90,18 +90,18 @@ export const evaluationApi = apiSlice.injectEndpoints({
 
     // جلب ملاحظات مقيم لمشروع معين
     getNotes: builder.query({
-      query: (projectId) => `/evaluation/notes/${projectId}/`,
-      providesTags: (result, error, projectId) => [{ type: 'Notes', id: projectId }],
+      query: (idea_id) => `/evaluations/notes/${idea_id}/`,
+      providesTags: (result, error, idea_id) => [{ type: 'Notes', id: idea_id }],
     }),
 
     // إضافة ملاحظة جديدة
     addNote: builder.mutation({
-      query: ({ projectId, userId, note }) => ({
-        url: `/evaluation/notes/${projectId}/`,
+      query: ({ idea_id, userId, note }) => ({
+        url: `/evaluations/evaluation-notes/${idea_id}/`,
         method: 'POST',
         body: { userId, note },
       }),
-      invalidatesTags: (result, error, { projectId }) => [{ type: 'Notes', id: projectId }],
+      invalidatesTags: (result, error, { idea_id }) => [{ type: 'Notes', id: idea_id }],
     }),
 
     // -----------------------------

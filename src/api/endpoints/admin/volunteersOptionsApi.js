@@ -1,10 +1,10 @@
 // src/api/endpoints/usersApi.js
-import { apiSlice } from "../apiSlice";
+import { apiSlice } from "../../apiSlice";
 
 export const volunteersOptionsApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
 
-    // جلب المتطوعين
+    // جلب المتطوعين المقبولين
     getVolunteers: builder.query({
       query: () => '/admin/volunteers/approved/',
       providesTags: ['Volunteers'],

@@ -1,23 +1,23 @@
+// src/pages/Admin_Dashboard/AddSessionPage.js
 import React, { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Input from "../../components/Input";
 import Select from "../../components/Select";
 import Button from "../../components/Button";
 import { showSuccess, showError } from "../../Utils/toast";
-
-// import { useGetAvailableTrainersQuery } from "../../api/endpoints/admin/trainersApi";
-// import { useAddSessionMutation } from "../../api/endpoints/admin/sessionsApi";
+import {useAddSessionMutation } from "../../api/endpoints/admin/sessionsApi";
+import { useGetVolunteersQuery } from "../../api/endpoints/admin/volunteersOptionsApi";
 
 const AddSessionPage = () => {
-  const { season_id } = useParams();
+  const params = useParams();
+  const seasonId = params.seasonId || params.season_id || params.id;
   const navigate = useNavigate();
-
-  // const { data: trainersData, isLoading: isLoadingTrainers } = useGetAvailableTrainersQuery();
-  // const [addSession, { isLoading: isSubmitting }] = useAddSessionMutation();
+  const { data: volunteersData, isLoading: isLoadingVolunteers, error: volunteersError } = useGetVolunteersQuery();
+  const [addSession, { isLoading: isSubmitting }] = useAddSessionMutation();
 
   const [session, setSession] = useState({
     title: "",
-    trainer: "",
+    trainer_name: "",
     tasks: "",
     location: "",
     start_time: "",
@@ -26,16 +26,14 @@ const AddSessionPage = () => {
   });
 
   const [errors, setErrors] = useState({});
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const fallbackTrainers = [
-    { value: "1", label: "أحمد محمد" },
-    { value: "2", label: "سارة خالد" },
-    { value: "3", label: "محمد علي" },
-    { value: "4", label: "نورا حسن" },
-  ];
-
-  const trainers = fallbackTrainers;
+  // تحويل بيانات المدربين من الباك إلى الشكل المطلوب للـ Select
+  let volunteers = [];
+  if (volunteersData?.volunteers) {
+    volunteers = volunteersData.volunteers.map(v => ({ value: v.id, label: v.name }));
+  } else if (Array.isArray(volunteersData)) {
+    volunteers = volunteersData.map(v => ({ value: v.id, label: v.name }));
+  }
 
   const handleChange = (field, value) => {
     setSession({ ...session, [field]: value });
@@ -45,7 +43,7 @@ const AddSessionPage = () => {
   const validate = () => {
     const newErrors = {};
     if (!session.title) newErrors.title = "عنوان الجلسة مطلوب";
-    if (!session.trainer) newErrors.trainer = "يرجى اختيار المدرب";
+    // if (!session.trainer) newErrors.trainer = "يرجى اختيار المدرب";
     if (!session.location) newErrors.location = "موقع المعسكر مطلوب";
     if (!session.start_time) newErrors.start_time = "وقت بدء الجلسة مطلوب";
     if (!session.end_time) newErrors.end_time = "وقت انتهاء الجلسة مطلوب";
@@ -56,25 +54,37 @@ const AddSessionPage = () => {
 
   const handleSubmit = async () => {
     if (!validate()) return;
-    if (!season_id) {
+    if (!seasonId) {
       showError("لا يمكن تحديد الموسم الحالي");
       return;
     }
 
-    setIsSubmitting(true);
-
     try {
-      // await addSession({ sessionData: session, season_id }).unwrap();
-      await new Promise(resolve => setTimeout(resolve, 500)); // محاكاة
+      await addSession({ sessionData: session, season_id: seasonId }).unwrap();
       showSuccess("تم إضافة الجلسة بنجاح. سيتم إرسال الإشعارات للمشاركين.");
       navigate(-1);
     } catch (err) {
       console.error(err);
       showError(err?.data?.message || "حدث خطأ في إضافة الجلسة");
-    } finally {
-      setIsSubmitting(false);
     }
   };
+
+  // حالات التحميل أو الخطأ للمدربين
+  if (isLoadingVolunteers) {
+    return (
+      <div className="container px-6 py-20 text-center">
+        <p className="text-gray-500">جاري تحميل قائمة المدربين...</p>
+      </div>
+    );
+  }
+
+  if (volunteersError) {
+    return (
+      <div className="container px-6 py-20 text-center">
+        <p className="text-red-500">حدث خطأ في تحميل المدربين. يرجى تحديث الصفحة.</p>
+      </div>
+    );
+  }
 
   return (
     <div className="container px-6 py-20">
@@ -91,9 +101,10 @@ const AddSessionPage = () => {
           label="تعيين المدرب"
           value={session.trainer}
           onChange={(e) => handleChange("trainer", e.target.value)}
-          options={trainers}
+          options={volunteers}
           placeholder="اختر المدرب"
-          error={errors.trainer}
+          error={errors.trainer_name}
+          disabled={isLoadingVolunteers}
         />
         <Input
           label="المهام المطلوبة"

@@ -15,11 +15,29 @@ const SeasonSettings = ({ season, onSave, onCloseSubmission }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
 
-  const remaining_days = season.remaining_days || 0;
+const calculateRemainingDays = () => {
+  if (season.remaining_days !== null && season.remaining_days !== undefined) {
+    return season.remaining_days;
+  }
+
+  if (!season.end_date) return 0;
+
+  const startDate = new Date(season.start_date);
+  const endDate = new Date(season.end_date);
+
+  const differenceInTime = endDate.getTime() - startDate.getTime();
+  const differenceInDays = Math.ceil(differenceInTime / (1000 * 3600 * 24));
+  
+  return differenceInDays > 0 ? differenceInDays : 0;
+};
+
+const remaining_days = calculateRemainingDays();
   const ideas_count = season.ideas_count || season.idea_count || 0;
 
   const getPhaseStatus = () => {
-    const phase = season.phase;
+    
+    const currentPhase = season?.phase;
+    const phase = currentPhase ? currentPhase.toString().toUpperCase().trim() : "SUBMISSION";
     switch (phase) {
       case "SUBMISSION":
         return { isOpen: true, label: "(قيد التقديم)" };
@@ -36,7 +54,8 @@ const SeasonSettings = ({ season, onSave, onCloseSubmission }) => {
     }
   };
 
-  const { isOpen, phaseLabel } = getPhaseStatus();
+
+const { isOpen, label: phaseLabel } = getPhaseStatus();
 
   // const [updateSeason, { isLoading }] = useUpdateIncubationSeasonMutation();
 

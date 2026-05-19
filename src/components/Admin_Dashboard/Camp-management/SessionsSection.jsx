@@ -1,61 +1,25 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { showSuccess, /*showError, showPromise*/ } from "../../../Utils/toast";
+import { useNavigate} from "react-router-dom";
+import { showPromise } from "../../../Utils/toast";
 import SearchBar from "../../SearchBar";
 import DataTable from "../DataTable";
 import Button from "../../Button";
+import { useGetSessionsQuery } from "../../../api/endpoints/admin/sessionsApi";
 
-// import { useGetSessionsQuery } from "../../../api/endpoints/admin/sessionsApi";
-
-const FALLBACK_SESSIONS = [
-  {
-    id: 1,
-    title: "منصة تدريبية",
-    trainer: "أحمد المحمد",
-    start_time: "09:00",
-    end_time: "11:00",
-    date: "12/2/2024",
-    tasks: "تجهيز العرض التقديمي",
-    location: "الحاضنة",
-  },
-  {
-    id: 2,
-    title: "روبوت سبايك",
-    trainer: "سارة خالد",
-    start_time: "10:00",
-    end_time: "12:00",
-    date: "15/2/2024",
-    tasks: "برمجة الروبوت",
-    location: "مختبر الروبوتات",
-  },
-  {
-    id: 3,
-    title: "تطوير واجهات",
-    trainer: "محمد علي",
-    start_time: "13:00",
-    end_time: "16:00",
-    date: "20/2/2024",
-    tasks: "تصميم UI/UX",
-    location: "قاعة التدريب",
-  },
-];
-
-const SessionsSection = () => {
+const SessionsSection = ({seasonId}) => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
 
-  // const { data: sessionsFromApi, isLoading, error, refetch } = useGetSessionsQuery();
+  const { data: sessionsFromApi, isLoading, error, refetch } = useGetSessionsQuery();
 
-  // حالياً: استخدام بيانات ثابتة
-  const sessions = FALLBACK_SESSIONS;
-  // const isLoading = false;
-  // const error = null;
+  const sessions = sessionsFromApi || [];
+  console.log("=== 📅 SESSIONS FROM API ===", sessionsFromApi);
 
   // فلترة الجلسات حسب البحث
   const filtered = sessions.filter(
     (s) =>
-      s.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      s.trainer.toLowerCase().includes(searchTerm.toLowerCase())
+      s.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      s.trainer_name?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const formatTime = (start, end) => {
@@ -72,62 +36,54 @@ const SessionsSection = () => {
       label: "الوقت",
       render: (row) => formatTime(row.start_time, row.end_time),
     },
-    { key: "trainer", label: "المدرب" },
+    { key: "trainer_name", label: "المدرب" },
     { key: "title", label: "عنوان الجلسة" },
   ];
 
   const handleAddSession = () => {
-   
-    showSuccess("أهلا بك اضف  جلسة جديدة");
-    navigate("/admin/add-session");
+    navigate(`/admin/add-session/${seasonId}`);
   };
 
-  // مثال لتوضيح كيفية استخدام showPromise عند جلب البيانات (بعد الربط)
-  // const fetchSessions = async () => {
-  //   const promise = refetch();
-  //   showPromise(promise, {
-  //     loading: "جاري تحميل الجلسات...",
-  //     success: "تم تحميل الجلسات بنجاح",
-  //     error: "فشل تحميل الجلسات",
-  //   });
-  // };
+  const handleRetry = async () => {
+    const promise = refetch();
+    showPromise(promise, {
+      loading: "جاري إعادة المحاولة...",
+      success: "تم تحميل الجلسات بنجاح",
+      error: "فشل إعادة تحميل الجلسات",
+    });
+  };
 
-  // TODO: بعد الربط شغلي حالة التحميل
-  // if (isLoading) {
-  //   return (
-  //     <div className="bg-white p-6 rounded-lg shadow">
-  //       <h2 className="text-lg font-bold mb-4">قائمة الجلسات</h2>
-  //       <div className="space-y-4">
-  //         {[1, 2, 3].map((i) => (
-  //           <div key={i} className="h-16 bg-gray-100 rounded animate-pulse"></div>
-  //         ))}
-  //       </div>
-  //     </div>
-  //   );
-  // }
+  // حالة التحميل
+  if (isLoading) {
+    return (
+      <div className="bg-white p-6 rounded-lg shadow">
+        <h2 className="text-lg font-bold mb-4">قائمة الجلسات</h2>
+        <div className="space-y-4">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="h-16 bg-gray-100 rounded animate-pulse"></div>
+          ))}
+        </div>
+      </div>
+    );
+  }
 
-  // if (error) {
-  //   return (
-  //     <div className="bg-white p-6 rounded-lg shadow">
-  //       <h2 className="text-lg font-bold mb-4">قائمة الجلسات</h2>
-  //       <div className="text-center py-6">
-  //         <p className="text-red-500 mb-3">حدث خطأ في تحميل الجلسات</p>
-  //         <button
-  //           onClick={() => {
-  //             showPromise(refetch(), {
-  //               loading: "جاري إعادة المحاولة...",
-  //               success: "تم التحميل بنجاح",
-  //               error: "فشل إعادة المحاولة",
-  //             });
-  //           }}
-  //           className="bg-main-color text-white px-4 py-2 rounded"
-  //         >
-  //           إعادة المحاولة
-  //         </button>
-  //       </div>
-  //     </div>
-  //   );
-  // }
+  // حالة الخطأ
+  if (error) {
+    return (
+      <div className="bg-white p-6 rounded-lg shadow">
+        <h2 className="text-lg font-bold mb-4">قائمة الجلسات</h2>
+        <div className="text-center py-6">
+          <p className="text-red-500 mb-3">حدث خطأ في تحميل الجلسات</p>
+          <button
+            onClick={handleRetry}
+            className="bg-main-color text-white px-4 py-2 rounded"
+          >
+            إعادة المحاولة
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-white p-6 rounded-lg shadow">

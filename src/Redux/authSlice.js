@@ -1,11 +1,14 @@
-// src/redux/authSlice.js
 import { createSlice } from "@reduxjs/toolkit";
 
+const savedToken = localStorage.getItem("token");
+const savedUser = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")) : null;
+const savedUserId = localStorage.getItem("userId");
+
 const initialState = {
-  user: null,
-  token: null,
-  userId: null,
-  isAuthenticated: false,
+  user: savedUser,
+  token: savedToken,
+  userId: savedUserId,
+  isAuthenticated: !!savedToken,
 };
 
 const authSlice = createSlice({
@@ -13,29 +16,29 @@ const authSlice = createSlice({
   initialState,
   reducers: {
     setCredentials: (state, action) => {
-      state.user = action.payload.user;
-      state.token = action.payload.token;
-      state.userId = action.payload.user?.id || action.payload.userId;
+      const { user, token, userId } = action.payload;
+      state.user = user;
+      state.token = token;
+      state.userId = userId;
       state.isAuthenticated = true;
-      
-      // حفظ في localStorage
-      localStorage.setItem("token", action.payload.token);
-      localStorage.setItem("userId", state.userId);
-      localStorage.setItem("user", JSON.stringify(action.payload.user));
+
+      localStorage.setItem("token", token);
+      localStorage.setItem("user", JSON.stringify(user));
+      localStorage.setItem("userId", userId);
     },
-    logout: (state) => {
+    logOut: (state) => {
       state.user = null;
       state.token = null;
       state.userId = null;
       state.isAuthenticated = false;
-      
-      // مسح localStorage
+
+      // تنظيف المتصفح عند تسجيل الخروج
       localStorage.removeItem("token");
-      localStorage.removeItem("userId");
       localStorage.removeItem("user");
+      localStorage.removeItem("userId");
     },
   },
 });
 
-export const { setCredentials, logout } = authSlice.actions;
+export const { setCredentials, logOut } = authSlice.actions;
 export default authSlice.reducer;

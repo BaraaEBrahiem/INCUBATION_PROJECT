@@ -1,14 +1,12 @@
 // src/components/Forms/IdeaForm.js
-import React, { useReducer, useState, /*useEffect*/ } from "react";
+import React, { useReducer, useState } from "react";
 import Button from "../Button";
 import Stepper from "../Stepper";
 import DynamicStep from "../DynamicStep";
 import { initialForm, ideaReducer } from "../../hooks/useIdeaReducer";
-import { useGetSeasonFormDesignQuery } from "../../api/endpoints/formConfigApi";
+import { useGetIdeaFormDesignQuery } from "../../api/endpoints/formConfigApi";
 
-// -----------------------------
-// Fallback (في حالة عدم وجود API)
-// -----------------------------
+
 const FALLBACK_SECTORS = [
   { value: "agriculture", label: "الزراعة" },
   { value: "education", label: "التعليم" },
@@ -17,16 +15,16 @@ const FALLBACK_SECTORS = [
 ];
 
 const FALLBACK_STEPS = [
-  { 
-    name: "المعلومات الشخصية", 
+  {
+    name: "المعلومات الشخصية",
     fields: [
       { name: "name", label: "الاسم", type: "text", required: true },
       { name: "city", label: "المدينة", type: "text", required: true },
       { name: "tel", label: "رقم الهاتف", type: "tel", required: true }
     ]
   },
-  { 
-    name: "معلومات الفكرة", 
+  {
+    name: "معلومات الفكرة",
     fields: [
       { name: "title", label: "عنوان الفكرة", type: "text", required: true },
       { name: "sector", label: "القطاع", type: "select", required: true },
@@ -34,16 +32,16 @@ const FALLBACK_STEPS = [
       { name: "productType", label: "نوع المنتج", type: "text", required: true }
     ]
   },
-  { 
-    name: "تفاصيل إضافية", 
+  {
+    name: "تفاصيل إضافية",
     fields: [
       { name: "targetAudience", label: "الجمهور المستهدف", type: "text", required: true },
       { name: "productProblem", label: "المشكلة التي يحلها المنتج", type: "text", required: true },
       { name: "projectDuration", label: "مدة المشروع", type: "text", required: true }
     ]
   },
-  { 
-    name: "الفريق", 
+  {
+    name: "الفريق",
     fields: [
       { name: "hasTeam", label: "هل لديك فريق؟", type: "radio", required: false },
       { name: "teamMembers", label: "أعضاء الفريق", type: "text", required: false },
@@ -53,17 +51,18 @@ const FALLBACK_STEPS = [
 ];
 
 /**
- *يجب تمرير seasonId إلى هذا المكون (عبر props أو يمكن استلامه من useParams داخل الصفحة الأم)
- *  <IdeaForm seasonId={seasonId} onSubmit={...} />
+ * IdeaForm – نموذج تقديم فكرة الاحتضان
+ * @param {Function} onSubmit - دالة تُستدعى عند إرسال النموذج، تستقبل form data.
+ * @param {string} seasonId - معرف الموسم (يُمرر من الصفحة الأم).
  */
 const IdeaForm = ({ onSubmit, seasonId }) => {
-  const { data: formConfigFromApi, isLoading: isConfigLoading } = useGetSeasonFormDesignQuery(seasonId);
+  const { data: formConfigFromApi, isLoading: isConfigLoading } = useGetIdeaFormDesignQuery(seasonId);
 
   const [form, dispatch] = useReducer(ideaReducer, initialForm);
   const [errors, setErrors] = useState({});
   const [currentStep, setCurrentStep] = useState(0);
 
-  // استخراج أقسام الفورم: الفكرة (idea_form) من تصميم الموسم
+  // استخراج إعدادات الفورم من الـ API (أو استخدام fallback)
   const ideaFormConfig = formConfigFromApi?.idea_form || {};
   const sectors = ideaFormConfig.sectors || FALLBACK_SECTORS;
   const steps = ideaFormConfig.steps || FALLBACK_STEPS;
@@ -73,14 +72,14 @@ const IdeaForm = ({ onSubmit, seasonId }) => {
 
   const handleChange = (field, value) => {
     dispatch({ type: "UPDATE_FIELD", field, value });
-    if (errors[field]) setErrors(prev => ({ ...prev, [field]: "" }));
+    if (errors[field]) setErrors((prev) => ({ ...prev, [field]: "" }));
   };
 
   const validateStep = () => {
     const currentStepFields = steps[currentStep]?.fields || [];
     const newErrors = {};
 
-    currentStepFields.forEach(field => {
+    currentStepFields.forEach((field) => {
       if (field.required && !form[field.name]) {
         newErrors[field.name] = `${field.label || field.name} مطلوب`;
       }
@@ -98,17 +97,17 @@ const IdeaForm = ({ onSubmit, seasonId }) => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleNext = () => validateStep() && setCurrentStep(prev => prev + 1);
-  const handlePrevious = () => setCurrentStep(prev => prev - 1);
+  const handleNext = () => validateStep() && setCurrentStep((prev) => prev + 1);
+  const handlePrevious = () => setCurrentStep((prev) => prev - 1);
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (hasMultipleSteps && !validateStep()) return;
 
     if (!hasMultipleSteps) {
-      const allFields = steps.flatMap(s => s.fields);
+      const allFields = steps.flatMap((s) => s.fields);
       const newErrors = {};
-      allFields.forEach(field => {
+      allFields.forEach((field) => {
         if ((field.required || requiredFields.includes(field.name)) && !form[field.name]) {
           newErrors[field.name] = `${field.label || field.name} مطلوب`;
         }
@@ -118,25 +117,41 @@ const IdeaForm = ({ onSubmit, seasonId }) => {
         return;
       }
     }
+
+    // إرسال البيانات إلى الصفحة الأم
     onSubmit(form);
   };
 
   if (isConfigLoading) {
-    return <div className="container space-y-6"><p className="text-center text-gray-500 py-10">جاري تحميل الفورم...</p></div>;
+    return (
+      <div className="container space-y-6">
+        <p className="text-center text-gray-500 py-10">جاري تحميل الفورم...</p>
+      </div>
+    );
   }
 
-  // حالة خطأ عام في حال فشل تحميل التصميم
-  if (!formConfigFromApi && !isConfigLoading) {
-    return <div className="container space-y-6"><p className="text-center text-red-500 py-10">فشل تحميل تصميم النموذج</p></div>;
-  }
+  // if (!formConfigFromApi && !isConfigLoading) {
+  //   return (
+  //     <div className="container space-y-6">
+  //       <p className="text-center text-red-500 py-10">فشل تحميل تصميم النموذج</p>
+  //     </div>
+  //   );
+  // }
 
-  // صيغة الخطوة الواحدة
+  // صيغة الخطوة الواحدة (بدون Stepper)
   if (!hasMultipleSteps) {
     const allFields = steps[0]?.fields || [];
     const stepName = steps[0]?.name || "نموذج التسجيل";
     return (
       <form onSubmit={handleSubmit} className="container space-y-6">
-        <DynamicStep stepName={stepName} fields={allFields} form={form} errors={errors} handleChange={handleChange} sectors={sectors} />
+        <DynamicStep
+          stepName={stepName}
+          fields={allFields}
+          form={form}
+          errors={errors}
+          handleChange={handleChange}
+          sectors={sectors}
+        />
         <div className="flex justify-center mt-4">
           <Button label="إرسال" type="submit" className="w-50 bg-main-color text-white px-4 py-2 rounded" />
         </div>
@@ -144,13 +159,20 @@ const IdeaForm = ({ onSubmit, seasonId }) => {
     );
   }
 
-  // صيغة متعددة الخطوات
+  // صيغة متعددة الخطوات (مع Stepper)
   const currentStepFields = steps[currentStep]?.fields || [];
   const currentStepName = steps[currentStep]?.name || "";
   return (
     <form onSubmit={handleSubmit} className="container space-y-6">
-      <Stepper steps={steps.map(s => s.name)} current={currentStep} />
-      <DynamicStep stepName={currentStepName} fields={currentStepFields} form={form} errors={errors} handleChange={handleChange} sectors={sectors} />
+      <Stepper steps={steps.map((s) => s.name)} current={currentStep} />
+      <DynamicStep
+        stepName={currentStepName}
+        fields={currentStepFields}
+        form={form}
+        errors={errors}
+        handleChange={handleChange}
+        sectors={sectors}
+      />
       <div className="flex gap-4">
         {currentStep < steps.length - 1 && (
           <Button label="التالي" type="button" onClick={handleNext} className="w-50 bg-main-color text-white px-4 py-2 rounded" />

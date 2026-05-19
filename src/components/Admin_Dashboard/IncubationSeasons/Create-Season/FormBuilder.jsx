@@ -1,13 +1,26 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import FieldTypesPanel from "./FieldTypesPanel";
 import FormBuilderCanvas from "./FormBuilderCanvas";
 import Button from "../../../Button";
 import { useNavigate } from "react-router-dom";
+import { showError } from "../../../../Utils/toast";
 
-const FormBuilder = () => {
+const FormBuilder = ({ onSubmit, isSubmitting = false, initialFields = [], onFieldsChange, seasonData }) => {
   const navigate = useNavigate();
+  const [fields, setFields] = useState(initialFields);
+  const [isPublishing, setIsPublishing] = useState(false);
+    const goToPreview = () => {
+    navigate("/admin/preview-form", { 
+      state: { 
+        fields, 
+        seasonData: seasonData
+      }
+    });
+  };
 
-  const [fields, setFields] = useState([]);
+  useEffect(() => {
+    if (onFieldsChange) onFieldsChange(fields);
+  }, [fields, onFieldsChange]);
 
   // إضافة حقل جديد
   const addField = (type) => {
@@ -21,7 +34,6 @@ const FormBuilder = () => {
           ? []
           : null,
     };
-
     setFields((prev) => [...prev, newField]);
   };
 
@@ -39,46 +51,69 @@ const FormBuilder = () => {
     setFields((prev) => prev.filter((field) => field.id !== id));
   };
 
-  // نشر النموذج (لاحقاً نربطه مع API)
-  const publishForm = () => {
-    console.log("Form Published:", fields);
+  // نشر النموذج (إرسال التصميم إلى الباك عبر الـ prop)
+  const publishForm = async () => {
+    if (!fields.length) {
+      showError("يرجى إضافة حقل واحد على الأقل قبل النشر.");
+      return;
+    }
+
+    // تحقق من أن كل الحقول لها تسمية (label)
+    const emptyLabel = fields.find((f) => !f.label.trim());
+    if (emptyLabel) {
+      showError("يرجى إدخال تسمية لجميع الحقول.");
+      return;
+    }
+
+    setIsPublishing(true);
+    try {
+      // تحويل الحقول إلى الشكل الذي يتوقعه الباك (إذا لزم)
+      const formConfig = {
+        fields: fields.map(({ id, type, label, required, options }) => ({
+          name: id, // أو يمكن استخدام id كـ name مؤقتاً
+          type,
+          label,
+          required,
+          options,
+        })),
+      };
+      await onSubmit(formConfig);
+    } catch (err) {
+      console.error(err);
+      showError(err?.data?.message || "حدث خطأ في نشر النموذج.");
+    } finally {
+      setIsPublishing(false);
+    }
   };
 
-  // الانتقال لصفحة المعاينة
-  const goToPreview = () => {
-    navigate("/admin/preview-form", { state: { fields } });
-  };
 
   return (
     <div>
-    <div className="flex gap-6">
-      {/* مساحة بناء النموذج */}
-      <div className="flex-1">
-        <FormBuilderCanvas
-          fields={fields}
-          updateField={updateField}
-          deleteField={deleteField}
-        />
-      </div> 
-
-      {/* لوحة أنواع الحقول */}
-      <FieldTypesPanel addField={addField} />
-    </div>
-    {/* أزرار التحكم بأسفل الصفحة */}
+      <div className="flex gap-6">
+        <div className="flex-1">
+          <FormBuilderCanvas
+            fields={fields}
+            updateField={updateField}
+            deleteField={deleteField}
+          />
+        </div>
+        <FieldTypesPanel addField={addField} />
+      </div>
       <div className="flex justify-center items-center gap-8 mt-6">
         <Button
           label="معاينة النموذج"
           onClick={goToPreview}
           className="bg-main-color w-50"
+          disabled={isSubmitting || isPublishing}
         />
-
         <Button
-          label="نشر"
+          label={isPublishing ? "جاري النشر..." : "نشر"}
           onClick={publishForm}
           className="bg-main-color w-50"
+          disabled={isSubmitting || isPublishing}
         />
       </div>
-      </div>
+    </div>
   );
 };
 

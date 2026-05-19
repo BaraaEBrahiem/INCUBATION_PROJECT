@@ -7,7 +7,7 @@ export const sessionsApi = apiSlice.injectEndpoints({
   // إضافة جلسة جديدة  
    addSession: builder.mutation({
   query: ({sessionData, season_id}) => ({
-    url: `/admin/bootcamp/sessions/${season_id}/create`,
+    url: `/admin/bootcamp/sessions/${season_id}/create/`,
     method: 'POST',
     body: sessionData,
   }),
@@ -20,10 +20,19 @@ export const sessionsApi = apiSlice.injectEndpoints({
       providesTags: ['Sessions'],
     }),
 
+    // جلب المدربين المتاحين (لصفحة إضافة جلسة)
+    // -----------------------------
+    getAvailableTrainers: builder.query({
+      query: () => '/admin/trainers/available/',
+      providesTags: ['Trainers'],
+    }),
+
+
   }),
 });
 
 export const {
   useAddSessionMutation,
   useGetSessionsQuery,
+  useGetAvailableTrainersQuery,
 } = sessionsApi;

@@ -1,21 +1,18 @@
 import React, { useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { MdPeople } from "react-icons/md";
 import { AiFillNotification } from "react-icons/ai";
 import { showSuccess, showError } from "../../../Utils/toast";
-// import { useEndCampMutation } from "../../api/endpoints/campApi";
+import { useEndCampMutation } from "../../../api/endpoints/admin/campApi";
 
-const CampHeader = () => {
+const CampHeader = ({ seasonId }) => { 
   const navigate = useNavigate();
-  const { season_id } = useParams(); 
-  const [isLoading, setIsLoading] = useState(false);
   const [campStatus, setCampStatus] = useState("نشط");
   const [error, setError] = useState("");
-
-  // const [endCamp, { isLoading: isApiLoading }] = useEndCampMutation();
+  const [endCamp, { isLoading }] = useEndCampMutation();
 
   const handleEndCamp = async () => {
-    if (!season_id) {
+    if (!seasonId) {
       showError("لا يمكن تحديد الموسم الحالي. يرجى المحاولة مرة أخرى.");
       return;
     }
@@ -25,25 +22,15 @@ const CampHeader = () => {
     );
     if (!confirmEnd) return;
 
-    setIsLoading(true);
     setError("");
-
     try {
-      // await endCamp(season_id).unwrap();   // إذا كانت الدالة تستقبل season_id مباشرة
-      // أو
-      // await endCamp({ season_id }).unwrap(); // إذا كانت تستقبل كائن
-
-      // محاكاة العملية
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      await endCamp(seasonId).unwrap();
       setCampStatus("منتهي");
-      showSuccess("تم إنهاء المعسكر بنجاح. تم إرسال الإشعارات لجميع المشاركين.");
+      showSuccess("تم إنهاء المعسكر بنجاح. تم إرسال الإشعارات.");
     } catch (err) {
       console.error("Error ending camp:", err);
       const msg = err?.data?.message || "حدث خطأ في إنهاء المعسكر";
-      setError(msg);
       showError(msg);
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -57,7 +44,7 @@ const CampHeader = () => {
             isLoading || campStatus === "منتهي" ? "opacity-50 cursor-not-allowed" : ""
           }`}
         >
-          {isLoading ? "جاري الإنهاء..." : "إعلان انتهاء المعسكر"}
+          {isLoading ? "جاري الإنهاء..." : "إعلان انتهاء جلسات المعسكر"}
           <AiFillNotification className="inline-block" />
         </button>
 

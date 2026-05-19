@@ -7,30 +7,26 @@ const PreviewFormPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // الحقول القادمة من FormBuilder
   const fields = location.state?.fields || [];
+
+  const goBackToFormBuilder = () => {
+    navigate("/admin/create-season", {
+      state: { activeTab: "form", 
+      fields: fields,
+      seasonData: location.state?.seasonData },
+    });
+  };
 
   return (
     <div className="container p-6">
-
-      {/* عنوان الصفحة */}
       <h1 className="text-xl font-bold mb-6">معاينة النموذج</h1>
-
-      {/* عرض النموذج */}
       <FormPreview fields={fields} />
-
-      {/* زر الرجوع */}
       <div className="flex justify-center items-center gap-8 mt-6">
         <Button
           label="العودة للتعديل"
-          onClick={() => navigate(-1)}
+          onClick={goBackToFormBuilder}
           className="bg-main-color w-50"
         />
-        <Button
-        label={"نشر"}
-        onClick={() => alert("تم نشر النموذج بنجاح!")}
-        className="bg-main-color w-50"
-      />
       </div>
     </div>
   );
