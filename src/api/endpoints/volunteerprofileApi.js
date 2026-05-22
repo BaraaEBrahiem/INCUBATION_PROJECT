@@ -1,4 +1,3 @@
-// src/api/endpoints/volunteerApi.js
 import { apiSlice } from "../apiSlice";
 
 export const volunteerprofileApi = apiSlice.injectEndpoints({
