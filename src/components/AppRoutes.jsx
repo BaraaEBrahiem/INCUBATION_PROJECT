@@ -1,7 +1,8 @@
 import { Routes, Route } from "react-router-dom";
 import { useRole } from "../hooks/useRole";
 import { buildUserNavOptions } from"../Utils/BulidUserNavOptions";
-
+import AssignIncubationEvaluatorsPage
+from "../pages/Admin/AssignIncubationEvaluatorsPage";
 import DashboardLayout from "./layout/DashboardLayout";
 import AdminLayout from "./Layout/AdminLayout";
 
@@ -288,7 +289,12 @@ const AppRoutes = () => {
       <Route path="/messagespage" element={<MessagesPage />} />
       <Route path="/notificationspage" element={<NotificationsPage />} />
       <Route path="/projectspage" element={<ProjectsPage />} />
-      
+      <Route
+  path="/admin/assign-incubation-evaluators/:id"
+  element={
+    <AssignIncubationEvaluatorsPage />
+  }
+/>
       </Route>
       )}
       

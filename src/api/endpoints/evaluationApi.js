@@ -57,30 +57,66 @@ export const evaluationApi = apiSlice.injectEndpoints({
     }),
     //تحديد موعد اللجنة للتقييم
     setMeetingDate: builder.mutation({
-      query: ({ idea_id, meetingDate }) => ({
-        url: `/admin/evaluations/ideas/${idea_id}/set-meeting/`,
-        method: 'POST',
-        body: { meetingDate },
-      }),
+      query: ({ idea_id, meetingDate }) => {
+        const [date, time] =
+          meetingDate.split("T");
+        return {
+          url: `/admin/evaluations/ideas/${idea_id}/set-meeting/`,
+          method: 'POST',
+          body: { 
+            date,
+            time 
+          },
+      };
+      },
       invalidatesTags: ['Evaluation'],
     }),
 
-    // -----------------------------
+  
+       // -----------------------------
     // 3) معايير التقييم (ثابتة لكل المواسم)
     // -----------------------------
 
-    // جلب معايير التقييم (ثابتة)
+    // جلب معايير التقييم
     getCriteria: builder.query({
-      query: () => `/evaluations/evaluation-form/`,
+      query: () => `/admin/evaluations/criteria/`,
       providesTags: ['Criteria'],
     }),
 
-    // حفظ معايير التقييم (نشر)
-    saveCriteria: builder.mutation({
-      query: (criteria) => ({
-        url: `/evaluation/criteria/`,
+    // إضافة معيار جديد
+    createCriterion: builder.mutation({
+      query: (data) => ({
+        url: `/admin/evaluations/criteria/`,
+        method: 'POST',
+        body: data,
+      }),
+      invalidatesTags: ['Criteria'],
+    }),
+
+    // تعديل معيار
+    updateCriterion: builder.mutation({
+      query: ({ id, ...data }) => ({
+        url: `/admin/evaluations/criteria/${id}/`,
         method: 'PUT',
-        body: { criteria },
+        body: data,
+      }),
+      invalidatesTags: ['Criteria'],
+    }),
+
+    // حذف معيار
+    deleteCriterion: builder.mutation({
+      query: (id) => ({
+        url: `/admin/evaluations/criteria/${id}/delete/`,
+        method: 'POST',
+      }),
+      invalidatesTags: ['Criteria'],
+    }),
+
+    // نشر المعايير (بدون body)
+    saveCriteria: builder.mutation({
+      query: () => ({
+        url: `/admin/evaluations/criteria/publish/`,
+        method: 'POST',
       }),
       invalidatesTags: ['Criteria'],
     }),
@@ -117,7 +153,7 @@ export const evaluationApi = apiSlice.injectEndpoints({
     // تعيين مقيمين لمشروع معين
     assignEvaluators: builder.mutation({
       query: ({ idea_id, evaluators_ids }) => ({
-        url: `/admin/evaluations/assign-evaluators/${idea_id}/`,
+        url: `/admin/evaluations/${idea_id}/assign-evaluators/`,
         method: 'POST',
         body: { evaluators_ids },
       }),
@@ -169,8 +205,11 @@ export const {
   useGetEvaluationResultsQuery,
   useSetMeetingDateMutation,
 
-  // معايير التقييم
+    // معايير التقييم
   useGetCriteriaQuery,
+  useCreateCriterionMutation,
+  useUpdateCriterionMutation,
+  useDeleteCriterionMutation,
   useSaveCriteriaMutation,
 
   // الملاحظات
