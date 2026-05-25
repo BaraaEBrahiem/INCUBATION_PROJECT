@@ -4,7 +4,7 @@ import Button from "./Button"
 
 const ConsultationRequestCard = ({ request, onApprove, onReject, mode }) => {
   return (
-  <div className="bg-white w-full max-w-md border border-second-color rounded-xl p-4 md:p-6 shadow flex flex-col gap-6 mx-auto">
+    <div className="bg-white w-full max-w-md border border-second-color rounded-xl p-4 md:p-6 shadow flex flex-col gap-6 mx-auto">
       <p><span className="font-bold text-xl">الاسم: </span>{request.requester_name}</p>
       <p><span className="font-bold text-xl">البريد الإلكتروني: </span>{request.requester_email}</p>
       <p><span className="font-bold text-xl">نوع الاستشارة: </span>{request.required_skill}</p>
@@ -14,8 +14,8 @@ const ConsultationRequestCard = ({ request, onApprove, onReject, mode }) => {
 
       {mode === "request" && (
         <ApprovalActions
-          onApprove={() => onApprove && onApprove(request.id)}
-          onReject={() => onReject && onReject(request.id)}
+          onApprove={() => onApprove && onApprove(request.idea_id)}
+          onReject={() => onReject && onReject(request.idea_id)}
         />
       )}
 
@@ -23,7 +23,7 @@ const ConsultationRequestCard = ({ request, onApprove, onReject, mode }) => {
         <Button 
           label="مراسلة" 
           className="bg-main-color w-full"
-          onClick={""}
+          onClick={() => console.log("المحادثة رقم:", request.conversation_id)}
         />
       )}
 

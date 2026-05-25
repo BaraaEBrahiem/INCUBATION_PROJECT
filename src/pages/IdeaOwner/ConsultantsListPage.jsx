@@ -1,7 +1,7 @@
 import React from "react";
 import { useParams } from "react-router-dom";
 import ConsultantsList from "../../components/ConsultantsList";
-import avatar from "../../assets/images/avatar.jpg";
+import avatarDefault from "../../assets/images/avatar.jpg";
 // import { useGetConsultantsBySpecialtyQuery } from "../../api/endpoints/consultantsApi";
 
 const ConsultantsListPage = () => {
@@ -10,59 +10,45 @@ const ConsultantsListPage = () => {
   // TODO: بعد الربط هذا السطر بدل البيانات الثابتة
   // const { data: consultants, isLoading, error, refetch } = useGetConsultantsBySpecialtyQuery(categoryId);
 
+  // مصفوفة مطابقة 100% لهيكلية الباكيند الظاهرة في صور الـ Postman الأخيرة
   const consultantsData = [
     {
-      id: 1,
-      name: "رانيا الأحمد",
-      specialization: "uiux",
-      availability: ["2:00pm إلى 4:00pm"],
-      avatar: avatar,
-    },
-    {
       id: 2,
-      name: "محمد العلي",
-      specialization: "legal",
-      availability: ["1:00pm إلى 3:00pm"],
-      avatar: avatar,
+      full_name: "hasan hasan",
+      avatar: null, // راجع null كما بالصورة تماماً
+      primary_skills: "backend", // التصفية تتم بناءً على هذا الحقل
+      availability: [
+        {
+          day: "SUNDAY",
+          start_time: "07:00:00",
+          end_time: "10:00:00"
+        },
+        {
+          day: "WEDNESDAY",
+          start_time: "08:00:00",
+          end_time: "11:00:00"
+        }
+      ]
     },
     {
-      id: 3,
-      name: "سارة خالد",
-      specialization: "marketing",
-      availability: ["11:00am إلى 1:00pm"],
-      avatar: avatar,
-    },
+      id: 1,
+      full_name: "hala ahmad",
+      avatar: null,
+      primary_skills: "uiux",
+      availability: [
+        {
+          day: "MONDAY",
+          start_time: "09:00:00",
+          end_time: "12:00:00"
+        }
+      ]
+    }
   ];
 
-  // تصفية المستشارين بحسب الاختصاص (للبيانات الثابتة)
+  // تصفية المستشارين بناءً على الحقل الصحيح المطابق للاختبارات (primary_skills)
   const filteredConsultants = consultantsData.filter(
-    (c) => c.specialization === categoryId
+    (c) => c.primary_skills === categoryId
   );
-
-  // TODO: بعد الربط  هذا الكود بدل الـ filteredConsultants
-  // const consultants = consultants?.data || [];
-
-  // if (isLoading) {
-  //   return (
-  //     <div className="container py-6">
-  //       <p className="text-center text-gray-500 mt-20">جاري تحميل المستشارين...</p>
-  //     </div>
-  //   );
-  // }
-
-  // if (error) {
-  //   return (
-  //     <div className="container py-6">
-  //       <p className="text-center text-red-500 mt-20">حدث خطأ في تحميل المستشارين</p>
-  //       <button 
-  //         onClick={refetch}
-  //         className="bg-main-color text-white px-4 py-2 rounded mt-4 mx-auto block"
-  //       >
-  //         إعادة المحاولة
-  //       </button>
-  //     </div>
-  //   );
-  // }
 
   return (
     <div className="container py-6">

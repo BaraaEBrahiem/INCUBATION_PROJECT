@@ -1,4 +1,4 @@
-import { useState } from "react";
+ import { useState } from "react";
 import Button from "./Button";
 import Modal from "./Modal";
 import Select from "./Select";
@@ -9,13 +9,14 @@ import { useSelector } from "react-redux";
 const ConsultationRequestBtn = ({ consultant }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [consultationType, setConsultationType] = useState("");
+  const [requiredSkill, setRequiredSkill] = useState(""); // تعديل 1: إضافة حالة لتخزين المهارة المطلوبة للباك إند
   const [description, setDescription] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
-// const [sendRequest, { isLoading }] = useSendConsultationRequestMutation();
+  // const [sendRequest, { isLoading }] = useSendConsultationRequestMutation();
 
-  // جلب userId من Redux
+  // جلب userId من Redux (إذا كان الباك إند لا يطلبه بالـ Payload فيمكنك عدم إرساله، حيث يعتمد الباك على الـ ID بالـ URL والـ Token)
   const userId = useSelector((state) => state.auth.userId);
 
   const open = () => {
@@ -26,6 +27,7 @@ const ConsultationRequestBtn = ({ consultant }) => {
   const close = () => {
     setIsOpen(false);
     setConsultationType("");
+    setRequiredSkill("");
     setDescription("");
     setError("");
     setSuccess("");
@@ -37,37 +39,52 @@ const ConsultationRequestBtn = ({ consultant }) => {
       setError("الرجاء اختيار نوع الاستشارة");
       return;
     }
+    if (!requiredSkill.trim()) {
+      setError("الرجاء تحديد المهارة المطلوبة (مثال: frontend)");
+      return;
+    }
     if (!description.trim()) {
       setError("الرجاء إدخال شرح مختصر");
       return;
     }
 
-    // TODO: بعد الربط هذا الكود
+    // -------------------------------------------------------------
+    // T0D0: بعد الربط هذا الكود الجاهز والمطابق للباك إند تماماً بالصورة
+    // -------------------------------------------------------------
     // try {
+    //   // نمرر الـ consultant?.id كـ parameter للـ Mutation ليتم وضعه في الـ URL تلقائياً
     //   await sendRequest({
-    //     consultantId: consultant?.id,
-    //     userId: userId,
-    //     consultationType: consultationType,
-    //     description: description,
+    //     consultantId: consultant?.id, 
+    //     body: {
+    //       required_skill: requiredSkill, // مطابقة للبوستمان
+    //       help_type: consultationType,   // تم تعديل القيم بالأسفل لتُرسل ONGOING أو ONETIME
+    //       description: description,
+    //     }
     //   }).unwrap();
+    //   
     //   setSuccess("تم إرسال طلب الاستشارة بنجاح");
     //   setTimeout(() => {
     //     close();
     //   }, 1500);
     // } catch (err) {
     //   console.error("Error sending consultation request:", err);
-    //   setError(err?.data?.message || "حدث خطأ في إرسال الطلب");
+    //   // قراءة الخطأ من detail أو message حسب الـ API
+    //   setError(err?.data?.detail  err?.data?.message  "حدث خطأ في إرسال الطلب");
     // }
 
-    // حالياً: محاكاة للإرسال
-    console.log("إرسال طلب استشارة:", {
-      consultantId: consultant?.id,
-      userId: userId,
-      consultationType,
-      description,
+    // حالياً: محاكاة للإرسال بنفس أسلوب الباك إند المتوقع
+    console.log("إرسال طلب استشارة للباك إند:", {
+      url_param_id: consultant?.id,
+      payload: {
+        required_skill: requiredSkill,
+        help_type: consultationType,
+        description: description,
+      }
     });
-    alert("تم إرسال طلب الاستشارة بنجاح (محاكاة)");
-    close();
+    setSuccess("تم إرسال طلب الاستشارة بنجاح (محاكاة متوافقة)");
+    setTimeout(() => {
+      close();
+    }, 1500);
   };
 
   return (
@@ -92,7 +109,7 @@ const ConsultationRequestBtn = ({ consultant }) => {
               // disabled={isLoading}
             />
             <button 
-              className="border border-second-color px-4 rounded" 
+              className="border border-second-color px-4 rounded cursor-pointer" 
               onClick={close}
             >
               إلغاء
@@ -100,13 +117,13 @@ const ConsultationRequestBtn = ({ consultant }) => {
           </>
         }
       >
-        <form className="flex flex-col gap-4">
+        <form className="flex flex-col gap-4" onSubmit={(e) => e.preventDefault()} dir="rtl">
           {consultant && (
             <p className="font-bold text-second-color">
               المستشار: {consultant.name}
             </p>
           )}
-
+{/* تعديل 2: تغيير الـ values لتطابق تماماً النصوص الإنجليزية المتوقعة في الباك إند (ONGOING / ONETIME) */}
           <Select
             placeholder="اختر نوع الاستشارة"
             label="نوع الاستشارة"
@@ -116,15 +133,27 @@ const ConsultationRequestBtn = ({ consultant }) => {
               setError("");
             }}
             options={[
-              { label: "استشارة", value: "استشارة" },
-              { label: "متابعة دورية", value: "متابعة دورية" },
+              { label: "متابعة مستمرة (ONGOING)", value: "ONGOING" },
+              { label: "استشارة لمرة واحدة (ONETIME)", value: "ONETIME" },
             ]}
+          />
+
+          {/* تعديل 3: إضافة حقل إدخال المهارة المطلوبة ليطابق required_skill بالباك إند */}
+          <Input
+            type="text"
+            label="المهارة المطلوبة"
+            placeholder="مثال: frontend, UI UX, backend"
+            value={requiredSkill}
+            onChange={(e) => {
+              setRequiredSkill(e.target.value);
+              setError("");
+            }}
           />
 
           <Input
             type="text"
             label="شرح مختصر"
-            placeholder="شرح ما تحتاجه"
+            placeholder="شرح ما تحتاجه من المستشار"
             value={description}
             onChange={(e) => {
               setDescription(e.target.value);
@@ -132,8 +161,8 @@ const ConsultationRequestBtn = ({ consultant }) => {
             }}
           />
 
-          {error && <p className="text-red-500 text-sm">{error}</p>}
-          {success && <p className="text-green-500 text-sm">{success}</p>}
+          {error && <p className="text-red-500 text-sm font-bold">{error}</p>}
+          {success && <p className="text-green-500 text-sm font-bold">{success}</p>}
         </form>
       </Modal>
     </>

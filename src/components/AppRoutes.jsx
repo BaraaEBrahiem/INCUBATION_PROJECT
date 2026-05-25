@@ -49,6 +49,9 @@ import VolunteerRequestsPage from "../pages/Volunteer/VolunteerRequestsPage";
 import ScheduleManagementPage from "../pages/Volunteer/ScheduleManagementPage";
 import AddWorkshopPage from "../pages/Volunteer/AddWorkshopPage";
 import AssignedProjectsPage from "../pages/Volunteer/AssignedProjectsPage";
+import CampWorkshopsPage from "../pages/Volunteer/CampWorkShopPage";
+import CampProjectsPage from "../pages/Volunteer/CampProjectsPage";
+
 import WorkshopsPage from "../pages/Volunteer/WorkshopsPage";
 import WorkshopInfoPage from "../pages/Volunteer/WorkshopInfoPage";
 import VolunteerRequestDetailsPage from "../pages/Volunteer/VolunteerRequestDetailsPage";
@@ -69,6 +72,8 @@ import UserDetailsPage from "../pages/Admin/UserDetailsPage";
 import TaskDetailsPage from "../pages/Admin/TaskDetailsPage";
 import VolunteerRequestPage from "../pages/Admin/VolunteerRequestPage";
 import VolunteersPage from "../pages/Admin/VolunteersPage";
+import SelectingVolunteerPage from "../pages/Admin/SelectingVolunteerPage";
+
 import AdminSettingsPage from "../pages/Admin/AdminSettingsPage";
 import IncubationSeasonsPage from "../pages/Admin/IncubationSeasonsPage";
 import SeasonDetailsPage from "../pages/Admin/SeasonDetailsPage"
@@ -161,6 +166,9 @@ const AppRoutes = () => {
           <Route path="/volunteer-center" element={<VolunteerCenterPage />} />
           <Route path="/requests-page" element={<VolunteerRequestsPage />} />
           <Route path="/workshop-page" element={<WorkshopsPage />} />
+           <Route path="/CampWorkShopsPage" element={<CampWorkshopsPage/>}/>
+          <Route path ="/CampProjectsPage" element={<CampProjectsPage/>}/>
+         
           <Route path="/schedule-page" element={<ScheduleManagementPage />} />
           <Route path="/workshopinfo/:id" element={<WorkshopInfoPage />} />
           <Route path="/assigned-projects-page" element={<AssignedProjectsPage />} />
@@ -257,6 +265,7 @@ const AppRoutes = () => {
           <Route path="/admin/statistics" element={<StatisticsPage />} />
           <Route path="/admin/users" element={<UsersPage />} />
           <Route path="/admin/volunteers" element={<VolunteersPage />} />
+          <Route path="/Selectingvolunteer" element={<SelectingVolunteerPage />} />
           <Route path="/admin/settings" element={<AdminSettingsPage />} />
           <Route path="/change-password" element={<ChangePasswordPage />} />
           <Route path="/admin/seasons" element={<IncubationSeasonsPage />} />

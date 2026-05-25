@@ -11,27 +11,39 @@ const TeamPage = () => {
   // const { data: suggestedData, isLoading: isSuggestedLoading, error: suggestedError } = useGetSuggestedVolunteersQuery();
 
   // -----------------------------
-  // بيانات ثابتة حالياً (تتحذف بعد الربط)
+  // تعديل: بيانات ثابتة تطابق تماماً هيكلية الـ API الظاهرة في البوستمان
   // -----------------------------
-  const hasTeam = false;
+  const apiTeamMock = {
+    has_team: true,
+    current_team: [
+      { id: 3, name: "hala ahmad", email: "hala@gmail.com", can_message: true },
+      { id: 4, name: "hasan hasan", email: "hasan@gmail.com", can_message: true },
+    ]
+  };
 
-  const currentTeam = [
-    { id: 1, name: "مايا المحمد", email: "maya123@gmail.com" },
-    { id: 2, name: "مايا المحمد", email: "maya123@gmail.com" },
-    { id: 3, name: "مايا المحمد", email: "maya123@gmail.com" },
+  // تعديل 1: قراءة المتغيرات من الـ Mock بنفس المسميات المتوقعة من الباك إند (Snake Case)
+  const hasTeam = apiTeamMock?.has_team || false;
+  const currentTeam = apiTeamMock?.current_team || [];
+
+  // تعديل 2: تحديث مصفوفة المتطوعين المقترحين لتطابق مخرجات الباك إند الحقيقي (primary_skill)
+  const suggestedVolunteersMock = [
+    { id: 3, name: "hala ahmad", email: "hala@gmail.com", primary_skill: "backend" },
+    { id: 4, name: "hasan hasan", email: "hasan@gmail.com", primary_skill: "frontend" },
   ];
 
-  const suggestedVolunteers = [
-    { id: 1, name: "مايا المحمد", email: "maya123@gmail.com", role: "backend" },
-    { id: 2, name: "مايا المحمد", email: "maya123@gmail.com", role: "frontend" },
-    { id: 3, name: "مايا المحمد", email: "مايا المحمد", role: "design" },
-    { id: 4, name: "مايا المحمد", email: "مايا المحمد", role: "testing" },
-  ];
+  // مواءمة برمجية سريعة لضمان التوافق مع الكومبوننت الحالي إذا كان يتوقع كلمة role
+  const adaptedSuggestedVolunteers = suggestedVolunteersMock.map(vol => ({
+    ...vol,
+    role: vol.primary_skill // تحويل داخلي آمن ليعمل كرتك الحالي فوراً
+  }));
 
-  // TODO: بعد الربط  هذا الكود لاستخراج البيانات من API
-  // const hasTeam = teamData?.hasTeam || false;
-  // const currentTeam = teamData?.members || [];
-  // const suggestedVolunteers = suggestedData?.volunteers || [];
+  // -------------------------------------------------------------
+  // T0D0: بعد الربط الفعلي مع الـ API، الكود الصحيح لاستخراج البيانات
+  // -------------------------------------------------------------
+  // const hasTeam = teamData?.has_team || false;
+  // const currentTeam = teamData?.current_team || [];
+  // // لو الـ API تبع المتطوعين بيرجع مصفوفة مباشرة كما بالصورة:
+  // const suggestedVolunteers = suggestedData ? suggestedData.map(vol => ({ ...vol, role: vol.primary_skill })) : [];
 
   // TODO: بعد الربط حالة التحميل والخطأ
   // if (isTeamLoading || isSuggestedLoading) {
@@ -51,7 +63,7 @@ const TeamPage = () => {
   // }
 
   return (
-    <div className="container py-6">
+    <div className="container py-6" dir="rtl">
       <h1 className="text-3xl font-bold text-second-color mb-6">الفريق</h1>
 
       {/* التبويبات */}
@@ -83,7 +95,7 @@ const TeamPage = () => {
       {activeTab === "current" ? (
         <CurrentTeamList members={currentTeam} />
       ) : (
-        <SuggestedVolunteersList volunteers={suggestedVolunteers} />
+        <SuggestedVolunteersList volunteers={adaptedSuggestedVolunteers} />
       )}
     </div>
   );

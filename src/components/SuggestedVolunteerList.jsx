@@ -8,7 +8,7 @@ const SuggestedVolunteersList = ({ volunteers }) => {
           key={v.id}
           name={v.name}
           email={v.email}
-          role={v.role}
+          role={v.role} // يقرأ الـ role المحولة داخلياً في صفحتك الأساسية بنجاح
           buttonLabel="إضافة للفريق"
           onButtonClick={() => console.log("إضافة", v.name)}
         />

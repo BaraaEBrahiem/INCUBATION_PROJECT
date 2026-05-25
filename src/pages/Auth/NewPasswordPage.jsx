@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+ import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import Input from "../../components/Input";
 import Button from "../../components/Button";
@@ -8,7 +8,7 @@ import { useNewPasswordMutation } from "../../api/endpoints/authApi";
 const NewPasswordPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const [newPassword, { isLoading }] = useNewPasswordMutation();
+  const [resetPassword, { isLoading }] = useNewPasswordMutation(); // غيرت الاسم لـ resetPassword للتوضيح
 
   const [form, setForm] = useState({
     password: "",
@@ -31,16 +31,22 @@ const NewPasswordPage = () => {
   const validate = () => {
     const newErrors = {};
 
-    if (!form.password) newErrors.password = "كلمة المرور مطلوبة";
-    if (form.password.length < 8)
-      newErrors.password = "كلمة المرور يجب أن تكون 8 أحرف على الأقل";
-    if (!/[A-Z]/.test(form.password))
-      newErrors.password = "كلمة المرور يجب أن تحتوي على حرف كبير واحد على الأقل";
-    if (!/[0-9]/.test(form.password))
-      newErrors.password = "كلمة المرور يجب أن تحتوي على رقم واحد على الأقل";
+    if (!form.password) {
+      newErrors.password = "كلمة المرور مطلوبة";
+    } else {
+      if (form.password.length < 8)
+        newErrors.password = "كلمة المرور يجب أن تكون 8 أحرف على الأقل";
+      if (!/[A-Z]/.test(form.password))
+        newErrors.password = "كلمة المرور يجب أن تحتوي على حرف كبير واحد على الأقل";
+      if (!/[0-9]/.test(form.password))
+        newErrors.password = "كلمة المرور يجب أن تحتوي على رقم واحد على الأقل";
+    }
 
-    if (form.confirmPassword !== form.password)
+    if (!form.confirmPassword) {
+      newErrors.confirmPassword = "يرجى تأكيد كلمة المرور";
+    } else if (form.confirmPassword !== form.password) {
       newErrors.confirmPassword = "كلمتا المرور غير متطابقتين";
+    }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -58,10 +64,12 @@ const NewPasswordPage = () => {
     }
 
     try {
-      await newPassword({
+      // التعديل هنا: إرسال الحقول بالمسميات المطابقة للباك إند تماماً (حسب الصورة الثالثة)
+      await resetPassword({
         email: email,
         otp: otp,
-        new_password: form.password,
+        password: form.password,
+        confirm_password: form.confirmPassword, // استخدام confirm_password بالـ underscore
       }).unwrap();
 
       // تم بنجاح، التوجيه إلى صفحة تسجيل الدخول
@@ -71,13 +79,16 @@ const NewPasswordPage = () => {
       
     } catch (error) {
       console.error("Reset password error:", error);
-      setApiError(error?.data?.message || "فشل تغيير كلمة المرور. حاول مرة أخرى");
+      // التعديل هنا: تصحيح السنتكس وقراءة الحقل detail الراجع من الباك إند
+      const errorMsg = error?.data?.detail || error?.data?.message || "فشل تغيير كلمة المرور. حاول مرة أخرى";
+      setApiError(errorMsg);
     }
   };
 
- return (
-    <div className="flex h-screen w-full overflow-hidden font-sans">
-      <div className="w-full md:w-1/2 bg-white flex items-center justify-center p-12">
+  return (
+    // التعديل هنا: إضافة dir="rtl" لتنسيق محاذاة العناصر العربية بشكل صحيح
+    <div className="flex h-screen w-full overflow-hidden font-sans antialiased" dir="rtl">
+      <div className="w-full md:w-1/2 bg-white flex items-center justify-center p-8 lg:p-24">
         <div className="w-full max-w-md">
           <h1 className="text-3xl font-bold text-second-color mb-10 text-center">
             إدخال كلمة مرور جديدة
@@ -99,11 +110,9 @@ const NewPasswordPage = () => {
                 value={form.password}
                 onChange={handleChange}
                 error={errors.password}
-                inputClassName="pl-10"
               />
             </div>
-
-            <div className="relative">
+ <div className="relative">
               <Input
                 label="تأكيد كلمة المرور الجديدة"
                 name="confirmPassword"
@@ -111,11 +120,11 @@ const NewPasswordPage = () => {
                 value={form.confirmPassword}
                 onChange={handleChange}
                 error={errors.confirmPassword}
-                inputClassName="pl-10"
               />
             </div>
+            
             <Button
-              label={isLoading ? "جاري التغيير..." : "التالي"}
+              label={isLoading ? "جاري التغيير..." : "تغيير كلمة المرور"}
               type="submit"
               disabled={isLoading}
               className="flex justify-center max-w-[300px] bg-main-color mt-10 mx-auto w-full"
@@ -123,7 +132,9 @@ const NewPasswordPage = () => {
           </form>
         </div>
       </div>
-      <div className="hidden md:flex md:w-1/2 bg-main-color relative items-end justify-center">
+      
+      {/* قسم الصورة نجعل اتجاهه لتر عشان الصورة تثبت بالطرف الآخر بشكل صحيح */}
+      <div className="hidden md:flex md:w-1/2 bg-main-color relative items-end justify-center" dir="ltr">
         <img src={newpassword} alt="Character" className="h-full w-full" />
       </div>
     </div>

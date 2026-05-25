@@ -2,7 +2,7 @@ import { useEffect } from "react";
 // import { useSelector } from "react-redux";
 import ConsultationRequestBtn from "../ConsultationRequestBtn";
 // import { useGetCommitteeEvaluationQuery } from "../../api/endpoints/incubationApi";
-
+import NavLinkUniversal from '../../components/NavLinkUniversal';
 const CommitteeStage = ({ onComplete, committeeResult }) => {
   // جلب userId من Redux
   // const userId = useSelector((state) => state.auth.userId);

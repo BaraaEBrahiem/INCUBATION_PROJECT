@@ -8,7 +8,7 @@ import Stepper from "../../components/Stepper"
 
 const IncubationStagesPage = () => {
   // المرحلة الحالية (0 → 4)
-  const [currentStage, setCurrentStage] = useState(2)
+  const [currentStage, setCurrentStage] = useState(4)
 
   // الانتقال للمرحلة التالية
   const handleStageComplete = () => {

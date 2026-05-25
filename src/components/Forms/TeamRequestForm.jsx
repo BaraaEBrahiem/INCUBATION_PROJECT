@@ -1,4 +1,4 @@
-import { useState } from "react";
+ import { useState } from "react";
 import Button from "../Button";
 import Input from "../Input";
 import Select from "../Select";
@@ -53,15 +53,17 @@ const TeamRequestForm = () => {
     setIsSubmitting(true);
     setApiError("");
 
-    // TODO: بعد الربط هذا الكود بدل console.log
+    // -------------------------------------------------------------
+    // T0D0: بعد الربط هذا الكود الجاهز والمطابق تماماً للبوستمان
+    // -------------------------------------------------------------
     // try {
     //   await sendTeamRequest({
-    //     userId: userId,
     //     title: title,
-    //     skill: skill,
-    //     requiredCount: count,
+    //     skill_required: skill,         // تعديل 1: تغيير الاسم ليطابق الباك إند تماماً
+    //     members_needed: Number(count), // تعديل 2: تغيير الاسم وتحويله لرقم ليطابق الباك إند
     //     description: description,
     //   }).unwrap();
+    //   
     //   setShowSuccess(true);
     //   // تفريغ النموذج
     //   setTitle("");
@@ -70,19 +72,20 @@ const TeamRequestForm = () => {
     //   setDescription("");
     // } catch (error) {
     //   console.error("Error sending team request:", error);
-    //   setApiError(error?.data?.message || "حدث خطأ في إرسال الطلب");
+    //   // قراءة الخطأ القادم في حقل detail بناءً على رد الباك إند بالصورة
+    //   setApiError(error?.data?.detail  error?.data?.message  "حدث خطأ في إرسال الطلب");
     // } finally {
     //   setIsSubmitting(false);
     // }
 
-    // حالياً: محاكاة للإرسال
+    // حالياً: محاكاة للإرسال بنفس الهيكلية الحقيقية المطلوبة للباك إند
     console.log("Form Data to backend:", {
-      userId,
-      title,
-      skill,
-      requiredCount: count,
-      description,
+      title: title,
+      skill_required: skill,
+      members_needed: Number(count),
+      description: description,
     });
+    
     setShowSuccess(true);
     setTitle("");
     setSkill("");
@@ -97,10 +100,10 @@ const TeamRequestForm = () => {
 
   return (
     <>
-      <form onSubmit={handleSubmit} className="flex flex-col gap-6 p-6 w-1/2">
-        {/* عرض خطأ API */}
+      <form onSubmit={handleSubmit} className="flex flex-col gap-6 p-6 w-1/2" dir="rtl">
+        {/* عرض خطأ API المحدث ليقرأ الـ detail من الباك إند */}
         {apiError && (
-          <div className="bg-red-100 text-red-700 p-3 rounded text-center">
+          <div className="bg-red-100 text-red-700 p-3 rounded text-center font-bold">
             {apiError}
           </div>
         )}
@@ -113,14 +116,15 @@ const TeamRequestForm = () => {
           onChange={(e) => setTitle(e.target.value)}
         />
 
+        {/* تعديل 3: تحديث الـ values في الخيارات لتطابق نصوص المهارات في الباك إند عند الإرسال */}
         <Select
           label="نوع المهارة المطلوبة"
           placeholder="اختر المهارة"
           value={skill}
           onChange={(e) => setSkill(e.target.value)}
           error={errors.skill}
-          options={[
-            { label: "UI UX", value: "uiux" },
+ options={[
+            { label: "UI UX", value: "ui_ux" },
             { label: "Back End", value: "backend" },
             { label: "Front End", value: "frontend" },
             { label: "Marketing", value: "marketing" },
@@ -132,7 +136,7 @@ const TeamRequestForm = () => {
           label="عدد المتطوعين المطلوبين"
           type="number"
           placeholder="4 على الأكثر"
-          value={count > 0 && count <= 4 ? count : ""}
+          value={count}
           onChange={(e) => setCount(e.target.value)}
           error={errors.count}
         />
@@ -164,8 +168,7 @@ const TeamRequestForm = () => {
             className="bg-main-color"
           />
         }
-      >
-      </Modal>
+      />
     </>
   );
 };

@@ -6,13 +6,16 @@ const FormBuilderCanvas = ({ fields, updateField, deleteField }) => {
   if (!fields || fields.length === 0) {
     return (
       <div className="flex-1 bg-white rounded-lg shadow p-6 flex items-center justify-center border-t-2 border-main-color">
-        لا يوجد أسئلة بعد، قم بإضافة حقل من قائمة أنواع الحقول.
+        لا يوجد أسئلة بعد، قم بإضافة حقل من قائمة أنواع الحقول أو الأسئلة الثابتة.
       </div>
     );
   }
 
-  const getFieldTypeLabel = (type) => {
-    switch (type) {
+  const getFieldTypeLabel = (field) => {
+    if (field.source === "STATIC") {
+      return` حقل ثابت (${field.label})`;
+    }
+    switch (field.type) {
       case "shortText":
         return "نص قصير";
       case "longText":
@@ -38,7 +41,9 @@ const FormBuilderCanvas = ({ fields, updateField, deleteField }) => {
         {fields.map((field) => (
           <div
             key={field.id}
-            className="border border-gray-200 rounded-lg p-4 bg-gray-50"
+            className={`border rounded-lg p-4 ${
+              field.source === "STATIC" ? "bg-teal-50/50 border-teal-200" : "bg-gray-50 border-gray-200"
+            }`}
           >
             {/* السطر العلوي: عنوان السؤال + نوعه + حذف */}
             <div className="flex items-start gap-3 mb-3">
@@ -46,16 +51,17 @@ const FormBuilderCanvas = ({ fields, updateField, deleteField }) => {
                 <input
                   type="text"
                   value={field.label}
+                  disabled={field.source === "STATIC"} // تعطيل الحقول الثابتة منعاً لتغيير المسمى المعتمد بالباك
                   onChange={(e) =>
                     updateField(field.id, { label: e.target.value })
                   }
                   placeholder="اكتب عنوان السؤال"
-                  className="w-full border border-second-color rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-teal-700"
+                  className="w-full border border-second-color rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-teal-700 disabled:bg-gray-100"
                 />
               </div>
 
               <div className="text-xs text-gray-500 mt-2 min-w-[110px] text-right">
-                {getFieldTypeLabel(field.type)}
+                {getFieldTypeLabel(field)}
               </div>
 
               <button
@@ -70,8 +76,8 @@ const FormBuilderCanvas = ({ fields, updateField, deleteField }) => {
             {/* خصائص السؤال */}
             <QuestionProperties field={field} updateField={updateField} />
 
-            {/* خيارات الحقول (select – radio – checkbox) */}
-            {["select", "radio", "checkbox"].includes(field.type) && (
+            {/* خيارات الحقول (select – radio – checkbox) للحقول الديناميكية فقط */}
+            {["select", "radio", "checkbox"].includes(field.type) && field.source !== "STATIC" && (
               <OptionsEditor field={field} updateField={updateField} />
             )}
           </div>

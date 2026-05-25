@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+ import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import Button from "../../components/Button";
 import Entercode from "../../assets/images/PIN.png";
@@ -13,7 +13,7 @@ const VerificationPage = () => {
   const [error, setError] = useState("");
   const [apiError, setApiError] = useState("");
 
-  // جلب email من الـ state (اللي جاي من صفحة forgot password)
+  // جلب email من الـ state (اللي جاي من صفحة forgot password) مع تصحيح السنتكس لـ ||
   const { email } = location.state || {};
 
   const handleChange = (e, index) => {
@@ -60,25 +60,27 @@ const VerificationPage = () => {
     const code = otp.join("");
 
     try {
+      // إرسال الإيميل والـ otp بالشكل المتوقع للباك إند تماماً
       await verifyOtp({
         email: email,
         otp: code,
       }).unwrap();
 
-      // تم التحقق بنجاح، التوجيه إلى صفحة إدخال كلمة المرور الجديدة
+      // تم التحقق بنجاح، التوجيه إلى صفحة إدخال كلمة المرور الجديدة مع تمرير الإيميل والرمز
       navigate("/new-password", { 
         state: { email: email, otp: code } 
       });
       
     } catch (error) {
       console.error("OTP verification error:", error);
-      setApiError(error?.data?.message || "الرمز غير صحيح أو منتهي الصلاحية. حاول مرة أخرى");
+      // التعديل هنا: تصحيح السنتكس وقراءة حقل detail ليتطابق مع رد الباك إند
+      const errorMsg = error?.data?.detail || error?.data?.message || "الرمز غير صحيح أو منتهي الصلاحية. حاول مرة أخرى";
+      setApiError(errorMsg);
     }
   };
 
-
   return (
-    <div className="flex h-screen w-full font-sans antialiased bg-white"dir="ltr">
+    <div className="flex h-screen w-full font-sans antialiased bg-white" dir="ltr">
       <div className="hidden md:flex w-1/2 bg-main-color items-center justify-center p-12">
         <img src={Entercode} alt="OTP Illustration" className="h-full w-full" />
       </div>
@@ -88,6 +90,7 @@ const VerificationPage = () => {
           <h1 className="text-3xl font-bold text-second-color mb-16">ادخال الرمز</h1>
 
           <form onSubmit={handleSubmit}>
+            {/* جعلنا اتجاه الـ OTP كـ ltr لكي تكتب الأرقام بالتتابع الصحيح من اليسار لليمين */}
             <div className="flex justify-between gap-3 mb-6" dir="ltr">
               {otp.map((digit, index) => (
                 <input
@@ -107,8 +110,7 @@ const VerificationPage = () => {
             {/* عرض أخطاء التحقق */}
             {error && <p className="text-red-500 text-sm mb-2">{error}</p>}
             {apiError && <p className="text-red-500 text-sm mb-2">{apiError}</p>}
-
-            <Button
+ <Button
               label={isLoading ? "جاري التحقق..." : "تأكيد"}
               type="submit"
               disabled={isLoading}

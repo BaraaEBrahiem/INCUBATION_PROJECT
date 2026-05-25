@@ -1,76 +1,61 @@
-// src/components/Incubation_Stages/ExhibitionStage.js
+ // src/components/Incubation_Stages/ExhibitionStage.js
 import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
-import DynamicStep from "../DynamicStep";
 import Button from "../Button";
 import AlertBox from "../AlertBox";
 import { useGetExhibitionFormConfigQuery } from "../../api/endpoints/formConfigApi";
 import { useSaveExhibitionDataMutation, useGetExhibitionDataQuery } from "../../api/endpoints/incubationApi";
 
-// -----------------------------
-// Fallback (في حالة عدم وجود API)
-// -----------------------------
-const FALLBACK_FIELDS = [
-  { name: "teamName", label: "اسم الفريق إن وجد", type: "text", required: false },
-  { name: "projectName", label: "اسم المشروع", type: "text", required: true },
-  { name: "email", label: "بريد إلكتروني للتواصل", type: "email", required: true },
-  { name: "membersEmails", label: "البريد الإلكتروني لكل عضو", type: "text", required: false, placeholder: "example@email.com, another@email.com" },
-  { name: "members", label: "أعضاء الفريق", type: "text", required: false, placeholder: "أسماء الأعضاء مفصولة بفواصل" },
-  { name: "goal", label: "هدف المشروع", type: "text", required: true },
-  { name: "projectLink", label: "رابط المشروع إن وجد (يفضل)", type: "text", required: false, placeholder: "https://..." },
-  { name: "services", label: "خدمات المشروع", type: "text", required: false },
-  { name: "image", label: "ارفع صورة لتكون واجهة المشروع", type: "file", required: false }
+// -------------------------------------------------------------
+// الـ JSON الثابت المطابق تماماً لبيانات الباك إند القادمة في الصور
+// -------------------------------------------------------------
+const BACKEND_JSON_FALLBACK = [
+  { id: 1, key: "title", label: "عنوان المشروع", type: "text", required: true },
+  { id: 2, key: "sector", label: "القطاع", type: "text", required: true },
+  { id: 3, key: "project_goal", label: "الهدف", type: "text", required: true },
+  { id: 4, key: "services", label: "الخدمات", type: "text", required: false },
+  { id: 5, key: "team member names", label: "أسماء أعضاء الفريق", type: "text", required: false },
+  { id: 6, key: "team member emails", label: "إيميلات أعضاء الفريق", type: "text", required: false }
 ];
 
 const ExhibitionStage = ({ onComplete }) => {
   const userId = useSelector((state) => state.auth.userId);
   
-  const { data: formConfigFromApi, isLoading: isConfigLoading } = useGetExhibitionFormConfigQuery();
+  // جلب إعدادات الفورم الديناميكية
+  const { data: formConfig, isLoading: isConfigLoading } = useGetExhibitionFormConfigQuery();
+  
+  // جلب البيانات المحفوظة سابقاً
   const { data: savedData, isLoading: isLoadingData } = useGetExhibitionDataQuery(userId, {
     skip: !userId,
   });
   const [saveExhibitionData, { isLoading: isSaving }] = useSaveExhibitionDataMutation();
 
-  const steps = formConfigFromApi?.steps || [{ name: "بيانات المعرض", fields: FALLBACK_FIELDS }];
-  const currentStepFields = steps[0]?.fields || FALLBACK_FIELDS;
-  const stepName = steps[0]?.name || "بيانات المعرض";
+  // 1. إذا نجح الـ API نأخذ منه، وإذا فشل أو كان فارغاً نأخذ الجيسون الثابت المطابق للصورة فوراً
+  const dynamicQuestions = formConfig?.form?.questions?.length > 0 
+    ? formConfig.form.questions 
+    : BACKEND_JSON_FALLBACK;
+
+  const exhibitionDate = formConfig?.exhibition_date || "2026";
+  const formTitle = formConfig?.form?.title || "معرض صيف 2026";
 
   const [form, setForm] = useState({});
   const [errors, setErrors] = useState({});
   const [submitError, setSubmitError] = useState("");
   const [submitSuccess, setSubmitSuccess] = useState("");
-  const [isFormInitialized, setIsFormInitialized] = useState(false);
 
-  const exhibitionDate = "12/1/2025";
-
-  // ✅ دمج كلا الـ useEffect في واحد
+  // تهيئة وتحديث قيم الفورم بناءً على الـ keys الخاصة بالـ JSON الثابت أو القادم من الباك
   useEffect(() => {
-    // إذا تم تهيئة الفورم مسبقاً، لا تعيدي التهيئة
-    if (isFormInitialized) return;
-    
-    // إذا كانت البيانات لا تزال تحمل، انتظري
-    if (isConfigLoading || isLoadingData) return;
-
-    // إذا وجدت بيانات محفوظة من الباك
-    if (savedData && Object.keys(savedData).length > 0) {
-      const loadedForm = {};
-      currentStepFields.forEach(field => {
-        loadedForm[field.name] = savedData[field.name] || "";
-      });
-      //eslint-disable-next-line
-      setForm(loadedForm);
-      setIsFormInitialized(true);
-    } 
-    // إذا لم توجد بيانات محفوظة، ننشئ فورم فارغ
-    else if (currentStepFields.length > 0 && !isFormInitialized) {
+    if (dynamicQuestions.length > 0) {
       const initialForm = {};
-      currentStepFields.forEach(field => {
-        initialForm[field.name] = "";
+      dynamicQuestions.forEach(q => {
+        initialForm[q.key] = savedData?.[q.key] || savedData?.data?.[q.key] || "";
       });
-      setForm(initialForm);
-      setIsFormInitialized(true);
+      setForm(prev => {
+        if (JSON.stringify(prev) === JSON.stringify(initialForm)) return prev;
+        return initialForm;
+      });
     }
-  }, [savedData, currentStepFields, isConfigLoading, isLoadingData, isFormInitialized]);
+  }, [dynamicQuestions, savedData]);
 
   const handleChange = (key, value) => {
     setForm(prev => ({ ...prev, [key]: value }));
@@ -81,16 +66,11 @@ const ExhibitionStage = ({ onComplete }) => {
 
   const validate = () => {
     const newErrors = {};
-    currentStepFields.forEach(field => {
-      if (field.required && !form[field.name]) {
-        newErrors[field.name] = `${field.label} مطلوب`;
+    dynamicQuestions.forEach(q => {
+      if (q.required && !form[q.key]) {
+        newErrors[q.key] = `${q.label} مطلوب;`
       }
     });
-    
-    if (form.email && !/\S+@\S+\.\S+/.test(form.email)) {
-      newErrors.email = "البريد الإلكتروني غير صحيح";
-    }
-    
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -103,41 +83,63 @@ const ExhibitionStage = ({ onComplete }) => {
     if (!validate()) return;
 
     try {
-      const formData = new FormData();
-      Object.keys(form).forEach(key => {
-        if (form[key] !== null && form[key] !== "") {
-          formData.append(key, form[key]);
+      // مطابقة هيكل الـ POST تماماً مع الصورة الثانية (تغليف بداخل كائن data)
+      const payload = {
+        data: {
+          ...form
         }
-      });
-      formData.append("userId", userId);
-      formData.append("exhibitionDate", exhibitionDate);
-      
-      await saveExhibitionData(formData).unwrap();
-      setSubmitSuccess("تم حفظ بيانات المعرض بنجاح");
+      };
+
+      await saveExhibitionData(payload).unwrap();
+      setSubmitSuccess("Exhibition form submitted successfully.");
       setTimeout(() => {
-        onComplete();
+        if (onComplete) onComplete();
       }, 1500);
     } catch (error) {
       console.error("Error saving exhibition data:", error);
       setSubmitError(error?.data?.message || "حدث خطأ في حفظ البيانات");
     }
   };
-
-  // حالة التحميل
-  if (isConfigLoading || isLoadingData) {
+ // حيلة صغيرة: حتى لو الـ Loading معلق، طالما لدينا Fallback جاهز، سنلغي الـ Loading لضمان ظهور الحقول فوراً
+  const isFormEmpty = Object.keys(form).length === 0;
+  if ((isConfigLoading || isLoadingData) && isFormEmpty) {
     return (
       <div className="p-6 space-y-8 min-h-screen bg-white-color">
-        <p className="text-center text-gray-500">جاري تحميل البيانات...</p>
+        <p className="text-center text-black text-lg animate-pulse">جاري تحميل حقول المعرض...</p>
       </div>
     );
   }
 
-  return (
-    <div className="p-6 space-y-8 min-h-screen bg-white-color">
-       {stepName && (
-        <h2 className="text-xl font-bold text-second-color mb-4">{stepName}</h2>
+  // تقسيم مصفوفة الأسئلة (سواء القادمة أو الثابتة) إلى عمودين
+  const leftColumnQuestions = dynamicQuestions.filter((_, idx) => idx % 2 === 0);
+  const rightColumnQuestions = dynamicQuestions.filter((_, idx) => idx % 2 === 1);
+
+  const renderField = (q) => (
+    <div key={q.key} className="flex flex-col space-y-2 text-right w-full">
+      <label className="text-sm font-semibold text-black">
+        {q.label} {q.required && <span className="text-red-500">*</span>}
+      </label>
+      <input
+        type="text"
+        value={form[q.key] || ""}
+        onChange={(e) => handleChange(q.key, e.target.value)}
+        className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-main-color ${
+          errors[q.key] ? "border-red-500" : "border-gray-300"
+        }`}
+        placeholder={`أدخل ${q.label}`}
+      />
+      {errors[q.key] && (
+        <span className="text-xs text-red-500 font-medium">{errors[q.key]}</span>
       )}
-      <p className="font-bold">
+    </div>
+  );
+
+  return (
+    <div className="p-6 space-y-8 min-h-screen bg-white-color" dir="rtl">
+      {formTitle && (
+        <h2 className="text-xl font-bold text-second-color mb-4">{formTitle}</h2>
+      )}
+      <p className="font-bold text-black">
         تاريخ المعرض:
         <span className="text-main-color mr-2"> {exhibitionDate}</span>
       </p>
@@ -145,48 +147,35 @@ const ExhibitionStage = ({ onComplete }) => {
       <AlertBox message="املأ الحقول التي تريد اظهارها فقط في بطاقة المشروع." />
 
       {submitError && (
-        <div className="bg-red-100 text-red-700 p-3 rounded text-center">
+        <div className="bg-red-100 text-red-700 p-3 rounded text-center font-medium">
           {submitError}
         </div>
       )}
       {submitSuccess && (
-        <div className="bg-green-100 text-green-700 p-3 rounded text-center">
+        <div className="bg-green-100 text-green-700 p-3 rounded text-center font-medium">
           {submitSuccess}
         </div>
       )}
 
       <form onSubmit={handleSubmit} className="mx-auto space-y-8">
-        <div className="flex items-start justify-center gap-8">
-          <div className="w-[30%] space-y-6">
-            {currentStepFields.filter((_, idx) => idx % 2 === 0).map(field => (
-              <DynamicStep
-                key={field.name}
-                stepName=""
-                fields={[field]}
-                form={form}
-                errors={errors}
-                handleChange={handleChange}
-              />
-            ))}
+        <div className="flex flex-row-reverse items-start justify-center gap-8 w-full">
+          
+          {/* العمود الأول (يمين) */}
+          <div className="w-[45%] space-y-6">
+            {leftColumnQuestions.map(q => renderField(q))}
           </div>
-          <div className="w-[30%] space-y-6">
-            {currentStepFields.filter((_, idx) => idx % 2 === 1).map(field => (
-              <DynamicStep
-                key={field.name}
-                stepName=""
-                fields={[field]}
-                form={form}
-                errors={errors}
-                handleChange={handleChange}
-              />
-            ))}
+
+          {/* العمود الثاني (يسار) */}
+          <div className="w-[45%] space-y-6">
+            {rightColumnQuestions.map(q => renderField(q))}
           </div>
+
         </div>
 
-        <div className="flex items-center justify-center mt-4">
+        <div className="flex items-center justify-center mt-6">
           <Button 
             label={isSaving ? "جاري الحفظ..." : "إرسال"}
-            className="bg-main-color px-8 py-2"
+            className="bg-main-color text-white px-10 py-2.5 rounded-md font-bold shadow-md hover:bg-opacity-90 transition-all"
             type="submit"
             disabled={isSaving}
           />

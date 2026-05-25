@@ -1,120 +1,110 @@
-import React, { useState, useEffect } from "react";
+ import React, { useState } from "react";
 import FieldTypesPanel from "./FieldTypesPanel";
 import FormBuilderCanvas from "./FormBuilderCanvas";
-import Button from "../../../Button";
-import { useNavigate } from "react-router-dom";
-import { showError } from "../../../../Utils/toast";
+import FormPreview from "./FormPreview";
 
-const FormBuilder = ({ onSubmit, isSubmitting = false, initialFields = [], onFieldsChange, seasonData }) => {
-  const navigate = useNavigate();
-  const [fields, setFields] = useState(initialFields);
-  const [isPublishing, setIsPublishing] = useState(false);
-    const goToPreview = () => {
-    navigate("/admin/preview-form", { 
-      state: { 
-        fields, 
-        seasonData: seasonData
-      }
+const FormBuilderManager = () => {
+  const [formData, setFormData] = useState({
+    steps: [{ id: 1, title: "المعلومات الشخصية", order: 1, questions: [] }]
+  });
+
+  const [activeStepId, setActiveStepId] = useState(1);
+  const [isPreviewMode, setIsPreviewMode] = useState(false);
+
+  const currentStep = formData.steps.find((s) => s.id === activeStepId) || formData.steps[0];
+
+  // إضافة خطوة بضغطة زر واحدة بدون أي نوافذ منبثقة أو تعقيد
+  const addStep = () => {
+    const newOrder = formData.steps.length + 1;
+    const newStep = {
+      id: Date.now(),
+      title:` خطوة جديدة رقم ${newOrder}`,
+      order: newOrder,
+      questions: []
+    };
+    setFormData({ ...formData, steps: [...formData.steps, newStep] });
+  };
+
+  // إضافة حقل للخطوة الحالية
+  const addFieldToCurrentStep = (fieldType, staticConfig = null) => {
+    const isStatic = !!staticConfig;
+    const newField = {
+      id: Date.now(),
+      key: isStatic ? staticConfig.static_field : `dynamic_${Date.now()}`,
+      label: isStatic ? staticConfig.label : "سؤال جديد",
+      type: fieldType,
+      required: true,
+      order: currentStep.questions.length + 1,
+      source: isStatic ? "STATIC" : "DYNAMIC",
+      static_field: isStatic ? staticConfig.static_field : null,
+      options: []
+    };
+
+    setFormData({
+      ...formData,
+      steps: formData.steps.map((s) => s.id === activeStepId ? { ...s, questions: [...s.questions, newField] } : s)
     });
   };
 
-  useEffect(() => {
-    if (onFieldsChange) onFieldsChange(fields);
-  }, [fields, onFieldsChange]);
-
-  // إضافة حقل جديد
-  const addField = (type) => {
-    const newField = {
-      id: crypto.randomUUID(),
-      type,
-      label: "",
-      required: false,
-      options:
-        type === "select" || type === "radio" || type === "checkbox"
-          ? []
-          : null,
-    };
-    setFields((prev) => [...prev, newField]);
-  };
-
-  // تعديل حقل
-  const updateField = (id, updatedData) => {
-    setFields((prev) =>
-      prev.map((field) =>
-        field.id === id ? { ...field, ...updatedData } : field
-      )
-    );
-  };
-
-  // حذف حقل
-  const deleteField = (id) => {
-    setFields((prev) => prev.filter((field) => field.id !== id));
-  };
-
-  // نشر النموذج (إرسال التصميم إلى الباك عبر الـ prop)
-  const publishForm = async () => {
-    if (!fields.length) {
-      showError("يرجى إضافة حقل واحد على الأقل قبل النشر.");
-      return;
-    }
-
-    // تحقق من أن كل الحقول لها تسمية (label)
-    const emptyLabel = fields.find((f) => !f.label.trim());
-    if (emptyLabel) {
-      showError("يرجى إدخال تسمية لجميع الحقول.");
-      return;
-    }
-
-    setIsPublishing(true);
-    try {
-      // تحويل الحقول إلى الشكل الذي يتوقعه الباك (إذا لزم)
-      const formConfig = {
-        fields: fields.map(({ id, type, label, required, options }) => ({
-          name: id, // أو يمكن استخدام id كـ name مؤقتاً
-          type,
-          label,
-          required,
-          options,
-        })),
-      };
-      await onSubmit(formConfig);
-    } catch (err) {
-      console.error(err);
-      showError(err?.data?.message || "حدث خطأ في نشر النموذج.");
-    } finally {
-      setIsPublishing(false);
-    }
-  };
-
-
   return (
-    <div>
-      <div className="flex gap-6">
-        <div className="flex-1">
-          <FormBuilderCanvas
-            fields={fields}
-            updateField={updateField}
-            deleteField={deleteField}
-          />
+    <div className="p-6 bg-gray-100 min-h-screen flex flex-col justify-between" dir="rtl">
+      
+      {/* المحتوى الرئيسي للموقع */}
+      <div className="mb-20">
+        <div className=" p-4 rounded-lg shadow mb-6">
+          <h1 className="text-lg font-bold">نموذج التسجيل - الموسم الصيفي 2025</h1>
+          <h4 className="text-md">يرجى تعبئة كافة الحقول لضمان قبول طلباتكم في الحاضنة</h4>
         </div>
-        <FieldTypesPanel addField={addField} />
+
+        {isPreviewMode ? (
+          <FormPreview steps={formData.steps} />
+        ) : (
+          /* التموضع المطلوب: الكانفاس يمين، والأدوات يسار */
+          <div className="flex gap-6 items-start">
+            
+            {/* ساحة العمل والخطوات (اليمين) */}
+            <div className="flex-1 flex flex-col gap-4">
+              <div className="flex gap-4 bg-white p-3 rounded-lg shadow items-center overflow-x-auto">
+                <span className="text-xs font-bold text-black ml-2">الخطوات:</span>
+                {formData.steps.map((step) => (
+                  <button
+                    key={step.id}
+                    onClick={() => setActiveStepId(step.id)}
+                    className={`px-4 py-2 rounded-md text-xs font-bold ${step.id === activeStepId ? "bg-main-color text-white" : "bg-gray-200"}`}
+                  >
+                    {step.title} (الترتيب: {step.order})
+                  </button>
+                ))}
+                <button onClick={addStep} className="px-3 py-1 bg-main-color text-white rounded-md text-xs mr-auto">
+                  + إنشاء خطوة
+                </button>
+              </div>
+
+              <FormBuilderCanvas
+                fields={currentStep.questions}
+                updateField={(id, props) => setFormData({...formData, steps: formData.steps.map(s => s.id === activeStepId ? {...s, questions: s.questions.map(q => q.id === id ? {...q, ...props} : q)} : s)})}
+                deleteField={(id) => setFormData({...formData, steps: formData.steps.map(s => s.id === activeStepId ? {...s, questions: s.questions.filter(q => q.id !== id)} : s)})}
+              />
+            </div>
+
+            {/* الأدوات والأسئلة (اليسار) */}
+            <FieldTypesPanel addField={addFieldToCurrentStep} />
+
+          </div>
+        )}
       </div>
-      <div className="flex justify-center items-center gap-8 mt-6">
-        <Button
-          label="معاينة النموذج"
-          onClick={goToPreview}
-          className="bg-main-color w-50"
-          disabled={isSubmitting || isPublishing}
-        />
-        <Button
-          label={isPublishing ? "جاري النشر..." : "نشر"}
-          onClick={publishForm}
-          className="bg-main-color w-50"
-          disabled={isSubmitting || isPublishing}
-        />
+ {/* أزرار المعاينة والنشر بالأسفل (Footer) */}
+      <div className=" flex justify-center gap-4 z-50 mb-10">
+        <button onClick={() => setIsPreviewMode(!isPreviewMode)} className="px-6 py-2 bg-main-color text-white rounded-md text-sm font-semibold">
+          {isPreviewMode ? "العودة للتعديل" : "معاينة النموذج"}
+        </button>
+        <button onClick={() => console.log(formData)} className="px-6 py-2 bg-main-color text-white rounded-md text-sm font-semibold">
+          نشر النموذج
+        </button>
       </div>
+
     </div>
   );
 };
 
-export default FormBuilder;
+export default FormBuilderManager;

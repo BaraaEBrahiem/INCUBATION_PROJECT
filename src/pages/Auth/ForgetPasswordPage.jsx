@@ -37,22 +37,27 @@ const ForgotPasswordPage = () => {
     try {
       const response = await forgotPassword({ email }).unwrap();
       
-      // تم الإرسال بنجاح
-      setSuccessMessage(response?.message || "تم إرسال رمز التحقق إلى بريدك الإلكتروني");
+      // التعديل 1: قراءة 'detail' من الـ API وتصحيح السنتكس بإضافة ||
+      const msg = response?.detail || "تم إرسال رمز التحقق إلى بريدك الإلكتروني";
+      setSuccessMessage(msg);
       setApiError("");
       
-      //التوجيه إلى صفحة إدخال الرمز بعد ثانية
+      // التوجيه إلى صفحة إدخال الرمز بعد ثانية ونصف لقراءة الرسالة
       setTimeout(() => {
+        // نمرر الإيميل عبر الـ state لكي نستخدمه في خطوة التحقق (الخطوة الثانية والثالثة)
         navigate("/verification", { state: { email: email } });
-      }, 1000);
+      }, 1500);
       
     } catch (error) {
       console.error("Forgot password error:", error);
-      setApiError(error?.data?.message || "فشل إرسال رمز التحقق. تأكد من البريد الإلكتروني");
+      // التعديل 2: قراءة الخطأ من detail وتصحيح السنتكس بإضافة ||
+      const errorMsg = error?.data?.detail || error?.data?.message ||  "فشل إرسال رمز التحقق. تأكد من البريد الإلكتروني";
+      setApiError(errorMsg);
       setSuccessMessage("");
     }
   };
-return (
+
+  return (
     <div className="flex h-screen w-full font-sans antialiased" dir="ltr">
       <div className="hidden md:flex w-1/2 bg-main-color items-center justify-center p-12">
         <img src={forgetPassword} alt="Illustration" className="w-full h-full" />

@@ -1,4 +1,4 @@
-import React from 'react';
+ import React from 'react';
 import Button from '../../components/Button';
 import NavLinkUniversal from '../../components/NavLinkUniversal';
 // import { useGetAllWorkshopsQuery } from '../../api/endpoints/workshopsApi';
@@ -98,12 +98,27 @@ const WorkshopsPage = () => {
                         label={<Button label="عرض التفاصيل" className="bg-main-color"/>}
                         to={`/workshopinfo/${item.id}`} 
                       />
+                    
                     </td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
+
+          <div className="flex flex-col items-start mt-6 gap-3">
+            <NavLinkUniversal 
+              label={<Button label="اضافة ورشة تدريب" className="bg-main-color text-white px-6 py-2 rounded-md" />}
+               يمكنك تعديل المسار حسب مشروعك
+           to = "/AddWorkShopPage"
+           />
+            <NavLinkUniversal 
+            
+          label={<Button label="ورشات المعسكر" className="bg-main-color text-white px-6 py-2 rounded-md" />}
+          to= "/CampWorkShopsPage"
+            />
+          </div>
+
         </div>
       </div>
     </div>

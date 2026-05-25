@@ -1,5 +1,7 @@
 import Button from "./Button"
-const TeamCard = ({ name, email, role, buttonLabel, onButtonClick }) => {
+
+// التعديل: أضفنا canMessage كخاصية (prop) اختيارية للتحكم بظهور زر المراسلة
+const TeamCard = ({ name, email, role, buttonLabel, onButtonClick, canMessage = true }) => {
    return (
     <div className="p-3 md:p-8 border border-second-color rounded-xl shadow">
       
@@ -12,13 +14,16 @@ const TeamCard = ({ name, email, role, buttonLabel, onButtonClick }) => {
         )}
       </div>
 
-      <div className="flex items-center justify-center">
-      <Button 
-        label={buttonLabel}
-        onClick={onButtonClick}
-        className="w-50 bg-main-color text-center"
-      />
-      </div>
+      {/* التعديل: الزر يظهر فقط إذا كانت canMessage تساوي true */}
+      {canMessage && (
+        <div className="flex items-center justify-center">
+          <Button 
+            label={buttonLabel}
+            onClick={onButtonClick}
+            className="w-50 bg-main-color text-center"
+          />
+        </div>
+      )}
     </div>
   )
 }

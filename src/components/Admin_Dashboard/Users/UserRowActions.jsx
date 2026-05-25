@@ -5,29 +5,25 @@ const UserRowActions = ({ user }) => {
   const navigate = useNavigate();
 
   const handleNavigate = () => {
-    switch (user.role) {
-      case "زائر":
-        navigate(`/admin/users/visitor/${user.id}`);
-        break;
+    // 1. التأكد من أن الأدوار عبارة عن مصفوفة، وإذا كانت نصاً واحداً نحولها لمصفوفة
+    const roles = Array.isArray(user.role) ? user.role : [user.role];
 
-      case "متطوع":
-        navigate(`/admin/users/volunteer/${user.id}`);
-        break;
-
-      case "محتضن":
-        navigate(`/admin/users/incubated/${user.id}`);
-        break;
-
-      case "متخرج":
-        navigate(`/admin/users/graduated/${user.id}`);
-        break;
-      case "صاحب فكرة":
-        navigate(`/admin/users/idea-owner/${user.id}`);
-        break;  
-
-      default:
-        navigate(`/admin/users/${user.id}`);
-        break;
+    // 2. تحديد التوجيه بناءً على الأولويات (الأعلى فالأقل)
+    if (roles.includes("زائر")) {
+      navigate(`/admin/users/visitor/${user.id}`);
+    } else if (roles.includes("مقيم")) {
+      navigate(`/admin/users/evaluator/${user.id}`); // فرضاً أن مقيم تعني evaluator
+    } else if (roles.includes("متطوع")) {
+      navigate(`/admin/users/volunteer/${user.id}`);
+    } else if (roles.includes("محتضن")) {
+      navigate(`/admin/users/incubated/${user.id}`);
+    } else if (roles.includes("متخرج")) {
+      navigate(`/admin/users/graduated/${user.id}`);
+    } else if (roles.includes("صاحب فكرة")) {
+      navigate(`/admin/users/idea-owner/${user.id}`);
+    } else {
+      // التوجيه الافتراضي في حال لم يتطابق أي دور
+      navigate(`/admin/users/${user.id}`);
     }
   };
 

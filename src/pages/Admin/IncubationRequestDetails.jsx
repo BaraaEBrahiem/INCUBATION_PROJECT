@@ -1,4 +1,4 @@
-import React from "react";
+ import React from "react";
 // import { useParams } from "react-router-dom";
 import InfoRow from "../../components/InfoRow";
 // import { useGetIncubationRequestQuery } from "../../api/endpoints/incubationApi";
@@ -8,24 +8,27 @@ const IncubationRequestDetails = () => {
 
   // const { data: request, isLoading, error, refetch } = useGetIncubationRequestQuery(id);
 
+  // التعديل هنا: تعديل الـ Mock Data لتطابق تماماً هيكلة الـ API الظاهرة في البوستمان
   const requestData = {
-    project_title: "منصة الشراكة الرقمية (Digital Partnership Platform)",
-    editor_name: "ريم العلي",
-    product_type: "منصة برمجية (SaaS) وتطبيق ويب",
-    owner_name: "ريم فهد العلي",
-    phone: "0987123456",
-    specialization: "مهندسة برمجيات",
-    email: "reem.alali@example.com",
-    team: [
-      { name: "ريم العلي", email: "reem.alali@example.com" },
-      { name: "أحمد محمد", email: "reem.alali@example.com" },
-      { name: "سارة محمود", email: "reem.alali@example.com" },
+    project_title: "منصة لادارة المشاريع الريادية",
+    editor_name: "alaa ali",
+    product_type: "ويب",
+    owner_name: "alaa ali",
+    phone: "0994450204",
+    specialization: null, // بناءً على البوستمان راجع null
+    email: "alaa@gmail.com",
+    idea_title: "منصة لادارة المشاريع الريادية",
+    target_audience: "اصحاب الافكار الريادية",
+    description: "منصة لتنظيم وادراة المشاريع في حاضنة تقانة المعلومات والاتصالات في حمص",
+    problem: "hhhhhh",
+    // تعديل 1: تحويل اسم الحقل من team إلى team_members وجعل العناصر تحتوي على name فقط لتطابق الباك إند
+    team_members: [
+      { name: "alaa ali" },
+      { name: "hala ahmad" },
+      { name: "hasan hasan" },
     ],
-      idea_title: "منصة ربط المشاريع الناشئة بالمستشارين والمتطوعين في مجال الذكاء الاصطناعي.",
-      target_audience: "students",
-      description: "بناء منصة SaaS لتقديم خدمة مطابقة ذكية (Smart Matching) تربط الشركات الناشئة التي تحتاج إلى تطوير حلول الذكاء الاصطناعي (AI) بالخبراء المستعدين لتقديم خدماتهم بالساعة أو مقابل حصة بسيطة.",
-      problem: "المشكلة التي يحلها المشروع",
-      duration: "6 أشهر",
+    // الحقل duration غير موجود بالباك إند، تركته بالـ Mock للاحتياط
+    
   };
 
   // استخدام البيانات من API إذا وجدت، وإلا استخدام الثابتة
@@ -94,7 +97,7 @@ const IncubationRequestDetails = () => {
           </InfoRow>
 
           <InfoRow label="الاختصاص:">
-            {request.specialization}
+            {request.specialization || "غير محدد"}
           </InfoRow>
 
           <InfoRow label="البريد الإلكتروني:">
@@ -106,12 +109,13 @@ const IncubationRequestDetails = () => {
         <div className="bg-white shadow-lg p-4 rounded-lg mb-4">
           <h2 className="border-b border-second-color text-xl font-bold mb-4">2. أعضاء الفريق</h2>
           
-          {request.team?.length === 0 ? (
-            <p className="text-gray-500 text-center py-4">لا يوجد أعضاء فريق</p>
+          {/* تعديل 2: القراءة من team_members بدلاً من team وتعديل طريقة العرض لتناسب عدم وجود إيميل */}
+          {!request.team_members || request.team_members.length === 0 ? (
+ <p className="text-gray-500 text-center py-4">لا يوجد أعضاء فريق</p>
           ) : (
-            request.team?.map((member, index) => (
-              <InfoRow key={index} label={`${member.name}:`}>
-                {member.email}
+            request.team_members.map((member, index) => (
+              <InfoRow key={index} label={`العضو ${index + 1}:`}>
+                {member.name}
               </InfoRow>
             ))
           )}
@@ -136,9 +140,7 @@ const IncubationRequestDetails = () => {
             {request.problem}
           </InfoRow>
 
-          <InfoRow label="الوقت المتوقع للإنجاز:">
-            {request.duration}
-          </InfoRow>
+         
         </div>
       </div>
     </div>

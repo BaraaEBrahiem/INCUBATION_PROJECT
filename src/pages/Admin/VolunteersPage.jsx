@@ -1,6 +1,7 @@
 import { useState } from "react";
 import CategoryFilterBar from "../../components/CategoryFilterBar";
 import ConsultantsList from "../../components/ConsultantsList";
+
 // import { useGetVolunteersQuery, useGetVolunteerRequestsQuery, useGetEvaluatorsQuery } from "../../api/endpoints/admin/volunteersOptionsApi.js";
 
 const VolunteersPage = () => {
@@ -8,6 +9,7 @@ const VolunteersPage = () => {
     { id: "volunteers", label: "المتطوعين" },
     { id: "requests", label: "طلبات التطوع" },
     { id: "evaluators", label: "المقيمين" },
+    {id: "user_requests" , label: "طلبات المستخدمين"}
   ];
 
   const [selected, setSelected] = useState("volunteers");
@@ -20,16 +22,18 @@ const VolunteersPage = () => {
     {
       id: 1,
       name: "رانيا الأحمد",
-      specialization: "UI/UX",
-      availability: ["2:00pm إلى 4:00pm"],
-      avatar: "/src/assets/images/avatar.jpg",
+      specialty: "UI/UX",
+      activeTime: "2:00pm إلى 4:00pm",
+      image: "/src/assets/images/avatar.jpg",
+      type: "volunteer",
     },
     {
       id: 2,
       name: "محمد علي",
-      specialization: "تطوير برمجيات",
-      availability: ["10:00am إلى 2:00pm"],
-      avatar: "/src/assets/images/avatar.jpg",
+      specialty: "تطوير برمجيات",
+      activeTime: "10:00am إلى 2:00pm",
+      image: "/src/assets/images/avatar.jpg",
+      type: "volunteer",
     },
   ];
 
@@ -37,16 +41,18 @@ const VolunteersPage = () => {
     {
       id: 10,
       name: "أحمد علي",
-      specialization: "متقدم بطلب تطوع",
-      availability: ["—"],
-      avatar: "/images/user1.png",
+      specialty: "متقدم بطلب تطوع",
+      activeTime: "—",
+      image: "/images/user1.png",
+      type: "request",
     },
     {
       id: 11,
       name: "نورا حسن",
-      specialization: "متقدم بطلب تطوع",
-      availability: ["—"],
-      avatar: "/images/user1.png",
+      specialty: "متقدم بطلب تطوع",
+      activeTime: "—",
+      image: "/images/user1.png",
+      type: "request",
     },
   ];
 
@@ -54,19 +60,38 @@ const VolunteersPage = () => {
     {
       id: 20,
       name: "خالد يوسف",
-      specialization: "مقيم مشاريع",
-      availability: ["—"],
-      avatar: "/images/user1.png",
+      specialty: "مقيم مشاريع",
+      activeTime: "—",
+      image: "/images/user1.png",
+      type: "evaluator",
     },
     {
       id: 21,
       name: "سارة أحمد",
-      specialization: "مقيم تقني",
-      availability: ["—"],
-      avatar: "/images/user1.png",
+      specialty: "مقيم تقني",
+      activeTime: "—",
+      image: "/images/user1.png",
+      type: "evaluator",
     },
+    
   ];
-
+  
+const userRequestsData = [
+    {
+      id: 22,
+      name: "ايه العبود",
+      specialty: "طلب صاحب الفكرة اقتراح فريق له",
+      image: "/images/user1.png",
+      type: "user_request", 
+    },
+    {
+      id: 23,
+      name: "حسين العبود",
+      specialty: "طلب صاحب الفكرة اقتراح فريق له",
+      image: "/images/user1.png",
+      type: "user_request", 
+    },
+];
   // تحديد البيانات حسب التبويب المختار
   let currentData = [];
   // let isLoading = false;
@@ -83,6 +108,9 @@ const VolunteersPage = () => {
     case "evaluators":
       currentData = evaluatorsData;
       // isLoading = false; //  isLoadingEvaluators
+      break;
+    case "user_requests":
+      currentData = userRequestsData;
       break;
     default:
       currentData = [];

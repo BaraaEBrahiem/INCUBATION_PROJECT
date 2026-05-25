@@ -8,9 +8,11 @@ const CurrentTeamList = ({ members }) => {
           key={m.id}
           name={m.name}
           email={m.email}
-          role={m.role}
+          // التعديل 1: أعضاء الفريق الحالي ليس لديهم role في الـ API القادم، لذلك نلغيها أو نتركها
           buttonLabel="مراسلة"
           onButtonClick={() => console.log("مراسلة", m.name)}
+          // التعديل 2: تمرير حالة إمكانية المراسلة القادمة من الباك إند (Snake Case)
+          canMessage={m.can_message}
         />
       ))}
     </div>
