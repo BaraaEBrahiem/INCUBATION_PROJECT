@@ -1,123 +1,249 @@
 import { useState } from "react";
+
 import CategoryFilterBar from "../../components/CategoryFilterBar";
 import ConsultantsList from "../../components/ConsultantsList";
-// import { useGetVolunteersQuery, useGetVolunteerRequestsQuery, useGetEvaluatorsQuery } from "../../api/endpoints/admin/volunteersOptionsApi.js";
+
+import {
+  useGetVolunteersQuery,
+  useGetVolunteerRequestsQuery,
+  useGetEvaluatorsQuery,
+} from "../../api/endpoints/admin/volunteersOptionsApi";
 
 const VolunteersPage = () => {
+  const [selected, setSelected] =
+    useState("volunteers");
+
   const categories = [
-    { id: "volunteers", label: "المتطوعين" },
-    { id: "requests", label: "طلبات التطوع" },
-    { id: "evaluators", label: "المقيمين" },
-  ];
-
-  const [selected, setSelected] = useState("volunteers");
-
-  // const { data: volunteersData, isLoading: isLoadingVolunteers } = useGetVolunteersQuery();
-  // const { data: requestsData, isLoading: isLoadingRequests } = useGetVolunteerRequestsQuery();
-  // const { data: evaluatorsData, isLoading: isLoadingEvaluators } = useGetEvaluatorsQuery();
-
-  const volunteersData = [
     {
-      id: 1,
-      name: "رانيا الأحمد",
-      specialization: "UI/UX",
-      availability: ["2:00pm إلى 4:00pm"],
-      avatar: "/src/assets/images/avatar.jpg",
+      id: "volunteers",
+      label: "المتطوعين",
     },
     {
-      id: 2,
-      name: "محمد علي",
-      specialization: "تطوير برمجيات",
-      availability: ["10:00am إلى 2:00pm"],
-      avatar: "/src/assets/images/avatar.jpg",
+      id: "requests",
+      label: "طلبات التطوع",
+    },
+    {
+      id: "evaluators",
+      label: "المقيمين",
     },
   ];
 
-  const requestsData = [
-    {
-      id: 10,
-      name: "أحمد علي",
-      specialization: "متقدم بطلب تطوع",
-      availability: ["—"],
-      avatar: "/images/user1.png",
-    },
-    {
-      id: 11,
-      name: "نورا حسن",
-      specialization: "متقدم بطلب تطوع",
-      availability: ["—"],
-      avatar: "/images/user1.png",
-    },
-  ];
+  // =========================
+  // API
+  // =========================
 
-  const evaluatorsData = [
-    {
-      id: 20,
-      name: "خالد يوسف",
-      specialization: "مقيم مشاريع",
-      availability: ["—"],
-      avatar: "/images/user1.png",
-    },
-    {
-      id: 21,
-      name: "سارة أحمد",
-      specialization: "مقيم تقني",
-      availability: ["—"],
-      avatar: "/images/user1.png",
-    },
-  ];
+  const volunteersQuery =
+    useGetVolunteersQuery();
 
-  // تحديد البيانات حسب التبويب المختار
-  let currentData = [];
-  // let isLoading = false;
+  const requestsQuery =
+    useGetVolunteerRequestsQuery();
 
-  switch (selected) {
-    case "volunteers":
-      currentData = volunteersData;
-      // isLoading = false; //  isLoadingVolunteers
-      break;
-    case "requests":
-      currentData = requestsData;
-      // isLoading = false; //  isLoadingRequests
-      break;
-    case "evaluators":
-      currentData = evaluatorsData;
-      // isLoading = false; //  isLoadingEvaluators
-      break;
-    default:
-      currentData = [];
+  const evaluatorsQuery =
+    useGetEvaluatorsQuery();
+
+  // =========================
+  // Normalize Response
+  // =========================
+
+  const normalizeData = (
+    response
+  ) => {
+    if (!response)
+      return [];
+
+    // إذا رجع array مباشرة
+    if (
+      Array.isArray(
+        response
+      )
+    ) {
+      return response;
+    }
+
+    // DRF pagination
+    if (
+      Array.isArray(
+        response?.results
+      )
+    ) {
+      return response.results;
+    }
+
+    // data wrapper
+    if (
+      Array.isArray(
+        response?.data
+      )
+    ) {
+      return response.data;
+    }
+
+    return [];
+  };
+
+  // =========================
+  // Current tab data
+  // =========================
+
+  const tabConfig = {
+    volunteers: {
+      query:
+        volunteersQuery,
+      emptyText:
+        "لا يوجد متطوعون حالياً",
+    },
+
+    requests: {
+      query:
+        requestsQuery,
+      emptyText:
+        "لا توجد طلبات تطوع حالياً",
+    },
+
+    evaluators: {
+      query:
+        evaluatorsQuery,
+      emptyText:
+        "لا يوجد مقيمون حالياً",
+    },
+  };
+
+  const currentTab =
+    tabConfig[
+      selected
+    ];
+
+  const {
+    data,
+    isLoading,
+    error,
+    refetch,
+  } = currentTab.query;
+
+  const currentData =
+    normalizeData(
+      data
+    );
+
+  // =========================
+  // Loading
+  // =========================
+
+  if (isLoading) {
+    return (
+      <div className="container p-6">
+        <h2 className="text-3xl font-bold mb-6">
+          إدارة المتطوعين
+        </h2>
+
+        <CategoryFilterBar
+          categories={
+            categories
+          }
+          selected={
+            selected
+          }
+          onSelect={
+            setSelected
+          }
+          className="bg-white-color"
+        />
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
+          {[1, 2, 3].map(
+            (i) => (
+              <div
+                key={i}
+                className="h-48 bg-gray-100 rounded-lg animate-pulse"
+              />
+            )
+          )}
+        </div>
+      </div>
+    );
   }
 
-  // if (isLoading) {
-  //   return (
-  //     <div className="container p-6">
-  //       <h2 className="text-3xl font-bold mb-6">إدارة المتطوعين</h2>
-  //       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-  //         {[1, 2, 3].map((i) => (
-  //           <div key={i} className="h-48 bg-gray-100 rounded-lg animate-pulse"></div>
-  //         ))}
-  //       </div>
-  //     </div>
-  //   );
-  // }
+  // =========================
+  // Error
+  // =========================
+
+  if (error) {
+    return (
+      <div className="container p-6 text-center">
+        <h2 className="text-3xl font-bold mb-6">
+          إدارة المتطوعين
+        </h2>
+
+        <CategoryFilterBar
+          categories={
+            categories
+          }
+          selected={
+            selected
+          }
+          onSelect={
+            setSelected
+          }
+          className="bg-white-color"
+        />
+
+        <div className="mt-10">
+          <p className="text-red-500 mb-4">
+            حدث خطأ أثناء
+            تحميل البيانات
+          </p>
+
+          <button
+            onClick={
+              refetch
+            }
+            className="px-4 py-2 bg-main-color text-white rounded-lg"
+          >
+            إعادة
+            المحاولة
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // =========================
+  // UI
+  // =========================
 
   return (
     <div className="container p-6">
-      <h2 className="text-3xl font-bold mb-6">إدارة المتطوعين</h2>
+      <h2 className="text-3xl font-bold mb-6">
+        إدارة المتطوعين
+      </h2>
 
       <CategoryFilterBar
-        categories={categories}
-        selected={selected}
-        onSelect={setSelected}
+        categories={
+          categories
+        }
+        selected={
+          selected
+        }
+        onSelect={
+          setSelected
+        }
         className="bg-white-color"
       />
 
-      {currentData.length === 0 ? (
+      {currentData.length ===
+      0 ? (
         <div className="text-center py-10 text-gray-500">
-          لا توجد {selected === "volunteers" ? "متطوعين" : selected === "requests" ? "طلبات تطوع" : "مقيمين"} حالياً
+          {
+            currentTab.emptyText
+          }
         </div>
       ) : (
-        <ConsultantsList consultants={currentData} role="admin" />
+        <ConsultantsList
+          consultants={
+            currentData
+          }
+          role="admin"
+        />
       )}
     </div>
   );
