@@ -3,8 +3,8 @@ import { apiSlice } from "../apiSlice";
 export const approvalApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
 
-    // الموافقة العامة لأي نوع (task, workshop, idea, project...)
-    approve: builder.mutation({
+    // للمهام (Tasks)، المشاريع، الورشات... إلخ
+    approveGeneral: builder.mutation({
       query: ({ type, id }) => ({
         url: `admin/${type}/${id}/approve/`,
         method: "POST",
@@ -12,8 +12,7 @@ export const approvalApi = apiSlice.injectEndpoints({
       invalidatesTags: ["Approvals"],
     }),
 
-    // الرفض العام لأي نوع
-    reject: builder.mutation({
+    rejectGeneral: builder.mutation({
       query: ({ type, id, reason }) => ({
         url: `admin/${type}/${id}/reject/`,
         method: "POST",
@@ -22,10 +21,24 @@ export const approvalApi = apiSlice.injectEndpoints({
       invalidatesTags: ["Approvals"],
     }),
 
+    handleConsultationDecision: builder.mutation({
+      query: ({ id, decision, reason = "" }) => ({
+        url: `/volunteers/consultations/${id}/decision/`,
+        method: "POST",
+        body: { 
+          decision,
+          reason 
+        },
+      }),
+      invalidatesTags: ["Volunteers", "Approvals"], 
+    }),
+
   }),
 });
 
+
 export const {
-  useApproveMutation,
-  useRejectMutation,
+  useApproveGeneralMutation,
+  useRejectGeneralMutation,
+  useHandleConsultationDecisionMutation,
 } = approvalApi;

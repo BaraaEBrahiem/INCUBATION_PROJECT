@@ -1,24 +1,19 @@
 import { useParams } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import TaskDetailsInfo from "../../components/Admin_Dashboard/Users/TaskDetailsInfo";
-
+import { showSuccess, showError } from "../../Utils/toast";
 import {
   useGetTaskByIdQuery,
 } from "../../api/endpoints/admin/adminTasksApi";
-
 import {
-  useApproveMutation,
-  useRejectMutation,
+  useApproveGeneralMutation,
+  useRejectGeneralMutation,
 } from "../../api/endpoints/approvalApi";
 
 const TaskDetailsPage = () => {
   const { taskId } = useParams();
+  const { data: task, isLoading: isTaskLoading, refetch } = useGetTaskByIdQuery(taskId);
 
-  // ---------------------------------------------------------
-  //   1) جلب بيانات المهمة
-  const { data: task, isLoading, refetch } = useGetTaskByIdQuery(taskId);
-
-  // fallback قبل الربط الكامل
   const fallbackTask = {
     id: taskId,
     description:
@@ -41,52 +36,79 @@ const TaskDetailsPage = () => {
 
   const finalTask = task || fallbackTask;
   const [status, setStatus] = useState(finalTask.status);
-  // ---------------------------------------------------------
 
-  // ---------------------------------------------------------
-  //   2) Mutations من approvalApi
-  const [approve] = useApproveMutation();
-  const [reject] = useRejectMutation();
-  // ---------------------------------------------------------
+  
+  useEffect(() => {
+    if (task?.status) {
+      //eslint-disable-next-line
+      setStatus(task.status);
+    }
+  }, [task]);
 
-  // ---------------------------------------------------------
-  //  3) Handlers
+  const [approve, { isLoading: isApproving }] = useApproveGeneralMutation();
+  const [reject, { isLoading: isRejecting }] = useRejectGeneralMutation();
+  const isActionLoading = isApproving || isRejecting;
+
   const handleApprove = async () => {
-    await approve({ type: "tasks", id: taskId });
-    setStatus("approved");
-    refetch();
+    if (isActionLoading) return;
+    try {
+     
+      await approve({ type: "tasks", id: taskId }).unwrap();
+      setStatus("approved");
+      showSuccess("تمت الموافقة على المهمة بنجاح");
+      refetch();
+    } catch (err) {
+      console.error(err);
+      showError(err?.data?.message || "حدث خطأ أثناء محاولة الموافقة");
+    }
   };
 
   const handleReject = async () => {
-    await reject({ type: "tasks", id: taskId });
-    setStatus("rejected");
-    refetch();
+    if (isActionLoading) return;
+    try {
+      // تستطيع تمرير سبب رفض ثابت أو تهيئة نافذة منبثقة لاحقاً لتمرير الـ reason
+      await reject({ type: "tasks", id: taskId, reason: "لم يستوفِ الشروط" }).unwrap();
+      setStatus("rejected");
+      showSuccess("تم رفض المهمة");
+      refetch();
+    } catch (err) {
+      console.error(err);
+      showError(err?.data?.message || "حدث خطأ أثناء محاولة الرفض");
+    }
   };
-  // ---------------------------------------------------------
 
-  if (isLoading) return <p className="text-center mt-10">جاري التحميل...</p>;
+  if (isTaskLoading) return <p className="text-center mt-10">جاري تحميل تفاصيل المهمة...</p>;
 
   return (
-    <div className="bg-white-color h-screen pt-20">
-      <div className="container">
+    <div className="bg-white-color min-h-screen pt-20">
+      <div className="container mx-auto px-4">
 
-        {/* معلومات المهمة + أزرار القبول/الرفض */}
         <TaskDetailsInfo
-          task={finalTask}
+          task={{ ...finalTask, status }} 
           onApprove={handleApprove}
           onReject={handleReject}
+          disabled={isActionLoading} 
         />
 
-        {/* جدول المشاركين يظهر فقط بعد الموافقة */}
+        {/* جدول المشاركين يظهر فقط بعد التأكد من الموافقة */}
         {status === "approved" && (
-          <div className="bg-main-color text-white p-4 mt-6 rounded-md">
-            <h3 className="font-bold mb-2">المشاركين في الورشة:</h3>
+          <div className="bg-main-color text-white p-6 mt-6 rounded-md shadow-md animate-fade-in">
+            <h3 className="font-bold text-lg mb-3 pb-2 border-b border-white/20">
+              المشاركين في الورشة ({finalTask.participants?.length || 0}):
+            </h3>
 
-            {finalTask.participants?.map((p, i) => (
-              <p key={i}>
-                {p.name}: {p.email}
-              </p>
-            ))}
+            <div className="space-y-2">
+              {finalTask.participants && finalTask.participants.length > 0 ? (
+                finalTask.participants.map((p, i) => (
+                  <div key={i} className="flex justify-between items-center bg-white/10 p-2 rounded">
+                    <span className="font-medium">{p.name}</span>
+                    <span className="text-sm opacity-90">{p.email}</span>
+                  </div>
+                ))
+              ) : (
+                <p className="text-sm text-white/80 text-center py-2">لا يوجد مشاركين مسجلين حتى الآن.</p>
+              )}
+            </div>
           </div>
         )}
 
