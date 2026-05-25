@@ -43,7 +43,7 @@ const LoginPage = () => {
         password: form.password,
       }).unwrap();
 
-      // 1️⃣ طباعة الاستجابة القادمة من السيرفر كاملة لنبحث عن الدور فيها
+   
       console.log("=== 全 API FULL RESPONSE ===", response);
 
       const accessToken = response.access || response.token || response.accessToken;
@@ -51,7 +51,6 @@ const LoginPage = () => {
 
       const decoded = jwtDecode(accessToken);
       
-      // 2️⃣ محاولة استخراج الدور من الـ response أولاً، ثم من التوكن، وإذا لم يوجدا نضع visitor
       let rawRoles = response.roles || 
                      response.role || 
                      response.user?.roles || 
@@ -60,12 +59,10 @@ const LoginPage = () => {
                      decoded.role || 
                      ["visitor"];
 
-      // إذا كان الدور القادم نصاً واحداً وليس مصفوفة، نحوله لمصفوفة
       if (typeof rawRoles === "string") {
         rawRoles = [rawRoles];
       }
 
-      // تحويل الأدوار إلى أحرف صغيرة لتفادي مشكلة ADMIN و admin
       let normalizedRoles = rawRoles.map(role => 
         typeof role === 'string' ? role.toLowerCase() : role
       );
