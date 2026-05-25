@@ -6,7 +6,6 @@ import InfoRow from '../../components/InfoRow';
 const ProjectInfoPage = () => {
   // const { id } = useParams();
 
-  // TODO: بعد الربط استخدمي هذا السطر بدل البيانات الثابتة
   // const { data: projectData, isLoading, error } = useGetProjectInfoQuery(id);
 
   // بيانات ثابتة حالياً
@@ -60,7 +59,7 @@ const ProjectInfoPage = () => {
         <div className="bg-white p-8 rounded-sm shadow-sm border border-gray-100">
           <h2 className="text-lg font-bold text-black mb-4 border-b border-second-color pb-2">3.المشكلة التي يحلها المشروع </h2>
           <div className="flex justify-between items-start text-right">
-            <div className="font-bold text-black min-w-[180px] flex-shrink-0">
+            <div className="font-bold text-black min-w-[180px] shrink-0">
               <span>المشكلة التي يحلها المشروع :</span>
             </div>
             <div className="flex-1 leading-relaxed pl-4">

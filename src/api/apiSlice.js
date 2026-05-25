@@ -70,6 +70,7 @@ export const apiSlice = createApi({
     "ExhibitionsList",
     "IncubationSeasons",
     "IncubationRequests",
+    "Volunteers",
   ],
   endpoints: () => ({}),
 });
