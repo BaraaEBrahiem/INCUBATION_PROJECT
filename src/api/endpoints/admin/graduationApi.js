@@ -1,0 +1,32 @@
+import { apiSlice } from "../apiSlice";
+
+export const graduationApi = apiSlice.injectEndpoints({
+  endpoints: (builder) => ({
+    
+    getEvaluationNotes: builder.query({
+      query: (idea_id) => ({
+        url: `/admin/incubations/ideas/${idea_id}/latest-review/`,
+        method: "GET",
+      }),
+     
+      providesTags: ["EvaluationNotes"],
+    }),
+
+    
+    submitGraduationDecision: builder.mutation({
+      query: ({ idea_id, status }) => ({
+        url: `/admin/incubations/ideas/${idea_id}/graduate/`,
+        method: "POST",
+        body: { status },
+      }),
+  
+      invalidatesTags: ["Projects", "Approvals"],
+    }),
+
+  }),
+});
+
+export const {
+  useGetEvaluationNotesQuery,
+  useSubmitGraduationDecisionMutation,
+} = graduationApi;

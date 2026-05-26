@@ -7,20 +7,20 @@ import { LuFileStack } from "react-icons/lu";
 import { GrTechnology } from "react-icons/gr";
 import { SlBookOpen } from "react-icons/sl";
 import { GiStethoscope } from "react-icons/gi";
-
 import { useGetPublicProjectsQuery } from "../../api/endpoints/publicProjectsApi";
 
 const ProjectsPage = () => {
   const location = useLocation();
+  
   const exhibitionYear = location.state?.year;
+  const graduationStatus = location.state?.graduationStatus;
 
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
 
-  // 1) جلب المشاريع من API
+  // جلب المشاريع من API
   const { data: projectsFromApi, isLoading } = useGetPublicProjectsQuery();
 
-  // 2) fallback مؤقت
   const fallbackProjects = [
     {
       id: 1,
@@ -29,6 +29,7 @@ const ProjectsPage = () => {
       team: "Green Panda",
       members: ["نصوح شاهين", "علي احمد"],
       year: 2024,
+      status: "positive" // إيجابي
     },
     {
       id: 2,
@@ -37,6 +38,7 @@ const ProjectsPage = () => {
       team: "Green Panda",
       members: ["نصوح شاهين", "علي احمد"],
       year: 2024,
+      status: "negative" // سلبي
     },
     {
       id: 3,
@@ -45,6 +47,7 @@ const ProjectsPage = () => {
       team: "Green Panda",
       members: ["نصوح شاهين", "علي احمد"],
       year: 2023,
+      status: "positive"
     },
     {
       id: 4,
@@ -53,18 +56,33 @@ const ProjectsPage = () => {
       team: "Green Panda",
       members: ["نصوح شاهين", "علي احمد"],
       year: 2024,
+      status: "positive"
     },
   ];
 
   const projects = projectsFromApi || fallbackProjects;
 
-  // 3) فلترة حسب سنة المعرض
-  const filteredByYear = exhibitionYear
-    ? projects.filter((p) => p.year === exhibitionYear)
-    : projects;
+  const getPageTitle = () => {
+    if (graduationStatus === "positive") return "المشاريع المتخرجة - تخريج إيجابي";
+    if (graduationStatus === "negative") return "المشاريع المتخرجة - تخريج سلبي";
+    if (exhibitionYear) return `مشاريع معرض ${exhibitionYear}`;
+    return "جميع المشاريع";
+  };
+
+  const getFilteredByContext = () => {
+    if (graduationStatus) {
+      return projects.filter((p) => p.status === graduationStatus);
+    }
+    if (exhibitionYear) {
+      return projects.filter((p) => p.year === exhibitionYear);
+    }
+    return projects;
+  };
+
+  const filteredByContext = getFilteredByContext();
 
   // 4) فلترة حسب الفئة والبحث
-  const filteredProjects = filteredByYear.filter((project) => {
+  const filteredProjects = filteredByContext.filter((project) => {
     const matchCategory =
       selectedCategory === "all" || project.category === selectedCategory;
 
@@ -85,8 +103,9 @@ const ProjectsPage = () => {
 
   return (
     <div className='container mt-20'>
+     
       <h2 className="text-xl font-bold mt-6 mb-4 text-main-color">
-        {exhibitionYear ? `مشاريع معرض ${exhibitionYear}` : "جميع المشاريع"}
+        {getPageTitle()}
       </h2>
 
       <div className="mt-4">
@@ -103,5 +122,4 @@ const ProjectsPage = () => {
     </div>
   );
 };
-
 export default ProjectsPage;

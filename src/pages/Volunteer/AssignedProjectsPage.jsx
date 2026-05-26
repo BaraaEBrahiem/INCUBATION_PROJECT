@@ -20,6 +20,7 @@ const AssignedProjectsPage = () => {
   const [selected, setSelected] = useState("tracking");
 
 <<<<<<< HEAD
+<<<<<<< HEAD
   // التعديل 1: هيكلة البيانات الثابتة لتطابق الـ Response الحقيقي من الباك إند بالظبط
   const apiResponseMock = {
     consultations: [
@@ -36,6 +37,8 @@ const AssignedProjectsPage = () => {
         help_type: "ONGOING",
         conversation_id: 2
 =======
+=======
+>>>>>>> df2da58e9d26fe04ba2613780d1d33bd4d047551
   const mockData = {
     ongoing: [
       {
@@ -57,11 +60,15 @@ const AssignedProjectsPage = () => {
         idea_title: "باسم المشروع",
         help_type: "استشارة لمرة واحدة",
         description: "شرح الطلب...",
+<<<<<<< HEAD
 >>>>>>> 3ae368bb075bfe26a446874e75110bf49b240936
+=======
+>>>>>>> df2da58e9d26fe04ba2613780d1d33bd4d047551
       }
     ],
     joined_projects: [
       {
+<<<<<<< HEAD
 <<<<<<< HEAD
         idea_id: 1,
         idea_title: "منصة لادارة المشاريع الريادية",
@@ -92,6 +99,23 @@ const AssignedProjectsPage = () => {
   */
 // const [submitDecision] = useHandleConsultationDecisionMutation();
 
+=======
+        id: 1,
+        name: "مايا المحمد",
+        email: "maya123@gmail.com",
+        projectTitle: "Green Panda"
+      }
+    ]
+  }
+
+  /*
+  const { data: apiData, isLoading, error } = useGetVolunteerAssignedDataQuery();
+  if (isLoading) return <div className="text-center py-20 text-gray-500">جاري تحميل البيانات...</div>;
+  if (error) return <div className="text-center py-20 text-red-500">حدث خطأ أثناء تحميل البيانات</div>;
+  */
+// const [submitDecision] = useHandleConsultationDecisionMutation();
+
+>>>>>>> df2da58e9d26fe04ba2613780d1d33bd4d047551
 // const handleApprove = async (id) => {
 //   try {
 //     await submitDecision({ id, action: "approve" }).unwrap();
@@ -118,7 +142,10 @@ const AssignedProjectsPage = () => {
 
   return (
     <div className='bg-white-color min-h-screen p-4 md:p-8'>
+<<<<<<< HEAD
 >>>>>>> 3ae368bb075bfe26a446874e75110bf49b240936
+=======
+>>>>>>> df2da58e9d26fe04ba2613780d1d33bd4d047551
       <div className="container mx-auto">
         <div className="w-full overflow-x-auto no-scrollbar">
           <CategoryFilterBar 
@@ -132,6 +159,7 @@ const AssignedProjectsPage = () => {
         <div className="mt-10 flex flex-col md:flex-row md:flex-wrap md:justify-between items-center md:items-start gap-6">
           
 <<<<<<< HEAD
+<<<<<<< HEAD
           {/* التعديل 2: قسم المتابعة المستمرة يقرأ مباشرة من مصفوفة ongoing بدون فلترة فرعية */}
           {selected === "tracking" && (
             data.ongoing && data.ongoing.length > 0 ? (
@@ -139,18 +167,24 @@ const AssignedProjectsPage = () => {
                 <ConsultationRequestCard 
                   key={req.idea_id} // استخدام idea_id بدلاً من id
 =======
+=======
+>>>>>>> df2da58e9d26fe04ba2613780d1d33bd4d047551
           {/* 1. قسم المتابعة المستمرة */}
           {selected === "tracking" && (
             trackingRequests.length > 0 ? (
               trackingRequests.map(req => (
                 <ConsultationRequestCard 
                   key={req.idea_id || req.id} 
+<<<<<<< HEAD
 >>>>>>> 3ae368bb075bfe26a446874e75110bf49b240936
+=======
+>>>>>>> df2da58e9d26fe04ba2613780d1d33bd4d047551
                   request={req}
                   mode="followup"
                 />
               ))
             ) : (
+<<<<<<< HEAD
 <<<<<<< HEAD
               <div className='mx-auto my-10'>
                 <p className='text-xl font-bold text-gray-500'>لا يوجد مشاريع متابعة مستمرة حالياً.</p>
@@ -174,6 +208,8 @@ const AssignedProjectsPage = () => {
               <div className='mx-auto my-10'>
                 <p className='text-xl font-bold text-gray-500'>لا يوجد طلبات استشارة حالياً.</p>
 =======
+=======
+>>>>>>> df2da58e9d26fe04ba2613780d1d33bd4d047551
               <div className='mx-auto my-10 text-center text-gray-500'>لا توجد طلبات متابعة مستمرة.</div>
             )
           )}
@@ -217,11 +253,15 @@ const AssignedProjectsPage = () => {
             ) : (
               <div className='mx-auto my-30 text-center'>
                 <p className='text-2xl font-bold text-gray-700'>لا يوجد مشاريع تم الانضمام لها.</p>
+<<<<<<< HEAD
 >>>>>>> 3ae368bb075bfe26a446874e75110bf49b240936
+=======
+>>>>>>> df2da58e9d26fe04ba2613780d1d33bd4d047551
               </div>
             )
           )}
 
+<<<<<<< HEAD
 <<<<<<< HEAD
           {/* التعديل 4: قسم المشاريع التي تم الانضمام لها يقرأ من joined_projects مع تعديل مسميات الكرت لتناسب الباك */}
           {selected === "assigned" && (
@@ -258,6 +298,8 @@ const AssignedProjectsPage = () => {
   );
 };
 =======
+=======
+>>>>>>> df2da58e9d26fe04ba2613780d1d33bd4d047551
         </div>
       </div>
     </div>

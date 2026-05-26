@@ -90,6 +90,8 @@ import AssignEvaluatorsPage from "../pages/Admin/AssignEvaluatorsPage";
 import ProjectsManagementPage from "../pages/Admin/ProjectsManagementPage";
 import CardRequestDetailsPage from "../pages/Admin/CardRequestDetailsPage";
 import ExhibitionManagementPage from "../pages/Admin/ExhibitionManagementPage";
+import LatestReviewPage from "../pages/Admin/LatestReviewPage";
+import AdminProjectsDetailsPage from "../pages/Admin/AdminProjectsDetailsPage";
 const AppRoutes = () => {
     const { roles } = useRole();
     const userNavOptions = buildUserNavOptions(roles);
@@ -298,12 +300,10 @@ const AppRoutes = () => {
       <Route path="/messagespage" element={<MessagesPage />} />
       <Route path="/notificationspage" element={<NotificationsPage />} />
       <Route path="/projectspage" element={<ProjectsPage />} />
-      <Route
-  path="/admin/assign-incubation-evaluators/:id"
-  element={
-    <AssignIncubationEvaluatorsPage />
-  }
-/>
+      <Route path="/admin/assign-incubation-evaluators/:id" element={<AssignIncubationEvaluatorsPage />}/>
+      <Route path="/admin/latest-review/:id" element={<LatestReviewPage />} />
+      <Route path="/admin/projects-details/:id" element={<AdminProjectsDetailsPage />} />
+      
       </Route>
       )}
       
