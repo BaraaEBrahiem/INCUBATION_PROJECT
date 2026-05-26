@@ -91,7 +91,7 @@ const ProjectsManagementPage = () => {
             className="bg-main-color"
           />
 
-          {/* 🎯 تم تعديل هذا الزر هنا ليذهب لصفحة المشاريع المتخرجة لإدارتها */}
+      
           <Button
             label="عرض المشاريع غير المكتملة"
             onClick={() => navigate("/admin/graduated-projects")}
