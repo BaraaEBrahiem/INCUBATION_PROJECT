@@ -9,7 +9,7 @@ export const exhibitionApi = apiSlice.injectEndpoints({
     // -----------------------------
     setExhibitionDate: builder.mutation({
       query: (data) => ({
-        url: '/admin/exhibition/set-date/',
+        url: '/admin/exhibition/create/',
         method: 'POST',
         body: data,
       }),
@@ -46,7 +46,7 @@ export const exhibitionApi = apiSlice.injectEndpoints({
 
     // جلب طلبات البطاقات
     getExhibitionCardRequests: builder.query({
-    query: () => '/admin/exhibition/card-requests/',
+    query: () => '/admin/exhibition/submissions/',
     providesTags: ['ExhibitionCardRequests'],
     }),
 
@@ -74,5 +74,6 @@ export const {
   useGetExhibitionProjectsQuery,
   useGetExhibitionCardQuery,
   useGetExhibitionCardRequestsQuery,
+  useGetExhibitionsListQuery,
   useGetExhibitionCardRequestDetailsQuery
 } = exhibitionApi;
