@@ -97,12 +97,12 @@ const AssignIncubationEvaluatorsPage = () => {
       key: "actions",
       label: "الإجراءات",
       render: (row) => {
-        const rowId = row.user_id;
+        console.log("ROW DATA:", row);
         return (
           <Checkbox
-            name={`ev-${rowId}`}
-            checked={sel.includes(rowId)}
-            onChange={() => toggle(rowId)}
+            name={`ev-${row.user_id}`}
+            checked={sel.includes(row.user_id)}
+            onChange={() => toggle(row.user_id)}
           />
         );
       },

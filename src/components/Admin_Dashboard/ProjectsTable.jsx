@@ -9,11 +9,8 @@ import EvaluatorsModal from "./Evaluation-management/EvaluatorsModal";
 
 import {
   useGetIncubatedProjectsQuery,
+  useGetIncubationEvaluatorsQuery,
 } from "../../api/endpoints/publicProjectsApi";
-
-import {
-  useGetEvaluatorsForMeetingQuery,
-} from "../../api/endpoints/evaluationApi";
 
 export default function ProjectsTable({
   onOpenScheduleModal,
@@ -47,13 +44,14 @@ export default function ProjectsTable({
   } =
     useGetIncubatedProjectsQuery();
 
+  // ✅ تم التعديل هون فقط
   const {
     data:
       evaluatorsFromApi,
     isLoading:
       evaluatorsLoading,
   } =
-    useGetEvaluatorsForMeetingQuery(
+    useGetIncubationEvaluatorsQuery(
       selectedProjectId,
       {
         skip:
@@ -97,6 +95,44 @@ export default function ProjectsTable({
   ) {
     projectsList =
       projectsFromApi.data;
+  }
+
+  // ======================
+  // Evaluators Data
+  // ======================
+
+  let evaluators =
+    [];
+
+  if (
+    Array.isArray(
+      evaluatorsFromApi
+    )
+  ) {
+    evaluators =
+      evaluatorsFromApi;
+  }
+
+  if (
+    evaluatorsFromApi
+      ?.results &&
+    Array.isArray(
+      evaluatorsFromApi.results
+    )
+  ) {
+    evaluators =
+      evaluatorsFromApi.results;
+  }
+
+  if (
+    evaluatorsFromApi
+      ?.data &&
+    Array.isArray(
+      evaluatorsFromApi.data
+    )
+  ) {
+    evaluators =
+      evaluatorsFromApi.data;
   }
 
   // ======================
@@ -344,8 +380,7 @@ export default function ProjectsTable({
           closeEvaluators
         }
         evaluators={
-          evaluatorsFromApi ||
-          []
+          evaluators
         }
         isLoading={
           evaluatorsLoading
@@ -354,3 +389,4 @@ export default function ProjectsTable({
     </div>
   );
 }
+

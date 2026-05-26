@@ -292,9 +292,14 @@ const AppRoutes = () => {
       <Route path="/notificationspage" element={<NotificationsPage />} />
       <Route path="/projectspage" element={<ProjectsPage />} />
       <Route path="/admin/assign-incubation-evaluators/:id" element={<AssignIncubationEvaluatorsPage />}/>
-      <Route path="/admin/latest-review/:id" element={<LatestReviewPage />} />
+      <Route path="/admin/latest-review/:idea_id" element={<LatestReviewPage />} />
       <Route path="/admin/projects-details/:id" element={<AdminProjectsDetailsPage />} />
-      
+      <Route
+  path="/admin/project-details/:id"
+  element={
+    <AdminProjectsDetailsPage />
+  }
+/>
       </Route>
       )}
       

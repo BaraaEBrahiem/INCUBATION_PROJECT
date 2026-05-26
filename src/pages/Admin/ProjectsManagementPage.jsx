@@ -15,10 +15,9 @@ import {
   showError,
 } from "../../Utils/toast";
 
-// import {
-//   useSetscheduleFollowUpMutation,
-// } from "../../api/endpoints/projectInfoApi";
-
+import {
+  useScheduleFollowUpMutation,
+} from "../../api/endpoints/projectInfoApi";
 const ProjectsManagementPage =
   () => {
     const [
@@ -49,11 +48,11 @@ const ProjectsManagementPage =
     const navigate =
       useNavigate();
 
-    // const [
-    //   setMeetingDate,
-    //   { isLoading },
-    // ] =
-    //   useSetscheduleFollowUpMutation();
+    // ✅ ربط API الحقيقي
+    const [
+      setMeetingDate,
+    ] =
+      useScheduleFollowUpMutation();
 
     const openScheduleModal =
       (idea_id) => {
@@ -85,25 +84,16 @@ const ProjectsManagementPage =
         );
 
         try {
-          // await setMeetingDate({
-          //   idea_id:
-          //     selectedIdeaId,
-          //   meetingDate:
-          //     schedule,
-          // }).unwrap();
-
-          await new Promise(
-            (
-              resolve
-            ) =>
-              setTimeout(
-                resolve,
-                500
-              )
-          );
+          // ✅ استدعاء API الحقيقي
+          await setMeetingDate({
+            idea_id:
+              selectedIdeaId,
+            meetingDate:
+              schedule,
+          }).unwrap();
 
           showSuccess(
-            `تم تعيين موعد التقييم للمشروع رقم ${selectedIdeaId} بنجاح`
+            `تم جدولة جلسة المتابعة للمشروع رقم ${selectedIdeaId} بنجاح`
           );
 
           setModalOpen(

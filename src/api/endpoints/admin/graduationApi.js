@@ -1,4 +1,4 @@
-import { apiSlice } from "../apiSlice";
+import { apiSlice } from "../../apiSlice";
 
 export const graduationApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
@@ -14,10 +14,10 @@ export const graduationApi = apiSlice.injectEndpoints({
 
     
     submitGraduationDecision: builder.mutation({
-      query: ({ idea_id, status }) => ({
-        url: `/admin/incubations/ideas/${idea_id}/graduate/`,
+      query: ({ evaluationId, status }) => ({
+        url: `/admin/incubations/ideas/${evaluationId}/graduate/`,
         method: "POST",
-        body: { status },
+        body: { action: status },
       }),
   
       invalidatesTags: ["Projects", "Approvals"],

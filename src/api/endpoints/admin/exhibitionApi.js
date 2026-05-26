@@ -1,5 +1,5 @@
 // src/api/endpoints/exhibitionApi.js
-import { apiSlice } from "../apiSlice";
+import { apiSlice } from "../../apiSlice";
 
 export const exhibitionApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
