@@ -1,23 +1,21 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import Modal from "../../components/Modal";
 import Select from "../../components/Select";
 import Input from "../../components/Input";
 import Button from "../../components/Button";
 import AdminNavbar from "../../components/AdminNavbar";
-import { useNavigate } from 'react-router-dom';
-import ProjectsTable from '../../components/Admin_Dashboard/ProjectsTable';
+import { useNavigate } from "react-router-dom";
+import ProjectsTable from "../../components/Admin_Dashboard/ProjectsTable";
 import { showSuccess, showError } from "../../Utils/toast";
-// import { useSetscheduleFollowUpMutation } from "../../api/endpoints/projectInfoApi";
 
 const ProjectsManagementPage = () => {
   const [open, setOpen] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [schedule, setSchedule] = useState("");
-  const [selectedIdeaId, setSelectedIdeaId] = useState(null); 
+  const [selectedIdeaId, setSelectedIdeaId] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const navigate = useNavigate();
 
-  // const [setMeetingDate, { isLoading }] = useSetscheduleFollowUpMutation();
+  const navigate = useNavigate();
 
   const openScheduleModal = (idea_id) => {
     setSelectedIdeaId(idea_id);
@@ -34,29 +32,37 @@ const ProjectsManagementPage = () => {
     setIsSubmitting(true);
 
     try {
-      // await setMeetingDate({ idea_id: selectedIdeaId, meetingDate: schedule }).unwrap();
-      await new Promise(resolve => setTimeout(resolve, 500));
+      await new Promise((resolve) => setTimeout(resolve, 500));
 
-      showSuccess(`تم تعيين موعد التقييم للمشروع رقم ${selectedIdeaId} بنجاح.`);
+      showSuccess(`تم تعيين موعد التقييم للمشروع رقم ${selectedIdeaId} بنجاح`);
       setModalOpen(false);
       setSelectedIdeaId(null);
       setSchedule("");
     } catch (error) {
-      console.error("Error setting meeting date:", error);
+      console.error(error);
       showError(error?.data?.message || "حدث خطأ في تعيين الموعد");
     } finally {
       setIsSubmitting(false);
     }
   };
 
+  const handleAssignEvaluators = () => {
+    if (!selectedIdeaId) {
+      showError("اختر مشروع أولاً من الجدول");
+      return;
+    }
+    navigate(`/admin/assign-incubation-evaluators/${selectedIdeaId}`);
+  };
+
   return (
     <div>
-      <AdminNavbar 
+      <AdminNavbar
         BtnLabel="إرسال إشعار"
         onBtnClick={() => setOpen(true)}
       />
-      
-      <Modal 
+
+      {/* مودال الإشعار */}
+      <Modal
         isOpen={open}
         onClose={() => setOpen(false)}
         title="إرسال إشعار"
@@ -64,7 +70,7 @@ const ProjectsManagementPage = () => {
         footer={<Button label="إرسال" className="bg-main-color ml-2" />}
       >
         <form className="flex flex-col gap-4">
-          <Select 
+          <Select
             label="اختيار المستلمين"
             options={[
               { value: "الكل", label: "الكل" },
@@ -81,21 +87,25 @@ const ProjectsManagementPage = () => {
         <div className="flex justify-between items-center mb-6">
           <Button
             label="تعيين المقيمين"
-            onClick={() => navigate(
-          `/admin/assign-incubation-evaluators/${selectedProjectId}`
-        )}
+            onClick={handleAssignEvaluators}
             className="bg-main-color"
-          />  
+          />
+
           <Button
-          label="عرض المشاريع غير المكتملة"
-          onClick={() => navigate("/projectspage", { state: { graduationStatus: "negative" } })}
-          className="bg-main-color"
-        />  
+            label="عرض المشاريع المتخرجة"
+            onClick={() => navigate("/admin/graduated-projects")}
+            className="bg-main-color"
+          />
         </div>
 
-        <ProjectsTable onOpenScheduleModal={openScheduleModal} />
+        <ProjectsTable
+          onOpenScheduleModal={openScheduleModal}
+          selectedProjectId={selectedIdeaId}
+          onSelectProject={setSelectedIdeaId}
+        />
       </div>
 
+      {/* مودال الموعد */}
       <Modal
         isOpen={modalOpen}
         onClose={() => {
@@ -114,11 +124,12 @@ const ProjectsManagementPage = () => {
         }
       >
         <Input
-          label="تاريخ و وقت اللجنة"
+          label="تاريخ ووقت اللجنة"
           type="datetime-local"
           onChange={(e) => setSchedule(e.target.value)}
           value={schedule}
         />
+
         {selectedIdeaId && (
           <p className="text-sm text-gray-500 text-right mt-2">
             سيتم إرسال إشعار للمستخدم بتعيين الموعد

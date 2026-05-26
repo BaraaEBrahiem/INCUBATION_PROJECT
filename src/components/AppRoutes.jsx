@@ -87,6 +87,8 @@ import CardRequestDetailsPage from "../pages/Admin/CardRequestDetailsPage";
 import ExhibitionManagementPage from "../pages/Admin/ExhibitionManagementPage";
 import LatestReviewPage from "../pages/Admin/LatestReviewPage";
 import AdminProjectsDetailsPage from "../pages/Admin/AdminProjectsDetailsPage";
+import GraduatedProjectsPage from "../pages/Admin/GraduatedProjectsPage";
+
 const AppRoutes = () => {
     const { roles } = useRole();
     const userNavOptions = buildUserNavOptions(roles);
@@ -294,6 +296,7 @@ const AppRoutes = () => {
       <Route path="/admin/assign-incubation-evaluators/:id" element={<AssignIncubationEvaluatorsPage />}/>
       <Route path="/admin/latest-review/:id" element={<LatestReviewPage />} />
       <Route path="/admin/projects-details/:id" element={<AdminProjectsDetailsPage />} />
+      <Route path="/admin/graduated-projects" element= {<GraduatedProjectsPage/>} />
       
       </Route>
       )}
