@@ -15,9 +15,7 @@ import { useGetPublicProjectsQuery } from "../../api/endpoints/publicProjectsApi
 
 const ProjectsPage = () => {
   const location = useLocation();
-  
   const exhibitionYear = location.state?.year;
-  const graduationStatus = location.state?.graduationStatus;
 
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
@@ -33,8 +31,7 @@ const ProjectsPage = () => {
       category: "تكنولوجي",
       team: "Green Panda",
       members: ["نصوح شاهين", "علي احمد"],
-      year: 2024,
-      status: "positive" // إيجابي
+      year: 2024
     },
     {
       id: 2,
@@ -42,8 +39,7 @@ const ProjectsPage = () => {
       category: "تعليمي",
       team: "Green Panda",
       members: ["نصوح شاهين", "علي احمد"],
-      year: 2024,
-      status: "negative" // سلبي
+      year: 2024
     },
     {
       id: 3,
@@ -51,8 +47,7 @@ const ProjectsPage = () => {
       category: "تعليمي",
       team: "Green Panda",
       members: ["نصوح شاهين", "علي احمد"],
-      year: 2023,
-      status: "positive"
+      year: 2023
     },
     {
       id: 4,
@@ -60,24 +55,20 @@ const ProjectsPage = () => {
       category: "طبي",
       team: "Green Panda",
       members: ["نصوح شاهين", "علي احمد"],
-      year: 2024,
-      status: "positive"
+      year: 2024
     },
   ];
 
   const projects = projectsFromApi || fallbackProjects;
 
+ 
   const getPageTitle = () => {
-    if (graduationStatus === "positive") return "المشاريع المتخرجة - تخريج إيجابي";
-    if (graduationStatus === "negative") return "المشاريع المتخرجة - تخريج سلبي";
     if (exhibitionYear) return `مشاريع معرض ${exhibitionYear}`;
     return "جميع المشاريع";
   };
 
+
   const getFilteredByContext = () => {
-    if (graduationStatus) {
-      return projects.filter((p) => p.status === graduationStatus);
-    }
     if (exhibitionYear) {
       return projects.filter((p) => p.year === exhibitionYear);
     }
@@ -86,7 +77,7 @@ const ProjectsPage = () => {
 
   const filteredByContext = getFilteredByContext();
 
-  // 4) فلترة حسب الفئة والبحث
+  // الفلترة حسب الفئة والبحث
   const filteredProjects = filteredByContext.filter((project) => {
     const matchCategory =
       selectedCategory === "all" || project.category === selectedCategory;
@@ -108,7 +99,8 @@ const ProjectsPage = () => {
 
 
   return (
-    <div className="container mt-20">
+
+    <div className='container mt-20 dir-rtl text-right'>
       <h2 className="text-xl font-bold mt-6 mb-4 text-main-color">
         {getPageTitle()}
       </h2>
