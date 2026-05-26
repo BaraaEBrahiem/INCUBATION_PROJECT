@@ -12,7 +12,7 @@ export const workshopsApi = apiSlice.injectEndpoints({
 
     // جلب ورشة محددة بواسطة ID
     getWorkshopById: builder.query({
-      query: (id) => `/workshops/${id}/`,
+      query: (id) => `volunteers/workshop-details/${id}/`,
       providesTags: (result, error, id) => [{ type: 'Workshop', id }],
     }),
 
@@ -34,6 +34,7 @@ export const workshopsApi = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ['Workshop'],
     }),
+
     getWorkshops: builder.query({
       query: () => 'admin/workshops/',
       providesTags: ['Workshop'],

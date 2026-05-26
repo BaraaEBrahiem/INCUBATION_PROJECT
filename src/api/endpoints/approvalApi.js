@@ -16,7 +16,8 @@ export const approvalApi = apiSlice.injectEndpoints({
       query: ({ type, id, reason }) => ({
         url: `admin/${type}/${id}/reject/`,
         method: "POST",
-        body: { reason },
+        body: { rejection_reason:
+        reason, },
       }),
       invalidatesTags: ["Approvals"],
     }),
