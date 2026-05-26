@@ -10,310 +10,102 @@ import { GrTechnology } from "react-icons/gr";
 import { SlBookOpen } from "react-icons/sl";
 import { GiStethoscope } from "react-icons/gi";
 
-import {
-  useGetPublicProjectsQuery,
-} from "../../api/endpoints/publicProjectsApi";
+
+import { useGetPublicProjectsQuery } from "../../api/endpoints/publicProjectsApi";
 
 const ProjectsPage = () => {
   const location = useLocation();
+  
+  const exhibitionYear = location.state?.year;
+  const graduationStatus = location.state?.graduationStatus;
 
-  const exhibitionYear =
-    location.state?.year;
+  const [selectedCategory, setSelectedCategory] = useState("all");
+  const [searchQuery, setSearchQuery] = useState("");
 
-  const graduationStatus =
-    location.state?.graduationStatus;
-
-  const [
-    selectedCategory,
-    setSelectedCategory,
-  ] = useState("all");
-
-  const [
-    searchQuery,
-    setSearchQuery,
-  ] = useState("");
-
-  const {
-    data: projectsFromApi,
-    isLoading,
-    error,
-    refetch,
-  } = useGetPublicProjectsQuery();
+  // جلب المشاريع من API
+  const { data: projectsFromApi, isLoading } = useGetPublicProjectsQuery();
 
   const fallbackProjects = [
     {
       id: 1,
-      title:
-        "موقع للتواصل الاجتماعي",
-      category:
-        "تكنولوجي",
-      team_members: [
-        "نصوح شاهين",
-        "علي احمد",
-      ],
+
+      name: "موقع للتواصل الاجتماعي",
+      category: "تكنولوجي",
+      team: "Green Panda",
+      members: ["نصوح شاهين", "علي احمد"],
       year: 2024,
-      status:
-        "GRADUATED_POSITIVE",
+      status: "positive" // إيجابي
     },
     {
       id: 2,
-      title:
-        "منصة تعليمية",
-      category:
-        "تعليمي",
-      team_members: [
-        "نصوح شاهين",
-        "علي احمد",
-      ],
+      name: "منصة تعليمية",
+      category: "تعليمي",
+      team: "Green Panda",
+      members: ["نصوح شاهين", "علي احمد"],
       year: 2024,
-      status:
-        "GRADUATED_NEGATIVE",
+      status: "negative" // سلبي
+    },
+    {
+      id: 3,
+      name: "نظام إدارة طلاب",
+      category: "تعليمي",
+      team: "Green Panda",
+      members: ["نصوح شاهين", "علي احمد"],
+      year: 2023,
+      status: "positive"
+    },
+    {
+      id: 4,
+      name: "تطبيق طبي",
+      category: "طبي",
+      team: "Green Panda",
+      members: ["نصوح شاهين", "علي احمد"],
+      year: 2024,
+      status: "positive"
     },
   ];
 
-  let projects = [];
+  const projects = projectsFromApi || fallbackProjects;
 
-  if (
-    Array.isArray(
-      projectsFromApi
-    )
-  ) {
-    projects =
-      projectsFromApi;
-  }
+  const getPageTitle = () => {
+    if (graduationStatus === "positive") return "المشاريع المتخرجة - تخريج إيجابي";
+    if (graduationStatus === "negative") return "المشاريع المتخرجة - تخريج سلبي";
+    if (exhibitionYear) return `مشاريع معرض ${exhibitionYear}`;
+    return "جميع المشاريع";
+  };
 
-  if (
-    projectsFromApi?.results &&
-    Array.isArray(
-      projectsFromApi.results
-    )
-  ) {
-    projects =
-      projectsFromApi.results;
-  }
+  const getFilteredByContext = () => {
+    if (graduationStatus) {
+      return projects.filter((p) => p.status === graduationStatus);
+    }
+    if (exhibitionYear) {
+      return projects.filter((p) => p.year === exhibitionYear);
+    }
+    return projects;
+  };
 
-  if (
-    projectsFromApi?.data &&
-    Array.isArray(
-      projectsFromApi.data
-    )
-  ) {
-    projects =
-      projectsFromApi.data;
-  }
+  const filteredByContext = getFilteredByContext();
 
-  if (
-    projects.length === 0
-  ) {
-    projects =
-      fallbackProjects;
-  }
+  // 4) فلترة حسب الفئة والبحث
+  const filteredProjects = filteredByContext.filter((project) => {
+    const matchCategory =
+      selectedCategory === "all" || project.category === selectedCategory;
 
-  const normalizedProjects =
-    projects.map(
-      (project) => ({
-        ...project,
+    const matchSearch =
+      project.name.toLowerCase().includes(searchQuery.toLowerCase());
 
-        id:
-          project.id,
-
-        name:
-          project.title ||
-          "بدون عنوان",
-
-        category:
-          project.category ||
-          "غير مصنف",
-
-        members:
-          Array.isArray(
-            project.team_members
-          )
-            ? project.team_members
-            : [],
-
-        team:
-          project.team ||
-          "غير محدد",
-
-        year:
-          project.year,
-
-        status:
-          project.status,
-
-        // ⭐ التوجيه الوحيد المسموح
-        detailsPath:
-          project.status ===
-          "GRADUATED_NEGATIVE"
-            ? `/admin/project-details/${project.id}`
-            : `/card-request-details/${project.id}`,
-      })
-    );
-
-  const getPageTitle =
-    () => {
-      if (
-        graduationStatus ===
-        "positive"
-      ) {
-        return "المشاريع المتخرجة - تخريج إيجابي";
-      }
-
-      if (
-        graduationStatus ===
-        "negative"
-      ) {
-        return "المشاريع المتخرجة - تخريج سلبي";
-      }
-
-      if (
-        exhibitionYear
-      ) {
-        return `مشاريع معرض ${exhibitionYear}`;
-      }
-
-      return "جميع المشاريع";
-    };
-
-  const getFilteredByContext =
-    () => {
-      if (
-        graduationStatus
-      ) {
-        return normalizedProjects.filter(
-          (p) => {
-            if (
-              graduationStatus ===
-              "positive"
-            ) {
-              return (
-                p.status ===
-                "GRADUATED_POSITIVE"
-              );
-            }
-
-            if (
-              graduationStatus ===
-              "negative"
-            ) {
-              return (
-                p.status ===
-                "GRADUATED_NEGATIVE"
-              );
-            }
-
-            return false;
-          }
-        );
-      }
-
-      if (
-        exhibitionYear
-      ) {
-        return normalizedProjects.filter(
-          (p) =>
-            Number(
-              p.year
-            ) ===
-            Number(
-              exhibitionYear
-            )
-        );
-      }
-
-      return normalizedProjects;
-    };
-
-  const filteredByContext =
-    getFilteredByContext();
-
-  const filteredProjects =
-    filteredByContext.filter(
-      (project) => {
-        const matchCategory =
-          selectedCategory ===
-            "all" ||
-          project.category ===
-            selectedCategory;
-
-        const matchSearch =
-          project.name
-            ?.toLowerCase()
-            .includes(
-              searchQuery.toLowerCase()
-            );
-
-        return (
-          matchCategory &&
-          matchSearch
-        );
-      }
-    );
+    return matchCategory && matchSearch;
+  });
 
   const categories = [
-    {
-      id: "all",
-      label: "الكل",
-      icon:
-        <LuFileStack />,
-    },
-    {
-      id:
-        "تكنولوجي",
-      label:
-        "تكنولوجي",
-      icon:
-        <GrTechnology />,
-    },
-    {
-      id:
-        "تعليمي",
-      label:
-        "تعليمي",
-      icon:
-        <SlBookOpen />,
-    },
-    {
-      id: "طبي",
-      label:
-        "طبي",
-      icon:
-        <GiStethoscope />,
-    },
+    { id: "all", label: "الكل", icon: <LuFileStack /> },
+    { id: "تكنولوجي", label: "تكنولوجي", icon: <GrTechnology /> },
+    { id: "تعليمي", label: "تعليمي", icon: <SlBookOpen /> },
+    { id: "طبي", label: "طبي", icon: <GiStethoscope /> },
   ];
 
-  if (
-    isLoading
-  ) {
-    return (
-      <p className="text-center mt-10">
-        جاري التحميل...
-      </p>
-    );
-  }
+  if (isLoading) return <p className="text-center mt-10">جاري التحميل...</p>;
 
-  if (
-    error
-  ) {
-    return (
-      <div className="text-center mt-10">
-        <p className="text-red-500 mb-4">
-          حدث خطأ أثناء
-          تحميل المشاريع
-        </p>
-
-        <button
-          onClick={
-            refetch
-          }
-          className="bg-main-color text-white px-4 py-2 rounded"
-        >
-          إعادة المحاولة
-        </button>
-      </div>
-    );
-  }
 
   return (
     <div className="container mt-20">
