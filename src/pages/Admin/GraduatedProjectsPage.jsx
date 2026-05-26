@@ -1,23 +1,15 @@
 import React, { useState } from 'react';
-import { useLocation } from "react-router-dom";
+import ProjectCard from '../../components/ProjectCard';
 import SearchBar from '../../components/SearchBar';
-import Projects from '../../components/Projects';
 import CategoryFilterBar from '../../components/CategoryFilterBar';
 import { LuFileStack } from "react-icons/lu";
 import { GrTechnology } from "react-icons/gr";
 import { SlBookOpen } from "react-icons/sl";
 import { GiStethoscope } from "react-icons/gi";
-import { useGetPublicProjectsQuery } from "../../api/endpoints/publicProjectsApi";
 
-const ProjectsPage = () => {
-  const location = useLocation();
-  const exhibitionYear = location.state?.year;
-
+const GraduatedProjectsPage = () => {
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
-
-  // جلب المشاريع من API
-  const { data: projectsFromApi, isLoading } = useGetPublicProjectsQuery();
 
   const fallbackProjects = [
     {
@@ -26,7 +18,7 @@ const ProjectsPage = () => {
       category: "تكنولوجي",
       team: "Green Panda",
       members: ["نصوح شاهين", "علي احمد"],
-      year: 2024
+      status: "positive"
     },
     {
       id: 2,
@@ -34,7 +26,7 @@ const ProjectsPage = () => {
       category: "تعليمي",
       team: "Green Panda",
       members: ["نصوح شاهين", "علي احمد"],
-      year: 2024
+      status: "negative"
     },
     {
       id: 3,
@@ -42,7 +34,7 @@ const ProjectsPage = () => {
       category: "تعليمي",
       team: "Green Panda",
       members: ["نصوح شاهين", "علي احمد"],
-      year: 2023
+      status: "positive"
     },
     {
       id: 4,
@@ -50,36 +42,14 @@ const ProjectsPage = () => {
       category: "طبي",
       team: "Green Panda",
       members: ["نصوح شاهين", "علي احمد"],
-      year: 2024
+      status: "positive"
     },
   ];
 
-  const projects = projectsFromApi || fallbackProjects;
-
- 
-  const getPageTitle = () => {
-    if (exhibitionYear) return `مشاريع معرض ${exhibitionYear}`;
-    return "جميع المشاريع";
-  };
-
-
-  const getFilteredByContext = () => {
-    if (exhibitionYear) {
-      return projects.filter((p) => p.year === exhibitionYear);
-    }
-    return projects;
-  };
-
-  const filteredByContext = getFilteredByContext();
-
-  // الفلترة حسب الفئة والبحث
-  const filteredProjects = filteredByContext.filter((project) => {
-    const matchCategory =
-      selectedCategory === "all" || project.category === selectedCategory;
-
-    const matchSearch =
-      project.name.toLowerCase().includes(searchQuery.toLowerCase());
-
+  // 1) الفلترة الصحيحة بحسب الفئة والبحث
+  const filteredProjects = fallbackProjects.filter((project) => {
+    const matchCategory = selectedCategory === "all" || project.category === selectedCategory;
+    const matchSearch = project.name.toLowerCase().includes(searchQuery.toLowerCase());
     return matchCategory && matchSearch;
   });
 
@@ -90,13 +60,10 @@ const ProjectsPage = () => {
     { id: "طبي", label: "طبي", icon: <GiStethoscope /> },
   ];
 
-  if (isLoading) return <p className="text-center mt-10">جاري التحميل...</p>;
-
   return (
     <div className='container mt-20 dir-rtl text-right'>
-     
       <h2 className="text-xl font-bold mt-6 mb-4 text-main-color">
-        {getPageTitle()}
+        إدارة المشاريع المتخرجة
       </h2>
 
       <div className="mt-4">
@@ -106,12 +73,19 @@ const ProjectsPage = () => {
           onSelect={setSelectedCategory}
         />
       </div>
-
+      
       <SearchBar onSearch={setSearchQuery} />
-
-      <Projects projects={filteredProjects} />
+     <div className="grid grid-cols-3 gap-6 mt-6">
+      {filteredProjects.map((project) => (
+        <ProjectCard 
+          key={project.id} 
+          project={project} 
+          details={project.status === "positive" ? "graduated-positive" : "graduated-negative"} 
+        />
+      ))}
+    </div>
     </div>
   );
 };
 
-export default ProjectsPage;
+export default GraduatedProjectsPage;

@@ -87,6 +87,7 @@ import CardRequestDetailsPage from "../pages/Admin/CardRequestDetailsPage";
 import ExhibitionManagementPage from "../pages/Admin/ExhibitionManagementPage";
 import LatestReviewPage from "../pages/Admin/LatestReviewPage";
 import AdminProjectsDetailsPage from "../pages/Admin/AdminProjectsDetailsPage";
+import GraduatedProjectsPage from "../pages/Admin/GraduatedProjectsPage";
 const AppRoutes = () => {
     const { roles } = useRole();
     const userNavOptions = buildUserNavOptions(roles);
@@ -246,7 +247,7 @@ const AppRoutes = () => {
       {/* صفحات مشتركة */}
       <Route path="/evaluationform" element={<EvaluationFormPage />} />
       <Route path="/notes" element={<NotesPage />} />
-      <Route path="/exhibition-card" element={<ExhibitionCardPage />} />
+      <Route path="/exhibition-card/:id" element={<ExhibitionCardPage />} />
       <Route path="/TeamRequestPage" element={<TeamRequestPage />} />
       <Route path="/AddworkshopPage" element={<AddWorkshopPage />} />
       <Route path="/projectinfo/:id" element={<ProjectInfoPage />} />
@@ -294,6 +295,7 @@ const AppRoutes = () => {
       <Route path="/admin/assign-incubation-evaluators/:id" element={<AssignIncubationEvaluatorsPage />}/>
       <Route path="/admin/latest-review/:id" element={<LatestReviewPage />} />
       <Route path="/admin/projects-details/:id" element={<AdminProjectsDetailsPage />} />
+      <Route path="/admin/graduated-projects" element= {<GraduatedProjectsPage/>} />
       
       </Route>
       )}
