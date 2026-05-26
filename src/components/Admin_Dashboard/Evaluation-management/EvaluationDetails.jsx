@@ -3,47 +3,94 @@ import avatar from "../../../assets/images/avatar.jpg";
 import Modal from "../../Modal";
 import Button from "../../Button";
 
-const EvaluationDetails = ({ evaluators = [], onBack }) => {
-  const [isAcceptModalOpen, setIsAcceptModalOpen] = useState(false);
-  const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
+const EvaluationDetails = ({
+  evaluators = [],
+  selectedProject,
+  onBack,
+  onAccept,
+  onReject,
+  isSubmitting = false,
+}) => {
+  const [isAcceptModalOpen, setIsAcceptModalOpen] =
+    useState(false);
 
-  const currentDate = "12/4/2026";
+  const [isRejectModalOpen, setIsRejectModalOpen] =
+    useState(false);
+
+  // جلب تاريخ الاجتماع من أول evaluator
+  const currentDate =
+    evaluators?.[0]?.meeting_date ||
+    "لم يتم تحديد موعد";
 
   return (
-    <div className="p-6 min-h-screen relative font-sans" dir="rtl">
-
+    <div
+      className="p-6 min-h-screen relative font-sans"
+      dir="rtl"
+    >
       {/* مودال القبول */}
       <Modal
         isOpen={isAcceptModalOpen}
-        onClose={() => setIsAcceptModalOpen(false)}
+        onClose={() =>
+          setIsAcceptModalOpen(false)
+        }
         title="تأكيد قبول التقييم"
         footer={
           <button
-            onClick={() => setIsAcceptModalOpen(false)}
-            className="bg-green-600 text-white px-6 py-2 rounded-lg font-bold"
+            onClick={async () => {
+              try {
+                await onAccept?.();
+                setIsAcceptModalOpen(false);
+              } catch (error) {
+                console.error(
+                  "Accept error:",
+                  error
+                );
+              }
+            }}
+            disabled={isSubmitting}
+            className="bg-green-600 text-white px-6 py-2 rounded-lg font-bold disabled:opacity-50"
           >
-            تأكيد
+            {isSubmitting
+              ? "جاري المعالجة..."
+              : "تأكيد"}
           </button>
         }
       >
-        <p className="text-gray-700">هل أنت متأكد من قبول التقييم؟</p>
+        <p className="text-gray-700">
+          هل أنت متأكد من قبول التقييم؟
+        </p>
       </Modal>
 
       {/* مودال الرفض */}
       <Modal
         isOpen={isRejectModalOpen}
-        onClose={() => setIsRejectModalOpen(false)}
+        onClose={() =>
+          setIsRejectModalOpen(false)
+        }
         title="هل انت متأكد من الرفض؟"
         footer={
           <button
-            onClick={() => setIsRejectModalOpen(false)}
-            className="bg-red-600 text-white px-6 py-2 rounded-lg font-bold"
+            onClick={async () => {
+              try {
+                await onReject?.();
+                setIsRejectModalOpen(false);
+              } catch (error) {
+                console.error(
+                  "Reject error:",
+                  error
+                );
+              }
+            }}
+            disabled={isSubmitting}
+            className="bg-red-600 text-white px-6 py-2 rounded-lg font-bold disabled:opacity-50"
           >
-            إرسال
+            {isSubmitting
+              ? "جاري المعالجة..."
+              : "إرسال"}
           </button>
         }
       >
-       <p>سيتم ارسال اشعار بالرفض</p>
+        <p>سيتم ارسال اشعار بالرفض</p>
       </Modal>
 
       {/* العنوان */}
@@ -65,24 +112,36 @@ const EvaluationDetails = ({ evaluators = [], onBack }) => {
         {evaluators.length > 0 ? (
           evaluators.map((ev, index) => (
             <div
-              key={index}
+              key={
+                ev.id ||
+                ev.evaluator_id ||
+                index
+              }
               className="p-6 rounded-xl shadow-xl border border-gray-100 bg-white flex flex-col"
             >
               {/* الاسم + الصورة */}
               <div className="flex items-start justify-between mb-4">
                 <div className="flex-1">
                   <h2 className="font-bold text-md text-second-color mb-1">
-                    {ev.evaluator_name}
+                    {ev.evaluator_name ||
+                      "غير معروف"}
                   </h2>
+
                   <p className="text-sm text-black">
-                    <span className="font-bold">اختصاص:</span>{" "}
-                    {ev.specialization}
+                    <span className="font-bold">
+                      اختصاص:
+                    </span>{" "}
+                    {ev.specialization ||
+                      "-"}
                   </p>
                 </div>
 
                 <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-gray-100 shadow-md">
                   <img
-                    src={ev.evaluator_image || avatar}
+                    src={
+                      ev.evaluator_image ||
+                      avatar
+                    }
                     alt="avatar"
                     className="w-full h-full object-cover"
                   />
@@ -91,21 +150,34 @@ const EvaluationDetails = ({ evaluators = [], onBack }) => {
 
               {/* الملاحظات */}
               <div className="text-right">
-                <p className="text-md font-bold text-black mb-1">الملاحظات:</p>
+                <p className="text-md font-bold text-black mb-1">
+                  الملاحظات:
+                </p>
 
                 <div className="text-sm text-black leading-relaxed space-y-1">
-                  <p>تكتب هنا ملاحظات المقيم {ev.evaluator_name.split(" ")[0]}</p>
+                  <p>
+                    تكتب هنا ملاحظات
+                    المقيم{" "}
+                    {ev.evaluator_name
+                      ?.split(" ")?.[0] ||
+                      ""}
+                  </p>
+
                   <p className="text-black">
-                    "{ev.notes || "لا يوجد ملاحظات إضافية"}"
+                    "
+                    {ev.notes ||
+                      "لا يوجد ملاحظات إضافية"}
+                    "
                   </p>
                 </div>
               </div>
             </div>
           ))
         ) : (
-          <div className="col-span-full py-10 text-center bg-white rounded-2xl border-gray-300">
+          <div className="col-span-full py-10 text-center bg-white rounded-2xl border border-gray-300">
             <p className="text-gray-700 font-medium text-md">
-              لم يتم اختيار أي مقيمين لعرض تفاصيلهم.
+              لم يتم اختيار أي مقيمين
+              لعرض تفاصيلهم.
             </p>
           </div>
         )}
@@ -114,14 +186,18 @@ const EvaluationDetails = ({ evaluators = [], onBack }) => {
       {/* أزرار القبول والرفض */}
       <div className="flex flex-col sm:flex-row gap-3 mt-6 w-full max-w-sm mx-auto">
         <Button
-        label={"رفض"}
-          onClick={() => setIsRejectModalOpen(true)}
+          label={"رفض"}
+          onClick={() =>
+            setIsRejectModalOpen(true)
+          }
           className="bg-red-color w-50"
         />
 
         <Button
-        label={"قبول"}
-          onClick={() => setIsAcceptModalOpen(true)}
+          label={"قبول"}
+          onClick={() =>
+            setIsAcceptModalOpen(true)
+          }
           className="bg-green-color w-50"
         />
       </div>

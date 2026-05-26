@@ -2,46 +2,24 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import DataTable from "../DataTable";
 import Button from "../../Button";
-
-// import { useGetProjectsForEvaluationQuery } from "../../api/endpoints/evaluationApi";
-
-const projectsData = [
-  {
-    id: 1,
-    title: "منصة الكترونية",
-    sector: "الالكترونيات",
-    target_audience: "التجار",
-    evaluators: [
-      { id: 1, name: "أحمد محمد" },
-      { id: 2, name: "سارة خالد" },
-      { id: 3, name: "حلا أحمد" }
-    ]
-  },
-  {
-    id: 2,
-    title: "تطبيق موبايل",
-    sector: "البرمجيات",
-    target_audience: "الشباب",
-    evaluators: []
-  },
-];
-
+import { useGetProjectsForEvaluationQuery } from "../../../api/endpoints/evaluationApi";
 const DistributionTable = () => {
   const navigate = useNavigate();
 
-  // TODO: بعد الربط هذا السطر بدل البيانات الثابتة
-  // const { data: projectsFromApi, isLoading, error, refetch } = useGetProjectsForEvaluationQuery();
-
-  // حالياً: استخدام بيانات ثابتة
-  const projects = projectsData;
-  // const isLoading = false;
-  // const error = null;
+  const {
+    data: projects,
+    isLoading,
+    error,
+    refetch,
+  } = useGetProjectsForEvaluationQuery();
 
   // معالجة شكل البيانات إذا كانت من API
   let projectsList = Array.isArray(projects) ? projects : [];
+
   if (projects?.results && Array.isArray(projects.results)) {
     projectsList = projects.results;
   }
+
   if (projects?.data && Array.isArray(projects.data)) {
     projectsList = projects.data;
   }
@@ -54,7 +32,9 @@ const DistributionTable = () => {
         <div className="text-center">
           <Button
             label="تعيين المقيمين"
-            onClick={() => navigate(`/admin/assign-evaluators/${row.id}`)}
+            onClick={() =>
+              navigate(`/admin/assign-evaluators/${row.id}`)
+            }
             className="bg-main-color text-white px-4 py-2 rounded-md text-xs md:text-sm"
           />
         </div>
@@ -64,14 +44,18 @@ const DistributionTable = () => {
       key: "sector",
       label: "القطاع المستهدف",
       render: (row) => (
-        <span className="text-center block">{row.sector}</span>
+        <span className="text-center block">
+          {row.sector}
+        </span>
       ),
     },
     {
       key: "target_audience",
       label: "الفئة المستهدفة",
       render: (row) => (
-        <span className="text-center block">{row.target_audience}</span>
+        <span className="text-center block">
+          {row.target_audience}
+        </span>
       ),
     },
     {
@@ -93,7 +77,7 @@ const DistributionTable = () => {
             {evaluators.map((ev, idx) => (
               <span
                 key={ev.id || idx}
-                className="bg-blue-50 text-blue-800 p-1 rounded text-xs md:text-xs border border-blue-200 whitespace-nowrap"
+                className="bg-blue-50 text-blue-800 p-1 rounded text-xs border border-blue-200 whitespace-nowrap"
               >
                 {ev.name}
               </span>
@@ -102,35 +86,45 @@ const DistributionTable = () => {
         );
       },
     },
-    { key: "title", label: "اسم المشروع" },
+    {
+      key: "title",
+      label: "اسم المشروع",
+    },
   ];
 
-  // TODO: بعد الربط شغلي حالة التحميل
-  // if (isLoading) {
-  //   return (
-  //     <div className="p-4">
-  //       <div className="space-y-4">
-  //         {[1, 2].map((i) => (
-  //           <div key={i} className="h-16 bg-gray-100 rounded animate-pulse"></div>
-  //         ))}
-  //       </div>
-  //     </div>
-  //   );
-  // }
+  // حالة التحميل
+  if (isLoading) {
+    return (
+      <div className="p-4">
+        <div className="space-y-4">
+          {[1, 2].map((i) => (
+            <div
+              key={i}
+              className="h-16 bg-gray-100 rounded animate-pulse"
+            />
+          ))}
+        </div>
+      </div>
+    );
+  }
 
-  // if (error) {
-  //   return (
-  //     <div className="p-4 text-center">
-  //       <p className="text-red-500 mb-3">حدث خطأ في تحميل المشاريع</p>
-  //       <button
-  //         onClick={refetch}
-  //         className="bg-main-color text-white px-4 py-2 rounded"
-  //       >
-  //         إعادة المحاولة
-  //       </button>
-  //     </div>
-  //   );
-  // }
+  // حالة الخطأ
+  if (error) {
+    return (
+      <div className="p-4 text-center">
+        <p className="text-red-500 mb-3">
+          حدث خطأ في تحميل المشاريع
+        </p>
+
+        <button
+          onClick={refetch}
+          className="bg-main-color text-white px-4 py-2 rounded"
+        >
+          إعادة المحاولة
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="p-4">
@@ -139,7 +133,10 @@ const DistributionTable = () => {
           لا توجد مشاريع متاحة للتقييم
         </div>
       ) : (
-        <DataTable columns={columns} data={projectsList} />
+        <DataTable
+          columns={columns}
+          data={projectsList}
+        />
       )}
     </div>
   );

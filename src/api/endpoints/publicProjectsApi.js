@@ -20,11 +20,35 @@ export const publicProjectsApi = apiSlice.injectEndpoints({
       query: () => `/admin/incubations/projects`,
       providesTags: ["PublicProjects"],
     }),
+    // جلب المقيمين لمشروع معين  (لصفحة الادارة)
+    getIncubationEvaluators:
+        builder.query({
+          query: (projectId) =>
+            `/admin/incubations/ideas/${projectId}/mentors/`,
+        }),
+
+
+    assignIncubationEvaluators:
+      builder.mutation({
+      query: ({
+        idea_id,
+        mentor_user_ids,}) => ({
+          url: `/admin/incubations/ideas/${idea_id}/mentors/assign/`,
+          method: "POST",
+          body: {
+            mentor_user_ids:
+          mentor_user_ids,
+        },
+      }),
+    
+    }),
   }),
 });
 
 export const {
   useGetPublicProjectByIdQuery,
   useGetPublicProjectsQuery,
+  useGetIncubationEvaluatorsQuery,
+  useAssignIncubationEvaluatorsMutation,
   useGetIncubatedProjectsQuery,
 } = publicProjectsApi;

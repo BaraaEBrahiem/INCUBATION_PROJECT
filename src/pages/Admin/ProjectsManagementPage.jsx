@@ -1,128 +1,317 @@
-import React, { useState } from 'react';
+import React, {
+  useState,
+} from "react";
+
 import Modal from "../../components/Modal";
 import Select from "../../components/Select";
 import Input from "../../components/Input";
 import Button from "../../components/Button";
 import AdminNavbar from "../../components/AdminNavbar";
-import { useNavigate } from 'react-router-dom';
-import ProjectsTable from '../../components/Admin_Dashboard/ProjectsTable';
-import { showSuccess, showError } from "../../Utils/toast";
+
+import {
+  useNavigate,
+} from "react-router-dom";
+
+import ProjectsTable from "../../components/Admin_Dashboard/ProjectsTable";
+
+import {
+  showSuccess,
+  showError,
+} from "../../Utils/toast";
 
 // import { useSetMeetingDateMutation } from "../../api/endpoints/evaluationApi";
 
-const ProjectsManagementPage = () => {
-  const [open, setOpen] = useState(false);
-  const [modalOpen, setModalOpen] = useState(false);
-  const [schedule, setSchedule] = useState("");
-  const [selectedIdeaId, setSelectedIdeaId] = useState(null); 
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const navigate = useNavigate();
+const ProjectsManagementPage =
+  () => {
+    const [open, setOpen] =
+      useState(false);
 
-  // const [setMeetingDate, { isLoading }] = useSetMeetingDateMutation();
+    const [
+      modalOpen,
+      setModalOpen,
+    ] = useState(false);
 
-  const openScheduleModal = (idea_id) => {
-    setSelectedIdeaId(idea_id);
-    setSchedule("");
-    setModalOpen(true);
-  };
+    const [schedule, setSchedule] =
+      useState("");
 
-  const handleSetMeeting = async () => {
-    if (!schedule) {
-      showError("الرجاء تحديد تاريخ ووقت اللجنة");
-      return;
-    }
+    // للمشروع المحدد من الجدول
+    const [
+      selectedProjectId,
+      setSelectedProjectId,
+    ] = useState(null);
 
-    setIsSubmitting(true);
+    // لمودال الجدولة
+    const [
+      selectedIdeaId,
+      setSelectedIdeaId,
+    ] = useState(null);
 
-    try {
-      // await setMeetingDate({ idea_id: selectedIdeaId, meetingDate: schedule }).unwrap();
-      
-      // محاكاة نجاح العملية (تتحذف عند الربط الحقيقي)
-      await new Promise(resolve => setTimeout(resolve, 500));
+    const [
+      isSubmitting,
+      setIsSubmitting,
+    ] = useState(false);
 
-      showSuccess(`تم تعيين موعد التقييم للمشروع رقم ${selectedIdeaId} بنجاح.`);
-      setModalOpen(false);
-      setSelectedIdeaId(null);
-      setSchedule("");
-    } catch (error) {
-      console.error("Error setting meeting date:", error);
-      showError(error?.data?.message || "❌ حدث خطأ في تعيين الموعد");
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
+    const navigate =
+      useNavigate();
 
-  return (
-    <div>
-      <AdminNavbar 
-        BtnLabel="إرسال إشعار"
-        onBtnClick={() => setOpen(true)}
-      />
-      
-      <Modal 
-        isOpen={open}
-        onClose={() => setOpen(false)}
-        title="إرسال إشعار"
-        className="h-80 py-10"
-        footer={<Button label="إرسال" className="bg-main-color ml-2" />}
-      >
-        <form className="flex flex-col gap-4">
-          <Select 
-            label="اختيار المستلمين"
-            options={[
-              { value: "الكل", label: "الكل" },
-              { value: "المتطوعين", label: "المتطوعين" },
-              { value: "المحتضنين", label: "المحتضنين" },
-              { value: "لجنة التقييم", label: "لجنة التقييم" },
-            ]}
+    // const [
+    //   setMeetingDate,
+    // ] =
+    // useSetMeetingDateMutation();
+
+    // فتح مودال الجدولة
+    const openScheduleModal =
+      (idea_id) => {
+        setSelectedIdeaId(
+          idea_id
+        );
+
+        setSchedule("");
+
+        setModalOpen(
+          true
+        );
+      };
+
+    // تعيين موعد جلسة
+    const handleSetMeeting =
+      async () => {
+        if (!schedule) {
+          showError(
+            "الرجاء تحديد تاريخ ووقت اللجنة"
+          );
+          return;
+        }
+
+        setIsSubmitting(
+          true
+        );
+
+        try {
+          // await setMeetingDate({
+          //   idea_id:
+          //     selectedIdeaId,
+          //   meetingDate:
+          //     schedule,
+          // }).unwrap();
+
+          // محاكاة مؤقتة
+          await new Promise(
+            (
+              resolve
+            ) =>
+              setTimeout(
+                resolve,
+                500
+              )
+          );
+
+          showSuccess(
+            `تم تعيين موعد التقييم للمشروع رقم ${selectedIdeaId} بنجاح`
+          );
+
+          setModalOpen(
+            false
+          );
+
+          setSelectedIdeaId(
+            null
+          );
+
+          setSchedule("");
+
+        } catch (error) {
+          console.error(
+            error
+          );
+
+          showError(
+            error?.data
+              ?.message ||
+              "حدث خطأ في تعيين الموعد"
+          );
+        } finally {
+          setIsSubmitting(
+            false
+          );
+        }
+      };
+
+    // زر تعيين المقيمين
+    const handleAssignEvaluators =
+      () => {
+        if (
+          !selectedProjectId
+        ) {
+          showError(
+            "اختاري مشروع أولاً من الجدول"
+          );
+          return;
+        }
+
+        navigate(
+          `/admin/assign-incubation-evaluators/${selectedProjectId}`
+        );
+      };
+
+    return (
+      <div>
+        <AdminNavbar
+          BtnLabel="إرسال إشعار"
+          onBtnClick={() =>
+            setOpen(
+              true
+            )
+          }
+        />
+
+        {/* مودال الإشعار */}
+        <Modal
+          isOpen={open}
+          onClose={() =>
+            setOpen(
+              false
+            )
+          }
+          title="إرسال إشعار"
+          className="h-80 py-10"
+          footer={
+            <Button
+              label="إرسال"
+              className="bg-main-color ml-2"
+            />
+          }
+        >
+          <form className="flex flex-col gap-4">
+            <Select
+              label="اختيار المستلمين"
+              options={[
+                {
+                  value:
+                    "الكل",
+                  label:
+                    "الكل",
+                },
+                {
+                  value:
+                    "المتطوعين",
+                  label:
+                    "المتطوعين",
+                },
+                {
+                  value:
+                    "المحتضنين",
+                  label:
+                    "المحتضنين",
+                },
+                {
+                  value:
+                    "لجنة التقييم",
+                  label:
+                    "لجنة التقييم",
+                },
+              ]}
+            />
+
+            <Input
+              label="محتوى الإشعار"
+              type="text"
+              placeholder="محتوى الإشعار"
+            />
+          </form>
+        </Modal>
+
+        <div className="container mt-30">
+          <div className="flex justify-between items-center mb-6">
+
+            <Button
+              label="تعيين المقيمين"
+              onClick={
+                handleAssignEvaluators
+              }
+              className="bg-main-color"
+            />
+
+          </div>
+
+          <ProjectsTable
+            onOpenScheduleModal={
+              openScheduleModal
+            }
+
+            // يرجع المشروع المحدد من الجدول
+            onSelectProject={
+              setSelectedProjectId
+            }
           />
-          <Input label="محتوى الإشعار" type="text" placeholder="محتوى الإشعار" />
-        </form>
-      </Modal>
-
-      <div className="container mt-30">
-        <div className="flex justify-between items-center mb-6">
-          <Button
-            label="تعيين المقيمين"
-            onClick={() => navigate('/admin/assign-evaluators/id')}
-            className="bg-main-color"
-          />  
         </div>
 
-        <ProjectsTable onOpenScheduleModal={openScheduleModal} />
-      </div>
+        {/* مودال تحديد الموعد */}
+        <Modal
+          isOpen={
+            modalOpen
+          }
+          onClose={() => {
+            setModalOpen(
+              false
+            );
 
-      <Modal
-        isOpen={modalOpen}
-        onClose={() => {
-          setModalOpen(false);
-          setSelectedIdeaId(null);
-          setSchedule("");
-        }}
-        title={selectedIdeaId ? `تعيين موعد التقييم - المشروع رقم ${selectedIdeaId}` : "تعيين موعد التقييم"}
-        footer={
-          <Button
-            label={isSubmitting ? "جاري التعيين..." : "تأكيد"}
-            onClick={handleSetMeeting}
-            disabled={isSubmitting}
-            className="bg-main-color"
+            setSelectedIdeaId(
+              null
+            );
+
+            setSchedule(
+              ""
+            );
+          }}
+          title={
+            selectedIdeaId
+              ? `تعيين موعد التقييم - المشروع رقم ${selectedIdeaId}`
+              : "تعيين موعد التقييم"
+          }
+          footer={
+            <Button
+              label={
+                isSubmitting
+                  ? "جاري التعيين..."
+                  : "تأكيد"
+              }
+              onClick={
+                handleSetMeeting
+              }
+              disabled={
+                isSubmitting
+              }
+              className="bg-main-color"
+            />
+          }
+        >
+          <Input
+            label="تاريخ ووقت اللجنة"
+            type="datetime-local"
+            onChange={(
+              e
+            ) =>
+              setSchedule(
+                e.target
+                  .value
+              )
+            }
+            value={
+              schedule
+            }
           />
-        }
-      >
-        <Input
-          label="تاريخ و وقت اللجنة"
-          type="datetime-local"
-          onChange={(e) => setSchedule(e.target.value)}
-          value={schedule}
-        />
-        {selectedIdeaId && (
-          <p className="text-sm text-gray-500 text-right mt-2">
-            سيتم إرسال إشعار للمستخدم بتعيين الموعد
-          </p>
-        )}
-      </Modal>
-    </div>
-  );
-};
+
+          {selectedIdeaId && (
+            <p className="text-sm text-gray-500 text-right mt-2">
+              سيتم إرسال إشعار
+              للمستخدم
+              بتعيين الموعد
+            </p>
+          )}
+        </Modal>
+      </div>
+    );
+  };
 
 export default ProjectsManagementPage;

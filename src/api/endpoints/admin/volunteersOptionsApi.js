@@ -12,7 +12,7 @@ export const volunteersOptionsApi = apiSlice.injectEndpoints({
 
     // جلب طلبات التطوع
     getVolunteerRequests: builder.query({
-      query: () => '/admin/volunteer/pending/',
+      query: () => '/admin/volunteers/pending/',
       providesTags: ['VolunteerRequests'],
     }),
 
@@ -23,13 +23,17 @@ export const volunteersOptionsApi = apiSlice.injectEndpoints({
     }),
 
     //ارسال دعوة تقييم
-    sendEvaluationInvitation: builder.mutation({
-      query: (evaluator_id) => ({
-        url: `/admin/volunteers/${evaluator_id}/send-invitation/`,
-        method: 'POST',
-      }),
-      invalidatesTags: ['Evaluators'],
+    sendEvaluationInvitation:
+      builder.mutation({query: ({volunteer_id,data}) => ({
+      url: `/admin/volunteers/${volunteer_id}/send-invitation/`,
+      method: "POST",
+      body: data,
     }),
+
+    invalidatesTags: [
+      "Evaluators",
+    ],
+  }),
 
     //ازالة دور مقيم
     removeEvaluatorRole: builder.mutation({
