@@ -13,7 +13,7 @@ export const volunteerprofileApi = apiSlice.injectEndpoints({
     // تحديث بيانات الملف الشخصي للمتطوع
     updateVolunteerProfile: builder.mutation({
       query: (profileData) => ({
-        url: "/volunteer/profile/",
+        url: "/volunteers/me/update/",
         method: "PUT",
         body: profileData,
       }),

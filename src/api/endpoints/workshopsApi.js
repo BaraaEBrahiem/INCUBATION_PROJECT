@@ -12,7 +12,7 @@ export const workshopsApi = apiSlice.injectEndpoints({
 
     // جلب ورشة محددة بواسطة ID
     getWorkshopById: builder.query({
-      query: (id) => `/workshops/${id}/`,
+      query: (id) => `/volunteers/public-workshopsdetails/${id}/`,
       providesTags: (result, error, id) => [{ type: 'Workshop', id }],
     }),
 
@@ -20,7 +20,7 @@ export const workshopsApi = apiSlice.injectEndpoints({
     getAllWorkshops: builder.query({
       query: (params = {}) => {
         const queryString = new URLSearchParams(params).toString();
-        return `/workshops/${queryString ? `?${queryString}` : ''}`;
+        return `/volunteers/public-workshops/${queryString ? `?${queryString}` : ''}`;
       },
       providesTags: ['Workshop'],
     }),
@@ -28,7 +28,7 @@ export const workshopsApi = apiSlice.injectEndpoints({
     // إضافة ورشة جديدة
     addWorkshop: builder.mutation({
       query: (workshopData) => ({
-        url: '/workshops/',
+        url: '/volunteers/workshops/create/',
         method: 'POST',
         body: workshopData,
       }),
@@ -36,6 +36,11 @@ export const workshopsApi = apiSlice.injectEndpoints({
     }),
     getWorkshops: builder.query({
       query: () => 'admin/workshops/',
+      providesTags: ['Workshop'],
+    }),
+    // جلب أقرب ورشة عمل (لصفحة المتطوع الرئيسية)
+    getNearestWorkshop: builder.query({
+      query: () => '/volunteers/nearest-workshop/',
       providesTags: ['Workshop'],
     }),
 
@@ -49,4 +54,5 @@ export const {
   useGetAllWorkshopsQuery,  
   useAddWorkshopMutation,
   useGetWorkshopsQuery,
+  useGetNearestWorkshopQuery,
 } = workshopsApi;

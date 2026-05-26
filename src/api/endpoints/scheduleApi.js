@@ -40,7 +40,7 @@ export const scheduleApi = apiSlice.injectEndpoints({
     // -----------------------------
     addHoliday: builder.mutation({
       query: (holidayData) => ({
-        url: '/schedule/holidays/',
+        url: '/volunteers/vacations/',
         method: 'POST',
         body: holidayData,
       }),
@@ -52,7 +52,7 @@ export const scheduleApi = apiSlice.injectEndpoints({
     // -----------------------------
     deleteHoliday: builder.mutation({
       query: (holidayId) => ({
-        url: `/schedule/holidays/${holidayId}/`,
+        url: `/volunteers/vacations/${holidayId}/delete/`,
         method: 'DELETE',
       }),
       invalidatesTags: ['Schedule'],

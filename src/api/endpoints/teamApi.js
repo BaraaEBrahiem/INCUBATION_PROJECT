@@ -8,8 +8,8 @@ export const teamApi = apiSlice.injectEndpoints({
     // إرسال طلب فريق (من TeamRequestForm)
     // -----------------------------
     sendTeamRequest: builder.mutation({
-      query: (data) => ({
-        url: '/team/requests/',
+      query: (data, id) => ({
+        url: `/volunteers/join/create/${id}`,
         method: 'POST',
         body: data,
       }),
@@ -28,7 +28,7 @@ export const teamApi = apiSlice.injectEndpoints({
     // جلب المتطوعين المقترحين (لصاحب الفكرة الذي ليس لديه فريق)
     // -----------------------------
     getSuggestedVolunteers: builder.query({
-      query: () => '/team/suggested/',
+      query: () => '/ideas/suggested-volunteers/',
       providesTags: ['SuggestedVolunteers'],
     }),
 
@@ -47,7 +47,7 @@ export const teamApi = apiSlice.injectEndpoints({
     // جلب طلبات الفريق (لصاحب الفكرة)
     // -----------------------------
     getTeamRequests: builder.query({
-      query: () => '/team/requests/',
+      query: () => '/ideas/team-request/',
       providesTags: ['TeamRequests'],
     }),
 
@@ -55,7 +55,7 @@ export const teamApi = apiSlice.injectEndpoints({
     // جلب تفاصيل طلب فريق محدد
     // -----------------------------
     getTeamRequestById: builder.query({
-      query: (id) => `/team/requests/${id}/`,
+      query: (id) => `/volunteers/join-request-details/${id}/`,
       providesTags: (result, error, id) => [{ type: 'TeamRequests', id }],
     }),
 

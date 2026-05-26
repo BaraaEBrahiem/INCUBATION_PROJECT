@@ -5,14 +5,14 @@ export const userApi = apiSlice.injectEndpoints({
 
     // 1) جلب بيانات المستخدم الحالي
     getCurrentUser: builder.query({
-      query: () => "users/me/",   // ← لاحقاً نعدّل الرابط
+      query: () => "users/me/",    
       providesTags: ["User"],
     }),
 
     // 2) تحديث بيانات المستخدم (اسم - إيميل - صورة)
     updateUser: builder.mutation({
       query: (data) => ({
-        url: "users/update/",      // ← لاحقاً نعدّل الرابط
+        url: "/accounts/profile/",       
         method: "PATCH",
         body: data,
       }),
@@ -22,7 +22,7 @@ export const userApi = apiSlice.injectEndpoints({
     // 3) تغيير كلمة المرور
     changePassword: builder.mutation({
       query: (data) => ({
-        url: "users/change-password/",   // ← لاحقاً نعدّل الرابط
+        url: "/accounts/change-password/",    
         method: "POST",
         body: data,
       }),
@@ -31,7 +31,7 @@ export const userApi = apiSlice.injectEndpoints({
     // 4) رفع صورة شخصية (اختياري)
     uploadAvatar: builder.mutation({
       query: (formData) => ({
-        url: "users/avatar/",      // ← لاحقاً نعدّل الرابط
+        url: "users/avatar/",       
         method: "POST",
         body: formData,
       }),
@@ -41,7 +41,7 @@ export const userApi = apiSlice.injectEndpoints({
     //5) تسجيل الخروج 
     logout: builder.mutation({
   query: () => ({
-    url: "auth/logout/",
+    url: "/accounts/logout/",
     method: "POST",
   }),
 }),
