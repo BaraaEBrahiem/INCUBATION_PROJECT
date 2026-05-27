@@ -164,8 +164,7 @@ const LatestReviewPage = () => {
                 <div className="flex gap-4 mb-4">
                   <img
                     src={
-                      reviewer.avatar ||
-                      "https://via.placeholder.com/150"
+                      reviewer.avatar
                     }
                     className="w-16 h-16 rounded-full"
                     alt=""
