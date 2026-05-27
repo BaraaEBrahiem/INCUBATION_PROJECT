@@ -1,66 +1,52 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import Button from "../../Button";
-
-import {
-  useGetExhibitionsListQuery,
-} from "../../../api/endpoints/admin/exhibitionApi";
+import { useGetExhibitionsListQuery } from "../../api/endpoints/exhibitionApi";
 
 export default function ExhibitionRecord() {
-  const navigate =
-    useNavigate();
+  const navigate = useNavigate();
 
   const {
-    data:
-      exhibitionsFromApi,
+    data: exhibitions,
     isLoading,
     error,
     refetch,
-  } =
-    useGetExhibitionsListQuery();
+  } = useGetExhibitionsListQuery();
 
-  // معالجة شكل البيانات
-  let exhibitionsList =
-    Array.isArray(
-      exhibitionsFromApi
-    )
-      ? exhibitionsFromApi
-      : [];
+  let exhibitionsList = Array.isArray(exhibitions)
+    ? exhibitions
+    : [];
 
   if (
-    exhibitionsFromApi
-      ?.results &&
-    Array.isArray(
-      exhibitionsFromApi.results
-    )
+    exhibitions?.results &&
+    Array.isArray(exhibitions.results)
   ) {
     exhibitionsList =
-      exhibitionsFromApi.results;
+      exhibitions.results;
   }
 
   if (
-    exhibitionsFromApi
-      ?.data &&
-    Array.isArray(
-      exhibitionsFromApi.data
-    )
+    exhibitions?.data &&
+    Array.isArray(exhibitions.data)
   ) {
     exhibitionsList =
-      exhibitionsFromApi.data;
+      exhibitions.data;
   }
 
-  const openDetails =
-    (ex) => {
-      navigate(
-        "/projectspage",
-        {
-          state: {
-            year:
-              ex.year,
-          },
-        }
-      );
-    };
+  const openDetails = (
+    ex
+  ) => {
+    navigate(
+      "/projectspage",
+      {
+        state: {
+          year: ex.year,
+          exhibitionId:
+            ex.id,
+        },
+      }
+    );
+  };
 
   if (isLoading) {
     return (
@@ -78,7 +64,7 @@ export default function ExhibitionRecord() {
               <div
                 key={i}
                 className="bg-teal-100 shadow-md rounded-xl px-4 py-6 h-28 animate-pulse"
-              />
+              ></div>
             )
           )}
         </div>
@@ -103,9 +89,7 @@ export default function ExhibitionRecord() {
           </p>
 
           <button
-            onClick={
-              refetch
-            }
+            onClick={refetch}
             className="bg-main-color text-white px-4 py-2 rounded"
           >
             إعادة المحاولة
@@ -135,9 +119,7 @@ export default function ExhibitionRecord() {
           {exhibitionsList.map(
             (ex) => (
               <div
-                key={
-                  ex.id
-                }
+                key={ex.id}
                 className="bg-teal-100 shadow-md rounded-xl px-4 py-6 border-dotted border-2 border-main-color flex flex-col md:flex-row md:items-center md:justify-between"
               >
                 <div>
@@ -151,7 +133,9 @@ export default function ExhibitionRecord() {
                     تاريخ
                     الانعقاد:{" "}
                     <span className="font-semibold">
-                      {ex.date}
+                      {
+                        ex.date
+                      }
                     </span>
                   </p>
 
@@ -160,9 +144,11 @@ export default function ExhibitionRecord() {
                     المشاريع
                     المخرجة:{" "}
                     <span className="font-semibold">
-                      {
-                        ex.projects_count
-                      }
+                      {ex.projects_count ||
+                        ex
+                          .projects
+                          ?.length ||
+                        0}
                     </span>
                   </p>
                 </div>

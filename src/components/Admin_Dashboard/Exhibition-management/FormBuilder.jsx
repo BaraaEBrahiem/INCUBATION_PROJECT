@@ -1,15 +1,19 @@
 import React, { useState, useEffect } from "react";
-import FieldTypesPanel from "../../Exhibition-management/FieldTypesPanel";
+import FieldTypesPanel from "./FieldTypesPanel";
 import FormBuilderCanvas from "./FormBuilderCanvas";
-import Button from "../../../Button";
+import Button from "../../Button";
 import { useNavigate } from "react-router-dom";
-import { showError } from "../../../../Utils/toast";
+import { showError, showSuccess } from "../../../../Utils/toast";
+import { useCreateExhibitionFormMutation, usePublishSeasonMutation } from "../../../api/endpoints/formConfigApi"
 
-const FormBuilder = ({ onSubmit, isSubmitting = false, initialFields = [], onFieldsChange, seasonData }) => {
+const FormBuilder = ({ initialFields = [], onFieldsChange, seasonData }) => {
   const navigate = useNavigate();
   const [fields, setFields] = useState(initialFields);
   const [isPublishing, setIsPublishing] = useState(false);
-    const goToPreview = () => {
+  const [createExhibitionForm] = useCreateExhibitionFormMutation();
+  const [publishSeason] = usePublishSeasonMutation();
+
+  const goToPreview = () => {
     navigate("/admin/preview-form", { 
       state: { 
         fields, 
@@ -51,14 +55,12 @@ const FormBuilder = ({ onSubmit, isSubmitting = false, initialFields = [], onFie
     setFields((prev) => prev.filter((field) => field.id !== id));
   };
 
-  // نشر النموذج (إرسال التصميم إلى الباك عبر الـ prop)
   const publishForm = async () => {
     if (!fields.length) {
       showError("يرجى إضافة حقل واحد على الأقل قبل النشر.");
       return;
     }
 
-    // تحقق من أن كل الحقول لها تسمية (label)
     const emptyLabel = fields.find((f) => !f.label.trim());
     if (emptyLabel) {
       showError("يرجى إدخال تسمية لجميع الحقول.");
@@ -67,20 +69,25 @@ const FormBuilder = ({ onSubmit, isSubmitting = false, initialFields = [], onFie
 
     setIsPublishing(true);
     try {
-      // تحويل الحقول إلى الشكل الذي يتوقعه الباك (إذا لزم)
-      const formConfig = {
-        fields: fields.map(({ id, type, label, required, options }) => ({
-          name: id, // أو يمكن استخدام id كـ name مؤقتاً
-          type,
-          label,
-          required,
-          options,
-        })),
-      };
-      await onSubmit(formConfig);
+   
+      const title = seasonData?.title || "نموذج المعرض الجديد"; 
+      
+      const createResponse = await createExhibitionForm(title).unwrap();
+      
+
+      const formId = createResponse?.id || createResponse?.form_id;
+
+      if (!formId) {
+        throw new Error("لم يتم استلام معرف النموذج من السيرفر.");
+      }
+
+      await publishSeason(formId).unwrap();
+
+      showSuccess("تم إنشاء ونشر فورم المعرض بنجاح!");
+
     } catch (err) {
       console.error(err);
-      showError(err?.data?.message || "حدث خطأ في نشر النموذج.");
+      showError(err?.data?.message || "حدث خطأ أثناء محاولة إنشاء ونشر النموذج.");
     } finally {
       setIsPublishing(false);
     }
@@ -104,13 +111,13 @@ const FormBuilder = ({ onSubmit, isSubmitting = false, initialFields = [], onFie
           label="معاينة النموذج"
           onClick={goToPreview}
           className="bg-main-color w-50"
-          disabled={isSubmitting || isPublishing}
+          disabled={isPublishing}
         />
         <Button
           label={isPublishing ? "جاري النشر..." : "نشر"}
           onClick={publishForm}
           className="bg-main-color w-50"
-          disabled={isSubmitting || isPublishing}
+          disabled={isPublishing}
         />
       </div>
     </div>
