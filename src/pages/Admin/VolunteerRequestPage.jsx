@@ -7,6 +7,15 @@ import Input from "../../components/Input";
 import Modal from "../../components/Modal";
 import { showSuccess, showError } from "../../Utils/toast";
 
+/*
+import { 
+  useApproveVolunteerRequestMutation,
+  useRejectVolunteerRequestMutation,
+  useSendEvaluationInvitationMutation,
+  useRemoveEvaluatorRoleMutation 
+} from "../../api/endpoints/admin/volunteersOptionsApi.js"; 
+*/
+
 const usersMockData = {
   1: {
     name: "رانيا الأحمد",
@@ -107,24 +116,31 @@ const VolunteerRequestPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  // جلب بيانات المستخدم الثابتة (أو ستأتي من API لاحقاً)
-  const request = usersMockData[id] || usersMockData[1];
-  const status = userStatusMap[id] || "PENDING"; // الحالة بناءً على id
+  /*
+  const [approveVolunteerRequest] = useApproveVolunteerRequestMutation();
+  const [rejectVolunteerRequest] = useRejectVolunteerRequestMutation();
+  const [sendEvaluationInvitation] = useSendEvaluationInvitationMutation();
+  const [removeEvaluatorRole] = useRemoveEvaluatorRoleMutation();
+  */
 
-  // حالة المودالات والمتغيرات (كما هي)
+  const request = usersMockData[id] || usersMockData[1];
+  const status = userStatusMap[id] || "PENDING"; 
+
   const [EvaluateOpen, setEvaluateOpen] = useState(false);
   const [RemoveEvaluatorOpen, setRemoveEvaluatorOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  
   const [evaluationData, setEvaluationData] = useState({
     description: "",
     committee_date: "",
     expected_duration: "",
-    required_task: "",
+    required_task: "", 
   });
 
   const handleApprove = async () => {
     setIsSubmitting(true);
     try {
+      // 📡 للربط: await approveVolunteerRequest(id).unwrap();
       await new Promise(resolve => setTimeout(resolve, 500));
       showSuccess("تم قبول طلب التطوع بنجاح");
       navigate("/admin/volunteers");
@@ -138,6 +154,7 @@ const VolunteerRequestPage = () => {
   const handleReject = async () => {
     setIsSubmitting(true);
     try {
+      // 📡 للربط: await rejectVolunteerRequest(id).unwrap();
       await new Promise(resolve => setTimeout(resolve, 500));
       showSuccess("تم رفض طلب التطوع");
       navigate("/admin/volunteers");
@@ -151,6 +168,16 @@ const VolunteerRequestPage = () => {
   const handleSendInvitation = async () => {
     setIsSubmitting(true);
     try {
+      /*
+      await sendEvaluationInvitation({
+        evaluator_id: id,
+        invitationData: {
+          volunteer_id: Number(id),
+          expected_duration: evaluationData.expected_duration,
+          task: evaluationData.required_task // تحويل الحقل إلى الاسم البرمجي المطلق في الباك إند
+        }
+      }).unwrap();
+      */
       await new Promise(resolve => setTimeout(resolve, 500));
       showSuccess("تم إرسال دعوة التقييم بنجاح");
       setEvaluateOpen(false);
@@ -165,6 +192,7 @@ const VolunteerRequestPage = () => {
   const handleRemoveEvaluator = async () => {
     setIsSubmitting(true);
     try {
+      // 📡 للربط: await removeEvaluatorRole(id).unwrap();
       await new Promise(resolve => setTimeout(resolve, 500));
       showSuccess("تم إزالة دور المقيم بنجاح");
       setRemoveEvaluatorOpen(false);
@@ -175,10 +203,8 @@ const VolunteerRequestPage = () => {
     }
   };
 
-  // (لا حاجة لـ useSearchParams بعد الآن)
-
   return (
-    <div className="p-6 bg-white-color min-h-screen">
+    <div className="p-6 bg-white-color min-h-screen" dir="rtl">
       <div className="container">
         <h2 className="text-3xl font-bold text-second-color mb-6">
           {status === "PENDING"
@@ -190,7 +216,6 @@ const VolunteerRequestPage = () => {
             : "طلب التطوع"}
         </h2>
 
-        {/* الأقسام (نفس ما كانت) */}
         <div className="bg-white p-4 rounded-lg shadow-lg mb-6">
           <InfoRow label="الاسم الكامل">{request.name}</InfoRow>
           <InfoRow label="البريد الإلكتروني">{request.email}</InfoRow>
@@ -216,7 +241,6 @@ const VolunteerRequestPage = () => {
           </InfoRow>
         </div>
 
-        {/* الأزرار حسب الحالة */}
         {status === "PENDING" && (
           <ApprovalActions onApprove={handleApprove} onReject={handleReject} disabled={isSubmitting} />
         )}
@@ -228,7 +252,6 @@ const VolunteerRequestPage = () => {
         )}
       </div>
 
-      {/* المودالات (نفسها) */}
       <Modal
         isOpen={EvaluateOpen}
         onClose={() => setEvaluateOpen(false)}
