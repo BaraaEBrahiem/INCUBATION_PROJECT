@@ -1,74 +1,28 @@
-import React from "react";
+
+import React from 'react';
 import { useNavigate, useParams } from "react-router-dom";
 import { IoMdArrowBack } from "react-icons/io";
-
 import { showSuccess, showError } from "../../Utils/toast";
 
-import {
-  useGetEvaluationNotesQuery,
-  useSubmitGraduationDecisionMutation,
-} from "../../api/endpoints/admin/graduationApi";
+import { useGetEvaluationNotesQuery, useSubmitGraduationDecisionMutation } from '../../api/endpoints/admin/graduationApi';
 
 const LatestReviewPage = () => {
   const navigate = useNavigate();
   const { idea_id } = useParams();
 
-  const {
-    data: apiData,
-    isLoading: isNotesLoading,
-  } = useGetEvaluationNotesQuery(idea_id, {
-    skip: !idea_id,
-  });
 
-  const [
-    submitGraduation,
-    { isLoading: isSubmitting },
-  ] = useSubmitGraduationDecisionMutation();
+  const { data, isLoading: isNotesLoading, error: isError } = useGetEvaluationNotesQuery(idea_id);
+  
 
-  const fallback = {
-    meeting_date: "12/4/2026",
-    // null (لم يتخذ قرار بعد) | positive | negative
-    graduation_status: null,
-    reviewers: [
-      {
-        mentor_id: 1,
-        mentor_name: "رانيا الأحمد",
-        specialization: "uiux",
-        avatar: null,
-        notes:
-          "تكتب هنا ملاحظات المقيم أحمد\nتكتب هنا ملاحظات المقيم أحمد\nتكتب هنا ملاحظات المقيم أحمد",
-      },
-      {
-        mentor_id: 2,
-        mentor_name: "رانيا الأحمد",
-        specialization: "uiux",
-        avatar: null,
-        notes:
-          "تكتب هنا ملاحظات المقيم أحمد\nتكتب هنا ملاحظات المقيم أحمد\nتكتب هنا ملاحظات المقيم أحمد",
-      },
-      {
-        mentor_id: 3,
-        mentor_name: "رانيا الأحمد",
-        specialization: "uiux",
-        avatar: null,
-        notes:
-          "تكتب هنا ملاحظات المقيم أحمد\nتكتب هنا ملاحظات المقيم أحمد\nتكتب هنا ملاحظات المقيم أحمد",
-      },
-    ],
-  };
+  const [submitGraduation, { isLoading: isSubmitting }] = useSubmitGraduationDecisionMutation();
 
-  // نفس منطقك
-  const dataSource = apiData || fallback;
 
-  const meetingDate = dataSource?.meeting_date || "";
-  const reviewersList = dataSource?.reviews || [];
-  const currentStatus =
-    dataSource?.graduation_status;
+  const meetingDate = data?.meeting_date || "";
+  const reviewersList = data?.reviewers || [];
+  
+  const currentStatus = data?.status?.toString().trim().toLowerCase(); 
 
-  const projectStatus =
-    dataSource?.project_status ||
-    dataSource?.status ||
-    "";
+  const isActionLoading = isSubmitting;
 
   const hideActions =
     projectStatus ===
@@ -80,63 +34,45 @@ const LatestReviewPage = () => {
     if (isSubmitting) return;
 
     try {
-      await submitGraduation({
-        evaluationId: idea_id,
-        status: action,
-      }).unwrap();
 
-      // محاكاة مؤقتة قبل الربط
-      console.log(
-        `تم إرسال الحالة للباك إند بنجاح: ${action}`
-      );
-
-      navigate(
-        "/admin/graduated-projects"
-      );
-    } catch (error) {
-      console.error(error);
-
-      showError(
-        error?.data?.message ||
-          "حدث خطأ"
-      );
+     
+      await submitGraduation({ evaluationId: idea_id, status: action }).unwrap();
+      
+      showSuccess(action === "positive" ? "تم تخريج المشروع بشكل إيجابي" : "تم تخريج المشروع بشكل سلبي");
+      
+    
+      navigate("/admin/graduated-projects");
+    } catch (err) {
+      showError(err?.data?.message || "حدث خطأ أثناء حفظ القرار، يرجى المحاولة لاحقاً");
     }
   };
 
+
   if (isNotesLoading) {
-    return (
-      <p className="text-center mt-10">
-        جاري تحميل الملاحظات...
-      </p>
-    );
+    return <p className="text-center mt-10 font-bold">جاري تحميل الملاحظات...</p>;
   }
 
+  if (isError) {
+    return <p className="text-center mt-10 text-red-500 font-bold">حدث خطأ أثناء جلب بيانات التقييم من السيرفر.</p>;
+  }
+
+
+  const shouldShowButtons = !currentStatus || currentStatus === "pending" || currentStatus === "null";
+
+
   return (
-    <div className="bg-[#f9f9f9] min-h-screen p-6 md:p-10 dir-rtl text-right">
+    <div className="bg-[#f9f9f9] min-h-screen p-6 md:p-10 text-right" dir="rtl">
       <div className="container mx-auto">
 
+        
+        {/* الهيدر وعرض الحالة الحالية */}
         <div className="flex justify-between items-center mb-8 border-b pb-4">
           <div>
-            <h1 className="text-xl font-bold text-gray-900">
-              تاريخ التقييم {meetingDate}
-            </h1>
+            <h1 className="text-xl font-bold text-gray-900">تاريخ التقييم {meetingDate}</h1>
+            {!shouldShowButtons && (
+              <p className={`text-sm font-bold mt-1 ${currentStatus === 'positive' ? 'text-green-600' : 'text-red-500'}`}>
+                حالة المشروع: تم التخريج بشكل {currentStatus === 'positive' ? 'إيجابي' : 'سلبي'} مسبقاً.
 
-            {currentStatus && (
-              <p
-                className={`text-sm font-bold mt-1 ${
-                  currentStatus ===
-                  "positive"
-                    ? "text-green-600"
-                    : "text-red-500"
-                }`}
-              >
-                حالة المشروع: تم
-                التخريج بشكل{" "}
-                {currentStatus ===
-                "positive"
-                  ? "إيجابي"
-                  : "سلبي"}{" "}
-                مسبقاً.
               </p>
             )}
           </div>
@@ -151,59 +87,47 @@ const LatestReviewPage = () => {
           </button>
         </div>
 
-        {/* شبكة عرض الملاحظات */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-          {reviewersList.map(
-            (reviewer) => (
-              <div
-                key={
-                  reviewer.mentor_id
-                }
-                className="bg-white p-6 rounded-xl shadow-sm border border-gray-100"
-              >
-                <div className="flex gap-4 mb-4">
-                  <img
-                    src={
-                      reviewer.avatar
-                    }
-                    className="w-16 h-16 rounded-full"
-                    alt=""
-                  />
 
-                  <div>
-                    <h3 className="font-bold">
-                      {
-                        reviewer.mentor_name
-                      }
-                    </h3>
-
-                    <p className="text-sm text-gray-500">
-                      {
-                        reviewer.specialization
-                      }
+        {/* شبكة عرض ملاحظات المقيمين الديناميكية القادمة من السيرفر */}
+        {reviewersList.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+            {reviewersList.map((reviewer) => (
+              <div key={reviewer.mentor_id} className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex flex-col items-end">
+                
+                <div className="flex items-center justify-start w-full gap-4 mb-4"> 
+                  {reviewer.avatar && (
+                    <img 
+                      src={reviewer.avatar} 
+                      alt={reviewer.mentor_name} 
+                      className="w-16 h-16 rounded-full object-cover border-2 border-gray-100"
+                    />
+                  )}
+                  <div className="text-right">
+                    <h3 className="font-bold text-gray-900 text-lg">{reviewer.mentor_name}</h3>
+                    <p className="text-sm text-gray-500 font-medium">
+                      اختصاص : <span className="uppercase text-main-color font-bold">{reviewer.specialization}</span>
                     </p>
                   </div>
                 </div>
 
                 {/* قسم الملاحظات */}
                 <div className="w-full text-right bg-gray-50/50 p-3 rounded-lg">
-                  <h4 className="text-sm font-bold text-gray-700 mb-2">
-                    الملاحظات :
-                  </h4>
-
+                  <h4 className="text-sm font-bold text-gray-700 mb-2">الملاحظات :</h4>
                   <p className="text-sm text-gray-600 leading-relaxed whitespace-pre-line">
-                    {
-                      reviewer.notes
-                    }
+                    {reviewer.notes || <span className="text-gray-400 italic">لا توجد ملاحظات مكتوبة</span>}
                   </p>
                 </div>
-              </div>
-            )
-          )}
-        </div>
 
-        {!currentStatus &&
-        !hideActions ? (
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className="text-center text-gray-500 my-10 font-medium">لا توجد ملاحظات مقيمين مضافة بعد لهذا المشروع.</p>
+        )}
+
+        {/* التحكم بظهور الأزرار بناءً على حالة المشروع الحقيقية */}
+        {shouldShowButtons ? (
+
           <div className="flex justify-center items-center gap-6 mt-6 max-w-2xl mx-auto">
 
             <button
@@ -248,10 +172,10 @@ const LatestReviewPage = () => {
 
           </div>
         ) : (
-          <div className="text-center py-4 bg-gray-100 text-gray-500 rounded-xl max-w-2xl mx-auto font-medium border border-dashed">
-            تم إغلاق طلب التقييم
-            واعتماد قرار التخريج
-            النهائي لهذا المشروع.
+
+          <div className="text-center py-4 bg-gray-100 text-gray-600 rounded-xl max-w-2xl mx-auto font-bold border border-dashed border-gray-300">
+            تم إغلاق طلب التقييم واعتماد قرار التخريج النهائي لهذا المشروع.
+
           </div>
         )}
 

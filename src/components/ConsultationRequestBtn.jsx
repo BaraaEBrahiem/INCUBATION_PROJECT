@@ -8,7 +8,7 @@ import { useSelector } from "react-redux";
 
 const ConsultationRequestBtn = ({ consultant }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [consultationType, setConsultationType] = useState("");
+  const [help_type, setHelp_type] = useState("");
   const [description, setDescription] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
@@ -25,7 +25,7 @@ const ConsultationRequestBtn = ({ consultant }) => {
   };
   const close = () => {
     setIsOpen(false);
-    setConsultationType("");
+    setHelp_type("");
     setDescription("");
     setError("");
     setSuccess("");
@@ -33,7 +33,7 @@ const ConsultationRequestBtn = ({ consultant }) => {
 
   const handleSubmit = async () => {
     // التحقق من الحقول
-    if (!consultationType) {
+    if (!help_type) {
       setError("الرجاء اختيار نوع الاستشارة");
       return;
     }
@@ -63,7 +63,7 @@ const ConsultationRequestBtn = ({ consultant }) => {
     console.log("إرسال طلب استشارة:", {
       consultantId: consultant?.id,
       userId: userId,
-      consultationType,
+      help_type,
       description,
     });
     alert("تم إرسال طلب الاستشارة بنجاح (محاكاة)");
@@ -110,9 +110,9 @@ const ConsultationRequestBtn = ({ consultant }) => {
           <Select
             placeholder="اختر نوع الاستشارة"
             label="نوع الاستشارة"
-            value={consultationType}
+            value={help_type}
             onChange={(e) => {
-              setConsultationType(e.target.value);
+              setHelp_type(e.target.value);
               setError("");
             }}
             options={[

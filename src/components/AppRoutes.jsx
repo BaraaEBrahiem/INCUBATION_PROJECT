@@ -88,6 +88,9 @@ import ExhibitionManagementPage from "../pages/Admin/ExhibitionManagementPage";
 import LatestReviewPage from "../pages/Admin/LatestReviewPage";
 import AdminProjectsDetailsPage from "../pages/Admin/AdminProjectsDetailsPage";
 import GraduatedProjectsPage from "../pages/Admin/GraduatedProjectsPage";
+import CampWorkshopsPage from "../pages/Volunteer/CampWorkshopsPage";
+import CampProjectsPage from "../pages/Volunteer/CampProjectsPage";
+import SelectingVolunteerPage from "../pages/Admin/SelectingVolunteerPage";
 
 const AppRoutes = () => {
     const { roles } = useRole();
@@ -170,6 +173,8 @@ const AppRoutes = () => {
           <Route path="/workshopinfo/:id" element={<WorkshopInfoPage />} />
           <Route path="/assigned-projects-page" element={<AssignedProjectsPage />} />
           <Route path="/volunteer-request/:id" element={<VolunteerRequestDetailsPage />} />
+          <Route path="/CampWorkShopsPage" element={<CampWorkshopsPage/>}/>
+          <Route path ="/CampProjectsPage" element={<CampProjectsPage/>}/>
         </Route>
       )}
 
@@ -278,6 +283,7 @@ const AppRoutes = () => {
           <Route path="/admin/assigned-projects" element={<ProjectsManagementPage />} />
           <Route path="/admin/exhibition" element={<ExhibitionManagementPage/>} />
           <Route path="/requests-details/:id" element={<CardRequestDetailsPage />} />
+           <Route path="/Selectingvolunteer/:id" element={<SelectingVolunteerPage />} />
         </Route>
       )} 
       {roles.includes("admin") && (

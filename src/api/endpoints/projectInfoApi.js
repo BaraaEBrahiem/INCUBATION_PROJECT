@@ -3,6 +3,12 @@ import { apiSlice } from "../apiSlice";
 export const projectsInfoApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
 
+    //تفاصيل المشروع المسند للمتطوع
+    getAssignProjectInfo: builder.query({
+      query: (id) => `evaluations/my-assignments_details/${id}/`,
+      providesTags: ['Projects'],
+    }),
+
     // معلومات المشروع (داخل لوحة التحكم)
     getProjectInfo: builder.query({
       query: (id) => `admin/projects/${id}/info/`,
