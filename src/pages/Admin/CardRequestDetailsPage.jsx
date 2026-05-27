@@ -4,9 +4,11 @@ import InfoRow from "../../components/InfoRow";
 import Modal from "../../components/Modal";
 import { IoImageOutline } from "react-icons/io5";
 import Input from "../../components/Input";
-import { showError, showSuccess } from "../../../../Utils/toast";
+import { showError, showSuccess } from "../../Utils/toast";
 
-import { useSubmitProjectDecisionMutation } from "../../../../api/endpoints/exhibitionApi";
+import {
+  useSubmitProjectDecisionMutation,
+} from "../../api/endpoints/admin/exhibitionApi";
 
 export default function CardRequestDetailsPage() {
  
