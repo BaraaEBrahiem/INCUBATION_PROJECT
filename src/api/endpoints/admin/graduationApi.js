@@ -23,6 +23,15 @@ export const graduationApi = apiSlice.injectEndpoints({
       invalidatesTags: ["Projects", "Approvals"],
     }),
 
+    getGraduatedProjects: builder.query({
+      query: () => ({
+        url: `/admin/incubations/graduated-projects/`, 
+        method: 'GET',
+      }),
+    
+      providesTags: ['GraduatedProjects'], 
+    }),
+
   }),
 });
 

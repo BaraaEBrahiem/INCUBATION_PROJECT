@@ -28,7 +28,7 @@ export const exhibitionApi = apiSlice.injectEndpoints({
     // 3) جلب جميع المشاريع المشاركة في المعرض
     // -----------------------------
     getExhibitionProjects: builder.query({
-      query: () => '/exhibition/projects/',
+      query: (exhibition_id) => `/admin/exhibition/${exhibition_id}/details/`,
       providesTags: ['ExhibitionProjects'],
     }),
 
@@ -46,14 +46,14 @@ export const exhibitionApi = apiSlice.injectEndpoints({
 
     // جلب طلبات البطاقات
     getExhibitionCardRequests: builder.query({
-    query: () => '/admin/exhibition/card-requests/',
+    query: () => '/admin/exhibition/submissions/',
     providesTags: ['ExhibitionCardRequests'],
     }),
 
     // جلب تفاصيل طلب بطاقة محدد
     getExhibitionCardRequestDetails: builder.query({
-    query: (requestId) => `/admin/exhibition/card-requests/${requestId}/`,
-    providesTags: (result, error, requestId) => [{ type: 'ExhibitionCardRequests', id: requestId }],
+    query: (submission_id) => `/admin/exhibition/submissions/${submission_id}/`,
+    providesTags: (result, error, submission_id) => [{ type: 'ExhibitionCardRequests', id: submission_id }],
     }),
 
     // -----------------------------
@@ -63,6 +63,18 @@ export const exhibitionApi = apiSlice.injectEndpoints({
     query: () => '/admin/exhibition/history/',
     providesTags: ['ExhibitionsList'],
     }),
+
+    //---------------------
+    //7)القبول والرفض
+    //---------------------
+   submitProjectDecision: builder.mutation({
+      query: ({ submission_id, decision, message }) => ({
+        url: `/admin/exhibition/submissions/${submission_id}/decision/`,
+        method: 'POST',
+        body: { decision, message },
+  }),
+  invalidatesTags: ['ExhibitionsList'], 
+}),
 
 
   }),
@@ -74,5 +86,6 @@ export const {
   useGetExhibitionProjectsQuery,
   useGetExhibitionCardQuery,
   useGetExhibitionCardRequestsQuery,
-  useGetExhibitionCardRequestDetailsQuery
+  useGetExhibitionCardRequestDetailsQuery,
+  useSubmitProjectDecisionMutation,
 } = exhibitionApi;

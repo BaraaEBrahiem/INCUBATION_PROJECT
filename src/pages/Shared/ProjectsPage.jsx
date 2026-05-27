@@ -8,16 +8,24 @@ import { GrTechnology } from "react-icons/gr";
 import { SlBookOpen } from "react-icons/sl";
 import { GiStethoscope } from "react-icons/gi";
 import { useGetPublicProjectsQuery } from "../../api/endpoints/publicProjectsApi";
+import { useGetExhibitionProjectsQuery } from "../../api/endpoints/exhibitionApi";
 
 const ProjectsPage = () => {
   const location = useLocation();
   const exhibitionYear = location.state?.year;
+  const exhibitionId = location.state?.exhibitionId;
 
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
 
-  // جلب المشاريع من API
-  const { data: projectsFromApi, isLoading } = useGetPublicProjectsQuery();
+  const { data: publicProjects, isLoading: isLoadingPublic } = useGetPublicProjectsQuery(undefined, {
+    skip: !!exhibitionId,
+    
+  });
+
+  const { data: exhibitionProjects, isLoading: isLoadingExhibition } = useGetExhibitionProjectsQuery(exhibitionId, {
+    skip: !exhibitionId,
+  });
 
   const fallbackProjects = [
     {
@@ -54,16 +62,19 @@ const ProjectsPage = () => {
     },
   ];
 
-  const projects = projectsFromApi || fallbackProjects;
+  const projects = exhibitionId 
+    ? (exhibitionProjects || []) 
+    : (publicProjects || fallbackProjects);
 
- 
   const getPageTitle = () => {
     if (exhibitionYear) return `مشاريع معرض ${exhibitionYear}`;
     return "جميع المشاريع";
   };
 
-
   const getFilteredByContext = () => {
+    if (exhibitionId) {
+      return projects;
+    }
     if (exhibitionYear) {
       return projects.filter((p) => p.year === exhibitionYear);
     }
@@ -78,7 +89,7 @@ const ProjectsPage = () => {
       selectedCategory === "all" || project.category === selectedCategory;
 
     const matchSearch =
-      project.name.toLowerCase().includes(searchQuery.toLowerCase());
+      project.name?.toLowerCase().includes(searchQuery.toLowerCase());
 
     return matchCategory && matchSearch;
   });
@@ -90,11 +101,13 @@ const ProjectsPage = () => {
     { id: "طبي", label: "طبي", icon: <GiStethoscope /> },
   ];
 
+  // دمج حالتي التحميل لضمان عدم حدوث مشاكل واجهة المستخدم
+  const isLoading = exhibitionId ? isLoadingExhibition : isLoadingPublic;
+
   if (isLoading) return <p className="text-center mt-10">جاري التحميل...</p>;
 
   return (
     <div className='container mt-20 dir-rtl text-right'>
-     
       <h2 className="text-xl font-bold mt-6 mb-4 text-main-color">
         {getPageTitle()}
       </h2>
