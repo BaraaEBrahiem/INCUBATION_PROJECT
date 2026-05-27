@@ -28,7 +28,7 @@ export const incubationApi = apiSlice.injectEndpoints({
     // 3) جلب بيانات المعسكر (المرحلة 1)
     // -----------------------------
     getCampData: builder.query({
-      query: (userId) => `/incubation/camp/${userId}/`,
+      query: () => `/bootcamp/owner-bootcamp/sessions/`,
       providesTags: ['Incubation'],
     }),
 
@@ -44,12 +44,19 @@ export const incubationApi = apiSlice.injectEndpoints({
       invalidatesTags: ['Incubation'],
     }),
 
+    getNextSession: builder.query({
+      query: () => ({
+        url: 'bootcamp/owner-bootcamp/next-session/', // الـ URL الخاص بالصورة الثانية تماماً
+        method: 'GET',
+      }),
+      providesTags: ['Incubation']
+    }),
     // -----------------------------
     // 5) طلب غياب عن جلسة (المرحلة 1)
     // -----------------------------
     requestAbsence: builder.mutation({
       query: ({ userId, reason, sessionId }) => ({
-        url: '/incubation/camp/absence/',
+        url: '/bootcamp/owner-bootcamp/absence-request/',
         method: 'POST',
         body: { userId, reason, sessionId },
       }),
@@ -133,7 +140,7 @@ export const incubationApi = apiSlice.injectEndpoints({
     // -----------------------------
     saveExhibitionData: builder.mutation({
       query: (formData) => ({
-        url: '/incubation/exhibition/',
+        url: '/ideas/exhibition/submit/',
         method: 'POST',
         body: formData,
       }),
@@ -143,7 +150,7 @@ export const incubationApi = apiSlice.injectEndpoints({
     // جلب معلومات الاحتضان (لصفحة عرض المعلومات فقط)
     // -----------------------------
     getIncubationInfo: builder.query({
-      query: (userId) => `/incubation/info/${userId}/`,
+      query: () => `/ideas/exhibition/dashboard/`,
       providesTags: ['Incubation'],
     }),
     // -----------------------------
@@ -155,7 +162,7 @@ export const incubationApi = apiSlice.injectEndpoints({
 // -----------------------------
 // جلب تفاصيل طلب احتضان محدد
     getIncubationRequest: builder.query({
-      query: (id) => `/admin/incubation-requests/${id}/`,
+      query: (id) => `/ideas/project-details/${id}/`,
       providesTags: (result, error, id) => [{ type: 'IncubationRequests', id }],
 }),
 

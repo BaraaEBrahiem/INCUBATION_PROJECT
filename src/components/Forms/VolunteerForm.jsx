@@ -1,4 +1,4 @@
-import React, { useReducer, useState } from "react";
+ import React, { useReducer, useState } from "react";
 import Button from "../Button";
 import LinearProgress from "../LinearProgress";
 import StepExperience from "./StepExperience";
@@ -6,9 +6,6 @@ import StepPreferences from "./StepPreferences";
 import StepAvailability from "./StepAvailability";
 import { initialVolunteerForm, volunteerReducer } from "../../hooks/useVolunteerReducer";
 
-// -----------------------------
-// خيارات الخبرات (ثابتة)
-// -----------------------------
 const EXPERTISE_OPTIONS = [
   { value: "ui ux", label: "تصميم واجهات وتجربة المستخدم" },
   { value: "development", label: "تطوير برمجيات" },
@@ -27,7 +24,6 @@ const VolunteerForm = ({ onSubmit, onCancel }) => {
       field: e.target.name,
       value: e.target.value
     });
-    // مسح الخطأ عند التعديل
     if (errors[e.target.name]) {
       setErrors(prev => ({ ...prev, [e.target.name]: "" }));
     }
@@ -47,24 +43,19 @@ const VolunteerForm = ({ onSubmit, onCancel }) => {
     const newErrors = {};
 
     if (step === 0) {
-      // التحقق من خطوة الخبرات والمهارات
       if (!form.experienceYears) newErrors.experienceYears = "سنوات الخبرة مطلوبة";
       if (!form.expertiseArea) newErrors.expertiseArea = "مجال الخبرة الرئيسي مطلوب";
       if (!form.employer) newErrors.employer = "جهة العمل مطلوبة";
     } 
     else if (step === 1) {
-      // التحقق من خطوة التفضيلات
       if (!form.consultationPreferences) newErrors.consultationPreferences = "تفضيلات الاستشارة مطلوبة";
       if (!form.location) newErrors.location = "الموقع مطلوب";
       if (!form.expertition) newErrors.expertition = "الخبرات الإضافية مطلوبة";
       if (!form.volunteeringGoal) newErrors.volunteeringGoal = "هدف التطوع مطلوب";
     }
     else if (step === 2) {
-      // التحقق من خطوة أوقات التوفر
       const availabilityValues = Object.values(form.availability || {});
-      const hasAvailability = availabilityValues.some(day =>
-        day.from && day.to && day.active
-      );
+      const hasAvailability = availabilityValues.some(day => day.from && day.to && day.active);
       if (!hasAvailability) newErrors.availability = "يرجى تحديد أوقات التوفر";
     }
 
@@ -72,22 +63,12 @@ const VolunteerForm = ({ onSubmit, onCancel }) => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleNext = () => {
-    if (validateStep()) {
-      setStep(step + 1);
-    }
-  };
-
-  const handlePrevious = () => {
-    setStep(step - 1);
-  };
+  const handleNext = () => validateStep() && setStep(step + 1);
+  const handlePrevious = () => setStep(step - 1);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    
-    if (validateStep()) {
-      onSubmit(form);
-    }
+    if (validateStep()) onSubmit(form);
   };
 
   return (
@@ -114,18 +95,18 @@ const VolunteerForm = ({ onSubmit, onCancel }) => {
 
         {step === 2 && (
           <StepAvailability
-            form={form}
+            availability={form.availability}
             errors={errors}
-            handleAvailabilityChange={handleAvailabilityChange}
+            onAvailabilityChange={handleAvailabilityChange} // تعديل: ربط دالة التغيير الممررة بشكل صحيح للـ Props المتوقعة داخل المكون الفرعي
           />
         )}
 
-        <div className="flex justify-between items-center">
+        <div className="flex justify-between items-center mt-6">
           <Button
             label="إلغاء"
             type="button"
             onClick={onCancel}
-            className="bg-main-color text-white px-6 py-2 rounded"
+            className="bg-red-500 text-white px-6 py-2 rounded"
           />
 
           <div className="flex gap-4">
@@ -134,11 +115,10 @@ const VolunteerForm = ({ onSubmit, onCancel }) => {
                 label="رجوع"
                 type="button"
                 onClick={handlePrevious}
-                className="bg-main-color text-white px-6 py-2 rounded"
+                className="bg-gray-300 px-6 py-2 rounded"
               />
             )}
-
-            {step < 2 ? (
+ {step < 2 ? (
               <Button
                 label="التالي"
                 type="button"

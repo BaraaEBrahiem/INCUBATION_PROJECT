@@ -20,7 +20,7 @@ export const teamApi = apiSlice.injectEndpoints({
     // جلب الفريق الحالي (لصاحب الفكرة)
     // -----------------------------
     getTeam: builder.query({
-      query: () => '/team/current/',
+      query: () => '/ideas/team/',
       providesTags: ['Team'],
     }),
 
@@ -28,7 +28,7 @@ export const teamApi = apiSlice.injectEndpoints({
     // جلب المتطوعين المقترحين (لصاحب الفكرة الذي ليس لديه فريق)
     // -----------------------------
     getSuggestedVolunteers: builder.query({
-      query: () => '/team/suggested/',
+      query: () => '/ideas/suggested-volunteers/',
       providesTags: ['SuggestedVolunteers'],
     }),
 

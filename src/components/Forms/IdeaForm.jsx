@@ -1,15 +1,9 @@
-// src/components/Forms/IdeaForm.js
-import React, { useReducer, useState, useEffect } from "react";
+import React, { useReducer, useState } from "react";
 import Button from "../Button";
 import Stepper from "../Stepper";
 import DynamicStep from "../DynamicStep";
 import { initialForm, ideaReducer } from "../../hooks/useIdeaReducer";
-
-// -------------------------------------------------------------
-// تعليق كود الـ API مؤقتاً لتجنب مشاكل الـ imports والأخطاء أثناء العمل المحلي
-// -------------------------------------------------------------
-// import { useGetSeasonFormDesignQuery } from "../../api/endpoints/formConfigApi";
-// import { useSaveStepMutation, useSubmitIdeaMutation } from "../../api/endpoints/ideasApi"; 
+import { useGetIdeaFormDesignQuery } from "../../api/endpoints/formConfigApi";
 
 const FALLBACK_SECTORS = [
   { value: "agriculture", label: "الزراعة" },
@@ -20,183 +14,106 @@ const FALLBACK_SECTORS = [
 
 const FALLBACK_STEPS = [
   {
-    id: 1,
-    title: "المعلومات الشخصية",
-    questions: [
-      { key: "phone", label: "رقم الهاتف", type: "text", required: true, placeholder: "رقم الهاتف", choices: [] },
-      { key: "recidence", label: "الاقامة", type: "text", required: true, placeholder: "مكان السكن", choices: [] },
-      { key: "name", label: "الاسم", type: "text", required: true, placeholder: null, choices: [] }
+    name: "المعلومات الشخصية",
+    fields: [
+      { name: "name", label: "الاسم", type: "text", required: true },
+      { name: "city", label: "المدينة", type: "text", required: true },
+      { name: "tel", label: "رقم الهاتف", type: "tel", required: true }
     ]
   },
   {
-    id: 2,
-    title: "معلومات الفكرة",
-    questions: [
-      { key: "title", label: "عنوان الفكرة", type: "text", required: true, placeholder: null, choices: [] },
-      { key: "sector", label: "القطاع المستهدف", type: "text", required: true, placeholder: "صحة\\تعليم\\طبي", choices: [] },
-      { key: "description", label: "وصف مختصر للفكرة", type: "text", required: true, placeholder: "وصف الفكرة", choices: [] }
+    name: "معلومات الفكرة",
+    fields: [
+      { name: "title", label: "عنوان الفكرة", type: "text", required: true },
+      { name: "sector", label: "القطاع", type: "select", required: true },
+      { name: "description", label: "وصف الفكرة", type: "text", required: true },
+      { name: "product_type", label: "نوع المنتج", type: "text", required: true } // تعديل: تحويله إلى product_type ليطابق الـ API
     ]
   },
   {
-    id: 3,
-    title: "معلومات اضافية",
-    questions: [
-      { key: "target_audience", label: "الجمهور المستهدف", type: "text", required: true, placeholder: "الفئة المستهدفة", choices: [] },
-      { key: "product_type", label: "نوع المنتج", type: "select", required: true, placeholder: "ويب\\تطبيق", choices: [
-          { id: 1, value: "app", label: "تطبيق" },
-          { id: 2, value: "web", label: "موقع" }
-        ]
-      },
-      { key: "duration", label: "المدة المتوقعة لانجاز المشروع", type: "text", required: true, placeholder: "المدة المتوقعة بالاشهر", choices: [] },
-      { key: "problem", label: "المشكلة التي يحلها المشروع", type: "text", required: true, placeholder: "المشكلة التي يحلها المشروع", choices: [] }
+    name: "تفاصيل إضافية",
+    fields: [
+      { name: "targetAudience", label: "الجمهور المستهدف", type: "text", required: true },
+      { name: "productProblem", label: "المشكلة التي يحلها المنتج", type: "text", required: true },
+      { name: "projectDuration", label: "مدة المشروع", type: "text", required: true }
     ]
   },
   {
-    id: 4,
-    title: "معلومات الفريق",
-    questions: [
-      { key: "team", label: "هل لديك فريق؟", type: "boolean", required: true, placeholder: null, choices: [] },
-      { key: "اعضاء الفريق", label: "ايميلات اعضاء الفريق", type: "list_text", required: true, placeholder: null, choices: [] }
+    name: "الفريق",
+    fields: [
+      { name: "hasTeam", label: "هل لديك فريق؟", type: "radio", required: true }, // تعديل: أصبح مطلوباً لمنع خطأ الباك إند
+      { name: "teamMembers", label: "أعضاء الفريق", type: "text", required: false },
+      { name: "teamEmails", label: "البريد الإلكتروني لكل عضو", type: "text", required: false }
     ]
   }
 ];
 
-const IdeaForm = ({ onSubmit }) => {
-  // -------------------------------------------------------------
-  // تعليق دوال الـ RTK Query / API
-  // -------------------------------------------------------------
-  // const { data: formConfigFromApi, isLoading: isConfigLoading } = useGetSeasonFormDesignQuery();
-  // const [saveStep, { isLoading: isSavingStep }] = useSaveStepMutation();
-  // const [submitIdea, { isLoading: isSubmitting }] = useSubmitIdeaMutation();
-  
-  // حالات وهمية (Mocked States) بديلة للـ API للحفاظ على استقرار الكود أثناء التعليق
-  const isConfigLoading = false; 
-  const isSavingStep = false;
-  const isSubmitting = false;
-  const formConfigFromApi = null; 
-
+const IdeaForm = ({ onSubmit, seasonId }) => {
+  const { data: formConfigFromApi, isLoading: isConfigLoading } = useGetIdeaFormDesignQuery(seasonId);
   const [form, dispatch] = useReducer(ideaReducer, initialForm);
   const [errors, setErrors] = useState({});
   const [currentStep, setCurrentStep] = useState(0);
 
-  const sectors = FALLBACK_SECTORS;
-  const steps = formConfigFromApi?.steps || FALLBACK_STEPS;
-  const requiredFields = formConfigFromApi?.requiredFields || [];
+  const ideaFormConfig = formConfigFromApi?.idea_form || {};
+  const sectors = ideaFormConfig.sectors || FALLBACK_SECTORS;
+  const steps = ideaFormConfig.steps || FALLBACK_STEPS;
+  const requiredFields = ideaFormConfig.requiredFields || [];
 
   const hasMultipleSteps = steps.length > 1;
 
-  useEffect(() => {
-    if (formConfigFromApi?.current_step) {
-      setCurrentStep(formConfigFromApi.current_step - 1); 
-    }
-  }, [formConfigFromApi]);
- const handleChange = (field, value) => {
-    let finalValue = value;
-    // تحويل القيمة القادمة لحقل الفريق لـ Boolean حقيقي ليتوافق مع الباكيند
-    if (field === "team") {
-      if (value === "true" || value === true || value === "yes") finalValue = true;
-      if (value === "false" || value === false || value === "no") finalValue = false;
-    }
-
-    dispatch({
-      type: "UPDATE_FIELD",
-      field: field,
-      value: finalValue
-    });
-
-    if (errors[field]) {
-      setErrors(prev => ({ ...prev, [field]: "" }));
-    }
+  const handleChange = (field, value) => {
+    dispatch({ type: "UPDATE_FIELD", field, value });
+    if (errors[field]) setErrors((prev) => ({ ...prev, [field]: "" }));
   };
 
   const validateStep = () => {
-    const currentStepFields = steps[currentStep]?.questions || [];
+    const currentStepFields = steps[currentStep]?.fields || [];
     const newErrors = {};
-    
-    currentStepFields.forEach(field => {
-      const value = form[field.key];
-      
-      // نتخطى الـ Validation التقليدي لحقل الـ team هنا لأنه يتم معالجته بالأسفل بشكل مخصص
-      if (field.required && field.key !== "team" && (value === undefined || value === null || value === "")) {
-        newErrors[field.key] =` ${field.label || field.key} مطلوب`;
+
+    currentStepFields.forEach((field) => {
+      if (field.required && !form[field.name]) {
+        newErrors[field.name] = `${field.label || field.name} مطلوب;`;
       }
-      
-      if (requiredFields.includes(field.key) && field.key !== "team" && (value === undefined || value === null || value === "")) {
-        newErrors[field.key] =` ${field.label || field.key} مطلوب`;
+      if (requiredFields.includes(field.name) && !form[field.name]) {
+        newErrors[field.name] = `${field.label || field.name} مطلوب;`;
       }
     });
-    
-    // التعديل الذكي: التحقق من حقل الفريق سواء كان Boolean أو نصاً قديماً
-    if (form.team === true || form.team === "yes") {
-      if (!form["اعضاء الفريق"] || form["اعضاء الفريق"].length === 0) {
-        newErrors["اعضاء الفريق"] = "ايميلات اعضاء الفريق مطلوبة";
+
+    // التحقق المخصص بناءً على اختيار وجود فريق (لتجنب أخطاء الإرسال النهائي في الـ PDF)
+    if (steps[currentStep]?.name === "الفريق") {
+      if (!form.hasTeam) {
+        newErrors.hasTeam = "يرجى تحديد ما إذا كان لديك فريق أم لا";
+      } else if (form.hasTeam === "yes") {
+        if (!form.teamMembers) newErrors.teamMembers = "أعضاء الفريق مطلوبون عند اختيار نعم";
+        if (!form.teamEmails) newErrors.teamEmails = "البريد الإلكتروني لكل عضو مطلوب";
       }
     }
-    
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const getStepPayload = (stepIndex) => {
-    const currentStepFields = steps[stepIndex]?.questions || [];
-    const stepData = {};
-    
-    currentStepFields.forEach(field => {
-      stepData[field.key] = form[field.key];
-    });
-
-    return {
-      step: stepIndex + 1,
-      data: stepData
-    };
-  };
-
-  const handleNext = async () => {
-    if (!validateStep()) return;
-
-    try {
-      const payload = getStepPayload(currentStep);
-      console.log("تم حفظ الخطوة محلياً بنجاح، الـ Payload المرسل:", payload);
-      
-      // تعليق إرسال الخطوة للسيرفر
-      // await saveStep(payload).unwrap();
-      
-      setCurrentStep(currentStep + 1);
-    } catch (apiError) {
-      if (apiError?.data) {
-        setErrors(apiError.data);
-      } else {
-        alert("حدث خطأ ما.");
-      }
-    }
-  };
-
-  const handlePrevious = () => {
-    setCurrentStep(currentStep - 1);
-  };
-
-  const handleSubmit = async (e) => {
+  const handleNext = () => validateStep() && setCurrentStep((prev) => prev + 1);
+  const handlePrevious = () => setCurrentStep((prev) => prev - 1);
+ const handleSubmit = (e) => {
     e.preventDefault();
-    if (!validateStep()) return;
-
-    try {
-      const payload = getStepPayload(currentStep);
-      console.log("حفظ الخطوة الأخيرة محلياً:", payload);
-      console.log("كل بيانات الفورم النهائية الجاهزة للإرسال:", form);
-
-      // تعليق الـ API Calls النهائية
-      // await saveStep(payload).unwrap();
-      // const submitResponse = await submitIdea({}).unwrap();
-      
-      if (onSubmit) onSubmit(form); 
-      
-    } catch (apiError) {
-      if (apiError?.data) {
-        setErrors(apiError.data);
-      } else {
-        alert("حدث خطأ أثناء الإرسال.");
+    if (hasMultipleSteps && !validateStep()) return;
+    
+    if (!hasMultipleSteps) {
+      const allFields = steps.flatMap((s) => s.fields);
+      const newErrors = {};
+      allFields.forEach((field) => {
+        if ((field.required || requiredFields.includes(field.name)) && !form[field.name]) {
+          newErrors[field.name] = `${field.label || field.name} مطلوب;`;
+        }
+      });
+      if (Object.keys(newErrors).length > 0) {
+        setErrors(newErrors);
+        return;
       }
     }
+
+    onSubmit(form);
   };
 
   if (isConfigLoading) {
@@ -208,9 +125,8 @@ const IdeaForm = ({ onSubmit }) => {
   }
 
   if (!hasMultipleSteps) {
-    const allFields = steps[0]?.questions || [];
-    const stepName = steps[0]?.title || "نموذج التسجيل";
-    
+    const allFields = steps[0]?.fields || [];
+    const stepName = steps[0]?.name || "نموذج التسجيل";
     return (
       <form onSubmit={handleSubmit} className="container space-y-6">
         <DynamicStep
@@ -221,24 +137,19 @@ const IdeaForm = ({ onSubmit }) => {
           handleChange={handleChange}
           sectors={sectors}
         />
-        
         <div className="flex justify-center mt-4">
-          <Button
-            label="إرسال"
-            type="submit"
-            className="w-50 bg-main-color text-white px-4 py-2 rounded"
-          />
+          <Button label="إرسال" type="submit" className="w-50 bg-main-color text-white px-4 py-2 rounded" />
         </div>
       </form>
     );
   }
- const currentStepFields = steps[currentStep]?.questions || [];
-  const currentStepName = steps[currentStep]?.title || "";
 
+  const currentStepFields = steps[currentStep]?.fields || [];
+  const currentStepName = steps[currentStep]?.name || "";
+  
   return (
     <form onSubmit={handleSubmit} className="container space-y-6">
-      <Stepper steps={steps.map(s => s.title)} current={currentStep} />
-
+      <Stepper steps={steps.map((s) => s.name)} current={currentStep} />
       <DynamicStep
         stepName={currentStepName}
         fields={currentStepFields}
@@ -247,32 +158,14 @@ const IdeaForm = ({ onSubmit }) => {
         handleChange={handleChange}
         sectors={sectors}
       />
-
-      <div className="flex gap-4">
-        {currentStep < steps.length - 1 && (
-          <Button
-            label="التالي"
-            type="button"
-            onClick={handleNext}
-            className="w-50 bg-main-color text-white px-4 py-2 rounded"
-          />
-        )}
-
+      <div className="flex gap-4 mt-6">
         {currentStep > 0 && (
-          <Button
-            label="رجوع"
-            type="button"
-            onClick={handlePrevious}
-            className="w-50 bg-gray-500 px-4 py-2 rounded"
-          />
+          <Button label="رجوع" type="button" onClick={handlePrevious} className="w-50 bg-gray-300 px-4 py-2 rounded" />
         )}
-
-        {currentStep === steps.length - 1 && (
-          <Button
-            label="إرسال الفكرة"
-            type="submit"
-            className="w-50 bg-main-color text-white px-4 py-2 rounded"
-          />
+        {currentStep < steps.length - 1 ? (
+          <Button label="التالي" type="button" onClick={handleNext} className="w-50 bg-main-color text-white px-4 py-2 rounded" />
+        ) : (
+          <Button label="إرسال" type="submit" className="w-50 bg-main-color text-white px-4 py-2 rounded" />
         )}
       </div>
     </form>

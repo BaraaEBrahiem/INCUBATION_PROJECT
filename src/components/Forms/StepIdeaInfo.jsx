@@ -12,7 +12,8 @@ const StepIdeaInfo = ({ form, errors, handleChange, sectors }) => {
         placeholder="ما هو عنوان فكرتك؟"
         name="title"
         value={form.title}
-        onChange={handleChange}
+        // داخل مكون StepIdeaInfo
+onChange={(e) => handleChange("title", e.target.value)}
         error={errors.title}
         className="w-1/2"
       />

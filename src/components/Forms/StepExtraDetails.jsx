@@ -3,15 +3,15 @@ import Input from "../Input"
 const StepExtraDetails = ({ form, errors, handleChange }) => {
   return (
     <>
-      <h3 className="font-bold text-lg">تفاصيل اضافية</h3>
+      <h3 className="font-bold text-lg mb-4">تفاصيل إضافية</h3>
 
       <Input
         label="نوع المنتج"
         placeholder="تطبيق، موقع إلكتروني، جهاز..."
-        name="productType"
-        value={form.productType}
-        onChange={handleChange}
-        error={errors.productType}
+        name="product_type" // تعديل أساسي ليطابق الباك إند
+        value={form.product_type || ""}
+        onChange={(e) => handleChange("product_type", e.target.value)}
+        error={errors.product_type}
         className="w-1/2"
       />
 
@@ -19,8 +19,8 @@ const StepExtraDetails = ({ form, errors, handleChange }) => {
         label="الفئة المستهدفة"
         placeholder="من هم المستخدمون المستهدفون؟"
         name="targetAudience"
-        value={form.targetAudience}
-        onChange={handleChange}
+        value={form.targetAudience || ""}
+        onChange={(e) => handleChange("targetAudience", e.target.value)}
         error={errors.targetAudience}
         className="w-1/2"
       />
@@ -29,8 +29,8 @@ const StepExtraDetails = ({ form, errors, handleChange }) => {
         label="المشكلة التي يحلها المنتج"
         placeholder="وصف لا تتجاوز 30 كلمة"
         name="productProblem"
-        value={form.productProblem}
-        onChange={handleChange}
+        value={form.productProblem || ""}
+        onChange={(e) => handleChange("productProblem", e.target.value)}
         error={errors.productProblem}
         className="w-1/2"
       />
@@ -38,4 +38,4 @@ const StepExtraDetails = ({ form, errors, handleChange }) => {
   )
 }
 
-export default StepExtraDetails
+export default StepExtraDetails;

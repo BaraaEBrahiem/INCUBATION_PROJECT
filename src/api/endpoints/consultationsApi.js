@@ -6,8 +6,8 @@ export const consultationsApi = apiSlice.injectEndpoints({
 
     // إرسال طلب استشارة
     sendConsultationRequest: builder.mutation({
-      query: (data) => ({
-        url: '/consultations/request/',
+      query: (data,id) => ({
+        url: `/volunteers/consultations/${id}/`,
         method: 'POST',
         body: data,
       }),

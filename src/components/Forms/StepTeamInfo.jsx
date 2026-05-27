@@ -10,7 +10,7 @@ const StepTeamInfo = ({ form, errors, handleChange }) => {
         label="هل لديك فريق؟"
         name="hasTeam"
         value={form.hasTeam}
-        onChange={handleChange}
+        onChange={(val) => handleChange("hasTeam", val)}
         options={[
           { value: "yes", label: "نعم" },
           { value: "no", label: "لا" }

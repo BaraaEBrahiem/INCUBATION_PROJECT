@@ -32,7 +32,7 @@ export const authApi = apiSlice.injectEndpoints({
     // -----------------------------
     forgotPassword: builder.mutation({
       query: (data) => ({
-        url: "auth/password-reset/",
+        url: "/accounts/forget-password/",
         method: "POST",
         body: data,
       }),
@@ -43,7 +43,7 @@ export const authApi = apiSlice.injectEndpoints({
     // -----------------------------
     verifyOtp: builder.mutation({
       query: (data) => ({
-        url: "auth/password-reset/verify/",
+        url: "/accounts/verify-password-otp/",
         method: "POST",
         body: data,
       }),
@@ -54,7 +54,7 @@ export const authApi = apiSlice.injectEndpoints({
     // -----------------------------
     newPassword: builder.mutation({
       query: (data) => ({
-        url: "auth/password-reset/confirm/",
+        url: "/acoounts/reset-password/",
         method: "POST",
         body: data,
       }),
