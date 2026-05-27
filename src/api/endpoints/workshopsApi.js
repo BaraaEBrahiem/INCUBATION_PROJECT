@@ -28,7 +28,7 @@ export const workshopsApi = apiSlice.injectEndpoints({
     // إضافة ورشة جديدة
     addWorkshop: builder.mutation({
       query: (workshopData) => ({
-        url: '/workshops/',
+        url: '/volunteers/workshops/create/',
         method: 'POST',
         body: workshopData,
       }),
@@ -38,7 +38,33 @@ export const workshopsApi = apiSlice.injectEndpoints({
       query: () => 'admin/workshops/',
       providesTags: ['Workshop'],
     }),
+  //جلب ورشات المعسكر للمتطوع
+  getCampWorkshops: builder.query({
+  query: () => '/bootcamp/my-bootcamp-sessions/',
+  providesTags: (result) =>
+    result
+      ? [
+          ...result.map(({ id }) => ({ type: 'Workshop', id })),
+          { type: 'CampWorkshops', id: 'LIST' },
+        ]
+      : [{ type: 'Workshop', id: 'LIST' }],
+}),
+ //عرض الافكار يلي بحالة المعسكر
 
+getCampWorkshopProjects: builder.query({
+  query: (id) => `/bootcamp/bootcamp-sessions/${id}/ideas/`,
+  providesTags: (result, error, id) => [{ type: 'CampProjects', id: id }],
+}),
+
+// دالة تحديث حالة الحضور والغياب للمشروع
+updateProjectAttendance: builder.mutation({
+  query: ({ idea_id, status }) => ({
+    url: `/admin/camp/projects/${idea_id}/attendance/`,
+    method: 'POST',
+    body: { status },
+  }),
+  invalidatesTags: (result, error, { idea_id }) => ['CampProjects', idea_id],
+}),
 
   }),
 });
@@ -49,4 +75,7 @@ export const {
   useGetAllWorkshopsQuery,  
   useAddWorkshopMutation,
   useGetWorkshopsQuery,
+  useGetCampWorkshopsQuery,
+  useGetCampWorkshopProjectsQuery,
+  useUpdateProjectAttendanceMutation,
 } = workshopsApi;

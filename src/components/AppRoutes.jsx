@@ -88,6 +88,8 @@ import ExhibitionManagementPage from "../pages/Admin/ExhibitionManagementPage";
 import LatestReviewPage from "../pages/Admin/LatestReviewPage";
 import AdminProjectsDetailsPage from "../pages/Admin/AdminProjectsDetailsPage";
 import GraduatedProjectsPage from "../pages/Admin/GraduatedProjectsPage";
+import CampWorkshopsPage from "../pages/Volunteer/CampWorkshopsPage";
+import CampProjectsPage from "../pages/Volunteer/CampProjectsPage";
 
 const AppRoutes = () => {
     const { roles } = useRole();
@@ -170,6 +172,8 @@ const AppRoutes = () => {
           <Route path="/workshopinfo/:id" element={<WorkshopInfoPage />} />
           <Route path="/assigned-projects-page" element={<AssignedProjectsPage />} />
           <Route path="/volunteer-request/:id" element={<VolunteerRequestDetailsPage />} />
+          <Route path="/CampWorkShopsPage" element={<CampWorkshopsPage/>}/>
+          <Route path ="/CampProjectsPage" element={<CampProjectsPage/>}/>
         </Route>
       )}
 

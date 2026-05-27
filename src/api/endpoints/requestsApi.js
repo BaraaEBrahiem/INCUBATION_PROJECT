@@ -8,7 +8,7 @@ export const requestsApi = apiSlice.injectEndpoints({
     // جلب جميع الطلبات (استشارات + تطوع)
     // -----------------------------
     getAllRequests: builder.query({
-      query: () => '/requests/',
+      query: () => '/volunteers/all-requests/',
       providesTags: ['Requests'],
     }),
 
@@ -16,7 +16,7 @@ export const requestsApi = apiSlice.injectEndpoints({
     // جلب طلبات الاستشارة فقط
     // -----------------------------
     getConsultationRequests: builder.query({
-      query: () => '/requests/consultations/',
+      query: () => '/volunteers/consultations/',
       providesTags: ['Requests'],
     }),
 
@@ -24,7 +24,7 @@ export const requestsApi = apiSlice.injectEndpoints({
     // جلب طلبات التطوع فقط
     // -----------------------------
     getVolunteerRequests: builder.query({
-      query: () => '/requests/volunteers/',
+      query: () => '/volunteers/join-requests/',
       providesTags: ['Requests'],
     }),
 
@@ -32,7 +32,7 @@ export const requestsApi = apiSlice.injectEndpoints({
     // جلب طلب تطوع محدد بواسطة ID
     // -----------------------------
     getVolunteerRequestById: builder.query({
-      query: (id) => `/requests/volunteers/${id}/`,
+      query: (id) => `/requests/join-request-details/${id}/`,
       providesTags: (result, error, id) => [{ type: 'Requests', id }],
 }),
   }),
