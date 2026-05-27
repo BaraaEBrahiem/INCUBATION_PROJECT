@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import Button from "../../Button";
-import { useGetExhibitionsListQuery } from "../../api/endpoints/exhibitionApi";
+import { useGetExhibitionsListQuery } from "../../../api/endpoints/admin/exhibitionApi";
 
 export default function ExhibitionRecord() {
   const navigate = useNavigate();

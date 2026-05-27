@@ -5,13 +5,13 @@ import Modal from "../../components/Modal";
 import { IoImageOutline } from "react-icons/io5";
 import Input from "../../components/Input";
 import { showError, showSuccess } from "../../Utils/toast";
+import { 
+  useGetExhibitionCardRequestDetailsQuery, 
+  useSubmitProjectDecisionMutation 
 
-import {
-  useSubmitProjectDecisionMutation,
 } from "../../api/endpoints/admin/exhibitionApi";
 
 export default function CardRequestDetailsPage() {
- 
   const { submissionId = 1 } = useParams(); 
   const navigate = useNavigate();
 
@@ -21,29 +21,10 @@ export default function CardRequestDetailsPage() {
   const [rejectNotes, setRejectNotes] = useState("");
   const [acceptMessage, setAcceptMessage] = useState("");
 
-  const [submitDecision, { isLoading: isSubmittingDecision }] = useSubmitProjectDecisionMutation();
+  const { data, isLoading: isLoadingDetails, error: errorDetails } = useGetExhibitionCardRequestDetailsQuery(submissionId);
 
-  
-  const data = {
-    project: {
-      name: "gg",
-      image: null,
-      owner_name: "user",
-    },
-    fields: [
-      {
-        label: "اسم الفكرة",
-        type: "text",
-        answer: "منصة عرض مشاريع مميزة",
-      },
-      {
-        label: "التصنيف",
-        type: "select",
-        answer: "تكنولوجي",
-      },
-    ],
-    status: "pending",
-  };
+
+  const [submitDecision, { isLoading: isSubmittingDecision }] = useSubmitProjectDecisionMutation();
 
 
   const handleReject = async () => {
@@ -75,7 +56,6 @@ export default function CardRequestDetailsPage() {
     }
 
     try {
-
       await submitDecision({
         submissionId,
         decision: "approved",
@@ -84,11 +64,22 @@ export default function CardRequestDetailsPage() {
 
       showSuccess("تم قبول طلب المشروع بنجاح!");
       setAcceptModal(false);
+      navigate("/admin/submissions");
     } catch (err) {
       console.error(err);
       showError(err?.data?.detail || "حدث خطأ أثناء إرسال قرار القبول.");
     }
   };
+
+
+  if (isLoadingDetails) {
+    return <p className="text-center mt-20 font-bold">جاري تحميل تفاصيل الطلب...</p>;
+  }
+
+
+  if (errorDetails) {
+    return <p className="text-center mt-20 text-red-500 font-bold">حدث خطأ أثناء تحميل بيانات هذا الطلب.</p>;
+  }
 
   return (
     <div className="p-6 bg-white-color w-full min-h-screen" dir="rtl">
@@ -97,7 +88,7 @@ export default function CardRequestDetailsPage() {
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
           
-          {/* القسم الأيمن: البيانات الأساسية والحقول الديناميكية */}
+          {/* القسم الأيمن: البيانات الأساسية والحقول الديناميكية القادمة من الدالة الحقيقية */}
           <div className="md:col-span-2 flex flex-col gap-6">
             
             {/* معلومات المشروع الأساسية */}
@@ -113,13 +104,16 @@ export default function CardRequestDetailsPage() {
               </InfoRow>
 
               <InfoRow label="حالة الطلب الحالية:">
-                <span className="px-3 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-800">
-                  {data?.status === "pending" ? "قيد الانتظار" : data?.status}
+                <span className={`px-3 py-1 rounded-full text-xs font-bold ${
+                  data?.status === "pending" ? "bg-amber-100 text-amber-800" : 
+                  data?.status === "approved" ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
+                }`}>
+                  {data?.status === "pending" ? "قيد الانتظار" : data?.status === "approved" ? "مقبول" : "مرفوض"}
                 </span>
               </InfoRow>
             </div>
 
-            {/* عناصر الفكرة الديناميكية مصفوفة fields */}
+            {/* عناصر الفكرة الديناميكية المقروءة من الـ API الحقيقي */}
             <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
               <h3 className="font-bold text-xl mb-4 border-b border-second-color pb-2">تفاصيل الفكرة (الفورم)</h3>
 
@@ -134,7 +128,7 @@ export default function CardRequestDetailsPage() {
               )}
             </div>
 
-            {/* أزرار التحكم بالطلب (تعطيل الأزرار أثناء التحميل لمنع التكرار) */}
+            {/* أزرار التحكم بالطلب */}
             <div className="flex gap-4 mt-4">
               <button
                 onClick={() => setAcceptModal(true)}
@@ -154,7 +148,7 @@ export default function CardRequestDetailsPage() {
             </div>
           </div>
 
-          {/* القسم الأيسر: عرض صورة المشروع */}
+          {/* القسم الأيسر: عرض صورة المشروع قادمة من السيرفر */}
           <div className="flex flex-col items-center justify-center p-6 bg-gray-50 border border-gray-200 border-dashed rounded-lg min-h-[250px]">
             {data?.project?.image ? (
               <img

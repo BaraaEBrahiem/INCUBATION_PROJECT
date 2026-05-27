@@ -38,4 +38,5 @@ export const graduationApi = apiSlice.injectEndpoints({
 export const {
   useGetEvaluationNotesQuery,
   useSubmitGraduationDecisionMutation,
+  useGetGraduatedProjectsQuery,
 } = graduationApi;
