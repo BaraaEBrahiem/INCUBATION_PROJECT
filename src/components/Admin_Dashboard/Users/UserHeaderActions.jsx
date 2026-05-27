@@ -1,4 +1,4 @@
-import { useState } from "react";
+ import { useState, useEffect } from "react";
 import Modal from "../../Modal";
 import Button from "../../Button";
 import girl from "../../../assets/images/girl.jpg";
@@ -18,8 +18,30 @@ const UserHeaderActions = ({
   const [editRoleOpen, setEditRoleOpen] = useState(false);
   const [notifyOpen, setNotifyOpen] = useState(false);
 
-  const [selectedRole, setSelectedRole] = useState(user.role);
+  // 1. تحويل الأدوار القادمة إلى مصفوفة دائماً لتجنب الأخطاء
+  const userRoles = Array.isArray(user.role) ? user.role : [user.role];
+
+  // 2. جعل الـ State عبارة عن مصفوفة لتخزين الأدوار المختارة
+  const [selectedRoles, setSelectedRoles] = useState(userRoles);
   const [notificationText, setNotificationText] = useState("");
+
+ 
+  useEffect(() => {
+  //eslint-disable-next-line
+    setSelectedRoles(userRoles);
+    //eslint-disable-next-line
+  }, [user.role]);
+
+  // دالة للتعامل مع الـ Checkbox (إضافة أو إزالة الدور من المصفوفة)
+  const handleCheckboxChange = (roleName, isChecked) => {
+    if (isChecked) {
+      // إذا تم تفعيل الخيار، نضيف الدور للمصفوفة
+      setSelectedRoles((prev) => [...prev, roleName]);
+    } else {
+      // إذا تم إلغاء تفعيل الخيار، نحذفه من المصفوفة
+      setSelectedRoles((prev) => prev.filter((r) => r !== roleName));
+    }
+  };
 
   return (
     <>
@@ -32,13 +54,14 @@ const UserHeaderActions = ({
           />
           <div>
             <h2 className="text-xl font-semibold">{user.name}</h2>
-            <p className="text-gray-600">{user.role}</p>
+            {/* تعديل 1: عرض الأدوار كـ نصوص مفصولة بشرطة */}
+            <p className="text-gray-600">{userRoles.join(" - ")}</p>
           </div>
         </div>
 
         <div className="flex justify-between items-center">
           <Button
-            label=" تعديل الدور"
+            label="تعديل الأدوار"
             className="bg-main-color"
             onClick={() => setEditRoleOpen(true)}
           />
@@ -61,7 +84,8 @@ const UserHeaderActions = ({
             onClick={() => setFreezeOpen(true)}
           />
 
-          {user.role === "متطوع" && (
+          {/* تعديل 2: الفحص باستخدام .includes لدعم تعدد الأدوار */}
+          {userRoles.includes("متطوع") && (
             <NavLinkUniversal
               label={<Button label="طلب التطوع" className="bg-main-color" />}
               to={`/admin/details/${user.id}?type="request"`}
@@ -98,7 +122,7 @@ const UserHeaderActions = ({
       <Modal
         isOpen={activateOpen}
         onClose={() => setActivateOpen(false)}
-        title="تفعيل الحساب"
+title="تفعيل الحساب"
         footer={
           <div className="flex gap-3">
             <Button
@@ -118,35 +142,58 @@ const UserHeaderActions = ({
         <p>سيتم تفعيل حساب المستخدم ويمكنه تسجيل الدخول.</p>
       </Modal>
 
-      {/* تعديل الدور */}
+      {/* تعديل 3: نافذة تعديل الأدوار المتعددة */}
       <Modal
         isOpen={editRoleOpen}
         onClose={() => setEditRoleOpen(false)}
-        title="تعديل الدور"
+        title="تعديل الأدوار"
         footer={
           <Button
             label="حفظ التعديلات"
             className="bg-main-color"
-            onClick={() => onChangeRole(user.id, selectedRole)}
+            // نرسل المصفوفة الكاملة للأدوار الجديدة المختارة
+            onClick={() => {
+              onChangeRole(user.id, selectedRoles);
+              setEditRoleOpen(false);
+            }}
           />
         }
       >
         <p className="mb-4 text-black font-medium">
-          يرجى اختيار الدور الجديد للمستخدم {user.name} :
+          يرجى اختيار الأدوار الحالية للمستخدم {user.name} :
         </p>
 
         <div className="flex flex-col gap-2 text-right font-bold">
-          <Checkbox label="مدير" onChange={() => setSelectedRole("مدير")} />
-          <Checkbox label="زائر" onChange={() => setSelectedRole("زائر")} />
-          <Checkbox label="متطوع" onChange={() => setSelectedRole("متطوع")} />
+          <Checkbox 
+            label="مدير" 
+            checked={selectedRoles.includes("مدير")}
+            onChange={(e) => handleCheckboxChange("مدير", e.target.checked)} 
+          />
+          <Checkbox 
+            label="زائر" 
+            checked={selectedRoles.includes("زائر")}
+            onChange={(e) => handleCheckboxChange("زائر", e.target.checked)} 
+          />
+          <Checkbox 
+            label="متطوع" 
+            checked={selectedRoles.includes("متطوع")}
+            onChange={(e) => handleCheckboxChange("متطوع", e.target.checked)} 
+          />
           <Checkbox
             label="صاحب الفكرة"
-            onChange={() => setSelectedRole("صاحب فكرة")}
+            checked={selectedRoles.includes("صاحب فكرة")}
+            onChange={(e) => handleCheckboxChange("صاحب فكرة", e.target.checked)}
           />
           <Checkbox
             label="محتضن"
-            onChange={() => setSelectedRole("محتضن")}
+            checked={selectedRoles.includes("محتضن")}
+            onChange={(e) => handleCheckboxChange("محتضن", e.target.checked)}
           />
+          <Checkbox 
+  label="مقيم" 
+  checked={selectedRoles.includes("مقيم")}
+  onChange={(e) => handleCheckboxChange("مقيم", e.target.checked)} 
+/>
         </div>
       </Modal>
 

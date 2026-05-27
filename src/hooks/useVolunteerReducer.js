@@ -1,13 +1,13 @@
 // الحالة الابتدائية
 export const initialVolunteerForm = {
-  experienceYears: "",
-  expertiseArea: "",
-  employer: "",
+  years_of_experience: "",
+  current_company:"",
+  primary_skills: "",
   profileLink: "",
-  consultationPreferences: "",
-  location: "",
-  expertition: "",
-  volunteeringGoal: "",
+  specialization: "",
+  residence: "",
+  volunteer_type: "",
+  motivation: "",
   availability: Object.fromEntries(
     ["الاثنين","الثلاثاء","الأربعاء","الخميس","الجمعة","السبت","الأحد"]
       .map(d => [d, { from: "", to: "", active: false }])

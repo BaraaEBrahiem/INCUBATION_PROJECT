@@ -1,4 +1,4 @@
-import { useParams, useNavigate } from "react-router-dom";
+ import { useParams, useNavigate } from "react-router-dom";
 import {
   useGetAdminUserByIdQuery,
   useUpdateUserStatusMutation,
@@ -21,11 +21,11 @@ const UserDetailsPage = () => {
   //   1) جلب بيانات المستخدم
   const { data: user, isLoading, refetch } = useGetAdminUserByIdQuery(id);
 
-  // fallback قبل الربط الكامل
+  // تم تعديل الـ fallback لتصبح الأدوار مصفوفة افتراضياً
   const fallbackUser = {
     id,
     name: "مايا المحمد",
-    role: "متطوع",
+    role: ["صاحب فكرة","متطوع"], // تحويلها لمصفوفة لتتوافق مع التحديث الجديد
     email: "ahmadalmo12@gmail.com",
     phone: "093883273883",
     joinedAt: "12/3/2025",
@@ -50,6 +50,9 @@ const UserDetailsPage = () => {
   };
 
   const finalUser = user || fallbackUser;
+
+  // التعديل الأساسي: التأكد من تحويل الأدوار إلى مصفوفة للتعامل معها بمرونة
+  const userRoles = Array.isArray(finalUser.role) ? finalUser.role : [finalUser.role];
   // ---------------------------------------------------------
 
   // ---------------------------------------------------------
@@ -71,8 +74,9 @@ const UserDetailsPage = () => {
     refetch();
   };
 
-  const handleChangeRole = async (userId, newRole) => {
-    await updateRole({ id: userId, role: newRole });
+  const handleChangeRole = async (userId, newRoles) => {
+    // نرسل الأدوار الجديدة (سواء كانت مصفوفة أو مجهزة للباكيند)
+    await updateRole({ id: userId, role: newRoles });
     refetch();
   };
 
@@ -103,8 +107,7 @@ const UserDetailsPage = () => {
     navigate(`/projectinfo/${finalUser.project.id}`);
   };
   // ---------------------------------------------------------
-
-  if (isLoading) return <p className="text-center mt-10">جاري التحميل...</p>;
+ if (isLoading) return <p className="text-center mt-10">جاري التحميل...</p>;
 
   return (
     <div className="bg-white-color min-h-screen pb-6">
@@ -128,34 +131,47 @@ const UserDetailsPage = () => {
           onMessageClick={handleMessageClick}
         />
 
-        {/* حسب الدور */}
-        {finalUser.role === "متطوع" && (
-          <VolunteerWorkshopsSection 
-            workshops={finalUser.workshops}
-            onTaskClick={handleTaskClick}
-          />
-        )}
+        {/* التعديل هنا: فحص الأدوار باستخدام .includes لدعم تعدد الأدوار وعرض الأقسام معاً */}
+        
+    
+{/* إضافة قسم المقيم هنا 🚀 */}
+{userRoles.includes("متطوع") && (
+  <VolunteerWorkshopsSection 
+    workshops={finalUser.workshops}
+    onTaskClick={handleTaskClick}
+  />
+)}
 
-        {finalUser.role === "محتضن" && (
-          <EvaluationSection
-            evaluations={finalUser.evaluations}
-            notes={finalUser.notes}
-            project={finalUser.project}
-            onEvaluationClick={handleEvaluationClick}
-            onViewProject={handleViewProject}
-          />
-        )}
+{/* حماية شرط المقيم: نتأكد من وجود مشروع أولاً قبل تمريره، أو نمرر كائن فارغ كـ fallback للـ project */}
+{userRoles.includes("مقيم") && (
+  <EvaluationSection
+    evaluations={finalUser.evaluations || []}
+    notes={finalUser.notes || []}
+    project={finalUser.project || { id: null }} // حماية الـ id هنا 
+    onEvaluationClick={handleEvaluationClick}
+    onViewProject={handleViewProject}
+  />
+)}
 
-        {finalUser.role === "صاحب فكرة" && (
-          <EvaluationSection
-            evaluations={finalUser.evaluations}
-            attendanceRate={finalUser.attendanceRate}
-            project={finalUser.project}
-            onEvaluationClick={handleEvaluationClick}
-            onViewProject={handleViewProject}
-          />
-        )}
+{userRoles.includes("محتضن") && (
+  <EvaluationSection
+    evaluations={finalUser.evaluations || []}
+    notes={finalUser.notes || []}
+    project={finalUser.project || { id: null }}
+    onEvaluationClick={handleEvaluationClick}
+    onViewProject={handleViewProject}
+  />
+)}
 
+{userRoles.includes("صاحب فكرة") && (
+  <EvaluationSection
+    evaluations={finalUser.evaluations || []}
+    attendanceRate={finalUser.attendanceRate}
+    project={finalUser.project || { id: null }}
+    onEvaluationClick={handleEvaluationClick}
+    onViewProject={handleViewProject}
+  />
+)}
       </div>
     </div>
   );

@@ -40,7 +40,7 @@ const DataTable = ({
               className={`border-b border-gray-300 transition cursor-pointer hover:bg-gray-100 ${
                 selectedRowId ===
                 row.idea_id
-                  ? "bg-blue-100"
+                  ? ""
                   : ""
               }`}
             >

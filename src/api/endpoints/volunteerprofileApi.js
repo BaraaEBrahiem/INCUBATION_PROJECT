@@ -19,6 +19,15 @@ export const volunteerprofileApi = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ["VolunteerProfile"],
     }),
+    //ارسال طلب تطوع
+  
+upgradeToVolunteer: builder.mutation({
+  query: (formData) => ({
+    url: '/volunteers/apply/', // الرابط المطابق للصورة تماماً
+    method: 'POST',
+    body: formData, // الحقول: primary_skills, years_of_experience, current_company, specialization, volunteer_type, residence, motivation, day, start_time, end_time
+  }),
+}),
 
   }),
 })

@@ -1,41 +1,32 @@
 import Input from "../Input"
 import Select from "../Select"
 
-const StepExperience = ({ form, errors, handleChange, expertiseOptions }) => {
+const StepExperience = ({ form, errors, handleChange}) => {
   return (
     <div className="grid grid-cols-2 gap-15">
       <Input
         label="عدد سنوات الخبرة"
-        name="experienceYears"
+        name="years_of_experience"
         type="number"
-        value={form.experienceYears > 0 ? form.experienceYears : ""}
+        value={form.years_of_experience > 0 ? form.years_of_experience : ""}
         onChange={handleChange}
-        error={errors.experienceYears}
-      />
-
-      <Select
-        label="مجالات الخبرة"
-        name="expertiseArea"
-        value={form.expertiseArea}
-        onChange={handleChange}
-        options={expertiseOptions}
-        error={errors.expertiseArea}
+        error={errors.years_of_experience}
       />
 
       <Input
         label="جهة العمل الحالية"
-        name="employer"
-        value={form.employer}
+        name="current_company"
+        value={form.current_company}
         onChange={handleChange}
-        error={errors.employer}  
+        error={errors.current_company}
       />
 
       <Input
-        label="رابط الملف المهني (اختياري)"
-        type="url"
-        name="profileLink"
-        value={form.profileLink}
+        label="المهارة الاساسية"
+        name="primary_skills"
+        value={form.primary_skills}
         onChange={handleChange}
+        error={errors.primary_skills}  
       />
     </div>
   )
