@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import FieldTypesPanel from "../../Exhibition-management/FieldTypesPanel";
-import FormBuilderCanvas from "./FormBuilderCanvas";
+import FormBuilderCanvas from "../../Exhibition-management/FormBuilderCanvas";
 import Button from "../../../Button";
 import { useNavigate } from "react-router-dom";
 import { showError } from "../../../../Utils/toast";

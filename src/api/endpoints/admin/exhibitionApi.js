@@ -1,5 +1,5 @@
 // src/api/endpoints/exhibitionApi.js
-import { apiSlice } from "../apiSlice";
+import { apiSlice } from "../../apiSlice";
 
 export const exhibitionApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
@@ -43,8 +43,6 @@ export const exhibitionApi = apiSlice.injectEndpoints({
     // -----------------------------
     // 5) طلبات البطاقات (للمشاريع التي تريد عرضاً في المعرض)
     // -----------------------------
-
-    // جلب طلبات البطاقات
     getExhibitionCardRequests: builder.query({
     query: () => '/admin/exhibition/submissions/',
     providesTags: ['ExhibitionCardRequests'],
@@ -88,4 +86,5 @@ export const {
   useGetExhibitionCardRequestsQuery,
   useGetExhibitionCardRequestDetailsQuery,
   useSubmitProjectDecisionMutation,
+  useGetExhibitionsListQuery,
 } = exhibitionApi;

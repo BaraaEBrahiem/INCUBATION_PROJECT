@@ -8,7 +8,7 @@ import { GrTechnology } from "react-icons/gr";
 import { SlBookOpen } from "react-icons/sl";
 import { GiStethoscope } from "react-icons/gi";
 import { useGetPublicProjectsQuery } from "../../api/endpoints/publicProjectsApi";
-import { useGetExhibitionProjectsQuery } from "../../api/endpoints/exhibitionApi";
+import { useGetExhibitionProjectsQuery } from "../../api/endpoints/admin/exhibitionApi";
 
 const ProjectsPage = () => {
   const location = useLocation();

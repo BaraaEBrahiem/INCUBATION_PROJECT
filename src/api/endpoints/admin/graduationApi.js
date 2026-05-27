@@ -1,4 +1,4 @@
-import { apiSlice } from "../apiSlice";
+import { apiSlice } from "../../apiSlice";
 
 export const graduationApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
@@ -38,4 +38,5 @@ export const graduationApi = apiSlice.injectEndpoints({
 export const {
   useGetEvaluationNotesQuery,
   useSubmitGraduationDecisionMutation,
+  useGetGraduatedProjectsQuery,
 } = graduationApi;
