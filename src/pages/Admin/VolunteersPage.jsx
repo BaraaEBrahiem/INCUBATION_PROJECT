@@ -1,17 +1,21 @@
 import { useState } from "react";
+
 import CategoryFilterBar from "../../components/CategoryFilterBar";
 import ConsultantsList from "../../components/ConsultantsList";
 
 // import { useGetVolunteersQuery, useGetVolunteerRequestsQuery, useGetEvaluatorsQuery, useGetTeamRequestsQuery } from "../../api/endpoints/admin/volunteersOptionsApi.js";
 
 const VolunteersPage = () => {
+  const [selected, setSelected] =
+    useState("volunteers");
+
   const categories = [
     { id: "volunteers", label: "المتطوعين" },
     { id: "requests", label: "طلبات التطوع" },
     { id: "evaluators", label: "المقيمين" },
     { id: "user_requests", label: "طلبات المستخدمين" }
   ];
-
+   //eslint-disable-next-line
   const [selected, setSelected] = useState("volunteers");
 
   // const { data: volunteersData, isLoading: isLoadingVolunteers } = useGetVolunteersQuery();
@@ -134,18 +138,30 @@ const VolunteersPage = () => {
       <h2 className="text-3xl font-bold mb-6">إدارة المتطوعين</h2>
 
       <CategoryFilterBar
-        categories={categories}
-        selected={selected}
-        onSelect={setSelected}
+        categories={
+          categories
+        }
+        selected={
+          selected
+        }
+        onSelect={
+          setSelected
+        }
         className="bg-white-color"
       />
 
-      {currentData.length === 0 ? (
+      {currentData.length ===
+      0 ? (
         <div className="text-center py-10 text-gray-500">
           لا يوجد {selected === "volunteers" ? "متطوعين" : selected === "requests" ? "طلبات تطوع" : selected === "evaluators" ? "مقيمين" : "طلبات مستخدمين"} حالياً.
         </div>
       ) : (
-        <ConsultantsList consultants={currentData} role="admin" />
+        <ConsultantsList
+          consultants={
+            currentData
+          }
+          role="admin"
+        />
       )}
     </div>
   );

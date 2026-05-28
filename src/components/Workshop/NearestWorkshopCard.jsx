@@ -1,39 +1,42 @@
 import React from 'react';
 import NavLinkUniversal from '../NavLinkUniversal';
 import Button from '../Button';
-// import { useGetNearestWorkshopQuery } from '../../api/endpoints/workshopInfo.js';
 
-const NearestWorkshopCard = () => {
-
-  // const { data: liveWorkshop, isLoading, error } = useGetNearestWorkshopQuery();
+const NearestWorkshopCard = ({ workshop }) => {
   
-  const mockWorkshop = {
-    title: "روبوت سبايك",
-    date: "15/4/2026",
-    time: "2-5",
-  };
-
-  // const workshop = liveWorkshop || mockWorkshop;
-  const workshop = mockWorkshop;
-
-  // if (isLoading) return <div className="p-6 text-center font-bold text-gray-500">جاري تحميل أقرب ورشة عمل...</div>;
-  // if (error) return <div className="p-6 text-center text-red-500 font-bold">حدث خطأ أثناء جلب تفاصيل الورشة.</div>;
+  if (!workshop) {
+    return (
+      <div className='bg-white p-6 rounded-lg flex justify-between items-center shadow-lg mb-8 dir-rtl text-right'>
+        <div>
+          <h3 className='font-bold text-2xl mb-2 text-gray-800'>أقرب ورشة عمل إليك</h3>
+          <p className='text-gray-500 font-medium mt-4'>لا توجد ورشات عمل مجدولة قريباً حالياً.</p>
+        </div>
+        <NavLinkUniversal 
+          label={<Button label={"إضافة ورشة"} className='bg-main-color hover:bg-second-color transition-all'/>}
+          to={"/AddworkshopPage"} 
+        />
+      </div>
+    );
+  }
 
   return (
-    <div className='bg-white p-6 rounded-lg flex justify-between items-center shadow-lg mb-8' dir="rtl">
-      <div className="text-right">
-        <h3 className='font-bold text-2xl mb-2 text-second-color'>أقرب ورشة عمل إليك</h3>
-        <p className='font-medium text-lg mb-1'>
-          <span className='font-bold text-xl pl-4 text-black'>اسم الورشة :</span>
-          {workshop?.title}
+    <div className='bg-white p-6 rounded-lg flex flex-col md:flex-row justify-between items-start md:items-center shadow-lg mb-8 dir-rtl text-right gap-4'>
+      <div className='space-y-2'>
+        <h3 className='font-bold text-2xl mb-3 text-second-color'>أقرب ورشة عمل إليك</h3>
+        
+        <p className='font-medium text-gray-700'>
+          <span className='font-bold text-lg pl-2 text-black'>اسم الورشة:</span>
+          {workshop.title || workshop.name || "بدون عنوان"}
         </p>
-        <p className='font-medium text-lg mb-1'>
-          <span className='font-bold text-xl pl-4 text-black'>تبدأ بتاريخ :</span>
-          {workshop?.date}
+        
+        <p className='font-medium text-gray-700'>
+          <span className='font-bold text-lg pl-2 text-black'>تبدأ بتاريخ:</span>
+          {workshop.date || "غير محدد"}
         </p>
-        <p className='font-medium text-lg'>
-          <span className='font-bold text-xl pl-4 text-black'>الوقت :</span>
-          {workshop?.time}
+        
+        <p className='font-medium text-gray-700'>
+          <span className='font-bold text-lg pl-2 text-black'>الوقت:</span>
+          {workshop.time || "غير محدد"}
         </p>
       </div>
 

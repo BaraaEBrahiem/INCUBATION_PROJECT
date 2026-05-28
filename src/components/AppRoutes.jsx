@@ -253,7 +253,7 @@ const AppRoutes = () => {
        <Route path="/workshopinfo/:id" element={<WorkshopInfoPage />} />
       <Route path="/evaluationform" element={<EvaluationFormPage />} />
       <Route path="/notes" element={<NotesPage />} />
-      <Route path="/exhibition-card" element={<ExhibitionCardPage />} />
+      <Route path="/exhibition-card/:id" element={<ExhibitionCardPage />} />
       <Route path="/TeamRequestPage" element={<TeamRequestPage />} />
       <Route path="/AddworkshopPage" element={<AddWorkshopPage />} />
       <Route path="/projectinfo/:id" element={<ProjectInfoPage />} />

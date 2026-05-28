@@ -6,7 +6,7 @@ export const workshopInfoApi = apiSlice.injectEndpoints({
 
     //جلب معلومات ورشة 
     getWorkshopInfoById: builder.query({
-      query: (id) => `/volunteers/workshop-details/${id}/`,
+      query: (id) => `/volunteers/workshops-details/${id}/`,
       providesTags: (result, error, id) => [{ type: 'WorkshopInfo', id }],
     }),
 

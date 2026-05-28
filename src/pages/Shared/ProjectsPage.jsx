@@ -1,14 +1,19 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import { useLocation } from "react-router-dom";
-import SearchBar from '../../components/SearchBar';
-import Projects from '../../components/Projects';
-import CategoryFilterBar from '../../components/CategoryFilterBar';
+
+import SearchBar from "../../components/SearchBar";
+import Projects from "../../components/Projects";
+import CategoryFilterBar from "../../components/CategoryFilterBar";
+
 import { LuFileStack } from "react-icons/lu";
 import { GrTechnology } from "react-icons/gr";
 import { SlBookOpen } from "react-icons/sl";
 import { GiStethoscope } from "react-icons/gi";
+
+
 import { useGetPublicProjectsQuery } from "../../api/endpoints/publicProjectsApi";
 import { useGetExhibitionProjectsQuery } from "../../api/endpoints/admin/exhibitionApi";
+
 
 const ProjectsPage = () => {
   const location = useLocation();
@@ -30,6 +35,7 @@ const ProjectsPage = () => {
   const fallbackProjects = [
     {
       id: 1,
+
       name: "موقع للتواصل الاجتماعي",
       category: "تكنولوجي",
       team: "Green Panda",
@@ -89,7 +95,7 @@ const ProjectsPage = () => {
       selectedCategory === "all" || project.category === selectedCategory;
 
     const matchSearch =
-      project.name?.toLowerCase().includes(searchQuery.toLowerCase());
+      project.title?.toLowerCase().includes(searchQuery.toLowerCase());
 
     return matchCategory && matchSearch;
   });
@@ -106,7 +112,9 @@ const ProjectsPage = () => {
 
   if (isLoading) return <p className="text-center mt-10">جاري التحميل...</p>;
 
+
   return (
+
     <div className='container mt-20 dir-rtl text-right'>
       <h2 className="text-xl font-bold mt-6 mb-4 text-main-color">
         {getPageTitle()}
@@ -114,15 +122,30 @@ const ProjectsPage = () => {
 
       <div className="mt-4">
         <CategoryFilterBar
-          categories={categories}
-          selected={selectedCategory}
-          onSelect={setSelectedCategory}
+          categories={
+            categories
+          }
+          selected={
+            selectedCategory
+          }
+          onSelect={
+            setSelectedCategory
+          }
         />
       </div>
 
-      <SearchBar onSearch={setSearchQuery} />
+      <SearchBar
+        onSearch={
+          setSearchQuery
+        }
+      />
 
-      <Projects projects={filteredProjects} />
+      <Projects
+        projects={
+          filteredProjects
+        }
+        details="exhibition"
+      />
     </div>
   );
 };

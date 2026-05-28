@@ -14,7 +14,8 @@ const ProjectCard = ({ project, ShowImage = false, details = "general" }) => {
   const isFavorite = favorites.some((p) => p.id === project.id)
   const showFavorites = roles.includes("visitor")
   const getDetailsPath = () => {
-    if (details === "graduated") return `/admin/latest-review/${project.id}`
+    if (details === "graduated-positive") return `/exhibition-card/${project.id}`;
+    if (details === "graduated-negative") return `/admin/latest-review/${project.id}`
     return `/ProjectDetails/${project.id}`; 
   }
 
