@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, /*useEffect*/ } from "react";
 import UserFilters from "../../components/Admin_Dashboard/Users/UserFilters";
 import UsersTable from "../../components/Admin_Dashboard/Users/UsersTable";
 import AdminNavbar from "../../components/AdminNavbar";
@@ -7,88 +7,156 @@ import Select from "../../components/Select";
 import Button from "../../components/Button";
 import Input from "../../components/Input";
 
+/*
+import {
+  useGetAdminUsersQuery,
+  useAddAdminUserMutation,
+  useGetAvailableRolesQuery,
+} from "../../api/endpoints/admin/usersOptionsApi.js";
+import { showSuccess, showError } from "../../Utils/toast.js";
+*/
+
 const UsersPage = () => {
   const [roleFilter, setRoleFilter] = useState("all");
   const [open, setOpen] = useState(false);
 
-  // ---------------------------------------------------------
-  //   1) لاحقاً: جلب المستخدمين من API
-  // const { data: users, isLoading } = useGetUsersQuery();
-  //
-  //   fallback قبل الربط:
+  const [formData, setFormData] = useState({
+    fullName: "",
+    email: "",
+    password: "",
+    selectedRole: "VOLUNTEER",
+  });
+
+
+  /*
+  const { data: serverUsers, isLoading, isError } = useGetAdminUsersQuery();
+  const [addAdminUser] = useAddAdminUserMutation();
+
+  useEffect(() => {
+    if (serverUsers) {
+      console.log("قائمة المستخدمين الحقيقية القادمة من الباك إند:", serverUsers);
+    }
+  }, [serverUsers]);
+  */
+
   const fallbackUsers = [
     {
-      id: 1,
-      name: "أحمد محمد",
+      id: 5,
+      full_name: "أحمد محمد",
       email: "ahmed@example.com",
-      role: "متطوع",
-      status: "نشط",
-      joined_at: "2024-01-10",
+      roles: ["VOLUNTEER"], 
+      status: "ACTIVE",
+      created_at: "2026-05-14", 
     },
     {
-      id: 2,
-      name: "سارة العلي",
+      id: 7,
+      full_name: "سارة العلي",
       email: "sara@example.com",
-      role: "محتضن",
-      status: "غير نشط",
-      joined_at: "2024-02-01",
+      roles: ["IDEA_OWNER"],
+      status: "FROZEN",
+      created_at: "2026-05-05",
     },
-     {
-      id: 3,
-      name: "سارة العلي",
-      email: "sara@example.com",
-      role: "متطوع ومحتضن",
-      status: "غير نشط",
-      joined_at: "2024-02-01",
+    {
+      id: 6,
+      full_name: "خالد العبد الله",
+      email: "khaled@example.com",
+      roles: ["VOLUNTEER", "IDEA_OWNER"],
+      status: "ACTIVE",
+      created_at: "2026-05-20",
     },
   ];
-  const users = fallbackUsers;
-  // ---------------------------------------------------------
 
-  // ---------------------------------------------------------
-  //   2) لاحقاً: إضافة مستخدم جديد عبر API
-  // const [addUser] = useAddUserMutation();
-  //
-  // const handleAddUser = async () => {
-  //   await addUser({
-  //     name,
-  //     email,
-  //     password,
-  //     role,
-  //   });
-  // };
-  // ---------------------------------------------------------
+  // عند الربط الفعلي نكتب: const users = serverUsers || fallbackUsers;
+  const users = fallbackUsers;
+
+  // دالة تحديث حقول الـ Form الخاصة بالإدخال
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+  const handleAddUserSubmit = async (e) => {
+    e.preventDefault();
+    console.log("إرسال بيانات المستخدم الجديد للباك إند:", formData);
+
+    /* 
+    try {
+
+      await addAdminUser({
+        full_name: formData.fullName,
+        email: formData.email,
+        password: formData.password,
+        roles: [formData.selectedRole] 
+      }).unwrap();
+
+      showSuccess("تم إضافة المستخدم بنجاح!");
+      setOpen(false); // إغلاق المودال
+      setFormData({ fullName: "", email: "", password: "", selectedRole: "VOLUNTEER" }); // تفريغ الحقول
+    } catch (err) {
+      showError("حدث خطأ أثناء إضافة المستخدم الجديد");
+      console.error(err);
+    }
+    */
+  };
+
+  // في حال تفعيل التحميل من السيرفر
+  // if (isLoading) return <p className="text-center mt-10">جاري تحميل قائمة المستخدمين...</p>;
 
   return (
-    <div className="bg-white-color h-screen">
+    <div className="bg-white-color min-h-screen" dir="rtl">
       <AdminNavbar 
         BtnLabel="إضافة مستخدم"
         onBtnClick={() => setOpen(true)}
       />
 
-      {/*   Modal إضافة مستخدم */}
       <Modal 
         isOpen={open}
         onClose={() => setOpen(false)}
-        title=""
-        footer={<Button label="إضافة" className="bg-main-color ml-2" />}
+        title="إضافة مستخدم جديد للنظام"
+        footer={
+          <Button 
+            label="إضافة" 
+            className="bg-main-color ml-2" 
+            onClick={handleAddUserSubmit}
+          />
+        }
       >
-        <form className="flex flex-col gap-4">
-          <Input label="اسم المستخدم الكامل" type="text" placeholder="اسم المستخدم" />
-          <Input label="البريد الإلكتروني" type="email" placeholder="البريد الإلكتروني" />
-          <Input label="كلمة المرور الأولية" type="password" placeholder="كلمة المرور" />
+        <form className="flex flex-col gap-4" onSubmit={handleAddUserSubmit}>
+          <Input 
+            label="اسم المستخدم الكامل" 
+            type="text" 
+            name="fullName"
+            placeholder="اسم المستخدم الثلاثي" 
+            value={formData.fullName}
+            onChange={handleInputChange}
+          />
+          <Input 
+            label="البريد الإلكتروني" 
+            type="email" 
+            name="email"
+            placeholder="example@test.com" 
+            value={formData.email}
+            onChange={handleInputChange}
+          />
+          <Input 
+            label="كلمة المرور الأولية" 
+            type="password" 
+            name="password"
+            placeholder="كلمة المرور" 
+            value={formData.password}
+            onChange={handleInputChange}
+          />
 
           <Select
-            label="الدور"
+            label="الدور الأساسي"
             options={[
-              { value: "زائر", label: "زائر" },
-              { value: "متطوع", label: "متطوع" },
-              { value: "محتضن", label: "محتضن" },
-              { value: "مقيم", label: "مقيم" },
-              { value: "صاحب فكرة", label: "صاحب فكرة" },
+              { value: "VISITOR", label: "زائر" },
+              { value: "VOLUNTEER", label: "متطوع" },
+              { value: "IDEA_OWNER", label: "صاحب فكرة" },
+              { value: "INCUBATOR", label: "محتضن" },
+              { value: "EVALUATOR", label: "مقيم" },
             ]}
-            value={roleFilter}
-            onChange={(e) => setRoleFilter(e.target.value)}
+            value={formData.selectedRole}
+            onChange={(e) => setFormData((prev) => ({ ...prev, selectedRole: e.target.value }))}
           />
         </form>
       </Modal>
@@ -96,16 +164,14 @@ const UsersPage = () => {
       <div className="container mt-30">
         <h2 className="text-2xl font-semibold mb-6">إدارة المستخدمين والأدوار</h2>
 
-        {/*   الفلاتر */}
         <UserFilters
           roleFilter={roleFilter}
           setRoleFilter={setRoleFilter}
         />
 
-        {/*   جدول المستخدمين */}
         <UsersTable
           roleFilter={roleFilter}
-          users={users} // ← API 
+          users={users} 
         />
       </div>
     </div>

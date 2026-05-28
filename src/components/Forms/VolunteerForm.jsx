@@ -10,10 +10,11 @@ import { initialVolunteerForm, volunteerReducer } from "../../hooks/useVolunteer
 // خيارات الخبرات (ثابتة)
 // -----------------------------
 const EXPERTISE_OPTIONS = [
-  { value: "ui ux", label: "تصميم واجهات وتجربة المستخدم" },
-  { value: "development", label: "تطوير برمجيات" },
-  { value: "marketing", label: "التسويق الرقمي" },
-  { value: "training", label: "تقديم ورشات تدريبية" }
+  { value: "UI/UX", label: "UI/UX" },
+  { value: "Frontend", label: "Frontend" },
+  { value: "Marketing", label: "Marketing" },
+  { value: "Legal", label: "Legal" },
+  {value: "Backend", label: "Backend"}
 ];
 
 const VolunteerForm = ({ onSubmit, onCancel }) => {

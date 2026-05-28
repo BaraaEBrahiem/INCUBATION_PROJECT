@@ -244,13 +244,13 @@ const AppRoutes = () => {
           <Route path="/assigned-projects-page" element={<AssignedProjectsPage />} />
            <Route path="/requests-page" element={<VolunteerRequestsPage />} />
           <Route path="/workshop-page" element={<WorkshopsPage />} />
-           <Route path="/workshopinfo/:id" element={<WorkshopInfoPage />} />
            <Route path="/schedule-page" element={<ScheduleManagementPage />} />
           <Route path="/consultantslist/:categoryId" element={<ConsultantsListPage />} />
         </Route>
       )}
 
       {/* صفحات مشتركة */}
+       <Route path="/workshopinfo/:id" element={<WorkshopInfoPage />} />
       <Route path="/evaluationform" element={<EvaluationFormPage />} />
       <Route path="/notes" element={<NotesPage />} />
       <Route path="/exhibition-card" element={<ExhibitionCardPage />} />
@@ -288,11 +288,7 @@ const AppRoutes = () => {
       )} 
       {roles.includes("admin") && (
       <Route>
-      <Route path="/admin/users/visitor/:id" element={<UserDetailsPage />} />
-      <Route path="/admin/users/volunteer/:id" element={<UserDetailsPage />} />
-      <Route path="/admin/users/incubated/:id" element={<UserDetailsPage />} />
-      <Route path="/admin/users/graduated/:id" element={<UserDetailsPage />} />
-      <Route path="/admin/users/idea-owner/:id" element={<UserDetailsPage />} />
+      <Route path="/admin/users/:id" element={<UserDetailsPage />} />
       <Route path="/admin/incubation_seasons/applications/:id" element={<IncubationRequestDetails />} />
       <Route path="/admin/tasks/:taskId" element={<TaskDetailsPage />} />
       <Route path="/admin/details/:id" element={<VolunteerRequestPage />} />
