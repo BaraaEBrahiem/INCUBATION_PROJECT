@@ -13,22 +13,13 @@ import {
 // خيارات الخبرات (ثابتة)
 // -----------------------------
 const EXPERTISE_OPTIONS = [
-  {
-    value: "ui ux",
-    label: "تصميم واجهات وتجربة المستخدم"
-  },
-  {
-    value: "development",
-    label: "تطوير برمجيات"
-  },
-  {
-    value: "marketing",
-    label: "التسويق الرقمي"
-  },
-  {
-    value: "training",
-    label: "تقديم ورشات تدريبية"
-  }
+
+  { value: "UI/UX", label: "UI/UX" },
+  { value: "Frontend", label: "Frontend" },
+  { value: "Marketing", label: "Marketing" },
+  { value: "Legal", label: "Legal" },
+  {value: "Backend", label: "Backend"}
+
 ];
 
 const VolunteerForm = ({
@@ -82,67 +73,27 @@ const VolunteerForm = ({
     const newErrors = {};
 
     if (step === 0) {
-      // أسماء الحقول حسب الباك
-      if (
-        !form.years_of_experience
-      )
-        newErrors.years_of_experience =
-          "سنوات الخبرة مطلوبة";
 
-      if (!form.primary_skills)
-        newErrors.primary_skills =
-          "مجال الخبرة الرئيسي مطلوب";
+      // التحقق من خطوة الخبرات والمهارات
+      if (!form.years_of_experience) newErrors.years_of_experience = "سنوات الخبرة مطلوبة";
+      if (!form.current_company) newErrors.current_company = "جهة العمل مطلوبة";
+      if (!form.primary_skills) newErrors.primary_skills = "الخبرة الاساسية";
+    } 
+    else if (step === 1) {
+      // التحقق من خطوة التفضيلات
+      if (!form.volunteer_type) newErrors.volunteer_type = "نوع التطوع مطلوب";
+      if (!form.residence) newErrors.residence = "الموقع مطلوب";
+      if (!form.specialization) newErrors.specialization = "التخصص مطلوب";
+      if (!form.motivation) newErrors.motivation = "هدف التطوع مطلوب";
+    }
+    else if (step === 2) {
+      // التحقق من خطوة أوقات التوفر
+      const availabilityValues = Object.values(form.availability || {});
+      const hasAvailability = availabilityValues.some(day =>
+        day.from && day.to && day.active
+      );
+      if (!hasAvailability) newErrors.availability = "يرجى تحديد أوقات التوفر";
 
-      if (
-        !form.current_company
-      )
-        newErrors.current_company =
-          "جهة العمل مطلوبة";
-    } else if (step === 1) {
-      // أسماء الحقول حسب الباك
-      if (
-        !form.availability_type
-      )
-        newErrors.availability_type =
-          "نوع الإتاحة مطلوب";
-
-      if (!form.location)
-        newErrors.location =
-          "الموقع مطلوب";
-
-      if (
-        !form.additional_skills
-      )
-        newErrors.additional_skills =
-          "الخبرات الإضافية مطلوبة";
-
-      if (
-        !form.volunteer_type
-      )
-        newErrors.volunteer_type =
-          "هدف التطوع مطلوب";
-
-      if (!form.motivation)
-        newErrors.motivation =
-          "الدافع للتطوع مطلوب";
-    } else if (step === 2) {
-      // التحقق من أوقات التوفر
-      const availabilityValues =
-        Object.values(
-          form.availability || {}
-        );
-
-      const hasAvailability =
-        availabilityValues.some(
-          (day) =>
-            day.from &&
-            day.to &&
-            day.active
-        );
-
-      if (!hasAvailability)
-        newErrors.availability =
-          "يرجى تحديد أوقات التوفر";
     }
 
     setErrors(newErrors);
@@ -206,15 +157,15 @@ const VolunteerForm = ({
           />
         )}
 
-        {step === 2 && (
-          <StepAvailability
-            form={form}
-            errors={errors}
-            handleAvailabilityChange={
-              handleAvailabilityChange
-            }
-          />
-        )}
+
+       {step === 2 && (
+  <StepAvailability
+    availability={form.availability} 
+    errors={errors}
+    onAvailabilityChange={handleAvailabilityChange} 
+  />
+)}
+
 
         <div className="flex justify-between items-center">
           <Button

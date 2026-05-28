@@ -32,7 +32,6 @@ const ExhibitionManagementPage =
     const location =
       useLocation();
 
-    // هون التعديل المهم
     const [
       activeTab,
       setActiveTab,

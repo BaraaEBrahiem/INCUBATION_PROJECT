@@ -19,6 +19,11 @@ const UserFilters = ({
           { value: "محتضن", label: "محتضن" },
           { value: "متخرج", label: "متخرج" },
           { value: "صاحب فكرة", label: "صاحب فكرة" },
+          {value:"متطوع ومحتضن" , label:"متطوع ومحتضن"},
+          {value:"صاحب فكرة ومتطوع" , label:"صاحب فكرة ومتطوع"},
+          {value:"مقيم" , label:"مقيم"},
+          {value:"متطوع ومقيم" , label:"متطوع ومقيم"},
+
         ]}
         className="w-100 mb-6"
       />

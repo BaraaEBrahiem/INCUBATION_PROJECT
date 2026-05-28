@@ -5,35 +5,35 @@ const StepPreferences = ({ form, errors, handleChange }) => {
   return (
     <>
       <Input
-        label="تفضيلات الاستشارة"
-        name="consultationPreferences"
-        value={form.consultationPreferences}
+        label="نوع التطوع"
+        name="volunteer_type"
+        value={form.volunteer_type}
         onChange={handleChange}
-        error={errors.consultationPreferences}
+        error={errors.volunteer_type}
       />
 
       <Input
         label="السكن"
-        name="location"
-        value={form.location}
+        name="residence"
+        value={form.residence}
         onChange={handleChange}
-        error={errors.location}
+        error={errors.residence}
       />
 
       <Input
         label="الاختصاص"
-        name="expertition"
-        value={form.expertition}
+        name="specialization"
+        value={form.specialization}
         onChange={handleChange}
-        error={errors.expertition}
+        error={errors.specialization}
       />
 
       <Textarea
         label="الهدف من التطوع"
-        name="volunteeringGoal"
-        value={form.volunteeringGoal}
+        name="motivation"
+        value={form.motivation}
         onChange={handleChange}
-        error={errors.volunteeringGoal}
+        error={errors.motivation}
       />
     </>
   )

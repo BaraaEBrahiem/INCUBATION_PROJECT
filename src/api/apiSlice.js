@@ -73,6 +73,8 @@ export const apiSlice = createApi({
     "IncubationRequests",
     'GraduatedProjects',
     'CampProjects',
+    'AdminUser',
+    'Ideas',
   ],
   endpoints: () => ({}),
 });
