@@ -27,7 +27,7 @@ const ConsultantsList = ({ consultants, role = "user" }) => {
           <div className="flex-1">
 
             <p className="font-bold">{c.full_name || c.name}</p>
-            {c.primary_skills && <p className="font-bold">{c.primary_skills}</p>}
+            {c.specialization && <p className="font-bold">{c.specialization}</p>}
             
             {/* عرض مصفوفة المواعيد كما هي قادمة من الباكيند */}
             {c.availability && c.availability.map((slot, index) => (

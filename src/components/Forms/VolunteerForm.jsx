@@ -4,72 +4,153 @@ import LinearProgress from "../LinearProgress";
 import StepExperience from "./StepExperience";
 import StepPreferences from "./StepPreferences";
 import StepAvailability from "./StepAvailability";
-import { initialVolunteerForm, volunteerReducer } from "../../hooks/useVolunteerReducer";
+import {
+  initialVolunteerForm,
+  volunteerReducer
+} from "../../hooks/useVolunteerReducer";
 
 // -----------------------------
 // خيارات الخبرات (ثابتة)
 // -----------------------------
 const EXPERTISE_OPTIONS = [
-  { value: "ui ux", label: "تصميم واجهات وتجربة المستخدم" },
-  { value: "development", label: "تطوير برمجيات" },
-  { value: "marketing", label: "التسويق الرقمي" },
-  { value: "training", label: "تقديم ورشات تدريبية" }
+  {
+    value: "ui ux",
+    label: "تصميم واجهات وتجربة المستخدم"
+  },
+  {
+    value: "development",
+    label: "تطوير برمجيات"
+  },
+  {
+    value: "marketing",
+    label: "التسويق الرقمي"
+  },
+  {
+    value: "training",
+    label: "تقديم ورشات تدريبية"
+  }
 ];
 
-const VolunteerForm = ({ onSubmit, onCancel }) => {
-  const [form, dispatch] = useReducer(volunteerReducer, initialVolunteerForm);
-  const [errors, setErrors] = useState({});
-  const [step, setStep] = useState(0);
+const VolunteerForm = ({
+  onSubmit,
+  onCancel
+}) => {
+  const [form, dispatch] =
+    useReducer(
+      volunteerReducer,
+      initialVolunteerForm
+    );
+
+  const [errors, setErrors] =
+    useState({});
+
+  const [step, setStep] =
+    useState(0);
 
   const handleChange = (e) => {
     dispatch({
       type: "UPDATE_FIELD",
       field: e.target.name,
-      value: e.target.value
+      value: e.target.value,
     });
+
     // مسح الخطأ عند التعديل
     if (errors[e.target.name]) {
-      setErrors(prev => ({ ...prev, [e.target.name]: "" }));
+      setErrors((prev) => ({
+        ...prev,
+        [e.target.name]: "",
+      }));
     }
   };
 
-  const handleAvailabilityChange = (availability) => {
-    dispatch({
-      type: "UPDATE_AVAILABILITY",
-      value: availability
-    });
-    if (errors.availability) {
-      setErrors(prev => ({ ...prev, availability: "" }));
-    }
-  };
+  const handleAvailabilityChange =
+    (availability) => {
+      dispatch({
+        type: "UPDATE_AVAILABILITY",
+        value: availability,
+      });
+
+      if (errors.availability) {
+        setErrors((prev) => ({
+          ...prev,
+          availability: "",
+        }));
+      }
+    };
 
   const validateStep = () => {
     const newErrors = {};
 
     if (step === 0) {
-      // التحقق من خطوة الخبرات والمهارات
-      if (!form.experienceYears) newErrors.experienceYears = "سنوات الخبرة مطلوبة";
-      if (!form.expertiseArea) newErrors.expertiseArea = "مجال الخبرة الرئيسي مطلوب";
-      if (!form.employer) newErrors.employer = "جهة العمل مطلوبة";
-    } 
-    else if (step === 1) {
-      // التحقق من خطوة التفضيلات
-      if (!form.consultationPreferences) newErrors.consultationPreferences = "تفضيلات الاستشارة مطلوبة";
-      if (!form.location) newErrors.location = "الموقع مطلوب";
-      if (!form.expertition) newErrors.expertition = "الخبرات الإضافية مطلوبة";
-      if (!form.volunteeringGoal) newErrors.volunteeringGoal = "هدف التطوع مطلوب";
-    }
-    else if (step === 2) {
-      // التحقق من خطوة أوقات التوفر
-      const availabilityValues = Object.values(form.availability || {});
-      const hasAvailability = availabilityValues.some(day =>
-        day.from && day.to && day.active
-      );
-      if (!hasAvailability) newErrors.availability = "يرجى تحديد أوقات التوفر";
+      // أسماء الحقول حسب الباك
+      if (
+        !form.years_of_experience
+      )
+        newErrors.years_of_experience =
+          "سنوات الخبرة مطلوبة";
+
+      if (!form.primary_skills)
+        newErrors.primary_skills =
+          "مجال الخبرة الرئيسي مطلوب";
+
+      if (
+        !form.current_company
+      )
+        newErrors.current_company =
+          "جهة العمل مطلوبة";
+    } else if (step === 1) {
+      // أسماء الحقول حسب الباك
+      if (
+        !form.availability_type
+      )
+        newErrors.availability_type =
+          "نوع الإتاحة مطلوب";
+
+      if (!form.location)
+        newErrors.location =
+          "الموقع مطلوب";
+
+      if (
+        !form.additional_skills
+      )
+        newErrors.additional_skills =
+          "الخبرات الإضافية مطلوبة";
+
+      if (
+        !form.volunteer_type
+      )
+        newErrors.volunteer_type =
+          "هدف التطوع مطلوب";
+
+      if (!form.motivation)
+        newErrors.motivation =
+          "الدافع للتطوع مطلوب";
+    } else if (step === 2) {
+      // التحقق من أوقات التوفر
+      const availabilityValues =
+        Object.values(
+          form.availability || {}
+        );
+
+      const hasAvailability =
+        availabilityValues.some(
+          (day) =>
+            day.from &&
+            day.to &&
+            day.active
+        );
+
+      if (!hasAvailability)
+        newErrors.availability =
+          "يرجى تحديد أوقات التوفر";
     }
 
     setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+
+    return (
+      Object.keys(newErrors)
+        .length === 0
+    );
   };
 
   const handleNext = () => {
@@ -84,7 +165,7 @@ const VolunteerForm = ({ onSubmit, onCancel }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    
+
     if (validateStep()) {
       onSubmit(form);
     }
@@ -92,15 +173,26 @@ const VolunteerForm = ({ onSubmit, onCancel }) => {
 
   return (
     <div>
-      <form onSubmit={handleSubmit} className="max-w-4xl my-6 space-y-8">
-        <LinearProgress steps={3} current={step} className="py-6" />
+      <form
+        onSubmit={handleSubmit}
+        className="max-w-4xl my-6 space-y-8"
+      >
+        <LinearProgress
+          steps={3}
+          current={step}
+          className="py-6"
+        />
 
         {step === 0 && (
           <StepExperience
             form={form}
             errors={errors}
-            handleChange={handleChange}
-            expertiseOptions={EXPERTISE_OPTIONS}
+            handleChange={
+              handleChange
+            }
+            expertiseOptions={
+              EXPERTISE_OPTIONS
+            }
           />
         )}
 
@@ -108,7 +200,9 @@ const VolunteerForm = ({ onSubmit, onCancel }) => {
           <StepPreferences
             form={form}
             errors={errors}
-            handleChange={handleChange}
+            handleChange={
+              handleChange
+            }
           />
         )}
 
@@ -116,7 +210,9 @@ const VolunteerForm = ({ onSubmit, onCancel }) => {
           <StepAvailability
             form={form}
             errors={errors}
-            handleAvailabilityChange={handleAvailabilityChange}
+            handleAvailabilityChange={
+              handleAvailabilityChange
+            }
           />
         )}
 
@@ -133,7 +229,9 @@ const VolunteerForm = ({ onSubmit, onCancel }) => {
               <Button
                 label="رجوع"
                 type="button"
-                onClick={handlePrevious}
+                onClick={
+                  handlePrevious
+                }
                 className="bg-main-color text-white px-6 py-2 rounded"
               />
             )}

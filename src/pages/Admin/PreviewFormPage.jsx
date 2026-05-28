@@ -1,30 +1,62 @@
 import React from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import {
+  useLocation,
+  useNavigate,
+} from "react-router-dom";
+
 import FormPreview from "../../components/Admin_Dashboard/IncubationSeasons/Create-Season/FormPreview";
 import Button from "../../components/Button";
 
 const PreviewFormPage = () => {
-  const navigate = useNavigate();
-  const location = useLocation();
+  const navigate =
+    useNavigate();
 
-  const fields = location.state?.fields || [];
+  const location =
+    useLocation();
 
-  const goBackToFormBuilder = () => {
-    navigate("/admin/create-season", {
-      state: { activeTab: "form", 
-      fields: fields,
-      seasonData: location.state?.seasonData },
-    });
-  };
+  const fields =
+    location.state?.fields ||
+    [];
+
+  const seasonData =
+    location.state
+      ?.seasonData;
+
+  const goBackToFormBuilder =
+    () => {
+      navigate(
+        "/admin/exhibition",
+        {
+          state: {
+            activeTab:
+              "create-card",
+
+            fields:
+              fields,
+
+            seasonData:
+              seasonData,
+          },
+        }
+      );
+    };
 
   return (
     <div className="container p-6">
-      <h1 className="text-xl font-bold mb-6">معاينة النموذج</h1>
-      <FormPreview fields={fields} />
+      <h1 className="text-xl font-bold mb-6">
+        معاينة النموذج
+      </h1>
+
+      <FormPreview
+        fields={fields}
+      />
+
       <div className="flex justify-center items-center gap-8 mt-6">
         <Button
           label="العودة للتعديل"
-          onClick={goBackToFormBuilder}
+          onClick={
+            goBackToFormBuilder
+          }
           className="bg-main-color w-50"
         />
       </div>

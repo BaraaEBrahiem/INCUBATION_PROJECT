@@ -18,14 +18,15 @@ const LatestReviewPage = () => {
 
 
   const meetingDate = data?.meeting_date || "";
-  const reviewersList = data?.reviewers || [];
+  const reviewersList = data?.reviews || [];
   
   const currentStatus = data?.status?.toString().trim().toLowerCase(); 
+  console.log("STATUS =", currentStatus);
 
   const isActionLoading = isSubmitting;
 
   const hideActions =
-    projectStatus ===
+    currentStatus ==
     "GRADUATED_NEGATIVE";
 
   const handleGraduation = async (
@@ -36,7 +37,7 @@ const LatestReviewPage = () => {
     try {
 
      
-      await submitGraduation({ evaluationId: idea_id, status: action }).unwrap();
+      await submitGraduation({ idea_id, status: action }).unwrap();
       
       showSuccess(action === "positive" ? "تم تخريج المشروع بشكل إيجابي" : "تم تخريج المشروع بشكل سلبي");
       
@@ -57,7 +58,7 @@ const LatestReviewPage = () => {
   }
 
 
-  const shouldShowButtons = !currentStatus || currentStatus === "pending" || currentStatus === "null";
+  const shouldShowButtons = !currentStatus || currentStatus === "pending" || currentStatus === "null"|| currentStatus === "incubation";;
 
 
   return (
@@ -70,8 +71,8 @@ const LatestReviewPage = () => {
           <div>
             <h1 className="text-xl font-bold text-gray-900">تاريخ التقييم {meetingDate}</h1>
             {!shouldShowButtons && (
-              <p className={`text-sm font-bold mt-1 ${currentStatus === 'positive' ? 'text-green-600' : 'text-red-500'}`}>
-                حالة المشروع: تم التخريج بشكل {currentStatus === 'positive' ? 'إيجابي' : 'سلبي'} مسبقاً.
+              <p className={`text-sm font-bold mt-1 ${currentStatus === 'graduated_positive' ? 'text-green-600' : 'text-red-500'}`}>
+                حالة المشروع: تم التخريج بشكل {currentStatus === 'graduated_positive' ? 'إيجابي' : 'سلبي'} مسبقاً.
 
               </p>
             )}
@@ -91,21 +92,21 @@ const LatestReviewPage = () => {
         {/* شبكة عرض ملاحظات المقيمين الديناميكية القادمة من السيرفر */}
         {reviewersList.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-            {reviewersList.map((reviewer) => (
-              <div key={reviewer.mentor_id} className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex flex-col items-end">
+            {reviewersList.map((reviews) => (
+              <div key={reviews.mentor_id} className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex flex-col items-end">
                 
                 <div className="flex items-center justify-start w-full gap-4 mb-4"> 
-                  {reviewer.avatar && (
+                  {reviews.avatar && (
                     <img 
-                      src={reviewer.avatar} 
-                      alt={reviewer.mentor_name} 
+                      src={reviews.avatar} 
+                      alt={reviews.mentor_name} 
                       className="w-16 h-16 rounded-full object-cover border-2 border-gray-100"
                     />
                   )}
                   <div className="text-right">
-                    <h3 className="font-bold text-gray-900 text-lg">{reviewer.mentor_name}</h3>
+                    <h3 className="font-bold text-gray-900 text-lg">{reviews.mentor_name}</h3>
                     <p className="text-sm text-gray-500 font-medium">
-                      اختصاص : <span className="uppercase text-main-color font-bold">{reviewer.specialization}</span>
+                      اختصاص : <span className="uppercase text-main-color font-bold">{reviews.specialization}</span>
                     </p>
                   </div>
                 </div>
@@ -114,7 +115,7 @@ const LatestReviewPage = () => {
                 <div className="w-full text-right bg-gray-50/50 p-3 rounded-lg">
                   <h4 className="text-sm font-bold text-gray-700 mb-2">الملاحظات :</h4>
                   <p className="text-sm text-gray-600 leading-relaxed whitespace-pre-line">
-                    {reviewer.notes || <span className="text-gray-400 italic">لا توجد ملاحظات مكتوبة</span>}
+                    {reviews.notes || <span className="text-gray-400 italic">لا توجد ملاحظات مكتوبة</span>}
                   </p>
                 </div>
 

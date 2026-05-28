@@ -1,29 +1,46 @@
 import React, { useState, useEffect } from "react";
-import FieldTypesPanel from "./FieldTypesPanel";
-import FormBuilderCanvas from "./FormBuilderCanvas";
-import Button from "../../Button";
+import FieldTypesPanel from "../../Exhibition-management/FieldTypesPanel";
+import FormBuilderCanvas from "../../Exhibition-management/FormBuilderCanvas";
+import Button from "../../../Button";
 import { useNavigate } from "react-router-dom";
 import { showError, showSuccess } from "../../../../Utils/toast";
-import { useCreateExhibitionFormMutation, usePublishSeasonMutation } from "../../../api/endpoints/formConfigApi"
+import {
+  useCreateExhibitionFormMutation,
+  usePublishSeasonMutation,
+} from "../../../api/endpoints/formConfigApi";
 
-const FormBuilder = ({ initialFields = [], onFieldsChange, seasonData }) => {
+
+const FormBuilder = ({
+  
+  initialFields = [],
+  onFieldsChange,
+  seasonData,
+}) => {
+  console.log("EXHIBITION FORM BUILDER");
   const navigate = useNavigate();
+
   const [fields, setFields] = useState(initialFields);
   const [isPublishing, setIsPublishing] = useState(false);
-  const [createExhibitionForm] = useCreateExhibitionFormMutation();
-  const [publishSeason] = usePublishSeasonMutation();
+
+  const [createExhibitionForm] =
+    useCreateExhibitionFormMutation();
+
+  const [publishSeason] =
+    usePublishSeasonMutation();
 
   const goToPreview = () => {
-    navigate("/admin/preview-form", { 
-      state: { 
-        fields, 
-        seasonData: seasonData
-      }
+    navigate("/admin/preview-form", {
+      state: {
+        fields,
+        seasonData,
+      },
     });
   };
 
   useEffect(() => {
-    if (onFieldsChange) onFieldsChange(fields);
+    if (onFieldsChange) {
+      onFieldsChange(fields);
+    }
   }, [fields, onFieldsChange]);
 
   // إضافة حقل جديد
@@ -34,10 +51,13 @@ const FormBuilder = ({ initialFields = [], onFieldsChange, seasonData }) => {
       label: "",
       required: false,
       options:
-        type === "select" || type === "radio" || type === "checkbox"
+        type === "select" ||
+        type === "radio" ||
+        type === "checkbox"
           ? []
           : null,
     };
+
     setFields((prev) => [...prev, newField]);
   };
 
@@ -45,54 +65,116 @@ const FormBuilder = ({ initialFields = [], onFieldsChange, seasonData }) => {
   const updateField = (id, updatedData) => {
     setFields((prev) =>
       prev.map((field) =>
-        field.id === id ? { ...field, ...updatedData } : field
+        field.id === id
+          ? { ...field, ...updatedData }
+          : field
       )
     );
   };
 
   // حذف حقل
   const deleteField = (id) => {
-    setFields((prev) => prev.filter((field) => field.id !== id));
+    setFields((prev) =>
+      prev.filter((field) => field.id !== id)
+    );
   };
 
   const publishForm = async () => {
+    console.log("publish clicked");
+
     if (!fields.length) {
-      showError("يرجى إضافة حقل واحد على الأقل قبل النشر.");
+      showError(
+        "يرجى إضافة حقل واحد على الأقل قبل النشر."
+      );
       return;
     }
 
-    const emptyLabel = fields.find((f) => !f.label.trim());
+    const emptyLabel = fields.find(
+      (f) => !f.label?.trim()
+    );
+
     if (emptyLabel) {
-      showError("يرجى إدخال تسمية لجميع الحقول.");
+      showError(
+        "يرجى إدخال تسمية لجميع الحقول."
+      );
       return;
     }
 
     setIsPublishing(true);
-    try {
-   
-      const title = seasonData?.title || "نموذج المعرض الجديد"; 
-      
-      const createResponse = await createExhibitionForm(title).unwrap();
-      
 
-      const formId = createResponse?.id || createResponse?.form_id;
+    try {
+      // تجهيز البيانات لتناسب الباك
+      const questions = fields.map(
+        (field) => ({
+          type:
+            field.type === "shortText"
+              ? "text"
+              : field.type === "longText"
+              ? "textarea"
+              : field.type === "checkbox"
+              ? "select_multiple"
+              : field.type === "radio"
+              ? "yes_no"
+              : field.type,
+
+          label: field.label,
+          required:
+            field.required || false,
+
+          options:
+            field.options?.map((opt) => ({
+              label:
+                typeof opt === "string"
+                  ? opt
+                  : opt.label,
+            })) || [],
+        })
+      );
+
+      console.log("REQUEST BODY", {
+        questions,
+      });
+
+      // إنشاء الفورم
+      const createResponse =
+        await createExhibitionForm({
+          questions,
+        }).unwrap();
+
+      console.log(
+        "CREATE RESPONSE",
+        createResponse
+      );
+
+      const formId =
+        createResponse?.form_id;
 
       if (!formId) {
-        throw new Error("لم يتم استلام معرف النموذج من السيرفر.");
+        throw new Error(
+          "لم يتم استلام form_id من السيرفر"
+        );
       }
 
-      await publishSeason(formId).unwrap();
+      // نشر الفورم
+      await publishSeason(
+        formId
+      ).unwrap();
 
-      showSuccess("تم إنشاء ونشر فورم المعرض بنجاح!");
-
+      showSuccess(
+        "تم إنشاء ونشر فورم المعرض بنجاح!"
+      );
     } catch (err) {
       console.error(err);
-      showError(err?.data?.message || "حدث خطأ أثناء محاولة إنشاء ونشر النموذج.");
+
+      showError(
+        err?.data?.message ||
+          err?.data?.detail ||
+          "حدث خطأ أثناء إنشاء أو نشر الفورم."
+      );
     } finally {
       setIsPublishing(false);
     }
   };
-
 
   return (
     <div>
@@ -104,8 +186,12 @@ const FormBuilder = ({ initialFields = [], onFieldsChange, seasonData }) => {
             deleteField={deleteField}
           />
         </div>
-        <FieldTypesPanel addField={addField} />
+
+        <FieldTypesPanel
+          addField={addField}
+        />
       </div>
+
       <div className="flex justify-center items-center gap-8 mt-6">
         <Button
           label="معاينة النموذج"
@@ -113,8 +199,13 @@ const FormBuilder = ({ initialFields = [], onFieldsChange, seasonData }) => {
           className="bg-main-color w-50"
           disabled={isPublishing}
         />
+
         <Button
-          label={isPublishing ? "جاري النشر..." : "نشر"}
+          label={
+            isPublishing
+              ? "جاري النشر..."
+              : "نشر"
+          }
           onClick={publishForm}
           className="bg-main-color w-50"
           disabled={isPublishing}

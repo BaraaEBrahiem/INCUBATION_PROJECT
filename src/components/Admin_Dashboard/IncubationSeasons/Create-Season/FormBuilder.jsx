@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import FieldTypesPanel from "../../Exhibition-management/FieldTypesPanel";
 import FormBuilderCanvas from "../../Exhibition-management/FormBuilderCanvas";
@@ -6,18 +7,20 @@ import { useNavigate } from "react-router-dom";
 import { showError } from "../../../../Utils/toast";
 
 const FormBuilder = ({ onSubmit, isSubmitting = false, initialFields = [], onFieldsChange, seasonData }) => {
+  console.log("INCUBATION FORM BUILDER");
   const navigate = useNavigate();
   const [fields, setFields] = useState(initialFields);
   const [isPublishing, setIsPublishing] = useState(false);
     const goToPreview = () => {
-    navigate("/admin/preview-form", { 
-      state: { 
-        fields, 
-        seasonData: seasonData
-      }
-    });
-  };
-
+  navigate("/admin/preview-form", {
+    state: {
+      fields,
+      seasonData,
+      returnTab: "create-card", // مهم
+    },
+  });
+};
+  
   useEffect(() => {
     if (onFieldsChange) onFieldsChange(fields);
   }, [fields, onFieldsChange]);
