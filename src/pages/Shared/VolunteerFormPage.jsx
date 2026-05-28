@@ -11,6 +11,25 @@ const VolunteerFormPage = () => {
   const [upgradeToVolunteer, { isLoading }] = useUpgradeToVolunteerMutation();
   const [showPendingModal, setShowPendingModal] = useState(false);
 
+  const DAY_MAPPING = {
+  "الأحد": "SUNDAY",
+  "الاثنين": "MONDAY",
+  "الثلاثاء": "TUESDAY",
+  "الأربعاء": "WEDNESDAY",
+  "الخميس": "THURSDAY",
+  "الجمعة": "FRIDAY",
+  "السبت": "SATURDAY",
+};
+
+const SKILL_MAPPING = {
+  "Backend": "backend",
+  "Frontend": "frontend",
+  "UI/UX": "ui_ux",
+  "Business": "business",
+  "Marketing": "marketing",
+  "Legal": "legal",
+};
+
   const handleSubmit = async (rawFormData) => {
     try {
      
@@ -20,13 +39,14 @@ const VolunteerFormPage = () => {
       //eslint-disable-next-line
         .filter(([_, dayConfig]) => dayConfig.active === true) 
         .map(([dayName, dayConfig]) => ({
-          day: dayName,                        
+          day: DAY_MAPPING[dayName],                      
           start_time: dayConfig.from || "00:00", 
           end_time: dayConfig.to || "00:00"
         }));
 
       const apiPayload = {
         ...restOfData,
+        primary_skills: SKILL_MAPPING[restOfData.primary_skills],
         availability: formattedAvailabilityArray 
       };
 

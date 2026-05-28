@@ -77,4 +77,4 @@ const ProfileInfoPage = () => {
   );
 };
 
-export default ProfileInfoPage;
+export default ProfileInfoPage;   

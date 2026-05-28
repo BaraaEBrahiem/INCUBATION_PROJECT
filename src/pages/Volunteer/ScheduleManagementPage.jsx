@@ -1,14 +1,36 @@
-import React, { useState, /*useEffect*/ } from 'react';
+import React, { useState, useEffect } from 'react';
 import { LuCirclePlus } from "react-icons/lu";
 import Input from "../../components/Input";
 import Button from '../../components/Button';
-// import { 
-//   useGetScheduleQuery, 
-//   useAddAppointmentMutation, 
-//   useDeleteAppointmentMutation,
-//   useAddHolidayMutation,
-//   useDeleteHolidayMutation 
-// } from '../../api/endpoints/scheduleApi';
+ import { 
+   useGetScheduleQuery, 
+   useAddAppointmentMutation, 
+   useDeleteAppointmentMutation,
+   useAddHolidayMutation,
+   useDeleteHolidayMutation ,
+   useGetVacationsQuery,
+ } from '../../api/endpoints/scheduleApi';
+
+
+const dayMap = {
+  "الأحد": "SUNDAY",
+  "الاثنين": "MONDAY",
+  "الثلاثاء": "TUESDAY",
+  "الأربعاء": "WEDNESDAY",
+  "الخميس": "THURSDAY",
+  "الجمعة": "FRIDAY",
+  "السبت": "SATURDAY",
+};
+
+const reverseDayMap = {
+  "SUNDAY": "الأحد",
+  "MONDAY": "الاثنين",
+  "TUESDAY": "الثلاثاء",
+  "WEDNESDAY": "الأربعاء",
+  "THURSDAY": "الخميس",
+  "FRIDAY": "الجمعة",
+  "SATURDAY": "السبت",
+};
 
 const ScheduleManagementPage = () => {
   // -----------------------------
@@ -16,7 +38,7 @@ const ScheduleManagementPage = () => {
   // -----------------------------
   const [selectedDays, setSelectedDays] = useState([]);
   const allDays = ['الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
-  const daysOfWeek = ['أحد', 'اثنين', 'ثلاثاء', 'اربعاء', 'الخميس', 'الجمعة', 'سبت'];
+  const daysOfWeek = ['الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
   
   const [holidayFrom, setHolidayFrom] = useState(null);
   const [holidayTo, setHolidayTo] = useState(null);
@@ -29,26 +51,32 @@ const ScheduleManagementPage = () => {
   const [holiday, setHoliday] = useState(null);
 
   // -----------------------------
-  // const { data: scheduleData, isLoading, error, refetch } = useGetScheduleQuery();
-  // const [addAppointment, { isLoading: isAddingAppointment }] = useAddAppointmentMutation();
-  // const [deleteAppointment] = useDeleteAppointmentMutation();
-  // const [addHoliday, { isLoading: isAddingHoliday }] = useAddHolidayMutation();
-  // const [deleteHoliday] = useDeleteHolidayMutation();
+   const { data: scheduleData, isLoading, error, refetch } = useGetScheduleQuery();
+   const [addAppointment, { isLoading: isAddingAppointment }] = useAddAppointmentMutation();
+   const [deleteAppointment] = useDeleteAppointmentMutation();
+   const [addHoliday, { isLoading: isAddingHoliday }] = useAddHolidayMutation();
+   const [deleteHoliday] = useDeleteHolidayMutation();
+   const { data: vacationsData } = useGetVacationsQuery();
 
   // -----------------------------
-  // تحميل البيانات من API (عند الربط)
+  // تحميل البيانات من API (عند الربط) توفر فقك
   // -----------------------------
-  // useEffect(() => {
-  //   if (scheduleData) {
-  //     setAppointments(scheduleData.appointments || []);
-  //     if (scheduleData.holiday) {
-  //       setHoliday(scheduleData.holiday);
-  //       setHolidayFrom(scheduleData.holiday.from);
-  //       setHolidayTo(scheduleData.holiday.to);
-        // setCurrentHolidayId(scheduleData.holiday.id);
-  //     }
-  //   }
-  // }, [scheduleData]);
+useEffect(() => {
+  if (scheduleData) {
+
+    const formattedAppointments = scheduleData.map((apt) => ({
+      id: apt.id,
+      text: `${reverseDayMap[apt.day]} : من ${formatBackendTime(apt.from)} إلى ${formatBackendTime(apt.to)}`,
+      day: apt.day,
+      from: apt.from,
+      to: apt.to,
+    }));
+
+    setAppointments(formattedAppointments);
+  }
+
+
+}, [scheduleData]);
 
   // -----------------------------
   // بيانات ثابتة حالياً (للتجربة)
@@ -60,6 +88,26 @@ const ScheduleManagementPage = () => {
   //   ]);
   // }, []);
 
+
+  // عرض الاجازات 
+
+  useEffect(() => {
+  if (vacationsData && vacationsData.length > 0) {
+
+    const latestVacation = vacationsData[vacationsData.length - 1];
+
+    setHoliday({
+      id: latestVacation.id,
+      from: reverseDayMap[latestVacation.start_day],
+      to: reverseDayMap[latestVacation.end_day],
+    });
+
+    setHolidayFrom(reverseDayMap[latestVacation.start_day]);
+
+    setHolidayTo(reverseDayMap[latestVacation.end_day]);
+  }
+}, [vacationsData]);
+
   // -----------------------------
   // دوال مساعدة
   // -----------------------------
@@ -68,6 +116,38 @@ const ScheduleManagementPage = () => {
     const m = time.minutes.toString().padStart(2, '0');
     return `${h}:${m} ${time.period}`;
   };
+
+  const toBackendTime = (time) => {
+  let hour = time.hours;
+
+  if (time.period === 'PM' && hour !== 12) {
+    hour += 12;
+  }
+
+  if (time.period === 'AM' && hour === 12) {
+    hour = 0;
+  }
+
+  return `${String(hour).padStart(2, '0')}:${String(time.minutes).padStart(2, '0')}:00`;
+  };
+
+
+  const formatBackendTime = (time) => {
+  if (!time) return "";
+
+  let [hours, minutes] = time.split(":");
+
+  hours = parseInt(hours);
+
+  const period = hours >= 12 ? "PM" : "AM";
+
+  hours = hours % 12;
+
+  if (hours === 0) hours = 12;
+
+  return `${hours}:${minutes} ${period}`;
+};
+
 
   const incrementTime = (setTime) => {
     setTime((prev) => {
@@ -88,112 +168,92 @@ const ScheduleManagementPage = () => {
   // -----------------------------
   // إضافة موعد جديد
   // -----------------------------
-  const handleAddAppointment = async () => {
-    if (selectedDays.length === 0) {
-      alert("يرجى اختيار يوم واحد على الأقل");
-      return;
-    }
+const handleAddAppointment = async () => {
+  if (selectedDays.length === 0) {
+    alert("يرجى اختيار يوم واحد على الأقل");
+    return;
+  }
 
-    const timeString = `من الساعة ${formatTime(startTime)} إلى ${formatTime(endTime)}`;
-    const daysString = selectedDays.join('، ');
+  try {
+    const requests = selectedDays.map((day) =>
+      addAppointment({
+        day: dayMap[day],   //  مهم
+        start_time: toBackendTime(startTime),
+        end_time: toBackendTime(endTime),
+      }).unwrap()
+    );
 
-    // TODO
-    // try {
-    //   const newAppointment = {
-    //     days: selectedDays,
-    //     start_time: `${startTime.hours}:${startTime.minutes} ${startTime.period}`,
-    //     end_time: `${endTime.hours}:${endTime.minutes} ${endTime.period}`,
-    //   };
-    //   await addAppointment(newAppointment).unwrap();
-    //   setSelectedDays([]);
-    //   setStartTime({ hours: 7, minutes: 0, period: 'PM' });
-    //   setEndTime({ hours: 7, minutes: 0, period: 'PM' });
-    // } catch (error) {
-    //   console.error("Error adding appointment:", error);
-    //   alert("حدث خطأ في إضافة الموعد");
-    // }
+    await Promise.all(requests);
 
-    // حالياً: إضافة محلية
-    const newAppointment = {
-      id: crypto.randomUUID(),
-      text: `${daysString}: ${timeString}`,
-      days: selectedDays,
-      start_time: formatTime(startTime),
-      end_time: formatTime(endTime),
-    };
-    setAppointments(prev => [...prev, newAppointment]);
+    // إعادة جلب البيانات من السيرفر
+    refetch();
+
     setSelectedDays([]);
-  };
+
+  } catch (error) {
+    console.error(error);
+    alert("خطأ في إضافة الموعد");
+  }
+};
 
   // -----------------------------
   // حذف موعد
   // -----------------------------
-  const deleteAppointment = async (id) => {
-    // TODO: بعد الربط هذا الكود
-    // try {
-    //   await deleteAppointment(id).unwrap();
-    // } catch (error) {
-    //   console.error("Error deleting appointment:", error);
-    //   alert("حدث خطأ في حذف الموعد");
-    // }
 
-    // حالياً: حذف محلي
-    setAppointments(appointments.filter(apt => apt.id !== id));
-  };
+const handleDeleteAppointment = async (id) => {
+  try {
+    await deleteAppointment(id).unwrap();
+    setAppointments((prev) => prev.filter((a) => a.id !== id));
+  } catch (error) {
+    console.error(error);
+    alert("حدث خطأ في حذف الموعد");
+  }
+};
 
   // -----------------------------
   // إضافة أجازة
   // -----------------------------
-  const handleAddHoliday = async () => {
-    if (!holidayFrom || !holidayTo) {
-      alert("يرجى اختيار فترة الأجازة");
-      return;
-    }
+const handleAddHoliday = async () => {
+  if (!holidayFrom || !holidayTo) {
+    alert("يرجى اختيار فترة الأجازة");
+    return;
+  }
 
-    // TODO: بعد الربط هذا الكود
-    // try {
-    //   const holidayData = {
-    //     from: holidayFrom,
-    //     to: holidayTo,
-    //   };
-    //   const response = await addHoliday(holidayData).unwrap();
-    //   setHoliday({ from: holidayFrom, to: holidayTo, id: response.id });
-    //   setCurrentHolidayId(response.id);
-    // } catch (error) {
-    //   console.error("Error adding holiday:", error);
-    //   alert("حدث خطأ في إضافة الأجازة");
-    // }
+  try {
+    const res = await addHoliday({
+      start_day: dayMap[holidayFrom],
+      end_day: dayMap[holidayTo],
+    }).unwrap();
 
-    // حالياً: إضافة محلية
-    setHoliday({ from: holidayFrom, to: holidayTo });
-    alert("تم إضافة الأجازة بنجاح");
-  };
+    setHoliday({
+      id: res.id,
+      from: holidayFrom,
+      to: holidayTo,
+    });
+
+  } catch (error) {
+    console.error(error);
+    alert("خطأ في إضافة الإجازة");
+  }
+};
 
   // -----------------------------
   // حذف أجازة
   // -----------------------------
-  const deleteHoliday = async () => {
-    // TODO: بعد الربط استخدمي هذا الكود
-    // if (currentHolidayId) {
-    //   try {
-    //     await deleteHoliday(currentHolidayId).unwrap();
-    //     setHoliday(null);
-    //     setHolidayFrom(null);
-    //     setHolidayTo(null);
-    //     setCurrentHolidayId(null);
-    //   } catch (error) {
-    //     console.error("Error deleting holiday:", error);
-    //     alert("حدث خطأ في حذف الأجازة");
-    //   }
-    // }
+const handleDeleteHoliday = async () => {
+  try {
+    if (!holiday?.id) return;
 
-    // حالياً: حذف محلي
+    await deleteHoliday(holiday.id).unwrap();
+
     setHoliday(null);
     setHolidayFrom(null);
     setHolidayTo(null);
-    setCurrentHolidayId(null);
-    alert("تم حذف الأجازة");
-  };
+
+  } catch (error) {
+    console.error(error);
+  }
+};
 
   // -----------------------------
   // حالة التحميل (بعد الربط)
@@ -303,7 +363,7 @@ const ScheduleManagementPage = () => {
                   </div>
                   <Button
                     label="حذف"
-                    onClick={() => deleteAppointment(apt.id)}
+                    onClick={() => handleDeleteAppointment(apt.id)}
                     className="bg-main-color px-4 py-1.5 hover:bg-red-700 transition order-2"
                   />
                 </div>
@@ -364,7 +424,7 @@ const ScheduleManagementPage = () => {
               </div> 
               <Button 
                 label="حذف" 
-                onClick={deleteHoliday} 
+                onClick={handleDeleteHoliday} 
                 className="bg-main-color px-5 py-1.5 hover:bg-red-500 transition" 
               />
             </div>
