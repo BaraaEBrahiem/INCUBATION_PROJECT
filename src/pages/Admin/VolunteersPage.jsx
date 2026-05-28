@@ -15,7 +15,6 @@ const VolunteersPage = () => {
     { id: "evaluators", label: "المقيمين" },
     { id: "user_requests", label: "طلبات المستخدمين" }
   ];
-   //eslint-disable-next-line
   const [selected, setSelected] = useState("volunteers");
 
   // const { data: volunteersData, isLoading: isLoadingVolunteers } = useGetVolunteersQuery();
