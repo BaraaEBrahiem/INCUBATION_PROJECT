@@ -18,7 +18,7 @@ export const publicProjectsApi =
       getPublicProjects:
         builder.query({
           query: () =>
-            `admin/incubations/negative-projects/`,
+            `admin/incubations/graduated-projects/`,
           providesTags: [
             "PublicProjects",
           ],

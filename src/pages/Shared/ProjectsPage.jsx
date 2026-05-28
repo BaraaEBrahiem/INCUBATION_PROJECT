@@ -95,7 +95,7 @@ const ProjectsPage = () => {
       selectedCategory === "all" || project.category === selectedCategory;
 
     const matchSearch =
-      project.name?.toLowerCase().includes(searchQuery.toLowerCase());
+      project.title?.toLowerCase().includes(searchQuery.toLowerCase());
 
     return matchCategory && matchSearch;
   });
@@ -144,6 +144,7 @@ const ProjectsPage = () => {
         projects={
           filteredProjects
         }
+        details="exhibition"
       />
     </div>
   );

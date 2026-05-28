@@ -159,7 +159,7 @@ export default function CardRequests() {
                     المشروع:{" "}
                     <span className="font-semibold">
                       {
-                        req.title
+                        req.project_name
                       }
                     </span>
                   </p>

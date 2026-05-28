@@ -17,6 +17,7 @@ const ProjectCard = ({ project, ShowImage = false, details = "general" }) => {
   const getDetailsPath = () => {
     if (details === "graduated") return `/admin/latest-review/${project.id}`
     return `/ProjectDetails/${project.id}`; 
+    
   }
 
   return (
