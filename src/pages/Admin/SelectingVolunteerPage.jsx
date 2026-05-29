@@ -5,7 +5,7 @@ import CategoryFilterBar from "../../components/CategoryFilterBar";
 import ConsultantsList from "../../components/ConsultantsList";
 import { 
   useGetAvailableVolunteersQuery,
-  useLazyAssignSuggestedVolunteersQuery, 
+  useAssignSuggestedVolunteersMutation, 
 } from "../../api/endpoints/admin/volunteersOptionsApi.js";
 
 const SelectingVolunteerPage = () => {
@@ -14,7 +14,7 @@ const SelectingVolunteerPage = () => {
   const [selectedVolunteers, setSelectedVolunteers] = useState([]);
 
   const { data: suggestedVolunteers, isLoading, error } = useGetAvailableVolunteersQuery();
-  const [triggerAssign, { isLoading: isAssigning }] = useLazyAssignSuggestedVolunteersQuery();
+  const [assignSuggestedVolunteers, { isLoading: isAssigning }] = useAssignSuggestedVolunteersMutation();
 
   const categories = [
     { id: "all", label: "الكل" },
@@ -51,7 +51,10 @@ const SelectingVolunteerPage = () => {
     }
 
     try {
-      await triggerAssign(teamRequestId).unwrap();
+      await assignSuggestedVolunteers({
+        team_request_id: teamRequestId,
+        volunteer_ids: selectedVolunteers
+      }).unwrap();
 
       showSuccess("تم إرسال اقتراح المتطوعين بنجاح");
       setSelectedVolunteers([]);
