@@ -1,30 +1,60 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { updateAccessToken, logOut } from "../redux/authSlice";
+
+const baseQuery = fetchBaseQuery({
+  baseUrl: "http://127.0.0.1:8000/api", 
+  prepareHeaders: (headers, { getState, endpoint }) => {
+    if (endpoint === "login") {
+      return headers;
+    }
+
+    const token = getState().auth.token;
+    if (token) {
+      headers.set("authorization", `Bearer ${token}`);
+    }
+    return headers;
+  },
+});
+
+const baseQueryWithReauth = async (args, api, extraOptions) => {
+  let result = await baseQuery(args, api, extraOptions);
+
+  if (result.error && result.error.status === 401) {
+    if (api.endpoint === "login") {
+      return result;
+    }
+
+    const refreshToken = api.getState().auth.refreshToken;
+
+    if (refreshToken) {
+      const refreshResult = await baseQuery(
+        {
+          url: "/accounts/token/refresh/", 
+          method: "POST",
+          body: { refresh: refreshToken },
+        },
+        api,
+        extraOptions
+      );
+
+      if (refreshResult.data) {
+        const newToken = refreshResult.data.access || refreshResult.data.token;
+        
+        api.dispatch(updateAccessToken({ token: newToken }));
+
+        result = await baseQuery(args, api, extraOptions);
+      } else {
+        api.dispatch(logOut());
+      }
+    } else {
+      api.dispatch(logOut());
+    }
+  }
+  return result;
+};
 
 export const apiSlice = createApi({
-  reducerPath: "api",
- baseQuery: fetchBaseQuery({
-    baseUrl: "http://127.0.0.1:8000/api/", //backend URL
-    prepareHeaders: (headers, { getState }) => {
-      const state = getState();
-      
-      // سطر طباعة سيكشف لنا هيكل الريدوكس بالكامل
-      console.log("=== MY EXACT REDUX STORE STATE ===", state);
-
-      const token = state.auth?.token || 
-                    state.auth?.accessToken || 
-                    state.auth?.access ||
-                    state.Auth?.token ||
-                    state.Auth?.accessToken;
-
-      if (token) {
-        headers.set("Authorization", `Bearer ${token}`);
-      } else {
-        console.warn("⚠️ API Slice: لم يتم العثور على التوكن في الريدوكس ستيت!");
-      }
-      
-      return headers;
-    },
-  }),
+  baseQuery: baseQueryWithReauth,
   tagTypes: [
     "Auth",
     "User",

@@ -161,7 +161,7 @@ const AppRoutes = () => {
 
       {/* ---------------- VOLUNTEER ---------------- */}
       {roles.includes("volunteer") && (
-        <Route element={<DashboardLayout roles={roles} userName="مايا محمد" email="maya@example.com" />}>
+        <Route element={<DashboardLayout roles={roles} userName="" email="" />}>
           <Route path="/volunteer-profile" element={<EditVolunteerProfilePage />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/settings" element={<SettingsPage />} />

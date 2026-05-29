@@ -81,12 +81,14 @@ const LoginPage = () => {
         name: decoded.full_name || response.user?.name || decoded.email,
         roles: normalizedRoles,
       };
+      const refreshToken = response.refresh || response.refreshToken;
 
       // تخزين البيانات في Redux
       dispatch(setCredentials({
         user: user,
         token: accessToken,
         userId: user.id,
+        refreshToken: refreshToken
       }));
 
       // تحديث السياق (Context)

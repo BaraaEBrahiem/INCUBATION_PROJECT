@@ -6,8 +6,8 @@ import ConsultantsList from "../../components/ConsultantsList";
 // import { useGetVolunteersQuery, useGetVolunteerRequestsQuery, useGetEvaluatorsQuery, useGetTeamRequestsQuery } from "../../api/endpoints/admin/volunteersOptionsApi.js";
 
 const VolunteersPage = () => {
-  const [selected, setSelected] =
-    useState("volunteers");
+
+  const [selected, setSelected] = useState("volunteers");
 
   const categories = [
     { id: "volunteers", label: "المتطوعين" },
@@ -15,7 +15,6 @@ const VolunteersPage = () => {
     { id: "evaluators", label: "المقيمين" },
     { id: "user_requests", label: "طلبات المستخدمين" }
   ];
-  const [selected, setSelected] = useState("volunteers");
 
   // const { data: volunteersData, isLoading: isLoadingVolunteers } = useGetVolunteersQuery();
   // const { data: requestsData, isLoading: isLoadingRequests } = useGetVolunteerRequestsQuery();
@@ -86,13 +85,13 @@ const VolunteersPage = () => {
   const userRequestsData = [
     {
       id: 22,
-      name: "ايه العبود",
+      full_name: "ايه العبود",
       avatar: "/images/user1.png",
       type: "user_request"
     },
     {
       id: 23,
-      name: "حسين العبود",
+      full_name: "حسين العبود",
       avatar: "/images/user1.png",
       type: "user_request"
     },
@@ -137,28 +136,24 @@ const VolunteersPage = () => {
       <h2 className="text-3xl font-bold mb-6">إدارة المتطوعين</h2>
 
       <CategoryFilterBar
-        categories={
-          categories
-        }
-        selected={
-          selected
-        }
-        onSelect={
-          setSelected
-        }
+        categories={categories}
+        selected={selected}
+        onSelect={setSelected}
         className="bg-white-color"
       />
 
-      {currentData.length ===
-      0 ? (
+      {currentData.length === 0 ? (
         <div className="text-center py-10 text-gray-500">
-          لا يوجد {selected === "volunteers" ? "متطوعين" : selected === "requests" ? "طلبات تطوع" : selected === "evaluators" ? "مقيمين" : "طلبات مستخدمين"} حالياً.
+          لا يوجد {
+            selected === "volunteers" ? "متطوعين" : 
+            selected === "requests" ? "طلبات تطوع" : 
+            selected === "evaluators" ? "مقيمين" : 
+            "طلبات مستخدمين"
+          } حالياً.
         </div>
       ) : (
         <ConsultantsList
-          consultants={
-            currentData
-          }
+          consultants={currentData}
           role="admin"
         />
       )}
