@@ -3,7 +3,7 @@ import DataTable from "../DataTable";
 import Button from "../../Button";
 
 const ROLE_TRANSLATIONS = {
-  VISITOR: "زائر",
+  VISITOR: "مستخدم",
   VOLUNTEER: "متطوع",
   IDEA_OWNER: "صاحب فكرة",
   INCUBATOR: "محتضن",

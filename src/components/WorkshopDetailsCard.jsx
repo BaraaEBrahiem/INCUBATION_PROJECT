@@ -146,12 +146,32 @@ const WorkshopDetailsCard = ({
             </p>
 
             <p className="text-lg">
-              <span className="font-bold">
-                الأهداف:
-              </span>{" "}
-              {workshop?.objectives ||
-                "لا يوجد"}
-            </p>
+  <span className="font-bold">
+    الأهداف:
+  </span>
+
+  {workshop?.objectives ? (
+    <ul className="list-disc pr-6 mt-2">
+      {typeof workshop.objectives === "object"
+        ? Object.values(
+            workshop.objectives
+          ).map(
+            (goal, index) => (
+              <li key={index}>
+                {goal}
+              </li>
+            )
+          )
+        : (
+          <li>
+            {workshop.objectives}
+          </li>
+        )}
+    </ul>
+  ) : (
+    " لا يوجد"
+  )}
+</p>
 
             <p className="text-lg">
               <span className="font-bold">
@@ -193,17 +213,54 @@ const WorkshopDetailsCard = ({
             </p>
 
             <p className="text-lg">
-              <span className="font-bold">
-                الأيام:
-              </span>{" "}
-              {Array.isArray(
-                workshop?.days
-              )
-                ? workshop.days.join(
-                    " - "
-                  )
-                : "غير محدد"}
-            </p>
+  <span className="font-bold">
+    الأيام:
+  </span>
+
+  <div className="mt-2 space-y-1">
+    {(() => {
+      const dayMap = {
+        saturday: "السبت",
+        sunday: "الأحد",
+        monday: "الإثنين",
+        tuesday: "الثلاثاء",
+        wednesday: "الأربعاء",
+        thursday: "الخميس",
+        friday: "الجمعة",
+      };
+
+      const daysArray =
+        Array.isArray(workshop?.days)
+          ? workshop.days
+          : typeof workshop?.days ===
+            "object"
+          ? Object.values(
+              workshop.days
+            )
+          : workshop?.days
+          ? [workshop.days]
+          : [];
+
+      return daysArray.length >
+        0 ? (
+        daysArray.map(
+          (day, index) => (
+            <div key={index}>
+              •{" "}
+              {dayMap[
+                day?.toLowerCase?.()
+              ] || day}
+            </div>
+          )
+        )
+      ) : (
+        <span>
+          غير محدد
+        </span>
+      );
+    })()}
+  </div>
+</p>
 
             <p className="text-lg">
               <span className="font-bold">
@@ -214,26 +271,33 @@ const WorkshopDetailsCard = ({
             </p>
 
             <p className="text-lg">
-              <span className="font-bold">
-                الحالة:
-              </span>{" "}
-              <span
-                className={`font-bold ${
-                  workshop?.status ===
-                  "ACCEPTED"
-                    ? "text-green-600"
-                    : workshop?.status ===
-                      "REJECTED"
-                    ? "text-red-600"
-                    : "text-yellow-600"
-                }`}
-              >
-                {
-                  workshop?.status
-                }
-              </span>
-            </p>
-
+  <span className="font-bold">
+    الحالة:
+  </span>{" "}
+  <span
+    className={`font-bold ${
+      workshop?.status ===
+      "ACCEPTED"
+        ? "text-green-600"
+        : workshop?.status ===
+          "REJECTED"
+        ? "text-red-600"
+        : "text-yellow-600"
+    }`}
+  >
+    {{
+      PENDING:
+        "قيد الانتظار",
+      ACCEPTED:
+        "مقبولة",
+      REJECTED:
+        "مرفوضة",
+    }[
+      workshop?.status
+    ] ||
+      workshop?.status}
+  </span>
+</p>
             {/* سبب الرفض */}
             {workshop?.status ===
               "REJECTED" && (
