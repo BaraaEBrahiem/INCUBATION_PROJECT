@@ -1,151 +1,80 @@
 import { useParams, useNavigate } from "react-router-dom";
+import { useState } from "react";
+
 import InfoRow from "../../components/InfoRow";
 import ApprovalActions from "../../components/ApprovalActions";
 import Button from "../../components/Button";
-import { useState } from "react";
 import Input from "../../components/Input";
 import Modal from "../../components/Modal";
+
 import { showSuccess, showError } from "../../Utils/toast";
 
-/*
-import { 
+import {
+  useGetVolunteerDetailsQuery,
   useApproveVolunteerRequestMutation,
   useRejectVolunteerRequestMutation,
   useSendEvaluationInvitationMutation,
-  useRemoveEvaluatorRoleMutation 
-} from "../../api/endpoints/admin/volunteersOptionsApi.js"; 
-*/
-
-const usersMockData = {
-  1: {
-    name: "رانيا الأحمد",
-    email: "rania@example.com",
-    primary_skills: "UI/UX",
-    additional_skills: ["تصميم واجهات", "تجربة مستخدم"],
-    years_of_experience: "3 سنوات",
-    current_company: "شركة تصميم",
-    motivation: "تطوير مهاراتي",
-    availability: [{ day: "monday", from: "10:00am", to: "2:00pm" }],
-    availability_type: "أونلاين",
-    volunteer_type: "تطوير واجهات المشاريع الناشئة",
-    cv: null,
-    location: "دمشق",
-  },
-  2: {
-    name: "محمد علي",
-    email: "mohamed@example.com",
-    primary_skills: "تطوير برمجيات",
-    additional_skills: ["بايثون", "جافا"],
-    years_of_experience: "سنتان",
-    current_company: "شركة تقنية",
-    motivation: "اكتساب خبرة",
-    availability: [{ day: "tuesday", from: "1:00pm", to: "5:00pm" }],
-    availability_type: "حضورية",
-    volunteer_type: "مساعدة في البرمجة",
-    cv: null,
-    location: "حلب",
-  },
-  10: {
-    name: "أحمد علي",
-    email: "ahmed@example.com",
-    primary_skills: "تسويق رقمي",
-    additional_skills: ["إدارة مشاريع صغيرة"],
-    years_of_experience: "سنة",
-    current_company: "شركة تسويق",
-    motivation: "بناء خبرة",
-    availability: [{ day: "wednesday", from: "2:00pm", to: "4:00pm" }],
-    availability_type: "عن بعد",
-    volunteer_type: "دعم المشاريع الناشئة",
-    cv: null,
-    location: "حمص",
-  },
-  11: {
-    name: "نورا حسن",
-    email: "noura@example.com",
-    primary_skills: "UI/UX",
-    additional_skills: ["تصميم الجرافيك"],
-    years_of_experience: "سنتان",
-    current_company: "شركة تقنية",
-    motivation: "المساهمة المجتمعية",
-    availability: [{ day: "thursday", from: "9:00am", to: "12:00pm" }],
-    availability_type: "حضورية",
-    volunteer_type: "تحسين تجربة المستخدم",
-    cv: null,
-    location: "اللاذقية",
-  },
-  20: {
-    name: "خالد يوسف",
-    email: "khaled@example.com",
-    primary_skills: "تقييم المشاريع",
-    additional_skills: ["إدارة مخاطر"],
-    years_of_experience: "10 سنوات",
-    current_company: "جهة استشارية",
-    motivation: "دعم رواد الأعمال",
-    availability: [{ day: "friday", from: "9:00am", to: "3:00pm" }],
-    availability_type: "عن بعد",
-    volunteer_type: "تقييم خطط العمل",
-    cv: null,
-    location: "طرطوس",
-  },
-  21: {
-    name: "سارة أحمد",
-    email: "sara@example.com",
-    primary_skills: "تقييم تقني",
-    additional_skills: ["تحليل نظم"],
-    years_of_experience: "8 سنوات",
-    current_company: "مركز أبحاث",
-    motivation: "نقل الخبرة",
-    availability: [{ day: "saturday", from: "11:00am", to: "3:00pm" }],
-    availability_type: "أونلاين",
-    volunteer_type: "مراجعة الكود",
-    cv: null,
-    location: "دمشق",
-  },
-};
-
-const userStatusMap = {
-  1: "VOLUNTEER",
-  2: "VOLUNTEER",
-  10: "PENDING",
-  11: "PENDING",
-  20: "EVALUATOR",
-  21: "EVALUATOR",
-};
+  useRemoveEvaluatorRoleMutation,
+} from "../../api/endpoints/admin/volunteersOptionsApi.js";
 
 const VolunteerRequestPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  /*
-  const [approveVolunteerRequest] = useApproveVolunteerRequestMutation();
-  const [rejectVolunteerRequest] = useRejectVolunteerRequestMutation();
-  const [sendEvaluationInvitation] = useSendEvaluationInvitationMutation();
-  const [removeEvaluatorRole] = useRemoveEvaluatorRoleMutation();
-  */
+  // =======================
+  // API
+  // =======================
+  const {
+    data: request,
+    isLoading,
+    isError,
+  } = useGetVolunteerDetailsQuery(id);
 
-  const request = usersMockData[id] || usersMockData[1];
-  const status = userStatusMap[id] || "PENDING"; 
+  const [approveVolunteerRequest] =
+    useApproveVolunteerRequestMutation();
 
+  const [rejectVolunteerRequest] =
+    useRejectVolunteerRequestMutation();
+
+  const [sendEvaluationInvitation] =
+    useSendEvaluationInvitationMutation();
+
+  const [removeEvaluatorRole] =
+    useRemoveEvaluatorRoleMutation();
+
+  // =======================
+  // States
+  // =======================
   const [EvaluateOpen, setEvaluateOpen] = useState(false);
-  const [RemoveEvaluatorOpen, setRemoveEvaluatorOpen] = useState(false);
+  const [RemoveEvaluatorOpen, setRemoveEvaluatorOpen] =
+    useState(false);
+
   const [isSubmitting, setIsSubmitting] = useState(false);
-  
+
   const [evaluationData, setEvaluationData] = useState({
     description: "",
     committee_date: "",
     expected_duration: "",
-    required_task: "", 
+    required_task: "",
   });
 
+  // =======================
+  // Actions
+  // =======================
   const handleApprove = async () => {
     setIsSubmitting(true);
+
     try {
-      // 📡 للربط: await approveVolunteerRequest(id).unwrap();
-      await new Promise(resolve => setTimeout(resolve, 500));
+      await approveVolunteerRequest(id).unwrap();
+
       showSuccess("تم قبول طلب التطوع بنجاح");
+
       navigate("/admin/volunteers");
     } catch (err) {
-      showError(err?.data?.message || "حدث خطأ في قبول الطلب");
+      showError(
+        err?.data?.message ||
+          "حدث خطأ في قبول الطلب"
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -153,13 +82,18 @@ const VolunteerRequestPage = () => {
 
   const handleReject = async () => {
     setIsSubmitting(true);
+
     try {
-      // 📡 للربط: await rejectVolunteerRequest(id).unwrap();
-      await new Promise(resolve => setTimeout(resolve, 500));
+      await rejectVolunteerRequest(id).unwrap();
+
       showSuccess("تم رفض طلب التطوع");
+
       navigate("/admin/volunteers");
     } catch (err) {
-      showError(err?.data?.message || "حدث خطأ في رفض الطلب");
+      showError(
+        err?.data?.message ||
+          "حدث خطأ في رفض الطلب"
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -167,23 +101,35 @@ const VolunteerRequestPage = () => {
 
   const handleSendInvitation = async () => {
     setIsSubmitting(true);
+
     try {
-      /*
       await sendEvaluationInvitation({
-        evaluator_id: id,
+        evaluator_id: request?.user_id,
         invitationData: {
-          volunteer_id: Number(id),
-          expected_duration: evaluationData.expected_duration,
-          task: evaluationData.required_task // تحويل الحقل إلى الاسم البرمجي المطلق في الباك إند
-        }
+          volunteer_id: request?.id,
+          expected_duration:
+            evaluationData.expected_duration,
+          task: evaluationData.required_task,
+        },
       }).unwrap();
-      */
-      await new Promise(resolve => setTimeout(resolve, 500));
-      showSuccess("تم إرسال دعوة التقييم بنجاح");
+
+      showSuccess(
+        "تم إرسال دعوة التقييم بنجاح"
+      );
+
       setEvaluateOpen(false);
-      setEvaluationData({ description: "", committee_date: "", expected_duration: "", required_task: "" });
+
+      setEvaluationData({
+        description: "",
+        committee_date: "",
+        expected_duration: "",
+        required_task: "",
+      });
     } catch (err) {
-      showError(err?.data?.message || "حدث خطأ في إرسال الدعوة");
+      showError(
+        err?.data?.message ||
+          "حدث خطأ في إرسال الدعوة"
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -191,93 +137,308 @@ const VolunteerRequestPage = () => {
 
   const handleRemoveEvaluator = async () => {
     setIsSubmitting(true);
+
     try {
-      // 📡 للربط: await removeEvaluatorRole(id).unwrap();
-      await new Promise(resolve => setTimeout(resolve, 500));
-      showSuccess("تم إزالة دور المقيم بنجاح");
+      await removeEvaluatorRole(
+        request?.id
+      ).unwrap();
+
+      showSuccess(
+        "تم إزالة دور المقيم بنجاح"
+      );
+
       setRemoveEvaluatorOpen(false);
     } catch (err) {
-      showError(err?.data?.message || "حدث خطأ في إزالة الدور");
+      showError(
+        err?.data?.message ||
+          "حدث خطأ في إزالة الدور"
+      );
     } finally {
       setIsSubmitting(false);
     }
   };
 
+  // =======================
+  // Loading & Error
+  // =======================
+  if (isLoading) {
+    return (
+      <div className="text-center mt-10">
+        جاري التحميل...
+      </div>
+    );
+  }
+
+  if (isError || !request) {
+    return (
+      <div className="text-center mt-10 text-red-500">
+        حدث خطأ أثناء تحميل البيانات
+      </div>
+    );
+  }
+
+  // =======================
+  // Logic
+  // =======================
+  const isPending =
+    request.status === "PENDING";
+
+  const isApproved =
+    request.status === "APPROVED";
+
+  const isEvaluator =
+    request.is_evaluator;
+
   return (
-    <div className="p-6 bg-white-color min-h-screen" dir="rtl">
+    <div
+      className="p-6 bg-white-color min-h-screen"
+      dir="rtl"
+    >
       <div className="container">
         <h2 className="text-3xl font-bold text-second-color mb-6">
-          {status === "PENDING"
+          {isPending
             ? "طلب التطوع"
-            : status === "VOLUNTEER"
-            ? "تفاصيل المتطوع"
-            : status === "EVALUATOR"
+            : isEvaluator
             ? "تفاصيل المقيم"
-            : "طلب التطوع"}
+            : "تفاصيل المتطوع"}
         </h2>
 
+        {/* المعلومات الأساسية */}
         <div className="bg-white p-4 rounded-lg shadow-lg mb-6">
-          <InfoRow label="الاسم الكامل">{request.name}</InfoRow>
-          <InfoRow label="البريد الإلكتروني">{request.email}</InfoRow>
-          <InfoRow label="عدد سنوات الخبرة">{request.years_of_experience}</InfoRow>
-          <InfoRow label="جهة العمل الحالية">{request.current_company}</InfoRow>
+          <InfoRow label="الاسم الكامل">
+            {request.name}
+          </InfoRow>
+
+          <InfoRow label="البريد الإلكتروني">
+            {request.email}
+          </InfoRow>
+
+          <InfoRow label="عدد سنوات الخبرة">
+            {request.years_of_experience}
+          </InfoRow>
+
+          <InfoRow label="جهة العمل الحالية">
+            {request.current_company ||
+              "غير محدد"}
+          </InfoRow>
+
+          <InfoRow label="المهارة الأساسية">
+            {request.primary_skills}
+          </InfoRow>
+
+          <InfoRow label="التخصص">
+            {request.specialization}
+          </InfoRow>
         </div>
 
+        {/* معلومات التطوع */}
         <div className="bg-white p-4 rounded-lg shadow-lg mb-6">
           <InfoRow label="أوقات الإتاحة الأسبوعية">
-            {request.availability?.map((item, index) => (
-              <div key={index}>{item.day}: {item.from} - {item.to}</div>
-            ))}
+            {request.availability?.length >
+            0 ? (
+              request.availability.map(
+                (item, index) => (
+                  <div key={index}>
+                    {item.day}: {item.from} -{" "}
+                    {item.to}
+                  </div>
+                )
+              )
+            ) : (
+              <p>لا يوجد</p>
+            )}
           </InfoRow>
-          <InfoRow label="الدافع للتطوع">{request.motivation}</InfoRow>
-          <InfoRow label="نوع الإتاحة">{request.availability_type}</InfoRow>
+
+          <InfoRow label="الدافع للتطوع">
+            {request.motivation}
+          </InfoRow>
+
+          <InfoRow label="نوع الإتاحة">
+            {request.availability_type}
+          </InfoRow>
+
+          <InfoRow label="السكن">
+            {request.residence}
+          </InfoRow>
         </div>
 
+        {/* الهدف والخبرات */}
         <div className="bg-white p-4 rounded-lg shadow-lg mb-6">
-          <InfoRow label="الهدف من التطوع">{request.volunteer_type}</InfoRow>
-          <InfoRow label="مجالات الخبرة الإضافية">{request.additional_skills?.join(", ")}</InfoRow>
-          <InfoRow label="السيرة الذاتية">
-            {request.cv ? <p>{request.cv}</p> : <p>لا توجد سيرة ذاتية مرفقة.</p>}
+          <InfoRow label="تفضيلات الاستشارة">
+  <div className="flex flex-col gap-1">
+    {request.volunteer_type?.map((item, index) => (
+      <div key={index}>
+        {typeof item === "object"
+          ? Object.values(item).join(" - ")
+          : item}
+      </div>
+    ))}
+  </div>
+</InfoRow>
+
+
+          <InfoRow label="مجالات الخبرة الإضافية">
+  <div className="flex flex-col gap-1">
+    {request.additional_skills?.map((skill, index) => (
+      <div key={index}>
+        {typeof skill === "object"
+          ? Object.values(skill).join(" - ")
+          : skill}
+      </div>
+    ))}
+  </div>
+</InfoRow>
+              
+          <InfoRow label="نبذة">
+            {request.bio ||
+              "لا توجد معلومات"}
           </InfoRow>
+
+          
         </div>
 
-        {status === "PENDING" && (
-          <ApprovalActions onApprove={handleApprove} onReject={handleReject} disabled={isSubmitting} />
+        {/* الأزرار */}
+        {isPending && (
+          <div className="flex gap-3 mt-6 mr-auto">
+            <Button
+              onClick={handleApprove}
+              disabled={isSubmitting}
+              label={isSubmitting ? "جاري المعالجة..." : "موافقة"}
+              className="bg-green-600 hover:bg-green-700 text-white w-28 h-12 rounded-lg text-base font-medium flex items-center justify-center"
+            />
+
+            <Button
+              onClick={handleReject}
+              disabled={isSubmitting}
+              label={isSubmitting ? "جاري المعالجة..." : "رفض"}
+              className="bg-red-600 hover:bg-red-700 text-white w-28 h-12 rounded-lg text-base font-medium flex items-center justify-center"
+            />
+          </div>
         )}
-        {status === "VOLUNTEER" && (
-          <Button onClick={() => setEvaluateOpen(true)} label="طلب تقييم" className="bg-main-color" />
+
+        {isApproved && !isEvaluator && (
+          <Button
+            onClick={() =>
+              setEvaluateOpen(true)
+            }
+            label="إرسال دعوة انضمام للجنة التقييم"
+            className="bg-main-color"
+          />
         )}
-        {status === "EVALUATOR" && (
-          <Button onClick={() => setRemoveEvaluatorOpen(true)} label="إزالة تقييم" className="bg-main-color" />
+
+        {isApproved && isEvaluator && (
+          <Button
+            onClick={() =>
+              setRemoveEvaluatorOpen(true)
+            }
+            label="إزالة من لجنة التقييم"
+            className="bg-red-600"
+          />
         )}
       </div>
 
+      {/* مودال إرسال دعوة */}
       <Modal
         isOpen={EvaluateOpen}
-        onClose={() => setEvaluateOpen(false)}
+        onClose={() =>
+          setEvaluateOpen(false)
+        }
         title="إرسال طلب للتقييم"
-        footer={<Button label="إرسال" onClick={handleSendInvitation} className="bg-main-color px-8" disabled={isSubmitting} />}
+        footer={
+          <Button
+            label="إرسال"
+            onClick={
+              handleSendInvitation
+            }
+            className="bg-main-color px-8"
+            disabled={isSubmitting}
+          />
+        }
       >
         <form className="flex flex-col gap-4">
-          <Input type="text" label="وصف الطلب" value={evaluationData.description} onChange={(e) => setEvaluationData({ ...evaluationData, description: e.target.value })} />
-          <Input type="date" label="تاريخ اللجنة" value={evaluationData.committee_date} onChange={(e) => setEvaluationData({ ...evaluationData, committee_date: e.target.value })} />
-          <Input type="text" label="المدة الزمنية المتوقعة" value={evaluationData.expected_duration} onChange={(e) => setEvaluationData({ ...evaluationData, expected_duration: e.target.value })} />
-          <Input type="text" label="المهمة المطلوبة" value={evaluationData.required_task} onChange={(e) => setEvaluationData({ ...evaluationData, required_task: e.target.value })} />
+          <Input
+            type="text"
+            label="وصف الطلب"
+            value={
+              evaluationData.description
+            }
+            onChange={(e) =>
+              setEvaluationData({
+                ...evaluationData,
+                description:
+                  e.target.value,
+              })
+            }
+          />
+
+          <Input
+            type="text"
+            label="المدة الزمنية المتوقعة"
+            value={
+              evaluationData.expected_duration
+            }
+            onChange={(e) =>
+              setEvaluationData({
+                ...evaluationData,
+                expected_duration:
+                  e.target.value,
+              })
+            }
+          />
+
+          <Input
+            type="text"
+            label="المهمة المطلوبة"
+            value={
+              evaluationData.required_task
+            }
+            onChange={(e) =>
+              setEvaluationData({
+                ...evaluationData,
+                required_task:
+                  e.target.value,
+              })
+            }
+          />
         </form>
       </Modal>
 
+      {/* مودال إزالة المقيم */}
       <Modal
         isOpen={RemoveEvaluatorOpen}
-        onClose={() => setRemoveEvaluatorOpen(false)}
-        title="إزالة التقييم"
+        onClose={() =>
+          setRemoveEvaluatorOpen(
+            false
+          )
+        }
+        title="إزالة دور التقييم"
         footer={
           <>
-            <Button label="إزالة" onClick={handleRemoveEvaluator} className="bg-red-600 px-2 mx-2" disabled={isSubmitting} />
-            <Button label="إلغاء" onClick={() => setRemoveEvaluatorOpen(false)} className="bg-gray-500 px-2" />
+            <Button
+              label="إزالة"
+              onClick={
+                handleRemoveEvaluator
+              }
+              className="bg-red-600 px-2 mx-2"
+              disabled={isSubmitting}
+            />
+
+            <Button
+              label="إلغاء"
+              onClick={() =>
+                setRemoveEvaluatorOpen(
+                  false
+                )
+              }
+              className="bg-gray-500 px-2"
+            />
           </>
         }
       >
-        <p>هل أنت متأكد من إزالة دور التقييم للمقيم؟</p>
+        <p>
+          هل أنت متأكد من إزالة
+          دور التقييم للمقيم؟
+        </p>
       </Modal>
     </div>
   );

@@ -77,14 +77,24 @@ export const volunteersOptionsApi = apiSlice.injectEndpoints({
     query: (pk) => `/admin/volunteers/team-requests/${pk}/`, 
     providesTags: ['VolunteerProfile'],
 }),
+  getVolunteerDetails: builder.query({
+    query: (id) =>
+    `/admin/volunteers/${id}/`,
+    
+    providesTags: [
+    "VolunteerProfile",
+  ],
+}),
 
   }),
+  
 });
 
 export const {
   useGetVolunteersQuery,
   useGetVolunteerRequestsQuery,
   useGetEvaluatorsQuery,
+  useGetVolunteerDetailsQuery,
   useApproveVolunteerRequestMutation,
   useRejectVolunteerRequestMutation,
   useSendEvaluationInvitationMutation,
