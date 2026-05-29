@@ -28,19 +28,17 @@ export const publicProjectsApi = apiSlice.injectEndpoints({
         }),
 
 
-    assignIncubationEvaluators:
-      builder.mutation({
-      query: ({
-        idea_id,
-        mentor_user_ids,}) => ({
-          url: `/admin/incubations/ideas/${idea_id}/mentors/assign/`,
-          method: "POST",
-          body: {
-            mentor_user_ids:
-          mentor_user_ids,
-        },
-      }),
-    
+    assignIncubationEvaluators: builder.mutation({
+        query: ({ idea_id, mentor_user_ids }) => ({
+    url: `/admin/incubations/ideas/${idea_id}/mentors/assign/`,
+    method: "POST",
+    body: {
+      mentor_user_ids: Array.isArray(mentor_user_ids)
+        ? mentor_user_ids
+        : [],
+    },
+  }),
+
     }),
   }),
 });

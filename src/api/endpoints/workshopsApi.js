@@ -12,7 +12,7 @@ export const workshopsApi = apiSlice.injectEndpoints({
 
     // جلب ورشة محددة بواسطة ID
     getWorkshopById: builder.query({
-      query: (id) => `/workshops/${id}/`,
+      query: (id) => `/volunteers/public-workshopsdetails/${id}/`,
       providesTags: (result, error, id) => [{ type: 'Workshop', id }],
     }),
 
@@ -20,7 +20,7 @@ export const workshopsApi = apiSlice.injectEndpoints({
     getAllWorkshops: builder.query({
       query: (params = {}) => {
         const queryString = new URLSearchParams(params).toString();
-        return `/workshops/${queryString ? `?${queryString}` : ''}`;
+        return `/volunteers/public-workshops/${queryString ? `?${queryString}` : ''}`;
       },
       providesTags: ['Workshop'],
     }),
@@ -28,7 +28,7 @@ export const workshopsApi = apiSlice.injectEndpoints({
     // إضافة ورشة جديدة
     addWorkshop: builder.mutation({
       query: (workshopData) => ({
-        url: '/workshops/',
+        url: '/volunteers/workshops/create/',
         method: 'POST',
         body: workshopData,
       }),
@@ -38,7 +38,38 @@ export const workshopsApi = apiSlice.injectEndpoints({
       query: () => 'admin/workshops/',
       providesTags: ['Workshop'],
     }),
+  //جلب ورشات المعسكر للمتطوع
+  getCampWorkshops: builder.query({
+  query: () => '/bootcamp/my-bootcamp-sessions/',
+  providesTags: (result) =>
+    result
+      ? [
+          ...result.map(({ id }) => ({ type: 'Workshop', id })),
+          { type: 'CampWorkshops', id: 'LIST' },
+        ]
+      : [{ type: 'Workshop', id: 'LIST' }],
+}),
 
+    // جلب أقرب ورشة عمل (لصفحة المتطوع الرئيسية)
+    getNearestWorkshop: builder.query({
+      query: () => '/volunteers/nearest-workshop/',
+      providesTags: ['Workshop'],
+    }),
+
+getCampWorkshopProjects: builder.query({
+  query: (id) => `/bootcamp/bootcamp-sessions/${id}/ideas/`,
+  providesTags: (result, error, id) => [{ type: 'CampProjects', id: id }],
+}),
+
+// دالة تحديث حالة الحضور والغياب للمشروع
+updateProjectAttendance: builder.mutation({
+  query: ({ idea_id, status }) => ({
+    url: `/admin/camp/projects/${idea_id}/attendance/`,
+    method: 'POST',
+    body: { status },
+  }),
+  invalidatesTags: (result, error, { idea_id }) => ['CampProjects', idea_id],
+}),
 
   }),
 });
@@ -49,4 +80,8 @@ export const {
   useGetAllWorkshopsQuery,  
   useAddWorkshopMutation,
   useGetWorkshopsQuery,
+  useGetCampWorkshopsQuery,
+  useGetCampWorkshopProjectsQuery,
+  useUpdateProjectAttendanceMutation,
+  useGetNearestWorkshopQuery,
 } = workshopsApi;

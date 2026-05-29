@@ -7,10 +7,11 @@ import StepAvailability from "./StepAvailability";
 import { initialVolunteerForm, volunteerReducer } from "../../hooks/useVolunteerReducer";
 
 const EXPERTISE_OPTIONS = [
-  { value: "ui ux", label: "تصميم واجهات وتجربة المستخدم" },
-  { value: "development", label: "تطوير برمجيات" },
-  { value: "marketing", label: "التسويق الرقمي" },
-  { value: "training", label: "تقديم ورشات تدريبية" }
+  { value: "UI/UX", label: "UI/UX" },
+  { value: "Frontend", label: "Frontend" },
+  { value: "Marketing", label: "Marketing" },
+  { value: "Legal", label: "Legal" },
+  {value: "Backend", label: "Backend"}
 ];
 
 const VolunteerForm = ({ onSubmit, onCancel }) => {
@@ -43,15 +44,17 @@ const VolunteerForm = ({ onSubmit, onCancel }) => {
     const newErrors = {};
 
     if (step === 0) {
-      if (!form.experienceYears) newErrors.experienceYears = "سنوات الخبرة مطلوبة";
-      if (!form.expertiseArea) newErrors.expertiseArea = "مجال الخبرة الرئيسي مطلوب";
-      if (!form.employer) newErrors.employer = "جهة العمل مطلوبة";
+      // التحقق من خطوة الخبرات والمهارات
+      if (!form.years_of_experience) newErrors.years_of_experience = "سنوات الخبرة مطلوبة";
+      if (!form.current_company) newErrors.current_company = "جهة العمل مطلوبة";
+      if (!form.primary_skills) newErrors.primary_skills = "الخبرة الاساسية";
     } 
     else if (step === 1) {
-      if (!form.consultationPreferences) newErrors.consultationPreferences = "تفضيلات الاستشارة مطلوبة";
-      if (!form.location) newErrors.location = "الموقع مطلوب";
-      if (!form.expertition) newErrors.expertition = "الخبرات الإضافية مطلوبة";
-      if (!form.volunteeringGoal) newErrors.volunteeringGoal = "هدف التطوع مطلوب";
+      // التحقق من خطوة التفضيلات
+      if (!form.volunteer_type) newErrors.volunteer_type = "نوع التطوع مطلوب";
+      if (!form.residence) newErrors.residence = "الموقع مطلوب";
+      if (!form.specialization) newErrors.specialization = "التخصص مطلوب";
+      if (!form.motivation) newErrors.motivation = "هدف التطوع مطلوب";
     }
     else if (step === 2) {
       const availabilityValues = Object.values(form.availability || {});
@@ -93,13 +96,13 @@ const VolunteerForm = ({ onSubmit, onCancel }) => {
           />
         )}
 
-        {step === 2 && (
-          <StepAvailability
-            availability={form.availability}
-            errors={errors}
-            onAvailabilityChange={handleAvailabilityChange} // تعديل: ربط دالة التغيير الممررة بشكل صحيح للـ Props المتوقعة داخل المكون الفرعي
-          />
-        )}
+       {step === 2 && (
+  <StepAvailability
+    availability={form.availability} 
+    errors={errors}
+    onAvailabilityChange={handleAvailabilityChange} 
+  />
+)}
 
         <div className="flex justify-between items-center mt-6">
           <Button

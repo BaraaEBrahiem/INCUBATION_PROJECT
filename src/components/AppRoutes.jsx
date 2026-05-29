@@ -92,6 +92,11 @@ import CardRequestDetailsPage from "../pages/Admin/CardRequestDetailsPage";
 import ExhibitionManagementPage from "../pages/Admin/ExhibitionManagementPage";
 import LatestReviewPage from "../pages/Admin/LatestReviewPage";
 import AdminProjectsDetailsPage from "../pages/Admin/AdminProjectsDetailsPage";
+import GraduatedProjectsPage from "../pages/Admin/GraduatedProjectsPage";
+import CampWorkshopsPage from "../pages/Volunteer/CampWorkshopsPage";
+import CampProjectsPage from "../pages/Volunteer/CampProjectsPage";
+import SelectingVolunteerPage from "../pages/Admin/SelectingVolunteerPage";
+
 const AppRoutes = () => {
     const { roles } = useRole();
     const userNavOptions = buildUserNavOptions(roles);
@@ -161,7 +166,7 @@ const AppRoutes = () => {
 
       {/* ---------------- VOLUNTEER ---------------- */}
       {roles.includes("volunteer") && (
-        <Route element={<DashboardLayout roles={roles} userName="مايا محمد" email="maya@example.com" />}>
+        <Route element={<DashboardLayout roles={roles} userName="" email="" />}>
           <Route path="/volunteer-profile" element={<EditVolunteerProfilePage />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/settings" element={<SettingsPage />} />
@@ -176,6 +181,8 @@ const AppRoutes = () => {
           <Route path="/workshopinfo/:id" element={<WorkshopInfoPage />} />
           <Route path="/assigned-projects-page" element={<AssignedProjectsPage />} />
           <Route path="/volunteer-request/:id" element={<VolunteerRequestDetailsPage />} />
+          <Route path="/CampWorkShopsPage" element={<CampWorkshopsPage/>}/>
+          <Route path ="/CampProjectsPage" element={<CampProjectsPage/>}/>
         </Route>
       )}
 
@@ -245,16 +252,16 @@ const AppRoutes = () => {
           <Route path="/assigned-projects-page" element={<AssignedProjectsPage />} />
            <Route path="/requests-page" element={<VolunteerRequestsPage />} />
           <Route path="/workshop-page" element={<WorkshopsPage />} />
-           <Route path="/workshopinfo/:id" element={<WorkshopInfoPage />} />
            <Route path="/schedule-page" element={<ScheduleManagementPage />} />
           <Route path="/consultantslist/:categoryId" element={<ConsultantsListPage />} />
         </Route>
       )}
 
       {/* صفحات مشتركة */}
+       <Route path="/workshopinfo/:id" element={<WorkshopInfoPage />} />
       <Route path="/evaluationform" element={<EvaluationFormPage />} />
       <Route path="/notes" element={<NotesPage />} />
-      <Route path="/exhibition-card" element={<ExhibitionCardPage />} />
+      <Route path="/exhibition-card/:id" element={<ExhibitionCardPage />} />
       <Route path="/TeamRequestPage" element={<TeamRequestPage />} />
       <Route path="/AddworkshopPage" element={<AddWorkshopPage />} />
       <Route path="/projectinfo/:id" element={<ProjectInfoPage />} />
@@ -285,15 +292,12 @@ const AppRoutes = () => {
           <Route path="/admin/assigned-projects" element={<ProjectsManagementPage />} />
           <Route path="/admin/exhibition" element={<ExhibitionManagementPage/>} />
           <Route path="/requests-details/:id" element={<CardRequestDetailsPage />} />
+           <Route path="/Selectingvolunteer/:id" element={<SelectingVolunteerPage />} />
         </Route>
       )} 
       {roles.includes("admin") && (
       <Route>
-      <Route path="/admin/users/visitor/:id" element={<UserDetailsPage />} />
-      <Route path="/admin/users/volunteer/:id" element={<UserDetailsPage />} />
-      <Route path="/admin/users/incubated/:id" element={<UserDetailsPage />} />
-      <Route path="/admin/users/graduated/:id" element={<UserDetailsPage />} />
-      <Route path="/admin/users/idea-owner/:id" element={<UserDetailsPage />} />
+      <Route path="/admin/users/:id" element={<UserDetailsPage />} />
       <Route path="/admin/incubation_seasons/applications/:id" element={<IncubationRequestDetails />} />
       <Route path="/admin/tasks/:taskId" element={<TaskDetailsPage />} />
       <Route path="/admin/details/:id" element={<VolunteerRequestPage />} />
@@ -303,6 +307,7 @@ const AppRoutes = () => {
       <Route path="/admin/assign-incubation-evaluators/:id" element={<AssignIncubationEvaluatorsPage />}/>
       <Route path="/admin/latest-review/:id" element={<LatestReviewPage />} />
       <Route path="/admin/projects-details/:id" element={<AdminProjectsDetailsPage />} />
+      <Route path="/admin/graduated-projects" element= {<GraduatedProjectsPage/>} />
       
       </Route>
       )}

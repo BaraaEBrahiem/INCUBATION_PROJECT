@@ -5,10 +5,10 @@ export const scheduleApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
 
     // -----------------------------
-    // جلب الجدول بالكامل (مواعيد + أجازات)
+    // جلب المواعيد 
     // -----------------------------
     getSchedule: builder.query({
-      query: () => '/schedule/',
+      query: () => '/volunteers/my-availability/',
       providesTags: ['Schedule'],
     }),
 
@@ -17,7 +17,7 @@ export const scheduleApi = apiSlice.injectEndpoints({
     // -----------------------------
     addAppointment: builder.mutation({
       query: (appointmentData) => ({
-        url: '/schedule/appointments/',
+        url: '/volunteers/availability/add/',
         method: 'POST',
         body: appointmentData,
       }),
@@ -28,8 +28,8 @@ export const scheduleApi = apiSlice.injectEndpoints({
     // حذف موعد
     // -----------------------------
     deleteAppointment: builder.mutation({
-      query: (appointmentId) => ({
-        url: `/schedule/appointments/${appointmentId}/`,
+      query: (id) => ({
+        url: `/volunteers/availability/${id}/delete/`,
         method: 'DELETE',
       }),
       invalidatesTags: ['Schedule'],
@@ -40,11 +40,19 @@ export const scheduleApi = apiSlice.injectEndpoints({
     // -----------------------------
     addHoliday: builder.mutation({
       query: (holidayData) => ({
-        url: '/schedule/holidays/',
+        url: '/volunteers/vacations/',
         method: 'POST',
         body: holidayData,
       }),
-      invalidatesTags: ['Schedule'],
+      invalidatesTags: ['Vacations'],
+    }),
+
+    // -----------------------------
+    // جلب الأجازات
+    //-----------------------------
+    getVacations: builder.query({
+      query: () => '/volunteers/vacations/',
+      providesTags: ['Vacations'],
     }),
 
     // -----------------------------
@@ -52,10 +60,10 @@ export const scheduleApi = apiSlice.injectEndpoints({
     // -----------------------------
     deleteHoliday: builder.mutation({
       query: (holidayId) => ({
-        url: `/schedule/holidays/${holidayId}/`,
+        url: `/volunteers/vacations/${holidayId}/delete/`,
         method: 'DELETE',
       }),
-      invalidatesTags: ['Schedule'],
+      invalidatesTags: ['Vacations'],
     }),
 
   }),
@@ -67,4 +75,5 @@ export const {
   useDeleteAppointmentMutation,
   useAddHolidayMutation,
   useDeleteHolidayMutation,
+  useGetVacationsQuery,
 } = scheduleApi;

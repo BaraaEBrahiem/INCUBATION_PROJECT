@@ -18,11 +18,12 @@ export const rolesApi = apiSlice.injectEndpoints({
     // ---------------------------------------------------
     // 2) Volunteer Form → يبقى Pending (ينتظر موافقة الإدارة)
     // ---------------------------------------------------
+
     upgradeToVolunteer: builder.mutation({
-      query: (data) => ({
-        url: "roles/volunteer/",
-        method: "POST",
-        body: data,
+      query: (formData) => ({
+        url: '/volunteers/apply/',
+        method: 'POST',
+        body: formData,
       }),
       invalidatesTags: ["User"],
     }),

@@ -10,10 +10,27 @@ export const formConfigApi = apiSlice.injectEndpoints({
       providesTags: ['FormConfig'],
     }),
 
+    //انشاء فورم المعرض
+    createExhibitionForm: builder.mutation({
+      query:(title) => ({
+        url: `/admin/exhibition/form/create/`,
+        method: 'POST',
+        body:{title},
+      }),
+      invalidatesTags:() => [{type: 'ExhibitionForm'}],
+    }),
+    ///نشر فورم المعرض
+     publishSeason: builder.mutation({
+      query: (form_id) => ({
+        url: `/admin/exhibition/form/${form_id}/publish/`,
+        method: 'POST',
+      }),
+      invalidatesTags: (result, error, form_id) => [{ type: 'ExhibitionForm', id: form_id }],
+    }),
     
    createSeasonForm: builder.mutation({
   query: ({ season_id, title }) => ({
-    url: `/admin/ideas/forms/${season_id}/create/`,
+    url: `/admin/ideas/forms/${season_id}/builder/`,
     method: 'POST',
     body: { title }, 
     description: `نموذج تقديم خاص بالموسم رقم ${season_id}`,

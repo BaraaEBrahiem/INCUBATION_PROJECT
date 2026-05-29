@@ -1,13 +1,11 @@
  import { useState } from "react";
 import CategoryFilterBar from "../../components/CategoryFilterBar";
 import ConsultantsList from "../../components/ConsultantsList";
-import {
-  useGetVolunteersQuery,
-  useGetVolunteerRequestsQuery,
-  useGetEvaluatorsQuery,
-} from "../../api/endpoints/admin/volunteersOptionsApi";
+
+// import { useGetVolunteersQuery, useGetVolunteerRequestsQuery, useGetEvaluatorsQuery, useGetTeamRequestsQuery } from "../../api/endpoints/admin/volunteersOptionsApi.js";
 
 const VolunteersPage = () => {
+
   const [selected, setSelected] = useState("volunteers");
 
   // التبويبات كاملة
@@ -18,185 +16,123 @@ const VolunteersPage = () => {
     { id: "user_requests", label: "طلبات المستخدمين" }
   ];
 
-  // =========================
-  // البيانات الوهمية المخصصة (مننوشك)
-  // =========================
-  const localVolunteersData = [
+  // const { data: volunteersData, isLoading: isLoadingVolunteers } = useGetVolunteersQuery();
+  // const { data: requestsData, isLoading: isLoadingRequests } = useGetVolunteerRequestsQuery();
+  // const { data: evaluatorsData, isLoading: isLoadingEvaluators } = useGetEvaluatorsQuery();
+  // const { data: teamRequestsData, isLoading: isLoadingTeamRequests } = useGetTeamRequestsQuery(); 
+
+  const volunteersData = [
     {
       id: 1,
-      name: "رانيا الأحمد",
-      specialty: "UI/UX",
-      activeTime: "2:00pm إلى 4:00pm",
-      image: "/src/assets/images/avatar.jpg",
+      full_name: "رانيا الأحمد",
+      primary_skills: "UI/UX",
+      avatar: "/src/assets/images/avatar.jpg",
       type: "volunteer",
+      availability: [
+        { day: "كل الأيام", start_time: "2:00pm", end_time: "4:00pm" }
+      ]
     },
     {
       id: 2,
-      name: "محمد علي",
-      specialty: "تطوير برمجيات",
-      activeTime: "10:00am إلى 2:00pm",
-      image: "/src/assets/images/avatar.jpg",
+      full_name: "محمد علي",
+      primary_skills: "تطوير برمجيات",
+      avatar: "/src/assets/images/avatar.jpg",
       type: "volunteer",
+      availability: [
+        { day: "كل الأيام", start_time: "10:00am", end_time: "2:00pm" }
+      ]
     },
   ];
 
-  const localRequestsData = [
+  const requestsData = [
     {
       id: 10,
-      name: "أحمد علي",
-      specialty: "متقدم بطلب تطوع",
-      activeTime: "—",
-      image: "/images/user1.png",
+      full_name: "أحمد علي",
+      primary_skills: "متقدم بطلب تطوع",
+      avatar: "/images/user1.png",
       type: "request",
+      availability: []
     },
     {
       id: 11,
-      name: "نورا حسن",
-      specialty: "متقدم بطلب تطوع",
-      activeTime: "—",
-      image: "/images/user1.png",
+      full_name: "نورا حسن",
+      primary_skills: "متقدم بطلب تطوع",
+      avatar: "/images/user1.png",
       type: "request",
+      availability: []
     },
   ];
 
-  const localEvaluatorsData = [
+  const evaluatorsData = [
     {
       id: 20,
-      name: "خالد يوسف",
-      specialty: "مقيم مشاريع",
-      activeTime: "—",
-      image: "/images/user1.png",
+      full_name: "خالد يوسف",
+      primary_skills: "مقيم مشاريع",
+      avatar: "/images/user1.png",
       type: "evaluator",
+      availability: []
     },
     {
       id: 21,
-      name: "سارة أحمد",
-      specialty: "مقيم تقني",
-      activeTime: "—",
-      image: "/images/user1.png",
+      full_name: "سارة أحمد",
+      primary_skills: "مقيم تقني",
+      avatar: "/images/user1.png",
       type: "evaluator",
+      availability: []
     },
   ];
   
-  const localUserRequestsData = [
+  const userRequestsData = [
     {
       id: 22,
-      name: "ايه العبود",
-      specialty: "طلب صاحب الفكرة اقتراح فريق له",
-      image: "/images/user1.png",
-      type: "user_request", 
+      full_name: "ايه العبود",
+      avatar: "/images/user1.png",
+      type: "user_request"
     },
     {
       id: 23,
-      name: "حسين العبود",
-      specialty: "طلب صاحب الفكرة اقتراح فريق له",
-      image: "/images/user1.png",
-      type: "user_request", 
+      full_name: "حسين العبود",
+      avatar: "/images/user1.png",
+      type: "user_request"
     },
   ];
 
-  // =========================
-  // API Queries
-  // =========================
-  const volunteersQuery = useGetVolunteersQuery();
-  const requestsQuery = useGetVolunteerRequestsQuery();
-  const evaluatorsQuery = useGetEvaluatorsQuery();
+  let currentData = [];
 
-  // =========================
-  // Normalize Response
-  // =========================
-  const normalizeData = (response, fallbackData) => {
-    if (!response) return fallbackData; // إذا لم تتوفر بيانات الـ API، نستخدم بياناتك المحلية
-    if (Array.isArray(response)) return response.length > 0 ? response : fallbackData;
-    if (Array.isArray(response?.results)) return response.results.length > 0 ? response.results : fallbackData;
-    if (Array.isArray(response?.data)) return response.data.length > 0 ? response.data : fallbackData;
-    return fallbackData;
-  };
+  switch (selected) {
+    case "volunteers":
+      currentData = volunteersData; 
+      break;
+    case "requests":
+      currentData = requestsData;
+      break;
+    case "evaluators":
+      currentData = evaluatorsData;
+      break;
+    case "user_requests":
+      currentData = userRequestsData; // عند الربط ستصبح: currentData = teamRequestsData || [];
+      break;
+    default:
+      currentData = [];
+  }
 
-  // =========================
-  // Current tab configuration
-  // =========================
-  const tabConfig = {
-    volunteers: {
-      query: volunteersQuery,
-      localData: localVolunteersData,
-      emptyText: "لا يوجد متطوعون حالياً",
-    },
-    requests: {
-      query: requestsQuery,
-      localData: localRequestsData,
-      emptyText: "لا توجد طلبات تطوع حالياً",
-    },
-    evaluators: {
-      query: evaluatorsQuery,
-      localData: localEvaluatorsData,
-      emptyText: "لا يوجد مقيمون حالياً",
-    },
-    user_requests: {
-      query: { data: null, isLoading: false, error: null, refetch: () => {} }, // لعدم وجود API حالياً لها
-      localData: localUserRequestsData,
-      emptyText: "لا توجد طلبات مستخدمين حالياً",
-    },
-  };
- const currentTab = tabConfig[selected] || tabConfig["volunteers"];
-  const { data, isLoading, error, refetch } = currentTab.query;
-  
-  // دمج ذكي: يعرض الـ API أولاً، وإن لم يجد، يعرض بياناتك المحلية مباشرة
-  const currentData = normalizeData(data, currentTab.localData);
-
-  // =========================
-  // Loading State
-  // =========================
-  if (isLoading) {
+  /*
+  if (isLoadingVolunteers || isLoadingRequests || isLoadingEvaluators || isLoadingTeamRequests) {
     return (
-      <div className="container p-6">
+      <div className="container p-6" dir="rtl">
         <h2 className="text-3xl font-bold mb-6">إدارة المتطوعين</h2>
-        <CategoryFilterBar
-          categories={categories}
-          selected={selected}
-          onSelect={setSelected}
-          className="bg-white-color"
-        />
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="h-48 bg-gray-100 rounded-lg animate-pulse" />
+            <div key={i} className="h-48 bg-gray-100 rounded-lg animate-pulse"></div>
           ))}
         </div>
       </div>
     );
   }
+  */
 
-  // =========================
-  // Error State
-  // =========================
-  if (error) {
-    return (
-      <div className="container p-6 text-center">
-        <h2 className="text-3xl font-bold mb-6">إدارة المتطوعين</h2>
-        <CategoryFilterBar
-          categories={categories}
-          selected={selected}
-          onSelect={setSelected}
-          className="bg-white-color"
-        />
-        <div className="mt-10">
-          <p className="text-red-500 mb-4">حدث خطأ أثناء تحميل البيانات</p>
-          <button
-            onClick={refetch}
-            className="px-4 py-2 bg-main-color text-white rounded-lg"
-          >
-            إعادة المحاولة
-          </button>
-        </div>
-      </div>
-    );
-  }
-
-  // =========================
-  // Main UI
-  // =========================
   return (
-    <div className="container p-6">
+    <div className="container p-6" dir="rtl">
       <h2 className="text-3xl font-bold mb-6">إدارة المتطوعين</h2>
 
       <CategoryFilterBar
@@ -208,10 +144,18 @@ const VolunteersPage = () => {
 
       {currentData.length === 0 ? (
         <div className="text-center py-10 text-gray-500">
-          {currentTab.emptyText}
+          لا يوجد {
+            selected === "volunteers" ? "متطوعين" : 
+            selected === "requests" ? "طلبات تطوع" : 
+            selected === "evaluators" ? "مقيمين" : 
+            "طلبات مستخدمين"
+          } حالياً.
         </div>
       ) : (
-        <ConsultantsList consultants={currentData} role="admin" />
+        <ConsultantsList
+          consultants={currentData}
+          role="admin"
+        />
       )}
     </div>
   );

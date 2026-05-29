@@ -6,7 +6,7 @@ export const RoleContext = createContext();
 export const RoleProvider = ({ children }) => {
   const [roles, setRoles] = useState(() => {
     const stored = localStorage.getItem("roles");
-    return stored ? JSON.parse(stored) : ["ideaOwner"]; 
+    return stored ? JSON.parse(stored) : [""]; 
   });
 
   const updateRoles = (newRoles) => {

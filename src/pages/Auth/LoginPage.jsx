@@ -43,7 +43,6 @@ const LoginPage = () => {
         password: form.password,
       }).unwrap();
 
-   
       console.log("=== 全 API FULL RESPONSE ===", response);
 
       const accessToken = response.access || response.token || response.accessToken;
@@ -56,18 +55,25 @@ const LoginPage = () => {
                      response.user?.roles || 
                      response.user?.role || 
                      decoded.roles || 
-                     decoded.role || 
-                     ["visitor"];
+                     decoded.role;
+
+      if (!rawRoles) {
+        rawRoles = ["visitor"];
+      }
 
       if (typeof rawRoles === "string") {
         rawRoles = [rawRoles];
       }
 
-      let normalizedRoles = rawRoles.map(role => 
-        typeof role === 'string' ? role.toLowerCase() : role
-      );
+      let normalizedRoles = rawRoles
+        .map(role => typeof role === 'string' ? role.toLowerCase().trim() : role)
+        .filter(Boolean); 
 
-      console.log("=== 🎯 FINAL ROLES DETECTED ===", normalizedRoles);
+      if (normalizedRoles.length === 0) {
+        normalizedRoles = ["visitor"];
+      }
+
+      console.log("=== FINAL ROLES DETECTED ===", normalizedRoles);
 
       const user = {
         id: decoded.user_id || response.user?.id,
@@ -75,12 +81,14 @@ const LoginPage = () => {
         name: decoded.full_name || response.user?.name || decoded.email,
         roles: normalizedRoles,
       };
+      const refreshToken = response.refresh || response.refreshToken;
 
       // تخزين البيانات في Redux
       dispatch(setCredentials({
         user: user,
         token: accessToken,
         userId: user.id,
+        refreshToken: refreshToken
       }));
 
       // تحديث السياق (Context)
@@ -91,9 +99,9 @@ const LoginPage = () => {
       // التوجيه التلقائي بناءً على الدور المخزن
       if (user.roles.includes("admin")) {
         navigate("/admin-mainpage");
-      } else if (user.roles.includes("ideaowner")) {
+      } else if (user.roles.includes("ideaowner") || user.roles.includes("صاحب فكرة")) {
         navigate("/ideaowner-mainpage");
-      } else if (user.roles.includes("volunteer")) {
+      } else if (user.roles.includes("volunteer") || user.roles.includes("متطوع")) {
         navigate("/volunteer-mainpage");
       } else {
         navigate("/visitor-mainpage");
@@ -120,9 +128,9 @@ const LoginPage = () => {
             <NavLinkUniversal label="هل نسيت كلمة المرور؟" to="/forgetpassword" className="font-bold text-third-color mt-2 hover:underline text-right" />
             <Button label={isLoading ? "جاري تسجيل الدخول..." : "تسجيل الدخول"} type="submit" disabled={isLoading} className="flex justify-center max-w-[300px] bg-main-color mt-10 mx-auto w-full" />
             <div className="flex items-center my-8">
-              <div className="flex-grow border-t border-second-color"></div>
+              <div className="grow border-t border-second-color"></div>
               <span className="px-4 font-bold text-black text-sm">او عن طريق</span>
-              <div className="flex-grow border-t border-second-color"></div>
+              <div className="grow border-t border-second-color"></div>
             </div>
             <div className="relative">
               <a href="http://127.0.0.1:8000/api/auth/google" className="flex justify-center font-bold border border-second-color px-10 py-2 rounded mt-5 mx-auto hover:bg-gray-50">تسجيل الدخول باستخدام Google</a>

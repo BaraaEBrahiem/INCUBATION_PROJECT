@@ -8,8 +8,7 @@ import { useSelector } from "react-redux";
 
 const ConsultationRequestBtn = ({ consultant }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [consultationType, setConsultationType] = useState("");
-  const [requiredSkill, setRequiredSkill] = useState(""); // تعديل 1: إضافة حالة لتخزين المهارة المطلوبة للباك إند
+  const [help_type, setHelp_type] = useState("");
   const [description, setDescription] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
@@ -26,8 +25,7 @@ const ConsultationRequestBtn = ({ consultant }) => {
   };
   const close = () => {
     setIsOpen(false);
-    setConsultationType("");
-    setRequiredSkill("");
+    setHelp_type("");
     setDescription("");
     setError("");
     setSuccess("");
@@ -35,7 +33,7 @@ const ConsultationRequestBtn = ({ consultant }) => {
 
   const handleSubmit = async () => {
     // التحقق من الحقول
-    if (!consultationType) {
+    if (!help_type) {
       setError("الرجاء اختيار نوع الاستشارة");
       return;
     }
@@ -72,14 +70,12 @@ const ConsultationRequestBtn = ({ consultant }) => {
     //   setError(err?.data?.detail  err?.data?.message  "حدث خطأ في إرسال الطلب");
     // }
 
-    // حالياً: محاكاة للإرسال بنفس أسلوب الباك إند المتوقع
-    console.log("إرسال طلب استشارة للباك إند:", {
-      url_param_id: consultant?.id,
-      payload: {
-        required_skill: requiredSkill,
-        help_type: consultationType,
-        description: description,
-      }
+    // حالياً: محاكاة للإرسال
+    console.log("إرسال طلب استشارة:", {
+      consultantId: consultant?.id,
+      userId: userId,
+      help_type,
+      description,
     });
     setSuccess("تم إرسال طلب الاستشارة بنجاح (محاكاة متوافقة)");
     setTimeout(() => {
@@ -127,9 +123,9 @@ const ConsultationRequestBtn = ({ consultant }) => {
           <Select
             placeholder="اختر نوع الاستشارة"
             label="نوع الاستشارة"
-            value={consultationType}
+            value={help_type}
             onChange={(e) => {
-              setConsultationType(e.target.value);
+              setHelp_type(e.target.value);
               setError("");
             }}
             options={[

@@ -1,4 +1,3 @@
-// src/api/endpoints/usersApi.js
 import { apiSlice } from "../../apiSlice";
 
 export const volunteersOptionsApi = apiSlice.injectEndpoints({
@@ -22,6 +21,12 @@ export const volunteersOptionsApi = apiSlice.injectEndpoints({
       providesTags: ['Evaluators'],
     }),
 
+    //جلب طلبات الفريق
+    getTeamRequests: builder.query({
+      query: () => '/admin/volunteers/team-request-owners/',
+      providesTags: ['VolunteerRequests'],
+
+    }),
     //ارسال دعوة تقييم
     sendEvaluationInvitation:
       builder.mutation({query: ({volunteer_id,data}) => ({
@@ -62,6 +67,28 @@ export const volunteersOptionsApi = apiSlice.injectEndpoints({
       invalidatesTags: ['VolunteerRequests'],
     }),
 
+    // اقتراح المتطوعين لفريق
+   assignSuggestedVolunteers: builder.mutation({
+  query: ({ team_request_id, volunteer_ids }) => ({
+    url: `/admin/volunteers/${team_request_id}/suggest/`,
+    method: "POST",
+    body: { volunteer_ids },
+  }),
+  invalidatesTags: ["VolunteerRequests"],
+}),
+
+// جلب تفاصيل طلب فريق معين بواسطة الـ id لعرضه داخل المودال
+  getRequestDetails: builder.query({
+    query: (pk) => `/admin/volunteers/team-requests/${pk}/`, 
+    providesTags: ['VolunteerProfile'],
+}),
+
+//جلب المتطوعين المتاحين للاقتراح منهم
+getAvailableVolunteers: builder.query({
+  query: () => `/admin/volunteers/available-approved-volunteers/`,
+  providesTags: ['Volunteers'],
+})
+
   }),
 });
 
@@ -73,4 +100,8 @@ export const {
   useRejectVolunteerRequestMutation,
   useSendEvaluationInvitationMutation,
   useRemoveEvaluatorRoleMutation,
+  useAssignSuggestedVolunteersMutation,
+  useGetRequestDetailsQuery,
+  useGetTeamRequestsQuery,
+  useGetAvailableVolunteersQuery
 } = volunteersOptionsApi;

@@ -26,44 +26,47 @@ const DataTable = ({
         </thead>
 
         <tbody>
-          {data.map((row) => (
-            <tr
-              key={
-                row.idea_id ||
-                row.id
-              }
-              onClick={() =>
-                onRowClick?.(
-                  row.idea_id
-                )
-              }
-              className={`border-b border-gray-300 transition cursor-pointer hover:bg-gray-100 ${
-                selectedRowId ===
-                row.idea_id
-                  ? "bg-blue-100"
-                  : ""
-              }`}
-            >
-              {columns.map(
-                (col) => (
-                  <td
-                    key={
-                      col.key
-                    }
-                    className="p-3"
-                  >
-                    {col.render
-                      ? col.render(
-                          row
-                        )
-                      : row[
-                          col.key
-                        ]}
-                  </td>
-                )
-              )}
-            </tr>
-          ))}
+          {data.map((row) => {
+            const rowId =
+              row.idea_id ||
+              row.id;
+
+            return (
+              <tr
+                key={rowId}
+                onClick={() =>
+                  onRowClick?.(
+                    rowId
+                  )
+                }
+                className={`border-b border-gray-300 transition cursor-pointer hover:bg-gray-100 ${
+                  selectedRowId ===
+                  rowId
+                    ? "bg-blue-100 border-blue-400"
+                    : ""
+                }`}
+              >
+                {columns.map(
+                  (col) => (
+                    <td
+                      key={
+                        col.key
+                      }
+                      className="p-3"
+                    >
+                      {col.render
+                        ? col.render(
+                            row
+                          )
+                        : row[
+                            col.key
+                          ]}
+                    </td>
+                  )
+                )}
+              </tr>
+            );
+          })}
         </tbody>
       </table>
     </div>

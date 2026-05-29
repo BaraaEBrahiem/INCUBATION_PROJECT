@@ -8,7 +8,7 @@ export const requestsApi = apiSlice.injectEndpoints({
     // جلب جميع الطلبات (استشارات + تطوع)
     // -----------------------------
     getAllRequests: builder.query({
-      query: () => '/requests/',
+      query: () => '/volunteers/all-requests/',
       providesTags: ['Requests'],
     }),
 
@@ -16,7 +16,7 @@ export const requestsApi = apiSlice.injectEndpoints({
     // جلب طلبات الاستشارة فقط
     // -----------------------------
     getConsultationRequests: builder.query({
-      query: () => '/requests/consultations/',
+      query: () => '/volunteers/consultations/',
       providesTags: ['Requests'],
     }),
 
