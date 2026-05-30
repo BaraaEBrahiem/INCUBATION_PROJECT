@@ -29,6 +29,8 @@ const VolunteerRequestPage = () => {
     isLoading,
     isError,
   } = useGetVolunteerDetailsQuery(id);
+  console.log("USER ID:", id);
+  
 
   const [approveVolunteerRequest] =
     useApproveVolunteerRequestMutation();

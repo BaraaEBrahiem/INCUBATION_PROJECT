@@ -14,20 +14,15 @@ const UserFilters = ({
         placeholder="اختر الدور"
         options={[
           { value: "all", label: "كل الادوار" },
-          { value: "زائر", label: "زائر" },
-          { value: "متطوع", label: "متطوع" },
-          { value: "محتضن", label: "محتضن" },
-          { value: "متخرج", label: "متخرج" },
-          { value: "صاحب فكرة", label: "صاحب فكرة" },
-          {value:"متطوع ومحتضن" , label:"متطوع ومحتضن"},
-          {value:"صاحب فكرة ومتطوع" , label:"صاحب فكرة ومتطوع"},
-          {value:"مقيم" , label:"مقيم"},
-          {value:"متطوع ومقيم" , label:"متطوع ومقيم"},
-
+          { value: "VISITOR", label: "زائر" },
+          { value: "VOLUNTEER", label: "متطوع" },
+          { value: "INCUBATOR", label: "محتضن" },
+          { value: "GRADUATED", label: "متخرج" },
+          { value: "IDEA_OWNER", label: "صاحب فكرة" },
+          { value: "EVALUATOR", label: "مقيم" }
         ]}
         className="w-100 mb-6"
       />
-
     </div>
   );
 };

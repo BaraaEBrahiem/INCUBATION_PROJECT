@@ -9,7 +9,7 @@ import { useGetAvailableRolesQuery } from "../../../api/endpoints/admin/usersOpt
 
 // قاموس الترجمة الموحد
 const ROLE_TRANSLATIONS = {
-  VISITOR: "زائر",
+  VISITOR: "مستخدم",
   VOLUNTEER: "متطوع",
   IDEA_OWNER: "صاحب فكرة",
   INCUBATOR: "محتضن",
@@ -24,6 +24,7 @@ const UserHeaderActions = ({
   onChangeRole,
   onSendNotification,
 }) => {
+  console.log("USER DATA:", user);
   const [freezeOpen, setFreezeOpen] = useState(false);
   const [activateOpen, setActivateOpen] = useState(false);
   const [editRoleOpen, setEditRoleOpen] = useState(false);
@@ -47,6 +48,7 @@ const UserHeaderActions = ({
   const userRoles = Array.isArray(user.role) ? user.role : [];
   const [selectedRoleIds, setSelectedRoleIds] = useState([]);
   const [notificationText, setNotificationText] = useState("");
+  
 
   useEffect(() => {
     if (availableRoles.length > 0 && userRoles.length > 0) {
@@ -102,7 +104,7 @@ const UserHeaderActions = ({
           {userRoles.includes("VOLUNTEER") && (
             <NavLinkUniversal
               label={<Button label="طلب التطوع" className="bg-main-color" />}
-              to={`/admin/details/${user.id}?type="request"`}
+              to={`/admin/details/${user.volunteer_request_id}?type=request`}
             />
           )}
         </div>

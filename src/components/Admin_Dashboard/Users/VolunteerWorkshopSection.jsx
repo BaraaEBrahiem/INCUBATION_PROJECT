@@ -51,7 +51,7 @@ const VolunteerWorkshopsSection = ({ workshops, onTaskClick }) => {
     
     { 
       key: "type", 
-      label: "معسكر/ورشة عمل",
+      label: "ورشة عمل",
       render: (row) => <span>{row.type || "ورشة عمل"}</span>
     },
   ];

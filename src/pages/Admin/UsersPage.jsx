@@ -21,7 +21,7 @@ const UsersPage = () => {
     fullName: "",
     email: "",
     password: "",
-    selectedRole: "VOLUNTEER",
+    selectedRole: "",
   });
 
   const {
@@ -72,42 +72,55 @@ const UsersPage = () => {
   };
 
   const handleAddUserSubmit =
-    async (e) => {
-      e.preventDefault();
+  async (e) => {
+    e.preventDefault();
 
-      try {
-        await createAdminUser({
-          full_name:
-            formData.fullName,
-          email: formData.email,
-          password:
-            formData.password,
-          roles: [
-            formData.selectedRole,
-          ],
-        }).unwrap();
+    try {
+      await createAdminUser({
+        full_name:
+          formData.fullName,
+        email:
+          formData.email,
+        password:
+          formData.password,
 
-        alert(
-          "تم إضافة المستخدم بنجاح!"
-        );
+        role_code:
+          formData.selectedRole || null,
+      }).unwrap();
 
-        setOpen(false);
+      alert(
+        "تم إضافة المستخدم بنجاح!"
+      );
 
-        setFormData({
-          fullName: "",
-          email: "",
-          password: "",
-          selectedRole:
-            "VOLUNTEER",
-        });
-      } catch (err) {
-        console.error(err);
+      setOpen(false);
 
-        alert(
+      setFormData({
+        fullName: "",
+        email: "",
+        password: "",
+        selectedRole: "",
+      });
+
+    } catch (err) {
+      console.error(
+        "ERROR:",
+        err
+      );
+
+      console.log(
+        err?.data
+      );
+
+      alert(
+        err?.data
+          ?.message ||
+          JSON.stringify(
+            err?.data
+          ) ||
           "حدث خطأ أثناء إضافة المستخدم"
-        );
-      }
-    };
+      );
+    }
+  };
 
   if (isLoading) {
     return (
@@ -126,6 +139,8 @@ const UsersPage = () => {
       </p>
     );
   }
+  
+  
 
   return (
     <div
@@ -198,61 +213,40 @@ const UsersPage = () => {
             }
           />
 
+          
+          
+
           <Select
-            label="الدور الأساسي"
-            options={
-              availableRoles?.map(
-                (role) => ({
-                  value: role,
-                  label: role,
-                })
-              ) || [
-                {
-                  value:
-                    "VISITOR",
-                  label:
-                    "مستخدم",
-                },
-                {
-                  value:
-                    "VOLUNTEER",
-                  label:
-                    "متطوع",
-                },
-                {
-                  value:
-                    "IDEA_OWNER",
-                  label:
-                    "صاحب فكرة",
-                },
-                {
-                  value:
-                    "INCUBATOR",
-                  label:
-                    "محتضن",
-                },
-                {
-                  value:
-                    "EVALUATOR",
-                  label:
-                    "مقيم",
-                },
-              ]
-            }
-            value={
-              formData.selectedRole
-            }
-            onChange={(e) =>
-              setFormData(
-                (prev) => ({
-                  ...prev,
-                  selectedRole:
-                    e.target
-                      .value,
-                })
-              )
-            }
-          />
+  label="الدور الأساسي"
+  options={[
+    {
+      value: "",
+      label:
+        "بدون دور",
+    },
+
+    ...(availableRoles?.map(
+      (role) => ({
+        value:
+          role.code,
+        label:
+          role.name,
+      })
+    ) || []),
+  ]}
+  value={
+    formData.selectedRole
+  }
+  onChange={(e) =>
+    setFormData(
+      (prev) => ({
+        ...prev,
+        selectedRole:
+          e.target.value,
+      })
+    )
+  }
+      />
         </form>
       </Modal>
 

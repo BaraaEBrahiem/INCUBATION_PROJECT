@@ -283,7 +283,7 @@ const AppRoutes = () => {
           <Route path="/admin/assigned-projects" element={<ProjectsManagementPage />} />
           <Route path="/admin/exhibition" element={<ExhibitionManagementPage/>} />
           <Route path="/requests-details/:submissionId" element={<CardRequestDetailsPage />} />
-           <Route path="/Selectingvolunteer/:id" element={<SelectingVolunteerPage />} />
+           <Route path="/Selectingvolunteer/:teamRequestId" element={<SelectingVolunteerPage />} />
         </Route>
       )} 
       {roles.includes("admin") && (

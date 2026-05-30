@@ -228,7 +228,11 @@ const UserDetailsPage = () => {
             id: finalUser.basic_info.id,
             name:
               finalUser.basic_info.full_name,
-            role: userRolesCodes
+            role: userRolesCodes,
+            volunteer_request_id:
+      finalUser.basic_info
+        ?.volunteer_request_id
+
           }}
           is_active={
             finalUser.basic_info.is_active
