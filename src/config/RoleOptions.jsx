@@ -21,7 +21,7 @@ const baseRoles = {
     { label: "إعدادات الحساب", link: "/settings", icon: <BsPersonFillGear /> },
   ],
 
-  ideaOwner: [
+  idea_owner: [
     { label: "تعديل الملف الشخصي", link: "/profile", icon: <BsPersonCircle /> },
     { label: "تواصل معنا", link: "/contact", icon: <IoCall /> },
     { label: "المستشارين", link: "/consultants", icon: <BsPersonWorkspace /> },
@@ -41,13 +41,13 @@ const baseRoles = {
 export const RoleOptions = {
   ...baseRoles,
 
-  volunteer_incubated: [
+  incubator: [
     ...baseRoles.volunteer,
     { label: "المستشارين", link: "/consultants", icon: <BsPersonWorkspace /> },
     { label: "الفريق", link: "/team", icon: <GrGroup /> },
   ],
 
-  volunteer_evaluator: [
+  evaluator: [
     ...baseRoles.volunteer,
     { label: "مركز التقييم", link: "/evaluation-center", icon: <ImStatsDots /> },
   ],

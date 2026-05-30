@@ -103,6 +103,10 @@ const LoginPage = () => {
         navigate("/ideaowner-mainpage");
       } else if (user.roles.includes("volunteer") || user.roles.includes("متطوع")) {
         navigate("/volunteer-mainpage");
+      } else if (user.roles.includes("evaluator") || user.roles.includes("مقيم")) {
+        navigate("/volunteer-evaluated-mainpage");
+      } else if (user.roles.includes("incubator") || user.roles.includes("مراجع")) {
+        navigate("/volunteer-incubated-mainpage");
       } else {
         navigate("/visitor-mainpage");
       }

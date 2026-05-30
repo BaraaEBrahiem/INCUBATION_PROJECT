@@ -1,33 +1,35 @@
 const homeRoutes = {
   visitor: "/visitor-mainpage",
-  ideaOwner: "/ideaowner-mainpage",
+  idea_owner: "/ideaowner-mainpage",
   volunteer: "/volunteer-mainpage",
-  volunteer_evaluator: "/volunteer-evaluated-mainpage",
-  volunteer_incubated: "/volunteer-incubated-mainpage",
+  evaluator: "/volunteer-evaluated-mainpage",
+  incubator: "/volunteer-incubated-mainpage",
   admin: "/admin-mainpage",
 };
 
 export const getMainPageByRole = (roles) => {
- 
-  if (roles.includes("ideaOwner")) {
-    return homeRoutes.ideaOwner;
+  if (!roles || !Array.isArray(roles)) {
+    return homeRoutes.visitor;
+  }
+
+  if (roles.includes("admin")) {
+    return homeRoutes.admin;
+  }
+  if (roles.includes("idea_owner")) {
+    return homeRoutes.idea_owner;
+  }
+  if (roles.includes("evaluator")) {
+    return homeRoutes.evaluator;
+  }
+  if (roles.includes("incubator")) {
+    return homeRoutes.incubator;
   }
   if (roles.includes("volunteer")) {
     return homeRoutes.volunteer;
   }
-  if (roles.includes("volunteer_evaluator")) {
-    return homeRoutes.volunteer_evaluator;
-  }
-  if (roles.includes("volunteer_incubated")) {
-    return homeRoutes.volunteer_incubated;
-  }
   if (roles.includes("visitor")) {
     return homeRoutes.visitor;
   }
-  if (roles.includes("admin")) {
-    return homeRoutes.admin;
-  }
   
-  // default
   return homeRoutes.visitor;
 };
