@@ -97,11 +97,7 @@ const AssignIncubationEvaluatorsPage = () => {
       key: "actions",
       label: "الإجراءات",
       render: (row) => {
-<<<<<<< HEAD
-        const rowId =  row.user_id;
-=======
         console.log("ROW DATA:", row);
->>>>>>> 4ae01237f59e8d7cceb825bce5a8c39bd8890889
         return (
           <Checkbox
             name={`ev-${row.user_id}`}

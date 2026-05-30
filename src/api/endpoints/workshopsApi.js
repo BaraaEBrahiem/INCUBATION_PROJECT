@@ -85,7 +85,4 @@ export const {
   useGetCampWorkshopProjectsQuery,
   useUpdateProjectAttendanceMutation,
   useGetNearestWorkshopQuery,
-  useGetCampWorkshopsQuery,
-  useGetCampWorkshopProjectsQuery,
-  useUpdateProjectAttendanceMutation,
 } = workshopsApi;

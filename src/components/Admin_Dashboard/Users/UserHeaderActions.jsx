@@ -73,29 +73,6 @@ const UserHeaderActions = ({
     .map((code) => ROLE_TRANSLATIONS[code] || code)
     .join(" ، ");
 
-  useEffect(() => {
-    if (availableRoles.length > 0 && userRoles.length > 0) {
-      const currentIds = availableRoles
-        .filter((role) => userRoles.includes(role.name))
-        .map((role) => role.id);
-      //eslint-disable-next-line
-      setSelectedRoleIds(currentIds);
-    }
-    //eslint-disable-next-line
-  }, [user.role, serverRoles]); 
-
-  const handleCheckboxChange = (roleId, isChecked) => {
-    if (isChecked) {
-      setSelectedRoleIds((prev) => [...prev, roleId]);
-    } else {
-      setSelectedRoleIds((prev) => prev.filter((id) => id !== roleId));
-    }
-  };
-
-  const arabicRolesText = userRoles
-    .map((code) => ROLE_TRANSLATIONS[code] || code)
-    .join(" ، ");
-
   return (
     <>
       <div className="mb-8" dir="rtl">

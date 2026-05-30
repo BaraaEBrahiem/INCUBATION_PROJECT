@@ -20,14 +20,10 @@ const SelectingVolunteerPage = () => {
     { id: "all", label: "الكل" },
     { id: "uiux", label: "UI UX" },
     { id: "frontend", label: "FrontEnd" },
-<<<<<<< HEAD
-    { id: "backend", label: "BackEnd" }
-=======
     { id: "backend", label: "BackEnd" },
     { id: "legal", label: "Legal" },
     { id: "marketing", label: "Marketing" },
     { id: "business", label: "Business" },
->>>>>>> adminFeature
   ];
 
   const volunteersList = suggestedVolunteers || [];
@@ -39,13 +35,9 @@ const SelectingVolunteerPage = () => {
     if (selected === "uiux") return skill.includes("ui") || skill.includes("ux");
     if (selected === "frontend") return skill.includes("front");
     if (selected === "backend") return skill.includes("back");
-<<<<<<< HEAD
-    
-=======
     if (selected === "legal") return skill.includes("legal");
     if (selected === "marketing") return skill.includes("marketing");
     if (selected === "business") return skill.includes("business");
->>>>>>> adminFeature
     return true;
   });
 

@@ -1,16 +1,3 @@
-<<<<<<< HEAD
-import React, {useState} from 'react'
-import { useNavigate } from 'react-router-dom';
-import AdminNavbar from '../../components/AdminNavbar';
-import PageTabs from '../../components/Admin_Dashboard/PageTabs';
-import ExhibitionSchedule from "../../components/Admin_Dashboard/Exhibition-management/ExhibitionSchedule"
-import FormBuilder from '../../components/Admin_Dashboard/Exhibition-management/FormBuilder';
-import CardRequests from '../../components/Admin_Dashboard/Exhibition-management/CardRequests';
-import ExhibitionRecord from '../../components/Admin_Dashboard/Exhibition-management/ExhibitionRecord';
-const ExhibitionManagementPage = () => {
-    const navigate = useNavigate();
-    const[activeTab, setActiveTab]= useState("schedule");
-=======
 import React, {
   useState,
 } from "react";
@@ -63,7 +50,6 @@ const ExhibitionManagementPage =
       publishSeason,
     ] =
       usePublishSeasonMutation();
->>>>>>> adminFeature
 
     const tabs = [
       {
