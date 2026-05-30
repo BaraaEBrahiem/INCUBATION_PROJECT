@@ -3,7 +3,7 @@ import FieldTypesPanel from "./FieldTypesPanel";
 import FormBuilderCanvas from "./FormBuilderCanvas";
 import Button from "../../Button";
 import { useNavigate } from "react-router-dom";
-import { showError, showSuccess } from "../../../../Utils/toast";
+import { showError, showSuccess } from "../../../Utils/toast";
 import { useCreateExhibitionFormMutation, usePublishSeasonMutation } from "../../../api/endpoints/formConfigApi"
 
 const FormBuilder = ({ initialFields = [], onFieldsChange, seasonData }) => {

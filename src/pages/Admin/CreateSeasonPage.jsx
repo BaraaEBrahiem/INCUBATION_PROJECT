@@ -93,7 +93,7 @@ const CreateSeasonPage = () => {
         <NavLinkUniversal to={`/admin/camp-management/${seasonData?.id}`} label="إدارة المعسكر" className="bg-main-color text-white rounded px-3 py-1" />
       </div>
       <div className="container">
-        <div className="flex gap-4 mb-6 border-b pb-2">
+        <div className="flex gap-4 mb-2 border-b pb-2">
           <button onClick={() => setActiveTab("settings")} disabled={isSubmitting} className={`px-4 py-2 font-semibold transition ${activeTab === "settings" ? "bg-main-color text-white rounded" : "border border-second-color rounded hover:bg-gray-50"}`}>الإعدادات</button>
           <button onClick={() => setActiveTab("form")} disabled={isSubmitting || !seasonData} className={`px-4 py-2 font-semibold transition ${activeTab === "form" ? "bg-main-color text-white rounded" : "border border-second-color rounded hover:bg-gray-50"} ${!seasonData ? "opacity-50 cursor-not-allowed" : ""}`}>تصميم النموذج</button>
         </div>

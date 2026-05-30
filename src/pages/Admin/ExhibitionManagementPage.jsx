@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import AdminNavbar from '../../components/AdminNavbar';
 import PageTabs from '../../components/Admin_Dashboard/PageTabs';
 import ExhibitionSchedule from "../../components/Admin_Dashboard/Exhibition-management/ExhibitionSchedule"
-import FormBuilder from '../../components/Admin_Dashboard/IncubationSeasons/Create-Season/FormBuilder';
+import FormBuilder from '../../components/Admin_Dashboard/Exhibition-management/FormBuilder';
 import CardRequests from '../../components/Admin_Dashboard/Exhibition-management/CardRequests';
 import ExhibitionRecord from '../../components/Admin_Dashboard/Exhibition-management/ExhibitionRecord';
 const ExhibitionManagementPage = () => {

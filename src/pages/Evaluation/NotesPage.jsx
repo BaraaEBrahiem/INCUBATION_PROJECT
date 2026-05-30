@@ -107,8 +107,7 @@ const NotesPage = () => {
           <h3 className="text-black text-lg font-bold p-5 text-right border-b border-second-color">
             الملاحظات المرسلة
           </h3>
-
-          <div className="space-y-4 p-4">
+ <div className="space-y-4 p-4">
             {sentNotes.length === 0 ? (
               <p className="text-gray-500 text-center py-6">
                 لا توجد ملاحظات مرسلة بعد

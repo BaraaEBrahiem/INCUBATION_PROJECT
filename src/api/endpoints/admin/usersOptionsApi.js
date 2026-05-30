@@ -77,6 +77,12 @@ export const usersOptionsApi = apiSlice.injectEndpoints({
       }),
       invalidatesTags: (result, error, { user_id }) => [{ type: "AdminUser", id: user_id }],
     }),
+    
+    //عرض المشاريع المحتضنة لاضافة عضو للفريق لها
+      getIdeasForAddingUserToTeam: builder.query({
+        query: () => "admin/users/current-season-ideas/",
+        providesTags: ["Ideas"],
+      }),
 
     //  عرض المشاريع/الأفكار للموسم الحالي (GET)
     getCurrentSeasonIdeas: builder.query({
@@ -87,6 +93,7 @@ export const usersOptionsApi = apiSlice.injectEndpoints({
   }),
   overrideExisting: false,
 });
+ 
 
 
 export const {
@@ -100,4 +107,5 @@ export const {
   useSendNotificationToUserMutation,
   useAddUserToTeamMutation,
   useGetCurrentSeasonIdeasQuery,
+  useGetIdeasForAddingUserToTeamQuery,
 } = usersOptionsApi;

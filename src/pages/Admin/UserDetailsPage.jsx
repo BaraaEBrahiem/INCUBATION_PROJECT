@@ -156,7 +156,7 @@ const UserDetailsPage = () => {
   // التنقلات
   const handleMessageClick = () => navigate(`/messagespage/${finalUser.basic_info.id}`);
   const handleTaskClick = (taskId) => navigate(`/workshopinfo/${taskId}`);
-  const handleViewProject = (projectId) => navigate(`/projectinfo/${projectId}`);
+  const handleViewProject = (projectId) => navigate(`/admin/projects-details/${projectId}`);
   
   return (
     <div className="bg-white-color min-h-screen pb-6" dir="rtl">

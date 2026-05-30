@@ -69,4 +69,6 @@ export const {
   useGetIdeaFormDesignQuery,
   useCreateSeasonFormMutation,
   useSaveSeasonFormDesignMutation,
+  useCreateExhibitionFormMutation,
+  usePublishSeasonMutation
 } = formConfigApi;

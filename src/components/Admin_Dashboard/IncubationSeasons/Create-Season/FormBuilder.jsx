@@ -50,9 +50,8 @@ const FormBuilderManager = () => {
     <div className="p-6 bg-gray-100 min-h-screen flex flex-col justify-between" dir="rtl">
       
       {/* المحتوى الرئيسي للموقع */}
-      <div className="mb-20">
+      <div className="mb-2">
         <div className=" p-4 rounded-lg shadow mb-6">
-          <h1 className="text-lg font-bold">نموذج التسجيل - الموسم الصيفي 2025</h1>
           <h4 className="text-md">يرجى تعبئة كافة الحقول لضمان قبول طلباتكم في الحاضنة</h4>
         </div>
 
@@ -65,17 +64,17 @@ const FormBuilderManager = () => {
             {/* ساحة العمل والخطوات (اليمين) */}
             <div className="flex-1 flex flex-col gap-4">
               <div className="flex gap-4 bg-white p-3 rounded-lg shadow items-center overflow-x-auto">
-                <span className="text-xs font-bold text-black ml-2">الخطوات:</span>
+                <span className="text-lg font-bold text-black ml-2">الخطوات:</span>
                 {formData.steps.map((step) => (
                   <button
                     key={step.id}
                     onClick={() => setActiveStepId(step.id)}
-                    className={`px-4 py-2 rounded-md text-xs font-bold ${step.id === activeStepId ? "bg-main-color text-white" : "bg-gray-200"}`}
+                    className={`px-2 py-2 rounded-md text-l font-bold ${step.id === activeStepId ? "bg-main-color text-white" : "bg-gray-200"}`}
                   >
                     {step.title} (الترتيب: {step.order})
                   </button>
                 ))}
-                <button onClick={addStep} className="px-3 py-1 bg-main-color text-white rounded-md text-xs mr-auto">
+                <button onClick={addStep} className="px-3 py-1 bg-main-color text-white rounded-md text-lg mr-auto">
                   + إنشاء خطوة
                 </button>
               </div>
@@ -94,11 +93,11 @@ const FormBuilderManager = () => {
         )}
       </div>
  {/* أزرار المعاينة والنشر بالأسفل (Footer) */}
-      <div className=" flex justify-center gap-4 z-50 mb-10">
-        <button onClick={() => setIsPreviewMode(!isPreviewMode)} className="px-6 py-2 bg-main-color text-white rounded-md text-sm font-semibold">
+      <div className=" flex justify-center gap-4 z-50">
+        <button onClick={() => setIsPreviewMode(!isPreviewMode)} className="px-4 py-2 bg-main-color text-white rounded-md text-lg font-semibold">
           {isPreviewMode ? "العودة للتعديل" : "معاينة النموذج"}
         </button>
-        <button onClick={() => console.log(formData)} className="px-6 py-2 bg-main-color text-white rounded-md text-sm font-semibold">
+        <button onClick={() => console.log(formData)} className=" px-4 py-2 bg-main-color text-white rounded-md text-lg font-semibold">
           نشر النموذج
         </button>
       </div>
