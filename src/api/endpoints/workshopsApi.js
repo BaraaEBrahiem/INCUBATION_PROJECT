@@ -34,6 +34,7 @@ export const workshopsApi = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ['Workshop'],
     }),
+
     getWorkshops: builder.query({
       query: () => 'admin/workshops/',
       providesTags: ['Workshop'],
@@ -84,4 +85,7 @@ export const {
   useGetCampWorkshopProjectsQuery,
   useUpdateProjectAttendanceMutation,
   useGetNearestWorkshopQuery,
+  useGetCampWorkshopsQuery,
+  useGetCampWorkshopProjectsQuery,
+  useUpdateProjectAttendanceMutation,
 } = workshopsApi;

@@ -7,6 +7,7 @@ export default function ExhibitionRecord() {
   const navigate = useNavigate();
   const { data: exhibitions, isLoading, error, refetch } = useGetExhibitionsListQuery();
 
+<<<<<<< HEAD
   let exhibitionsList = Array.isArray(exhibitions) ? exhibitions : [];
   if (exhibitions?.results && Array.isArray(exhibitions.results)) {
     exhibitionsList = exhibitions.results;
@@ -22,9 +23,61 @@ export default function ExhibitionRecord() {
         exhibitionId: ex.id 
       } 
     });
+=======
+  const {
+    data: exhibitions,
+    isLoading,
+    error,
+    refetch,
+  } = useGetExhibitionsListQuery();
+
+  let exhibitionsList = Array.isArray(exhibitions)
+    ? exhibitions
+    : [];
+
+  if (
+    exhibitions?.results &&
+    Array.isArray(exhibitions.results)
+  ) {
+    exhibitionsList =
+      exhibitions.results;
+  }
+
+  if (
+    exhibitions?.data &&
+    Array.isArray(exhibitions.data)
+  ) {
+    exhibitionsList =
+      exhibitions.data;
+  }
+
+  const openDetails = (
+    ex
+  ) => {
+    navigate(
+      "/projectspage",
+      {
+        state: {
+          year: ex.year,
+          exhibitionId:
+            ex.id,
+        },
+      }
+    );
+>>>>>>> adminFeature
   };
 
+  if (isLoading) {
+    return (
+      <div
+        className="p-6"
+        dir="rtl"
+      >
+        <h2 className="text-xl font-bold mb-6 text-main-color">
+          سجل المعارض
+        </h2>
 
+<<<<<<< HEAD
   if (isLoading) {
     return (
       <div className="p-6" dir="rtl">
@@ -33,6 +86,17 @@ export default function ExhibitionRecord() {
           {[1, 2, 3].map((i) => (
             <div key={i} className="bg-teal-100 shadow-md rounded-xl px-4 py-6 h-28 animate-pulse"></div>
           ))}
+=======
+        <div className="flex flex-col gap-4">
+          {[1, 2, 3].map(
+            (i) => (
+              <div
+                key={i}
+                className="bg-teal-100 shadow-md rounded-xl px-4 py-6 h-28 animate-pulse"
+              ></div>
+            )
+          )}
+>>>>>>> adminFeature
         </div>
       </div>
     );
@@ -40,10 +104,27 @@ export default function ExhibitionRecord() {
 
   if (error) {
     return (
+<<<<<<< HEAD
       <div className="p-6" dir="rtl">
         <h2 className="text-xl font-bold mb-6 text-main-color">سجل المعارض</h2>
         <div className="text-center py-10">
           <p className="text-red-500 mb-3">حدث خطأ في تحميل المعارض</p>
+=======
+      <div
+        className="p-6"
+        dir="rtl"
+      >
+        <h2 className="text-xl font-bold mb-6 text-main-color">
+          سجل المعارض
+        </h2>
+
+        <div className="text-center py-10">
+          <p className="text-red-500 mb-3">
+            حدث خطأ في تحميل
+            المعارض
+          </p>
+
+>>>>>>> adminFeature
           <button
             onClick={refetch}
             className="bg-main-color text-white px-4 py-2 rounded"
@@ -56,15 +137,23 @@ export default function ExhibitionRecord() {
   }
 
   return (
-    <div className="p-6" dir="rtl">
-      <h2 className="text-xl font-bold mb-6 text-main-color">سجل المعارض</h2>
+    <div
+      className="p-6"
+      dir="rtl"
+    >
+      <h2 className="text-xl font-bold mb-6 text-main-color">
+        سجل المعارض
+      </h2>
 
-      {exhibitionsList.length === 0 ? (
+      {exhibitionsList.length ===
+      0 ? (
         <div className="text-center py-10 text-gray-500">
-          لا توجد معارض سابقة
+          لا توجد معارض
+          سابقة
         </div>
       ) : (
         <div className="flex flex-col gap-4">
+<<<<<<< HEAD
           {exhibitionsList.map((ex) => (
             <div
               key={ex.id}
@@ -80,14 +169,57 @@ export default function ExhibitionRecord() {
                   <span className="font-semibold">{ex.projects_count || ex.projects?.length || 0}</span>
                 </p>
               </div>
+=======
+          {exhibitionsList.map(
+            (ex) => (
+              <div
+                key={ex.id}
+                className="bg-teal-100 shadow-md rounded-xl px-4 py-6 border-dotted border-2 border-main-color flex flex-col md:flex-row md:items-center md:justify-between"
+              >
+                <div>
+                  <p className="font-bold text-lg">
+                    {
+                      ex.title
+                    }
+                  </p>
+>>>>>>> adminFeature
 
-              <Button
-                label="عرض التفاصيل"
-                onClick={() => openDetails(ex)}
-                className="mt-4 md:mt-0 bg-main-color"
-              />
-            </div>
-          ))}
+                  <p className="mt-1">
+                    تاريخ
+                    الانعقاد:{" "}
+                    <span className="font-semibold">
+                      {
+                        ex.date
+                      }
+                    </span>
+                  </p>
+
+                  <p className="mt-1">
+                    عدد
+                    المشاريع
+                    المخرجة:{" "}
+                    <span className="font-semibold">
+                      {ex.projects_count ||
+                        ex
+                          .projects
+                          ?.length ||
+                        0}
+                    </span>
+                  </p>
+                </div>
+
+                <Button
+                  label="عرض التفاصيل"
+                  onClick={() =>
+                    openDetails(
+                      ex
+                    )
+                  }
+                  className="mt-4 md:mt-0 bg-main-color"
+                />
+              </div>
+            )
+          )}
         </div>
       )}
     </div>

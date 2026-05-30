@@ -17,24 +17,51 @@ export const projectsInfoApi = apiSlice.injectEndpoints({
 
     // تفاصيل المشروع الكاملة
     getProjectDetails: builder.query({
-      // query: (id) => `admin/projects/${id}/details/`,
+      query: (id) => `admin/ideas/${id}/details/`,
       providesTags: ["Projects"],
     }),
      //جلب تفاصيل المشروع للادمن
     getAdminProjectDetails: builder.query({
-      query: (id) => `admin/projects/${id}/details/`,
+      query: (id) => `admin/ideas/${id}/details/`,
       providesTags: ["Projects"],
     }),
     //جدولة جلسة متابعة بالاحتضان
-    scheduleFollowUp: builder.mutation({
-      query: ({ idea_id, meetingDate }) => ({
-        url: `admin/incubations/ideas/${idea_id}/meetings/schedule/`,
-        method: "POST",
-        body: { meetingDate },
-      }),
-      invalidatesTags: ["Projects"],
-    }),
+  scheduleFollowUp:
+  builder.mutation({
+    query: ({
+      idea_id,
+      meetingDate,
+    }) => {
+      const [
+        date,
+        time,
+      ] =
+        meetingDate.split(
+          "T"
+        );
 
+      return {
+        url:
+          `admin/incubations/ideas/${idea_id}/meetings/schedule/`,
+        method:
+          "POST",
 
+        body: {
+          date,
+          time,
+        },
+      };
+    },
+
+    invalidatesTags: [
+      "Projects",
+    ],
+  }),
   }),
 });
+export const {
+  useGetProjectInfoQuery,
+  useGetProjectDetailsQuery,
+  useGetAdminProjectDetailsQuery,
+  useScheduleFollowUpMutation,
+} = projectsInfoApi;

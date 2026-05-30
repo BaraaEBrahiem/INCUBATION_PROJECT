@@ -25,6 +25,7 @@ export const volunteersOptionsApi = apiSlice.injectEndpoints({
     getTeamRequests: builder.query({
       query: () => '/admin/volunteers/team-request-owners/',
       providesTags: ['VolunteerRequests'],
+<<<<<<< HEAD
 
     }),
     //ارسال دعوة تقييم
@@ -34,11 +35,20 @@ export const volunteersOptionsApi = apiSlice.injectEndpoints({
       method: "POST",
       body: data,
     }),
+=======
+>>>>>>> adminFeature
 
-    invalidatesTags: [
-      "Evaluators",
-    ],
-  }),
+    }),
+    //ارسال دعوة تقييم
+
+    sendEvaluationInvitation: builder.mutation({
+      query: ({ evaluator_id, invitationData }) => ({
+        url: `/admin/volunteers/${evaluator_id}/send-invitation/`,
+        method: 'POST',
+        body: invitationData, // الحقول: volunteer_id, expected_duration, task
+      }),
+      invalidatesTags: ['Evaluators'],
+    }),
 
     //ازالة دور مقيم
     removeEvaluatorRole: builder.mutation({
@@ -67,12 +77,18 @@ export const volunteersOptionsApi = apiSlice.injectEndpoints({
       invalidatesTags: ['VolunteerRequests'],
     }),
 
+<<<<<<< HEAD
     // اقتراح المتطوعين لفريق
    assignSuggestedVolunteers: builder.mutation({
+=======
+    // جلب قائمة المتطوعين المقترحين
+    assignSuggestedVolunteers: builder.mutation({
+>>>>>>> adminFeature
   query: ({ team_request_id, volunteer_ids }) => ({
     url: `/admin/volunteers/${team_request_id}/suggest/`,
     method: "POST",
     body: { volunteer_ids },
+<<<<<<< HEAD
   }),
   invalidatesTags: ["VolunteerRequests"],
 }),
@@ -89,13 +105,41 @@ getAvailableVolunteers: builder.query({
   providesTags: ['Volunteers'],
 })
 
+=======
+>>>>>>> adminFeature
   }),
+  invalidatesTags: ["VolunteerRequests"],
+}),
+
+// جلب تفاصيل طلب فريق معين بواسطة الـ id لعرضه داخل المودال
+  getRequestDetails: builder.query({
+    query: (pk) => `/admin/volunteers/team-requests/${pk}/`, 
+    providesTags: ['VolunteerProfile'],
+}),
+  getVolunteerDetails: builder.query({
+    query: (id) =>
+    `/admin/volunteers/${id}/`,
+    
+    providesTags: [
+    "VolunteerProfile",
+  ],
+}),
+//جلب المتطوعين المتاحين للاقتراح منهم
+  getAvailableVolunteers: builder.query({
+    query: () => `/admin/volunteers/available-approved-volunteers/`,
+    providesTags: ['Volunteers'],
+})
+
+
+  }),
+  
 });
 
 export const {
   useGetVolunteersQuery,
   useGetVolunteerRequestsQuery,
   useGetEvaluatorsQuery,
+  useGetVolunteerDetailsQuery,
   useApproveVolunteerRequestMutation,
   useRejectVolunteerRequestMutation,
   useSendEvaluationInvitationMutation,

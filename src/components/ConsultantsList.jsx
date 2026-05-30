@@ -4,7 +4,15 @@ import ConsultationRequestBtn from "./ConsultationRequestBtn";
 import Button from "./Button";
 import RequestDetailsModal from "./RequestDetailsModal"; 
 import avatarDefault from "../assets/images/avatar.jpg"; 
-
+const DAY_TRANSLATIONS = {
+  MONDAY: "الاثنين",
+  TUESDAY: "الثلاثاء",
+  WEDNESDAY: "الأربعاء",
+  THURSDAY: "الخميس",
+  FRIDAY: "الجمعة",
+  SATURDAY: "السبت",
+  SUNDAY: "الأحد",
+};
 const ConsultantsList = ({ 
   consultants, 
   role = "user", 
@@ -58,11 +66,14 @@ const ConsultantsList = ({
               <p className="font-bold">{c.full_name || c.name}</p>
               {c.primary_skills && <p className="text-sm font-semibold text-gray-600">{c.primary_skills}</p>}
               
-              {c.availability && c.availability.map((slot, index) => (
-                <div key={index} className="text-sm text-gray-500">
-                  {slot.day}: من {slot.start_time || slot.from} إلى {slot.end_time || slot.to}
-                </div>
-              ))}
+              {c.availability?.map((slot, index) => (
+  <div key={index} className="text-sm text-gray-500">
+    {DAY_TRANSLATIONS[slot.day] || slot.day}
+    : من {slot.start_time || slot.from}
+    {" "}إلى{" "}
+    {slot.end_time || slot.to}
+  </div>
+))}
             </div>
 
             {role === "admin" ? (

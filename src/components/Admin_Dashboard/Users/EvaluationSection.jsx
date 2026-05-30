@@ -115,7 +115,7 @@ const EvaluationSection = ({
 
               {/* القسم الأيسر: جدول التقييمات الأولية الراجعة للفكرة */}
               <div className="w-full md:w-2/3 overflow-x-auto">
-                <h5 className="text-lg font-bold text-gray-800 mb-3">نتائج التقييمات الحالية</h5>
+                <h5 className="text-lg font-bold text-gray-800 mb-3">نتائج التقييمات الاولية</h5>
                 <table className="w-full text-right border-collapse border border-second-color">
                   <thead>
                     <tr className="bg-gray-50 border-b border-second-color text-gray-700 font-bold">

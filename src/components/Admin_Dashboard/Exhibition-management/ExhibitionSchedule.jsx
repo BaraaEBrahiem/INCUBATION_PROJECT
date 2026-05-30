@@ -1,72 +1,112 @@
 import React, { useState } from "react";
 import Input from "../../Input";
 import Button from "../../Button";
-import { showSuccess, showError } from "../../../Utils/toast";
+import {
+  showSuccess,
+  showError,
+} from "../../../Utils/toast";
 
-// import { useSetExhibitionDateMutation } from "../../api/endpoints/exhibitionApi";
+import {
+  useSetExhibitionDateMutation,
+} from "../../../api/endpoints/admin/exhibitionApi";
 
 export default function ExhibitionSchedule() {
-  const [date, setDate] = useState("");
-  const [time, setTime] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [date, setDate] =
+    useState("");
 
-  // const [setExhibitionDate, { isLoading }] = useSetExhibitionDateMutation();
+  const [time, setTime] =
+    useState("");
 
-  const handleSendNotification = async () => {
-    if (!date || !time) {
-      showError("يرجى إدخال تاريخ ووقت المعرض");
-      return;
-    }
+  const [
+    setExhibitionDate,
+    { isLoading },
+  ] =
+    useSetExhibitionDateMutation();
 
-    setIsSubmitting(true);
+  const handleSendNotification =
+    async () => {
+      if (!date || !time) {
+        showError(
+          "يرجى إدخال تاريخ ووقت المعرض"
+        );
+        return;
+      }
 
-    const payload = {
-      exhibitionDate: date,
-      exhibitionTime: time,
+      const payload = {
+        date,
+        time,
+      };
+
+      try {
+        await setExhibitionDate(
+          payload
+        ).unwrap();
+
+        showSuccess(
+          "تم إرسال موعد المعرض لجميع المستخدمين بنجاح."
+        );
+
+        // تنظيف الحقول
+        setDate("");
+        setTime("");
+      } catch (error) {
+        console.error(
+          "Error setting exhibition date:",
+          error
+        );
+
+        showError(
+          error?.data
+            ?.message ||
+            "حدث خطأ في تحديد موعد المعرض"
+        );
+      }
     };
 
-    console.log("Payload to backend:", payload);
-
-    try {
-      // await setExhibitionDate(payload).unwrap();
-      // محاكاة نجاح العملية (تتحذف عند الربط الحقيقي)
-      await new Promise(resolve => setTimeout(resolve, 500));
-
-      showSuccess("تم إرسال موعد المعرض لجميع المستخدمين بنجاح.");
-      // إعادة تعيين الحقول بعد النجاح
-      setDate("");
-      setTime("");
-    } catch (error) {
-      console.error("Error setting exhibition date:", error);
-      showError(error?.data?.message || "حدث خطأ في تحديد موعد المعرض");
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
   return (
-    <div className="p-6 bg-white rounded-xl shadow-sm max-w-xl" dir="rtl">
-      <h2 className="text-xl font-bold mb-6">تحديد موعد المعرض</h2>
+    <div
+      className="p-6 bg-white rounded-xl shadow-sm max-w-xl"
+      dir="rtl"
+    >
+      <h2 className="text-xl font-bold mb-6">
+        تحديد موعد المعرض
+      </h2>
 
       <div className="flex flex-col gap-4">
         <Input
           label="تاريخ المعرض"
           type="date"
           value={date}
-          onChange={(e) => setDate(e.target.value)}
+          onChange={(e) =>
+            setDate(
+              e.target.value
+            )
+          }
         />
 
         <Input
           label="الوقت"
           type="time"
           value={time}
-          onChange={(e) => setTime(e.target.value)}
+          onChange={(e) =>
+            setTime(
+              e.target.value
+            )
+          }
         />
 
         <Button
-          label={isSubmitting ? "جاري الإرسال..." : "إرسال إشعار"}
-          onClick={handleSendNotification}
-          disabled={isSubmitting}
+          label={
+            isLoading
+              ? "جاري الإرسال..."
+              : "إرسال إشعار"
+          }
+          onClick={
+            handleSendNotification
+          }
+          disabled={
+            isLoading
+          }
           className="bg-main-color"
         />
       </div>
