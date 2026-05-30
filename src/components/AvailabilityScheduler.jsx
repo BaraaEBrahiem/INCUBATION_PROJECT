@@ -58,12 +58,19 @@ const AvailabilityScheduler = ({ value, onChange }) => {
             />
 
             <label className="flex items-center gap-2 text-sm mt-2 sm:mt-0">
-              <CheckBox
-              label={"مفعّل"}
-                checked={availability[day].active}
-                onChange={() => handleToggle(day)}
-                className="w-4 h-4"
-              />
+        
+                    <div className="flex items-center gap-2 mt-2 sm:mt-0">
+                      <input
+                        type="checkbox"
+                        id={`day-${day}`}
+                        checked={availability[day]?.active || false}
+                        onChange={() => handleToggle(day)}
+                        className="w-5 h-5 accent-main-color cursor-pointer"
+                      />
+                      <label htmlFor={`day-${day}`} className="text-sm cursor-pointer select-none">
+                        مفعّل
+                      </label>
+                    </div>
             </label>
           </div>
         </div>

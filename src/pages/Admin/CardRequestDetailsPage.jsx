@@ -1,165 +1,530 @@
 import React, { useState } from "react";
-import InfoRow from "../../components/InfoRow";
+import {
+  useParams,
+  useNavigate,
+} from "react-router-dom";
+
 import Modal from "../../components/Modal";
-import { IoImageOutline } from "react-icons/io5";
 import Input from "../../components/Input";
 
+import {
+  IoImageOutline,
+} from "react-icons/io5";
+
+import {
+  showError,
+  showSuccess,
+} from "../../Utils/toast";
+
+import {
+  useGetExhibitionCardRequestDetailsQuery,
+  useSubmitProjectDecisionMutation,
+} from "../../api/endpoints/admin/exhibitionApi";
+
 export default function CardRequestDetailsPage() {
-  const [rejectModal, setRejectModal] = useState(false);
-  const [acceptModal, setAcceptModal] = useState(false);
+  const {
+    submissionId,
+  } = useParams();
 
-  const [rejectNotes, setRejectNotes] = useState("");
-  const [acceptMessage, setAcceptMessage] = useState("");
-   const data = {
-  id: 1,
-  title: "معرض خريجي دفعة 2024",
-  date: "12/3/2024",
-  projectsCount: 30,
-  leader: "ريم العلي",
-  productType: "منصة برمجية (SaaS)",
-  ideaTitle: "منصة لعرض مشاريع التخرج",
-  sector: "التقنية",
-  description: "معرض سنوي لعرض مشاريع التخرج المتميزة.",
-  problem: "لا يوجد مشكلة، هذا معرض عرض فقط",
-  expected_duration: "6 months",
-  img: null,
-};
+  const navigate =
+    useNavigate();
 
+  const [
+    rejectModal,
+    setRejectModal,
+  ] = useState(false);
 
-  const handleReject = () => {
-    console.log("Reject reason:", rejectNotes);
-    setRejectModal(false);
-  };
+  const [
+    acceptModal,
+    setAcceptModal,
+  ] = useState(false);
 
-  const handleAccept = () => {
-    console.log("Accept message:", acceptMessage);
-    setAcceptModal(false);
-  };
+  const [
+    rejectNotes,
+    setRejectNotes,
+  ] = useState("");
+
+  const [
+    acceptMessage,
+    setAcceptMessage,
+  ] = useState("");
+
+  // ==========================
+  // fetch details
+  // ==========================
+  const {
+    data,
+    isLoading,
+    error,
+  } =
+    useGetExhibitionCardRequestDetailsQuery(
+      submissionId
+    );
+
+  // ==========================
+  // submit decision
+  // ==========================
+  const [
+    submitDecision,
+    {
+      isLoading:
+        isSubmittingDecision,
+    },
+  ] =
+    useSubmitProjectDecisionMutation();
+
+  // ==========================
+  // reject
+  // ==========================
+  const handleReject =
+    async () => {
+      if (
+        !rejectNotes.trim()
+      ) {
+        showError(
+          "يرجى كتابة سبب الرفض أولاً."
+        );
+        return;
+      }
+
+      try {
+        await submitDecision(
+          {
+            submission_id:
+              submissionId,
+            decision:
+              "rejected",
+            message:
+              rejectNotes,
+          }
+        ).unwrap();
+
+        showSuccess(
+          "تم رفض الطلب بنجاح"
+        );
+
+        setRejectModal(
+          false
+        );
+
+        navigate(
+          `/requests-details/${submissionId}`
+        );
+      } catch (err) {
+        console.error(
+          err
+        );
+
+        showError(
+          err?.data
+            ?.detail ||
+            "حدث خطأ أثناء إرسال قرار الرفض."
+        );
+      }
+    };
+
+  // ==========================
+  // accept
+  // ==========================
+  const handleAccept =
+    async () => {
+      if (
+        !acceptMessage.trim()
+      ) {
+        showError(
+          "يرجى كتابة إشعار القبول."
+        );
+        return;
+      }
+
+      try {
+        await submitDecision(
+          {
+            submission_id:
+              submissionId,
+            decision:
+              "approved",
+            message:
+              acceptMessage,
+          }
+        ).unwrap();
+
+        showSuccess(
+          "تم قبول الطلب بنجاح"
+        );
+
+        setAcceptModal(
+          false
+        );
+
+        navigate(
+          `/requests-details/${submissionId}`
+        );
+      } catch (err) {
+        console.error(
+          err
+        );
+
+        showError(
+          err?.data
+            ?.detail ||
+            "حدث خطأ أثناء إرسال قرار القبول."
+        );
+      }
+    };
+
+  // ==========================
+  // loading
+  // ==========================
+  if (isLoading) {
+    return (
+      <div className="text-center mt-20 text-lg font-bold">
+        جاري تحميل
+        تفاصيل الطلب...
+      </div>
+    );
+  }
+
+  // ==========================
+  // error
+  // ==========================
+  if (error) {
+    return (
+      <div className="text-center mt-20 text-red-500 font-bold">
+        حدث خطأ أثناء
+        تحميل تفاصيل
+        الطلب.
+      </div>
+    );
+  }
 
   return (
-    <div className="p-6 bg-white-color w-full min-h-screen" dir="rtl">
-    <div className="container">
-      <h2 className="text-2xl font-bold mb-6 text-second-color">تفاصيل المشروع</h2>
-      <div className="flex justify-between items-center">
-      <div>
-    
-      </div>
-      <div>
-       <div className="bg-white p-6 rounded-lg shadow mb-6">
-      <InfoRow label="اسم المشروع:">
-        {data?.projectName}
-      </InfoRow>
+    <div
+      className="bg-[#f4f4f4] min-h-screen p-8"
+      dir="rtl"
+    >
+      <div className="container mx-auto">
 
-      <InfoRow label="مسؤول التعديل (القائد):">
-        {data?.leader}
-      </InfoRow>
+        <div className="bg-white shadow-lg rounded overflow-hidden flex flex-col md:flex-row">
 
-      <InfoRow label="نوع المنتج:">
-        {data?.productType}
-      </InfoRow>
-      </div>
-      <hr className="my-6" />
-      <div>
-        <div className="bg-white p-6 rounded-lg shadow mb-6">
-      <h3 className="font-bold text-xl mb-4 border-b border-second-color">معلومات عن الفكرة</h3>
-
-      <InfoRow label="عنوان الفكرة:">
-        {data?.ideaTitle}
-      </InfoRow>
-
-      <InfoRow label="القطاع المستهدف:">
-        {data?.sector}
-      </InfoRow>
-
-      <InfoRow label="وصف مختصر للفكرة:">
-        {data?.description}
-      </InfoRow>
-
-      <InfoRow label="المشكلة التي يحلها:">
-        {data?.problem}
-      </InfoRow>
-
-      <InfoRow label="الوقت المتوقع للإنجاز:">
-        {data?.expected_duration}
-      </InfoRow>
-      </div>
-
-      {/* أزرار القبول والرفض */}
-      <div className="flex gap-4 mt-10">
-        <button
-          onClick={() => setAcceptModal(true)}
-          className="bg-green-600 text-white px-6 py-3 rounded-lg font-bold hover:bg-green-700"
-        >
-          قبول
-        </button>
-
-        <button
-          onClick={() => setRejectModal(true)}
-          className="bg-red-600 text-white px-6 py-3 rounded-lg font-bold hover:bg-red-700"
-        >
-          رفض
-        </button>
-      </div>
-      </div> 
-      </div>
-
-     {/* الصورة */}
-      <div className="flex items-center gap-4 mb-8">
-        {data.img ? (
+          {/* الصورة */}
+          <div className="md:w-1/2 bg-gray-100 flex items-center justify-center min-h-[550px]">
+            {data?.avatar ? (
               <img
-          src={data.img}
-          alt= "project"
-          className="object-cover"
-        />
-        ):
-        <IoImageOutline className="text-8xl"/>
-        }
-      
-      </div>
-      {/* مودال الرفض */}
-      <Modal
-        isOpen={rejectModal}
-        onClose={() => setRejectModal(false)}
-        title="سبب الرفض"
-        footer={
-          <button
-            onClick={handleReject}
-            className="bg-main-color text-white px-6 py-2 rounded-lg font-bold"
-          >
-            إرسال إشعار الرفض
-          </button>
-        }
-      >
-        <Input
-          placeholder="اكتب ما يجب تعديله في المشروع..."
-          value={rejectNotes}
-          onChange={(e) => setRejectNotes(e.target.value)}
-          className="w-full border border-gray-300 rounded-lg p-3 text-right"
-        />
-      </Modal>
+                src={
+                  data.avatar
+                }
+                alt="project"
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <div className="text-center text-gray-400">
+                <IoImageOutline className="text-8xl mx-auto mb-4" />
+                <p>
+                  لا توجد صورة
+                  للمشروع
+                </p>
+              </div>
+            )}
+          </div>
 
-      {/* مودال القبول */}
-      <Modal
-        isOpen={acceptModal}
-        onClose={() => setAcceptModal(false)}
-        title="إشعار القبول"
-        footer={
-          <button
-            onClick={handleAccept}
-            className="bg-main-color text-white px-6 py-2 rounded-lg font-bold"
-          >
-            إرسال إشعار القبول
-          </button>
-        }
-      >
-        <Input
-          placeholder="اكتب نص إشعار القبول..."
-          value={acceptMessage}
-          onChange={(e) => setAcceptMessage(e.target.value)}
-          className="w-full border border-gray-300 rounded-lg p-3 text-right"
-        />
-      </Modal>
-      </div>
+          {/* التفاصيل */}
+          <div className="md:w-1/2 p-8 text-right">
+
+            <h2 className="text-3xl font-bold text-teal-600 mb-8 text-center">
+              تفاصيل المشروع
+            </h2>
+
+            <div className="space-y-4 text-sm leading-8">
+
+              <p>
+                <span className="font-bold">
+                  اسم المشروع:
+                </span>{" "}
+                {data?.title ||
+                  "-"}
+              </p>
+
+              <p>
+                <span className="font-bold">
+                  قائد الفريق :
+                </span>{" "}
+                {data?.owner_name ||
+                  "-"}
+              </p>
+
+              <p>
+                <span className="font-bold">
+                  إيميل قائد الفريق:
+                </span>{" "}
+                {data?.owner_email ||
+                  "غير متوفر"}
+              </p>
+
+              <p>
+                <span className="font-bold">
+                  القطاع:
+                </span>{" "}
+                {data?.sector ||
+                  "-"}
+              </p>
+
+              <div>
+                <p className="font-bold">
+                  أعضاء الفريق:
+                </p>
+
+                <ul className="pr-6 list-disc mt-2">
+                  {data
+                    ?.team_members
+                    ?.length ? (
+                    data.team_members.map(
+                      (
+                        member,
+                        index
+                      ) => (
+                        <li
+                          key={
+                            index
+                          }
+                        >
+                          {
+                            member
+                          }
+                        </li>
+                      )
+                    )
+                  ) : (
+                    <li>
+                      لا يوجد
+                      أعضاء
+                    </li>
+                  )}
+                </ul>
+              </div>
+
+              <div>
+                <p className="font-bold">
+                  إيميلات
+                  الفريق:
+                </p>
+
+                <ul className="pr-6 list-disc mt-2">
+                  {data
+                    ?.emails
+                    ?.length ? (
+                    data.emails.map(
+                      (
+                        email,
+                        index
+                      ) => (
+                        <li
+                          key={
+                            index
+                          }
+                        >
+                          {
+                            email
+                          }
+                        </li>
+                      )
+                    )
+                  ) : (
+                    <li>
+                      لا توجد
+                      إيميلات
+                    </li>
+                  )}
+                </ul>
+              </div>
+
+              <p>
+                <span className="font-bold">
+                  اهداف المشروع:
+                </span>{" "}
+                {data?.project_goal ||
+                  "غير متوفر"}
+              </p>
+
+              <div>
+                <p className="font-bold">
+                  خدمات المشروع:
+                </p>
+
+                {Array.isArray(
+                  data?.project_services
+                ) ? (
+                  <ul className="pr-6 list-decimal mt-2">
+                    {data.project_services.map(
+                      (
+                        service,
+                        index
+                      ) => (
+                        <li
+                          key={
+                            index
+                          }
+                        >
+                          {
+                            service
+                          }
+                        </li>
+                      )
+                    )}
+                  </ul>
+                ) : (
+                  <p className="mt-2">
+                    {data?.project_services ||
+                      "غير متوفر"}
+                  </p>
+                )}
+              </div>
+
+              <p>
+                <span className="font-bold">
+                  حالة الطلب:
+                </span>{" "}
+                <span
+                  className={`font-bold ${
+                    data?.status ===
+                    "approved"
+                      ? "text-green-600"
+                      : data?.status ===
+                        "rejected"
+                      ? "text-red-600"
+                      : "text-yellow-600"
+                  }`}
+                >
+                  {data?.status ===
+                  "approved"
+                    ? "مقبول"
+                    : data?.status ===
+                      "rejected"
+                    ? "مرفوض"
+                    : "قيد المراجعة"}
+                </span>
+              </p>
+            </div>
+
+            {/* أزرار التحكم */}
+            {data?.status ===
+              "pending" && (
+              <div className="flex gap-4 mt-10">
+
+                <button
+                  onClick={() =>
+                    setAcceptModal(
+                      true
+                    )
+                  }
+                  disabled={
+                    isSubmittingDecision
+                  }
+                  className="bg-green-600 hover:bg-green-700 text-white px-8 py-3 rounded-lg font-bold transition"
+                >
+                  قبول
+                  الطلب
+                </button>
+
+                <button
+                  onClick={() =>
+                    setRejectModal(
+                      true
+                    )
+                  }
+                  disabled={
+                    isSubmittingDecision
+                  }
+                  className="bg-red-600 hover:bg-red-700 text-white px-8 py-3 rounded-lg font-bold transition"
+                >
+                  رفض
+                  الطلب
+                </button>
+
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* مودال الرفض */}
+        <Modal
+          isOpen={
+            rejectModal
+          }
+          onClose={() =>
+            setRejectModal(
+              false
+            )
+          }
+          title="سبب الرفض"
+          footer={
+            <button
+              onClick={
+                handleReject
+              }
+              className="bg-main-color text-white px-6 py-2 rounded-lg"
+            >
+              {isSubmittingDecision
+                ? "جاري الإرسال..."
+                : "إرسال"}
+            </button>
+          }
+        >
+          <Input
+            placeholder="اكتب سبب الرفض..."
+            value={
+              rejectNotes
+            }
+            onChange={(
+              e
+            ) =>
+              setRejectNotes(
+                e.target
+                  .value
+              )
+            }
+          />
+        </Modal>
+
+        {/* مودال القبول */}
+        <Modal
+          isOpen={
+            acceptModal
+          }
+          onClose={() =>
+            setAcceptModal(
+              false
+            )
+          }
+          title="إشعار القبول"
+          footer={
+            <button
+              onClick={
+                handleAccept
+              }
+              className="bg-main-color text-white px-6 py-2 rounded-lg"
+            >
+              {isSubmittingDecision
+                ? "جاري الإرسال..."
+                : "إرسال"}
+            </button>
+          }
+        >
+          <Input
+            placeholder="اكتب رسالة القبول..."
+            value={
+              acceptMessage
+            }
+            onChange={(
+              e
+            ) =>
+              setAcceptMessage(
+                e.target
+                  .value
+              )
+            }
+          />
+        </Modal>
       </div>
     </div>
   );

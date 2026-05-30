@@ -88,6 +88,10 @@ import ExhibitionManagementPage from "../pages/Admin/ExhibitionManagementPage";
 import LatestReviewPage from "../pages/Admin/LatestReviewPage";
 import AdminProjectsDetailsPage from "../pages/Admin/AdminProjectsDetailsPage";
 import GraduatedProjectsPage from "../pages/Admin/GraduatedProjectsPage";
+import CampWorkshopsPage from "../pages/Volunteer/CampWorkshopsPage";
+import CampProjectsPage from "../pages/Volunteer/CampProjectsPage";
+import SelectingVolunteerPage from "../pages/Admin/SelectingVolunteerPage";
+
 const AppRoutes = () => {
     const { roles } = useRole();
     const userNavOptions = buildUserNavOptions(roles);
@@ -169,6 +173,8 @@ const AppRoutes = () => {
           <Route path="/workshopinfo/:id" element={<WorkshopInfoPage />} />
           <Route path="/assigned-projects-page" element={<AssignedProjectsPage />} />
           <Route path="/volunteer-request/:id" element={<VolunteerRequestDetailsPage />} />
+          <Route path="/CampWorkShopsPage" element={<CampWorkshopsPage/>}/>
+          <Route path ="/CampProjectsPage" element={<CampProjectsPage/>}/>
         </Route>
       )}
 
@@ -238,13 +244,13 @@ const AppRoutes = () => {
           <Route path="/assigned-projects-page" element={<AssignedProjectsPage />} />
            <Route path="/requests-page" element={<VolunteerRequestsPage />} />
           <Route path="/workshop-page" element={<WorkshopsPage />} />
-           <Route path="/workshopinfo/:id" element={<WorkshopInfoPage />} />
            <Route path="/schedule-page" element={<ScheduleManagementPage />} />
           <Route path="/consultantslist/:categoryId" element={<ConsultantsListPage />} />
         </Route>
       )}
 
       {/* صفحات مشتركة */}
+       <Route path="/workshopinfo/:id" element={<WorkshopInfoPage />} />
       <Route path="/evaluationform" element={<EvaluationFormPage />} />
       <Route path="/notes" element={<NotesPage />} />
       <Route path="/exhibition-card/:id" element={<ExhibitionCardPage />} />
@@ -276,16 +282,13 @@ const AppRoutes = () => {
           <Route path= "/admin/assign-evaluators/:id" element={<AssignEvaluatorsPage />} />
           <Route path="/admin/assigned-projects" element={<ProjectsManagementPage />} />
           <Route path="/admin/exhibition" element={<ExhibitionManagementPage/>} />
-          <Route path="/requests-details/:id" element={<CardRequestDetailsPage />} />
+          <Route path="/requests-details/:submissionId" element={<CardRequestDetailsPage />} />
+           <Route path="/Selectingvolunteer/:teamRequestId" element={<SelectingVolunteerPage />} />
         </Route>
       )} 
       {roles.includes("admin") && (
       <Route>
-      <Route path="/admin/users/visitor/:id" element={<UserDetailsPage />} />
-      <Route path="/admin/users/volunteer/:id" element={<UserDetailsPage />} />
-      <Route path="/admin/users/incubated/:id" element={<UserDetailsPage />} />
-      <Route path="/admin/users/graduated/:id" element={<UserDetailsPage />} />
-      <Route path="/admin/users/idea-owner/:id" element={<UserDetailsPage />} />
+      <Route path="/admin/users/:id" element={<UserDetailsPage />} />
       <Route path="/admin/incubation_seasons/applications/:id" element={<IncubationRequestDetails />} />
       <Route path="/admin/tasks/:taskId" element={<TaskDetailsPage />} />
       <Route path="/admin/details/:id" element={<VolunteerRequestPage />} />
@@ -293,7 +296,7 @@ const AppRoutes = () => {
       <Route path="/notificationspage" element={<NotificationsPage />} />
       <Route path="/projectspage" element={<ProjectsPage />} />
       <Route path="/admin/assign-incubation-evaluators/:id" element={<AssignIncubationEvaluatorsPage />}/>
-      <Route path="/admin/latest-review/:id" element={<LatestReviewPage />} />
+      <Route path="/admin/latest-review/:idea_id" element={<LatestReviewPage />} />
       <Route path="/admin/projects-details/:id" element={<AdminProjectsDetailsPage />} />
       <Route path="/admin/graduated-projects" element= {<GraduatedProjectsPage/>} />
       

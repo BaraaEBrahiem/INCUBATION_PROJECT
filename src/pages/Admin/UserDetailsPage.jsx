@@ -1,11 +1,15 @@
 import { useParams, useNavigate } from "react-router-dom";
+import { useEffect } from "react";
+
 import {
   useGetAdminUserByIdQuery,
-  useUpdateUserStatusMutation,
-  useUpdateUserRoleMutation,
-} from "../../api/endpoints/admin/adminUsersApi";
+  useFreezeUserMutation,
+  useActivateUserMutation,
+  useUpdateUserRolesMutation,
+  useSendNotificationToUserMutation
+} from "../../api/endpoints/admin/usersOptionsApi.js";
 
-import { useSendNotificationMutation } from "../../api/endpoints/admin/adminDashboardApi";
+import { showError, showSuccess } from "../../Utils/toast";
 
 import UserHeaderActions from "../../components/Admin_Dashboard/Users/UserHeaderActions";
 import UserInfoCard from "../../components/Admin_Dashboard/Users/UserInfoCard";
@@ -17,145 +21,307 @@ const UserDetailsPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  // ---------------------------------------------------------
-  //   1) جلب بيانات المستخدم
-  const { data: user, isLoading, refetch } = useGetAdminUserByIdQuery(id);
+  const {
+    data: serverUser,
+    isLoading,
+    isError
+  } = useGetAdminUserByIdQuery(id);
 
-  // fallback قبل الربط الكامل
+  useEffect(() => {
+    if (serverUser) {
+      console.log("البيانات القادمة من الباك إند:", serverUser);
+    }
+  }, [serverUser]);
+
+  const [freezeUser] = useFreezeUserMutation();
+  const [activateUser] = useActivateUserMutation();
+  const [updateUserRoles] = useUpdateUserRolesMutation();
+  const [sendNotification] = useSendNotificationToUserMutation();
+
   const fallbackUser = {
-    id,
-    name: "مايا المحمد",
-    role: "متطوع",
-    email: "ahmadalmo12@gmail.com",
-    phone: "093883273883",
-    joinedAt: "12/3/2025",
-    rolesHistory: ["متطوع", "مختص"],
-    location: "حمص",
-    lastActive: "الأمس",
-    status: "نشط",
-    lastMessage: "هنا يكتب رسالة المستخدم والتفاصيل تكتب هنا",
-    workshops: [
-      { id: 1, taskName: "روبوت سابك", type: "ورشة عمل", assignedAt: "12/2/2024", status: "قيد المراجعة" },
-      { id: 2, taskName: "روبوت سابك", type: "ورشة عمل", assignedAt: "12/2/2024", status: "مرفوضة" },
-      { id: 3, taskName: "روبوت سابك", type: "ورشة عمل", assignedAt: "12/2/2024", status: "مقبولة" },
-    ],
-    evaluations: [
-      { evaluator: "سهيل أحمد", score: 40, note: "جيد جداً" },
-      { evaluator: "سهيل أحمد", score: 40, note: "جيد جداً" },
-      { evaluator: "سهيل أحمد", score: 40, note: "جيد جداً" },
-    ],
-    notes: ["تكتب هنا الملاحظة الأولى", "تكتب هنا الملاحظة الأولى", "تكتب هنا الملاحظة الأولى"],
-    attendanceRate: 75,
-    project: { id: 22 },
+    basic_info: {
+      id,
+      full_name: "مايا المحمد",
+      email: "ahmadalmo12@gmail.com",
+      phone: "093883273883",
+      avatar: null,
+      joined_at: "12/03/2025",
+      is_active: false,
+      current_roles: ["VOLUNTEER", "EVALUATOR"],
+      all_roles: ["VOLUNTEER", "IDEA_OWNER"]
+    },
+    roles: ["VOLUNTEER", "IDEA_OWNER"],
+    sections: [
+      {
+        type: "VOLUNTEER",
+        data: {
+          workshops: [
+            {
+              id: 1,
+              title: "روبوت سابك الورشة الأولى",
+              start_date: "12/02/2024",
+              status: "قيد المراجعة"
+            },
+            {
+              id: 2,
+              title: "روبوت سابك الورشة الثانية",
+              start_date: "15/02/2024",
+              status: "مرفوض"
+            },
+            {
+              id: 3,
+              title: "روبوت سابك الورشة الثالثة",
+              start_date: "20/02/2024",
+              status: "مقبول"
+            }
+          ]
+        }
+      },
+      {
+        type: "IDEA_OWNER",
+        data: {
+          ideas: [
+            {
+              idea_id: 22,
+              title: "مشروع نظام الحواضن الذكي",
+              status: "INCUBATION",
+              commitment_percentage: 75.5,
+              evaluations: [
+                {
+                  evaluator_name: "سهيل أحمد",
+                  score: 40,
+                  note: "مشروع واعد جداً ومكتمل الأركان"
+                },
+                {
+                  evaluator_name: "رنا محمود",
+                  score: 38,
+                  note: "حضور متميز ومتابعة مستمرة"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    ]
   };
 
-  const finalUser = user || fallbackUser;
-  // ---------------------------------------------------------
+  const finalUser = serverUser || fallbackUser;
 
-  // ---------------------------------------------------------
-  //   2) Mutations
-  const [updateStatus] = useUpdateUserStatusMutation();
-  const [updateRole] = useUpdateUserRoleMutation();
-  const [sendNotification] = useSendNotificationMutation();
-  // ---------------------------------------------------------
+  const userRolesCodes =
+    finalUser?.roles ||
+    finalUser?.basic_info?.current_roles ||
+    [];
 
-  // ---------------------------------------------------------
-  //   3) Handlers (تمريرها للهيدر)
-  const handleFreeze = async (userId) => {
-    await updateStatus({ id: userId, status: "مجمد" });
-    refetch();
+  const getSectionData = (type) => {
+    const section = finalUser?.sections?.find(
+      (sec) => sec.type === type
+    );
+
+    return section ? section.data : null;
   };
 
-  const handleActivate = async (userId) => {
-    await updateStatus({ id: userId, status: "نشط" });
-    refetch();
+  const handleFreeze = async (user_id) => {
+    try {
+      await freezeUser(user_id).unwrap();
+
+      showSuccess("تم تجميد حساب المستخدم بنجاح");
+    } catch (error) {
+      console.error("خطأ أثناء تجميد الحساب:", error);
+      showError("فشل تجميد الحساب، يرجى المحاولة لاحقاً");
+    }
   };
 
-  const handleChangeRole = async (userId, newRole) => {
-    await updateRole({ id: userId, role: newRole });
-    refetch();
+  const handleActivate = async (user_id) => {
+    try {
+      await activateUser(user_id).unwrap();
+
+      showSuccess("تم تفعيل حساب المستخدم بنجاح");
+    } catch (error) {
+      console.error("خطأ أثناء تفعيل الحساب:", error);
+      showError("فشل تفعيل الحساب");
+    }
   };
 
-  const handleSendNotification = async (userId, text) => {
-    await sendNotification({
-      target: "user",
-      userId,
-      message: text,
-    });
-  };
-  // ---------------------------------------------------------
+  const handleChangeRole = async (
+    user_id,
+    selectedRoleIds
+  ) => {
+    try {
+      await updateUserRoles({
+        user_id,
+        roles: selectedRoleIds
+      }).unwrap();
 
-  // ---------------------------------------------------------
-  //   4) Handlers للأقسام الأخرى
-  const handleMessageClick = () => {
-    navigate(`/messagespage/${finalUser.id}`);
+      showSuccess(
+        "تم تحديث أدوار وصلاحيات المستخدم بنجاح"
+      );
+    } catch (error) {
+      console.error(
+        "خطأ أثناء تحديث الأدوار:",
+        error
+      );
+      showError(
+        "حدث خطأ أثناء حفظ الأدوار الجديدة"
+      );
+    }
   };
 
-  const handleTaskClick = (task) => {
-    navigate(`/admin/tasks/${task.id}`);
+  const handleSendNotification = async (
+    user_id,
+    text
+  ) => {
+    if (!text.trim()) return;
+
+    try {
+      await sendNotification({
+        user_id,
+        message: text
+      }).unwrap();
+
+      showSuccess(
+        "تم إرسال الإشعار إلى المستخدم بنجاح"
+      );
+    } catch (error) {
+      console.error(
+        "خطأ أثناء إرسال الإشعار:",
+        error
+      );
+      showError("فشل إرسال الإشعار");
+    }
   };
 
-  const handleEvaluationClick = (evaluation) => {
-    console.log("تفاصيل التقييم:", evaluation);
-  };
+  const handleMessageClick = () =>
+    navigate(
+      `/messagespage/${finalUser.basic_info.id}`
+    );
 
-  const handleViewProject = () => {
-    navigate(`/projectinfo/${finalUser.project.id}`);
-  };
-  // ---------------------------------------------------------
+  const handleTaskClick = (taskId) =>
+    navigate(`/workshopinfo/${taskId}`);
 
-  if (isLoading) return <p className="text-center mt-10">جاري التحميل...</p>;
+  const handleViewProject = (projectId) =>
+    navigate(`/projectinfo/${projectId}`);
+
+  if (isLoading) {
+    return (
+      <div className="text-center mt-20 font-bold">
+        جاري تحميل بيانات المستخدم...
+      </div>
+    );
+  }
+
+  if (isError && !finalUser) {
+    return (
+      <div className="text-center mt-20 text-red-500 font-bold">
+        حدث خطأ أثناء جلب بيانات المستخدم
+      </div>
+    );
+  }
 
   return (
-    <div className="bg-white-color min-h-screen pb-6">
+    <div
+      className="bg-white-color min-h-screen pb-6"
+      dir="rtl"
+    >
       <div className="container">
-
-        {/* الهيدر */}
         <UserHeaderActions
-          user={finalUser}
+          user={{
+            id: finalUser.basic_info.id,
+            name:
+              finalUser.basic_info.full_name,
+            role: userRolesCodes,
+            volunteer_request_id:
+      finalUser.basic_info
+        ?.volunteer_request_id
+
+          }}
+          is_active={
+            finalUser.basic_info.is_active
+          }
           onFreeze={handleFreeze}
           onActivate={handleActivate}
           onChangeRole={handleChangeRole}
-          onSendNotification={handleSendNotification}
+          onSendNotification={
+            handleSendNotification
+          }
         />
 
-        {/* معلومات الحساب */}
-        <UserInfoCard user={finalUser} />
-
-        {/* المراسلات */}
-        <UserMessagesSection 
-          user={finalUser}
-          onMessageClick={handleMessageClick}
+        <UserInfoCard
+          basicInfo={finalUser.basic_info}
         />
 
-        {/* حسب الدور */}
-        {finalUser.role === "متطوع" && (
-          <VolunteerWorkshopsSection 
-            workshops={finalUser.workshops}
-            onTaskClick={handleTaskClick}
+        <UserMessagesSection
+          lastMessage={
+            finalUser.basic_info
+              ?.last_message ||
+            "لا توجد رسائل جديدة غير مقروءة حالياً"
+          }
+          onMessageClick={
+            handleMessageClick
+          }
+        />
+
+        {userRolesCodes.includes(
+          "VOLUNTEER"
+        ) && (
+          <VolunteerWorkshopsSection
+            workshops={
+              getSectionData(
+                "VOLUNTEER"
+              )?.workshops || []
+            }
+            onTaskClick={
+              handleTaskClick
+            }
           />
         )}
 
-        {finalUser.role === "محتضن" && (
+        {userRolesCodes.includes(
+          "EVALUATOR"
+        ) && (
           <EvaluationSection
-            evaluations={finalUser.evaluations}
-            notes={finalUser.notes}
-            project={finalUser.project}
-            onEvaluationClick={handleEvaluationClick}
-            onViewProject={handleViewProject}
+            assignments={
+              getSectionData(
+                "EVALUATOR"
+              )?.assignments || []
+            }
+            roleType="EVALUATOR"
+            onViewProject={
+              handleViewProject
+            }
           />
         )}
 
-        {finalUser.role === "صاحب فكرة" && (
+        {userRolesCodes.includes(
+          "INCUBATOR"
+        ) && (
           <EvaluationSection
-            evaluations={finalUser.evaluations}
-            attendanceRate={finalUser.attendanceRate}
-            project={finalUser.project}
-            onEvaluationClick={handleEvaluationClick}
-            onViewProject={handleViewProject}
+            ideas={
+              getSectionData(
+                "INCUBATOR"
+              )?.ideas || []
+            }
+            roleType="INCUBATOR"
+            onViewProject={
+              handleViewProject
+            }
           />
         )}
 
+        {userRolesCodes.includes(
+          "IDEA_OWNER"
+        ) && (
+          <EvaluationSection
+            ideas={
+              getSectionData(
+                "IDEA_OWNER"
+              )?.ideas || []
+            }
+            roleType="IDEA_OWNER"
+            onViewProject={
+              handleViewProject
+            }
+          />
+        )}
       </div>
     </div>
   );

@@ -34,6 +34,7 @@ export const workshopsApi = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ['Workshop'],
     }),
+
     getWorkshops: builder.query({
       query: () => 'admin/workshops/',
       providesTags: ['Workshop'],
@@ -44,6 +45,20 @@ export const workshopsApi = apiSlice.injectEndpoints({
       providesTags: ['Workshop'],
     }),
 
+getCampWorkshopProjects: builder.query({
+  query: (id) => `/bootcamp/bootcamp-sessions/${id}/ideas/`,
+  providesTags: (result, error, id) => [{ type: 'CampProjects', id: id }],
+}),
+
+// دالة تحديث حالة الحضور والغياب للمشروع
+updateProjectAttendance: builder.mutation({
+  query: ({ idea_id, status }) => ({
+    url: `/admin/camp/projects/${idea_id}/attendance/`,
+    method: 'POST',
+    body: { status },
+  }),
+  invalidatesTags: (result, error, { idea_id }) => ['CampProjects', idea_id],
+}),
 
   }),
 });
@@ -55,4 +70,7 @@ export const {
   useAddWorkshopMutation,
   useGetWorkshopsQuery,
   useGetNearestWorkshopQuery,
+  useGetCampWorkshopsQuery,
+  useGetCampWorkshopProjectsQuery,
+  useUpdateProjectAttendanceMutation,
 } = workshopsApi;

@@ -5,6 +5,7 @@ import { FaCheckSquare } from "react-icons/fa";
 import { RiFileList3Fill } from "react-icons/ri";
 import { FaCheckCircle } from "react-icons/fa";
 import { TbNumbers } from "react-icons/tb";
+
 const FieldTypesPanel = ({ addField }) => {
   const fieldTypes = [
     { type: "shortText", label: "نص قصير", icon: <MdTextFields /> },
@@ -15,21 +16,35 @@ const FieldTypesPanel = ({ addField }) => {
     { type: "number", label: "ادخال رقم", icon: <TbNumbers /> },
   ];
 
-  return (
-    <div className="w-64 bg-white rounded-lg shadow p-4 flex flex-col gap-3">
-      <h2 className="text-base font-bold mb-2">أنواع الحقول</h2>
+  const staticFields = [
+    { static_field: "title", label: "عنوان الفكرة" },
+    { static_field: "description", label: "وصف الفكرة" },
+    { static_field: "target_audience", label: "الجمهور المستهدف" },
+    { static_field: "sector", label: "القطاع المستهدف" },
+  ];
 
-      <div className="grid grid-cols-2 gap-6">
-        {fieldTypes.map((field) => (
-          <button
-            key={field.type}
-            onClick={() => addField(field.type)}
-            className="bg-white border-2 border-second-color rounded-md px-8 py-4 flex flex-col items-center gap-2 text-2xl"
-          >
-            {field.icon}
-            {field.label}
-          </button>
-        ))}
+  return (
+    <div className="w-75 h-150 bg-white rounded-lg border border-second-color shadow p-4 flex flex-col gap-4">
+      <div>
+        <h2 className="text-sm font-bold mb-3  pb-1">أنواع الحقول</h2>
+        <div className="grid grid-cols-2 gap-6 ">
+          {fieldTypes.map((f) => (
+            <button key={f.type} onClick={() => addField(f.type)} className="border border-second-color rounded p-2 flex flex-col items-center gap-1 text-lg hover:border-teal-700">
+              {f.icon} <span className="text-[10px]">{f.label}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div >
+        <h2 className="text-sm font-bold mb-4 pt-5  pb-4">الأسئلة الثابتة</h2>
+        <div className="grid grid-cols-2 gap-6">
+          {staticFields.map((f) => (
+            <button key={f.static_field} onClick={() => addField("shortText", f)} className="border-2 border-dashed border-second-color rounded p-2 text-center hover:border-teal-600 min-h-[55px]">
+              <span className="text-[11px] font-bold text-blak">{f.label}</span>
+            </button>
+          ))}
+        </div>
       </div>
     </div>
   );

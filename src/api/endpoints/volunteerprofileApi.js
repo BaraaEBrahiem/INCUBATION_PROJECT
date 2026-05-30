@@ -1,4 +1,4 @@
-// src/api/endpoints/volunteerApi.js
+
 import { apiSlice } from "../apiSlice";
 
 export const volunteerprofileApi = apiSlice.injectEndpoints({
@@ -6,7 +6,7 @@ export const volunteerprofileApi = apiSlice.injectEndpoints({
 
     // جلب بيانات الملف الشخصي للمتطوع
     getVolunteerProfile: builder.query({
-      query: () => "/volunteer/profile/",
+      query: (id) => `/volunteers/public-me/${id}`,
       providesTags: ["VolunteerProfile"],
     }),
 

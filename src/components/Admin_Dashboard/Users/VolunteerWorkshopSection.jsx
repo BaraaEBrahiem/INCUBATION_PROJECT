@@ -7,9 +7,9 @@ const VolunteerWorkshopsSection = ({ workshops, onTaskClick }) => {
 
   const handleClick = (row) => {
     if (onTaskClick) {
-      onTaskClick(row);
+      onTaskClick(row.id);
     } else {
-      navigate(`/admin/tasks/${row.id}`);
+      navigate(`/workshopinfo/${row.id}`);
     }
   };
 
@@ -19,7 +19,7 @@ const VolunteerWorkshopsSection = ({ workshops, onTaskClick }) => {
       label: "الإجراءات",
       render: (row) => (
         <Button
-          label="تفاصيل المهمة"
+          label="تفاصيل الورشة"
           className="bg-main-color"
           onClick={() => handleClick(row)}
         />
@@ -31,13 +31,13 @@ const VolunteerWorkshopsSection = ({ workshops, onTaskClick }) => {
       render: (row) => (
         <span
           className={`
-            px-3 py-1 rounded-md text-white text-sm
+            px-3 py-1 rounded-md text-white text-sm font-medium
             ${
               row.status === "قيد المراجعة"
                 ? "bg-yellow-500"
-                : row.status === "مرفوضة"
+                : row.status === "مرفوض"
                 ? "bg-red-600"
-                : "bg-green-600"
+                : "bg-green-600" 
             }
           `}
         >
@@ -45,15 +45,22 @@ const VolunteerWorkshopsSection = ({ workshops, onTaskClick }) => {
         </span>
       ),
     },
-    { key: "assignedAt", label: "تاريخ التعيين" },
-    { key: "taskName", label: "اسم المهمة" },
-    { key: "type", label: "معسكر/ورشة عمل" },
+    { key: "start_date", label: "تاريخ البدء" },
+    
+    { key: "title", label: "اسم المهمة" },
+    
+    { 
+      key: "type", 
+      label: "ورشة عمل",
+      render: (row) => <span>{row.type || "ورشة عمل"}</span>
+    },
   ];
 
   return (
-    <div>
-      <h3 className="text-2xl font-bold mb-4">الورشات</h3>
-      <DataTable columns={columns} data={workshops} />
+    <div className="mb-8" dir="rtl">
+      <h3 className="text-2xl font-bold mb-4">الورشات والدورات التدريبية</h3>
+      {/* تمرير مصفوفة الورشات المحدثة */}
+      <DataTable columns={columns} data={workshops || []} />
     </div>
   );
 };

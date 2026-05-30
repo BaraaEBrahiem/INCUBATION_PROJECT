@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import DataTable from "./DataTable";
 import EvaluatorsModal from "./Evaluation-management/EvaluatorsModal";
 
+<<<<<<< HEAD
 // import { useGetIncubatedProjectsQuery } from "../../api/endpoints/publicProjectsApi";
 //import {useGetEvaluatorsForMeetingQuery} from "../../api/endpoints/evaluationApi";
 export default function ProjectsTable({ onOpenScheduleModal }) {
@@ -35,6 +36,20 @@ export default function ProjectsTable({ onOpenScheduleModal }) {
       { id: 3, name: "خالد حسن", specialization: "Mobile Apps", image: null },
     ],
   };
+=======
+import {
+  useGetIncubatedProjectsQuery,
+  useGetIncubationEvaluatorsQuery,
+} from "../../api/endpoints/publicProjectsApi";
+
+export default function ProjectsTable({
+  onOpenScheduleModal,
+  selectedProjectId,
+  onSelectProject,
+}) {
+  const navigate =
+    useNavigate();
+>>>>>>> 4ae01237f59e8d7cceb825bce5a8c39bd8890889
 
   // استخدام البيانات الثابتة حالياً
   const projects = projectsData;
@@ -68,6 +83,7 @@ export default function ProjectsTable({ onOpenScheduleModal }) {
     navigate(`/admin/projects-details/${projectId}`);
   };
 
+<<<<<<< HEAD
   // حالة التحميل
   // if (isLoading) {
   //   return (
@@ -91,6 +107,163 @@ export default function ProjectsTable({ onOpenScheduleModal }) {
   //     </div>
   //   );
   // }
+=======
+  // ✅ تم التعديل هون فقط
+  const {
+    data:
+      evaluatorsFromApi,
+    isLoading:
+      evaluatorsLoading,
+  } =
+    useGetIncubationEvaluatorsQuery(
+      selectedProjectId,
+      {
+        skip:
+          !selectedProjectId,
+      }
+    );
+
+  // ======================
+  // Projects Data
+  // ======================
+
+  let projectsList =
+    [];
+
+  if (
+    Array.isArray(
+      projectsFromApi
+    )
+  ) {
+    projectsList =
+      projectsFromApi;
+  }
+
+  if (
+    projectsFromApi
+      ?.results &&
+    Array.isArray(
+      projectsFromApi.results
+    )
+  ) {
+    projectsList =
+      projectsFromApi.results;
+  }
+
+  if (
+    projectsFromApi
+      ?.data &&
+    Array.isArray(
+      projectsFromApi.data
+    )
+  ) {
+    projectsList =
+      projectsFromApi.data;
+  }
+
+  // ======================
+  // Evaluators Data
+  // ======================
+
+  let evaluators =
+    [];
+
+  if (
+    Array.isArray(
+      evaluatorsFromApi
+    )
+  ) {
+    evaluators =
+      evaluatorsFromApi;
+  }
+
+  if (
+    evaluatorsFromApi
+      ?.results &&
+    Array.isArray(
+      evaluatorsFromApi.results
+    )
+  ) {
+    evaluators =
+      evaluatorsFromApi.results;
+  }
+
+  if (
+    evaluatorsFromApi
+      ?.data &&
+    Array.isArray(
+      evaluatorsFromApi.data
+    )
+  ) {
+    evaluators =
+      evaluatorsFromApi.data;
+  }
+
+  // ======================
+  // Actions
+  // ======================
+
+  const openEvaluators =
+    (
+      projectId
+    ) => {
+      onSelectProject?.(
+        projectId
+      );
+
+      setModals({
+        evals: true,
+      });
+    };
+
+  const closeEvaluators =
+    () => {
+      setModals({
+        evals: false,
+      });
+    };
+
+  const openProjectDetails =
+    (
+      projectId
+    ) => {
+      navigate(
+        `/admin/projects-details/${projectId}`
+      );
+    };
+
+  // ======================
+  // Loading
+  // ======================
+
+  if (
+    isLoading
+  ) {
+    return (
+      <div className="p-4 text-center">
+        <p className="text-gray-500">
+          جاري تحميل
+          المشاريع...
+        </p>
+      </div>
+    );
+  }
+
+  // ======================
+  // Error
+  // ======================
+
+  if (
+    error
+  ) {
+    return (
+      <div className="p-4 text-center">
+        <p className="text-red-500 mb-3">
+          حدث خطأ
+          في تحميل
+          المشاريع
+        </p>
+>>>>>>> 4ae01237f59e8d7cceb825bce5a8c39bd8890889
 
   const columns = [
     {
@@ -156,10 +329,26 @@ export default function ProjectsTable({ onOpenScheduleModal }) {
 
       {/* مودال المقيمين */}
       <EvaluatorsModal
+<<<<<<< HEAD
         isOpen={modals.evals}
         onClose={() => setModals({ ...modals, evals: false })}
         evaluators={modals.data}
+=======
+        isOpen={
+          modals.evals
+        }
+        onClose={
+          closeEvaluators
+        }
+        evaluators={
+          evaluators
+        }
+        isLoading={
+          evaluatorsLoading
+        }
+>>>>>>> 4ae01237f59e8d7cceb825bce5a8c39bd8890889
       />
     </div>
   );
 }
+
