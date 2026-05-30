@@ -7,7 +7,7 @@ const VolunteerRequestDetails = ({ request, onApprove, onReject }) => {
 
       <p><span className="font-bold text-xl">الاسم: </span>{request.name}</p>
       <p><span className="font-bold text-xl">البريد الإلكتروني: </span>{request.email}</p>
-      <p><span className="font-bold text-xl">نوع المهارة: </span>{request.required_skill}</p>
+      <p><span className="font-bold text-xl">المهارة المطلوبة: </span>{request.required_skill}</p>
       <p><span className="font-bold text-xl">الفئة المستهدفة: </span>{request.target_audience}</p>
       <p><span className="font-bold text-xl">عنوان المشروع: </span>{request.title}</p>
       <p><span className="font-bold text-xl">المهام المطلوبة: </span>{request.tasks}</p>

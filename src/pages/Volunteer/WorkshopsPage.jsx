@@ -1,53 +1,62 @@
  import React from 'react';
 import Button from '../../components/Button';
 import NavLinkUniversal from '../../components/NavLinkUniversal';
-// import { useGetAllWorkshopsQuery } from '../../api/endpoints/workshopsApi';
+import { useGetAllWorkshopsQuery } from '../../api/endpoints/workshopsApi';
 
 const WorkshopsPage = () => {
   
   //  بعد الربط هذا السطر بدل البيانات الثابتة
-  // const { data: workshopsFromApi = [], isLoading, error, refetch } = useGetAllWorkshopsQuery();
+const { data: workshopsFromApi = [], isLoading, error, refetch } = useGetAllWorkshopsQuery();
   
-  // بيانات ثابتة حالياً
-  const data = [
-    { id: 1, title: "روبوت سبايك", start_date: "10/12/2025", end_date: "20/12/2025", sessions: "4 جلسات", days: "سبت وثلاثاء", time_from: "02:00:00",time_to:"05:00:00", category: "اداري", status: "مقبولة" },
-    { id: 2, title: "روبوت سبايك", start_date: "10/12/2025", end_date: "20/12/2025", sessions: "4 جلسات", days: "سبت وثلاثاء", time_from: "02:00:00",time_to:"05:00:00", category: "اداري", status: "مرفوضة" },
-    { id: 3, title: "روبوت سبايك", start_date: "10/12/2025", end_date: "20/12/2025", sessions: "4 جلسات", days: "سبت وثلاثاء", time_from: "02:00:00",time_to:"05:00:00", category: "اداري", status: "قيد المراجعة" },
-    { id: 4, title: "روبوت سبايك", start_date: "10/12/2025", end_date: "20/12/2025", sessions: "4 جلسات", days: "سبت وثلاثاء", time_from: "02:00:00",time_to:"05:00:00", category: "اداري", status: "قيد المراجعة" },
-  ];
 
-  // const workshops = workshopsFromApi.length > 0 ? workshopsFromApi : data;
-  const workshops = data;
+  const workshops = workshopsFromApi;
+ 
 
-  // if (isLoading) {
-  //   return (
-  //     <div className="bg-white-color min-h-screen bg-gray-50 p-8 flex justify-center items-start">
-  //       <div className="w-full max-w-6xl text-center">
-  //         <p>جاري تحميل الورشات...</p>
-  //       </div>
-  //     </div>
-  //   );
-  // }
+   if (isLoading) {
+    return (
+      <div className="bg-white-color min-h-screen bg-gray-50 p-8 flex justify-center items-start">
+        <div className="w-full max-w-6xl text-center">
+           <p>جاري تحميل الورشات...</p>
+        </div>
+       </div>
+     );
+   }
 
-  // if (error) {
-  //   return (
-  //     <div className="bg-white-color min-h-screen bg-gray-50 p-8 flex justify-center items-start">
-  //       <div className="w-full max-w-6xl text-center">
-  //         <p className="text-red-500">حدث خطأ في تحميل الورشات</p>
-  //         <Button label="إعادة المحاولة" onClick={refetch} className="bg-main-color mt-4" />
-  //       </div>
-  //     </div>
-  //   );
-  // }
+   if (error) {
+     return (
+       <div className="bg-white-color min-h-screen bg-gray-50 p-8 flex justify-center items-start">
+         <div className="w-full max-w-6xl text-center">
+           <p className="text-red-500">حدث خطأ في تحميل الورشات</p>
+           <Button label="إعادة المحاولة" onClick={refetch} className="bg-main-color mt-4" />
+         </div>
+       </div>
+     );
+   }
+
+  const getStatusText = (status) => {
+    switch (status) {
+      case "ACCEPTED":
+        return "مقبولة";
+
+      case "REJECTED":
+        return "مرفوضة";
+
+      case "PENDING":
+        return "قيد المراجعة";
+
+      default:
+        return status;
+    }
+  };
 
   // دالة لتحديد لون الحالة
   const getStatusColor = (status) => {
     switch (status) {
-      case "مقبولة":
+      case "ACCEPTED":
         return "text-green-600";
-      case "مرفوضة":
+      case "REJECTED":
         return "text-red-600";
-      case "قيد المراجعة":
+      case "PENDING":
         return "text-yellow-600";
       default:
         return "text-gray-600";
@@ -90,7 +99,7 @@ const WorkshopsPage = () => {
                     <td className="py-6 px-2">{item.category}</td>
                     <td className="py-6 px-2">
                       <span className={getStatusColor(item.status)}>
-                        {item.status}
+                        {getStatusText(item.status)}
                       </span>
                     </td>
                     <td className="py-4">

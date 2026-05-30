@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import VolunteerRequestDetails from "../../components/VolunteerRequestDetails";
-// import { useGetVolunteerRequestByIdQuery } from "../../api/endpoints/requestsApi";
-// import { useApproveMutation, useRejectMutation } from "../../api/endpoints/approvalApi";
-// import { showSuccess, showError } from "../../Utils/toast";
+import { useGetVolunteerRequestByIdQuery } from "../../api/endpoints/requestsApi";
+import { showSuccess, showError } from "../../Utils/toast";
+import { 
+  useHandleJoinRequestDecisionMutation 
+} from "../../api/endpoints/approvalApi";
 
 const VolunteerRequestDetailsPage = () => {
   const { id } = useParams();
@@ -12,89 +14,82 @@ const VolunteerRequestDetailsPage = () => {
   // const { data: apiData, isLoading, error, refetch } = useGetVolunteerRequestByIdQuery(id);
   // const [approveRequest, { isLoading: isApproving }] = useApproveMutation();
   // const [rejectRequest, { isLoading: isRejecting }] = useRejectMutation();
+  const {
+    data: apiData,
+    isLoading,
+    error,
+    refetch,
+  } = useGetVolunteerRequestByIdQuery(id);
 
-  const [request, setRequest] = useState(null);
+  const [handleDecision, { isLoading: isActionLoading }] =
+    useHandleJoinRequestDecisionMutation();
+ 
+
+      // تجهيز البيانات للواجهة
+const request = apiData
+  ? {
+      id,
+
+      name: apiData.requester?.name,
+      email: apiData.requester?.email,
+
+      required_skill: apiData.request?.required_skill,
+
+      target_audience: apiData.project?.target_audience,
+
+      title: apiData.project?.title,
+
+      tasks: apiData.request?.tasks,
+
+      description: apiData.request?.description,
+
+      problem: apiData.project?.problem,
+    }
+  : null;
+
 //----------------------------------------------------------
-  useEffect(() => {
-    const fetchRequest = () => {
-     
-      const apiResponseMock = {
-        requester: {
-          name: "alaa ali",
-          email: "alaa@gmail.com",
-        },
-        project: {
-          title: "منصة لادارة المشاريع الريادية",
-          target_audience: "اصحاب الافكار الريادية",
-          problem: "hhhhhh",
-        },
-        request: {
-          required_skill: "ui_ux",
-          tasks: "رسم واجهات",
-          description: "منصة لتنظيم وادراة المشاريع في حاضنة تقانة المعلومات والاتصالات في حمص",
-        }
-      };
-
-      const formattedRequest = {
-        id: id,
-        name: apiResponseMock.requester.name,
-        email: apiResponseMock.requester.email,
-        skill: apiResponseMock.request.required_skill,
-        targetGroup: apiResponseMock.project.target_audience,
-        projectTitle: apiResponseMock.project.title,
-        tasks: apiResponseMock.request.tasks,
-        ideaSummary: apiResponseMock.request.description,
-        problem: apiResponseMock.project.problem,
-      };
-
-      setRequest(formattedRequest);
-    };
-
-    fetchRequest();
-  }, [id]);
-
-  // -------------------------------------------------------------
-  // دالة الموافقة (محاكاة حالياً + الكود الحقيقي في تعليقات)
-  // -------------------------------------------------------------
+ 
+// قبول الطلب
   const approveVolunteer = async () => {
-    /* 
     try {
-      await approveRequest({ type: "volunteer", id }).unwrap();
-      showSuccess("تم قبول طلب التطوع بنجاح");
-      refetch();
-    } catch (err) {
-      console.error("Error approving request:", err);
-      showError(err?.data?.message || "حدث خطأ في قبول الطلب");
-    }
-    */
 
-    console.log("تمت الموافقة على طلب التطوع (محاكاة محلياً) للـ ID:", id);
-    alert("تم قبول طلب التطوع بنجاح (محاكاة)");
+      await handleDecision({
+        id,
+        action: "accept",
+      }).unwrap();
+
+      alert("تم قبول طلب التطوع بنجاح");
+
+      refetch();
+
+    } catch (err) {
+      console.error(err);
+      alert("حدث خطأ في قبول الطلب");
+    }
   };
 
-  // -------------------------------------------------------------
-  // دالة الرفض (محاكاة حالياً + الكود الحقيقي في تعليقات)
-  // -------------------------------------------------------------
+  // رفض الطلب
   const rejectVolunteer = async () => {
-    const reasonText = prompt("الرجاء إدخال سبب الرفض:");
-    if (!reasonText || !reasonText.trim()) return;
-
-    /* 
     try {
-      await rejectRequest({ type: "volunteer", id, reason: reasonText }).unwrap();
-      showSuccess("تم رفض طلب التطوع");
-      refetch();
-    } catch (err) {
-      console.error("Error rejecting request:", err);
-      showError(err?.data?.message || "حدث خطأ في رفض الطلب");
-    }
-    */
 
-    console.log("تم رفض طلب التطوع (محاكاة محلياً) بسبب:", reasonText);
-    alert(`تم رفض طلب التطوع بنجاح (محاكاة) بسب: ${reasonText}`);
+      await handleDecision({
+        id,
+        action: "reject",
+      }).unwrap();
+
+      alert("تم رفض طلب التطوع");
+
+      refetch();
+
+    } catch (err) {
+      console.error(err);
+      alert("حدث خطأ في رفض الطلب");
+    }
   };
 
-  /*
+
+
+  
   if (isLoading) {
     return (
       <div className="bg-white-color h-screen p-6" dir="rtl">
@@ -117,7 +112,7 @@ const VolunteerRequestDetailsPage = () => {
       </div>
     );
   }
-  */
+  
 
   if (!request) return <p className="text-center text-gray-500 mt-20">جاري التحميل...</p>;
 
@@ -130,7 +125,7 @@ const VolunteerRequestDetailsPage = () => {
           request={request}
           onApprove={approveVolunteer}
           onReject={rejectVolunteer}
-          // isActionLoading={isApproving || isRejecting} // يمرر عند الربط الفعلي لمنع النقر المتكرر
+          isActionLoading={isActionLoading}// يمرر عند الربط الفعلي لمنع النقر المتكرر
         />
       </div>
     </div>

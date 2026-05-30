@@ -89,7 +89,7 @@ import LatestReviewPage from "../pages/Admin/LatestReviewPage";
 import AdminProjectsDetailsPage from "../pages/Admin/AdminProjectsDetailsPage";
 import GraduatedProjectsPage from "../pages/Admin/GraduatedProjectsPage";
 import CampWorkshopsPage from "../pages/Volunteer/CampWorkshopsPage";
-import CampProjectsPage from "../pages/Volunteer/CampProjectsPage";
+import CampProjectsPage from '../pages/Volunteer/CampProjectsPage';
 import SelectingVolunteerPage from "../pages/Admin/SelectingVolunteerPage";
 
 const AppRoutes = () => {
@@ -174,7 +174,7 @@ const AppRoutes = () => {
           <Route path="/assigned-projects-page" element={<AssignedProjectsPage />} />
           <Route path="/volunteer-request/:id" element={<VolunteerRequestDetailsPage />} />
           <Route path="/CampWorkShopsPage" element={<CampWorkshopsPage/>}/>
-          <Route path ="/CampProjectsPage" element={<CampProjectsPage/>}/>
+          <Route path="/CampProjectsPage/:workshopId" element={<CampProjectsPage />} />
         </Route>
       )}
 

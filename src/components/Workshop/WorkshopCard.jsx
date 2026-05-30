@@ -20,9 +20,9 @@ return (
      
       <p className={`font-bold px-2 ${statusStyles[status]}`}> 
       <span className="font-bold text-black pl-2">حالة الورشة:</span>
-        {status === "pending" && "قيد المراجعة"}
-        {status === "rejected" && "مرفوضة"}
-        {status === "accepted" && "مقبولة"}
+        {status === "PENDING" && "قيد المراجعة"}
+        {status === "REJECTED" && "مرفوضة"}
+        {status === "ACCEPTED" && "مقبولة"}
       </p>
 
       </div>
@@ -48,14 +48,14 @@ return (
         <p className="text-gray-700 leading-relaxed">{workshop.objectives}</p>
       </div>
 
-      {status === "rejected" && (
+      {status === "REJECTED" && (
         <div className="bg-main-color text-white p-4 mt-4 rounded-md">
           <h3 className="font-bold mb-2">سبب الرفض:</h3>
           {workshop.rejection_reason}
         </div>
       )}
 
-      {(status === "accepted") && (
+      {(status === "ACCEPTED") && (
         <div className="bg-main-color text-white p-4 mt-6 rounded-md">
           <h3 className="font-bold mb-2">المسجلين في الورشة:</h3>
           {workshop.registrations.map((m, i) => (

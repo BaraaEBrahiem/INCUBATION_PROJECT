@@ -2,14 +2,14 @@ import React, { useState } from "react";
 import WorkshopImage from "../../components/Workshop/WorkshopImage";
 import WorkshopStepOne from "../../components/Workshop/WorkshopStepOne";
 import WorkshopStepTwo from "../../components/Workshop/WorkshopStepTwo";
-// import { useAddWorkshopMutation } from "../../api/endpoints/workshopsApi";
+import { useAddWorkshopMutation } from "../../api/endpoints/workshopsApi";
 
 const AddWorkshopPage = () => {
   const [step, setStep] = useState(1);
   const [error, setError] = useState({});
 
   // TODO: بعد الربط استخدمي هذا السطر
-  // const [addWorkshop, { isLoading }] = useAddWorkshopMutation();
+  const [addWorkshop, { isLoading }] = useAddWorkshopMutation();
 
   const [formData, setFormData] = useState({
     time_from: "",
@@ -42,7 +42,7 @@ const AddWorkshopPage = () => {
       "sessions",
       "capacity",
       "objectives",
-      "image",
+      
     ];
 
     requiredFields.forEach((field) => {
@@ -55,17 +55,35 @@ const AddWorkshopPage = () => {
     }
 
     // TODO: بعد الربط استخدمي هذا الكود بدل console.log
-    // try {
-    //   await addWorkshop(formData).unwrap();
-    //   alert("تم حفظ الورشة بنجاح");
-    //   // reset form
-    // } catch (err) {
-    //   alert("حدث خطأ في حفظ الورشة");
-    // }
+     try {
+       await addWorkshop(formData).unwrap();
+       alert("تم حفظ الورشة بنجاح");
 
-    console.log("بيانات الورشة:", formData);
-    alert("تم حفظ الورشة بنجاح");
+       setFormData({
+        time_from: "",
+        time_to: "",
+        description: "",
+        title: "",
+        objectives: "",
+        target_audience: "",
+        sessions: "",
+        capacity: "",
+        category: "",
+        start_date: "",
+        end_date: "",
+        days: "",
+        image: null,
+      });
+
+      setStep(1);
+      setError({});
+    } catch (err) {
+      console.log(err);
+      alert("حدث خطأ في حفظ الورشة");
+    }
   };
+
+
 
  return (
    <div className="bg-white-color min-h-screen p-6 md:p-10"dir="ltr">
