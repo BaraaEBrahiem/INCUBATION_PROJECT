@@ -56,7 +56,7 @@ const FormBuilderCanvas = ({ fields, updateField, deleteField }) => {
                     updateField(field.id, { label: e.target.value })
                   }
                   placeholder="اكتب عنوان السؤال"
-                  className="w-full border border-second-color rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-teal-700 disabled:bg-gray-100"
+                  className="w-full border border-second-color rounded-md px-3 py-2 text-lg focus:outline-none focus:ring-2 focus:ring-teal-700 disabled:bg-gray-100"
                 />
               </div>
 

@@ -16,7 +16,7 @@ export const consultationsApi = apiSlice.injectEndpoints({
 
     // جلب طلبات الاستشارة (للمستشار)
     getConsultationRequests: builder.query({
-      query: () => '/consultations/requests/',
+      query: () => '/volunteers/consultations/',
       providesTags: ['Consultations'],
     }),
 

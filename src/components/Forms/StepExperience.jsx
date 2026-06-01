@@ -1,7 +1,7 @@
 import Input from "../Input"
 import Select from "../Select"
 
-const StepExperience = ({ form, errors, handleChange}) => {
+const StepExperience = ({ form, errors, handleChange, expertiseOptions}) => {
   return (
     <div className="grid grid-cols-2 gap-15">
       <Input
@@ -21,11 +21,12 @@ const StepExperience = ({ form, errors, handleChange}) => {
         error={errors.current_company}
       />
 
-      <Input
+      <Select
         label="المهارة الاساسية"
         name="primary_skills"
         value={form.primary_skills}
         onChange={handleChange}
+        options={expertiseOptions}
         error={errors.primary_skills}  
       />
     </div>

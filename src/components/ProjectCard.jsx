@@ -1,11 +1,12 @@
-import React from 'react'
-import SignupLink from './SignupLink'
-import { useFavorites } from '../hooks/useFavorites'
-import NavLinkUniversal from './NavLinkUniversal';
+import React from "react";
+import SignupLink from "./SignupLink";
+import { useFavorites } from "../hooks/useFavorites";
+import NavLinkUniversal from "./NavLinkUniversal";
 import { FaRegHeart } from "react-icons/fa";
 import { IoIosHeart } from "react-icons/io";
-import { useRole } from '../hooks/useRole';
-import Button from './Button';
+import { useRole } from "../hooks/useRole";
+import Button from "./Button";
+
 
 const ProjectCard = ({ project, ShowImage = false, details = "general" }) => {
 
@@ -16,22 +17,31 @@ const ProjectCard = ({ project, ShowImage = false, details = "general" }) => {
   const getDetailsPath = () => {
     if (details === "graduated") return `/admin/latest-review/${project.id}`
     return `/ProjectDetails/${project.id}`; 
+    
   }
 
   return (
     <div className='flex flex-col md:flex-row-reverse items-center justify-between bg-white-color rounded-xl shadow-md p-4 border border-second-color w-full gap-16' dir='ltr'>
         
+
         {ShowImage && (
-          <div className='relative w-full md:w-[300px] h-[200px] md:h-[241px] rounded-lg overflow-hidden '>
-            <img src={project.image} alt={project.name} className="absolute w-full h-full object-cover" />
+          <div className="mt-4">
+            <SignupLink
+              label={
+                "عرض التفاصيل"
+              }
+              className={
+                "bg-main-color text-white px-6 py-2 rounded-lg inline-block"
+              }
+            />
           </div>
         )}
 
+
         <div className='flex flex-col gap-2 w-full md:flex-1 text-right' dir='rtl'>
-            <p className="text-lg md:text-xl"><span className='font-bold'>اسم المشروع: </span>{project.name}</p>
+            <p className="text-lg md:text-xl"><span className='font-bold'>اسم المشروع: </span>{project.title}</p>
             <p className="text-lg md:text-xl"><span className='font-bold'>الفئة: </span>{project.category}</p>
-            <p className="text-lg md:text-xl"><span className='font-bold'>اسم الفريق: </span>{project.team}</p>
-            <p className="text-lg md:text-xl"><span className='font-bold'>أعضاء الفريق: </span>{project.members?.join(", ") || ""}</p>
+            <p className="text-lg md:text-xl"><span className='font-bold'>أعضاء الفريق: </span>{project.team_members?.join(", ") || ""}</p>
 
             {showFavorites && !ShowImage && (
               <div className='flex justify-between items-center mt-4'>
@@ -70,7 +80,7 @@ const ProjectCard = ({ project, ShowImage = false, details = "general" }) => {
             )}
         </div>
     </div>
-  )
-}
+  );
+};
 
 export default ProjectCard;

@@ -12,13 +12,15 @@ export const formConfigApi = apiSlice.injectEndpoints({
 
     //انشاء فورم المعرض
     createExhibitionForm: builder.mutation({
-      query:(title) => ({
-        url: `/admin/exhibition/form/create/`,
-        method: 'POST',
-        body:{title},
-      }),
-      invalidatesTags:() => [{type: 'ExhibitionForm'}],
+      query: (data) => ({
+      url: `/admin/exhibition/form/create/`,
+      method: "POST",
+      body: data
     }),
+      invalidatesTags: () => [
+    { type: "ExhibitionForm" },
+  ],
+}),
     ///نشر فورم المعرض
      publishSeason: builder.mutation({
       query: (form_id) => ({
@@ -64,6 +66,8 @@ export const formConfigApi = apiSlice.injectEndpoints({
 });
 
 export const {
+  useCreateExhibitionFormMutation,
+  usePublishSeasonMutation,
   useGetExhibitionFormConfigQuery,
   useGetSeasonFormDesignQuery,
   useGetIdeaFormDesignQuery,

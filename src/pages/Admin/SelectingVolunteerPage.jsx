@@ -1,127 +1,106 @@
 import { useState } from "react";
-// import { useParams } from "react-router-dom"; 
+import { useParams } from "react-router-dom"; 
+import { showError, showSuccess, showInfo } from "../../Utils/toast";
 import CategoryFilterBar from "../../components/CategoryFilterBar";
 import ConsultantsList from "../../components/ConsultantsList";
-// import { useGetSuggestedVolunteersQuery } from "../../api/endpoints/admin/volunteersOptionsApi.js";
+import { 
+  useGetAvailableVolunteersQuery,
+  useAssignSuggestedVolunteersMutation, 
+} from "../../api/endpoints/admin/volunteersOptionsApi.js";
 
 const SelectingVolunteerPage = () => {
+  const { teamRequestId } = useParams();
+  const [selected, setSelected] = useState("all");
+  const [selectedVolunteers, setSelectedVolunteers] = useState([]);
 
-//   const { teamRequestId } = useParams();
+  const { data: suggestedVolunteers, isLoading, error } = useGetAvailableVolunteersQuery();
+  const [assignSuggestedVolunteers, { isLoading: isAssigning }] = useAssignSuggestedVolunteersMutation();
 
   const categories = [
     { id: "all", label: "الكل" },
     { id: "uiux", label: "UI UX" },
     { id: "frontend", label: "FrontEnd" },
-    { id: "backend", label: "BackEnd" }
+    { id: "backend", label: "BackEnd" },
+    { id: "legal", label: "Legal" },
+    { id: "marketing", label: "Marketing" },
+    { id: "business", label: "Business" },
   ];
 
-  const [selected, setSelected] = useState("all");
+  const volunteersList = suggestedVolunteers || [];
 
-  // const { data: suggestedVolunteers, isLoading, error } = useGetSuggestedVolunteersQuery(teamRequestId);
+  const filteredData = volunteersList.filter((volunteer) => {
+    if (selected === "all") return true;
+    
+    const skill = volunteer.primary_skills?.toLowerCase() || "";
+    if (selected === "uiux") return skill.includes("ui") || skill.includes("ux");
+    if (selected === "frontend") return skill.includes("front");
+    if (selected === "backend") return skill.includes("back");
+    if (selected === "legal") return skill.includes("legal");
+    if (selected === "marketing") return skill.includes("marketing");
+    if (selected === "business") return skill.includes("business");
+    return true;
+  });
 
-  const allData = [
-    {
-      id: 1, 
-      full_name: "أحمد علي",
-      primary_skills: "UI UX",
-      avatar: "/src/assets/images/avatar.jpg",
-      type: "all", 
-      availability: [{ day: "كل الأيام", start_time: "2:00pm", end_time: "4:00pm" }]
-    },
-    {
-      id: 2, 
-      full_name: "خالد يوسف",
-      primary_skills: "FrontEnd",
-      avatar: "/src/assets/images/avatar.jpg",
-      type: "all",
-      availability: [{ day: "كل الأيام", start_time: "2:00pm", end_time: "4:00pm" }]
-    },
-    {
-      id: 3, 
-      full_name: "سارة أحمد",
-      primary_skills: "FrontEnd",
-      avatar: "/src/assets/images/avatar.jpg",
-      type: "all",
-      availability: [{ day: "كل الأيام", start_time: "2:00pm", end_time: "4:00pm" }]
-    },
-    {
-      id: 4, 
-      full_name: "ايه العبود",
-      primary_skills: "BackEnd",
-      avatar: "/src/assets/images/avatar.jpg",
-      type: "all", 
-      availability: [{ day: "كل الأيام", start_time: "2:00pm", end_time: "4:00pm" }]
-    },
-  ];
+  const handleToggleSelect = (volunteerId) => {
+    setSelectedVolunteers((prev) =>
+      prev.includes(volunteerId)
+        ? prev.filter((id) => id !== volunteerId)
+        : [...prev, volunteerId]
+    );
+  };
 
-  const uiuxData = [
-    {
-      id: 1,
-      full_name: "أحمد علي",
-      primary_skills: "UI UX",
-      avatar: "/src/assets/images/avatar.jpg",
-      type: "all",
-      availability: [{ day: "كل الأيام", start_time: "2:00pm", end_time: "4:00pm" }]
-    },
-  ];
+  const handleSendProposal = async () => {
+    if (selectedVolunteers.length === 0) {
+      showInfo("يرجى تحديد متطوع واحد على الأقل قبل تقديم الاقتراح");
+      return;
+    }
 
-  const frontData = [
-    {
-      id: 2,
-      full_name: "خالد يوسف",
-      primary_skills: "FrontEnd",
-      avatar: "/src/assets/images/avatar.jpg",
-      type: "all",
-      availability: [{ day: "كل الأيام", start_time: "2:00pm", end_time: "4:00pm" }]
-    },
-    {
-      id: 3,
-      full_name: "سارة أحمد",
-      primary_skills: "FrontEnd",
-      avatar: "/src/assets/images/avatar.jpg",
-      type: "all",
-      availability: [{ day: "كل الأيام", start_time: "2:00pm", end_time: "4:00pm" }]
-    },
-  ];
-  
-  const backData = [
-    {
-      id: 4,
-      full_name: "ايه العبود",
-      primary_skills: "BackEnd",
-      avatar: "/src/assets/images/avatar.jpg",
-      type: "all", 
-      availability: [{ day: "كل الأيام", start_time: "2:00pm", end_time: "4:00pm" }]
-    },
-  ];
+    try {
+      await assignSuggestedVolunteers({
+        team_request_id: teamRequestId,
+        volunteer_ids: selectedVolunteers
+      }).unwrap();
 
-  let currentData = [];
+      showSuccess("تم إرسال اقتراح المتطوعين بنجاح");
+      setSelectedVolunteers([]);
+    } catch (err) {
+      showError("حدث خطأ أثناء إرسال الاقتراح", err);
+    }
+  };
 
-  switch (selected) {
-    case "all":
-      currentData = allData; // عند الربط ستكون: currentData = suggestedVolunteers || [];
-      break;
-    case "uiux":
-      currentData = uiuxData; 
-      break;
-    case "frontend":
-      currentData = frontData;
-      break;
-    case "backend":
-      currentData = backData;
-      break;
-    default:
-      currentData = [];
+  if (isLoading) {
+    return (
+      <div className="text-center mt-20 font-bold">
+        جاري تحميل المتطوعين المتاحين...
+      </div>
+    );
   }
 
-  /*
-  if (isLoading) return <div className="text-center mt-20 font-bold">جاري تحميل المتطوعين المقترحين لهذا الطلب...</div>;
-  if (error) return <div className="text-center mt-20 text-red-500 font-bold">حدث خطأ أثناء جلب المتطوعين المقترحين.</div>;
-  */
+  if (error) {
+    return (
+      <div className="text-center mt-20 text-red-500 font-bold">
+        حدث خطأ أثناء جلب المتطوعين.
+      </div>
+    );
+  }
 
   return (
-    <div className="container p-6" dir="rtl">
-      <h2 className="text-3xl font-bold mb-6">تحديد المتطوعين</h2>
+    <div className="container p-6 relative" dir="rtl">
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-2xl md:text-3xl font-bold">تحديد المتطوعين</h2>
+        
+        <button
+          onClick={handleSendProposal}
+          disabled={isAssigning || selectedVolunteers.length === 0}
+          className={`px-6 py-2 rounded-lg text-white font-semibold transition-all ${
+            selectedVolunteers.length === 0 
+              ? "bg-gray-400 cursor-not-allowed" 
+              : "bg-main-color hover:bg-opacity-90 shadow-md"
+          }`}
+        >
+          {isAssigning ? "جاري الإرسال..." : "اقتراح"}
+        </button>
+      </div>
       
       <CategoryFilterBar
         categories={categories}
@@ -130,12 +109,17 @@ const SelectingVolunteerPage = () => {
         className="bg-white-color"
       />
 
-      {currentData.length === 0 ? (
+      {filteredData.length === 0 ? (
         <div className="text-center py-10 text-gray-500">
           لا توجد بيانات لتبويب {categories.find(c => c.id === selected)?.label} حالياً.
         </div>
       ) : (
-        <ConsultantsList consultants={currentData} role="admin" />
+        <ConsultantsList 
+          consultants={filteredData} 
+          role="admin" 
+          selectedVolunteers={selectedVolunteers}
+          onToggleSelect={handleToggleSelect}
+        />
       )}
     </div>
   );

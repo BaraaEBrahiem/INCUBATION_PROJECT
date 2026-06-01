@@ -12,7 +12,7 @@ export const volunteersOptionsApi = apiSlice.injectEndpoints({
 
     // جلب طلبات التطوع
     getVolunteerRequests: builder.query({
-      query: () => '/admin/volunteer/pending/',
+      query: () => '/admin/volunteers/pending/',
       providesTags: ['VolunteerRequests'],
     }),
 
@@ -29,6 +29,7 @@ export const volunteersOptionsApi = apiSlice.injectEndpoints({
 
     }),
     //ارسال دعوة تقييم
+
     sendEvaluationInvitation: builder.mutation({
       query: ({ evaluator_id, invitationData }) => ({
         url: `/admin/volunteers/${evaluator_id}/send-invitation/`,
@@ -37,6 +38,7 @@ export const volunteersOptionsApi = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ['Evaluators'],
     }),
+
     //ازالة دور مقيم
     removeEvaluatorRole: builder.mutation({
       query: (evaluator_id) => ({
@@ -65,9 +67,13 @@ export const volunteersOptionsApi = apiSlice.injectEndpoints({
     }),
 
     // جلب قائمة المتطوعين المقترحين
-    getSuggestedVolunteers: builder.query({
-      query: (team_request_id) => `/admin/volunteers/${team_request_id}/suggest/`, 
-      providesTags: ['VolunteerRequests'],
+    assignSuggestedVolunteers: builder.mutation({
+  query: ({ team_request_id, volunteer_ids }) => ({
+    url: `/admin/volunteers/${team_request_id}/suggest/`,
+    method: "POST",
+    body: { volunteer_ids },
+  }),
+  invalidatesTags: ["VolunteerRequests"],
 }),
 
 // جلب تفاصيل طلب فريق معين بواسطة الـ id لعرضه داخل المودال
@@ -75,19 +81,36 @@ export const volunteersOptionsApi = apiSlice.injectEndpoints({
     query: (pk) => `/admin/volunteers/team-requests/${pk}/`, 
     providesTags: ['VolunteerProfile'],
 }),
+  getVolunteerDetails: builder.query({
+    query: (id) =>
+    `/admin/volunteers/${id}/`,
+    
+    providesTags: [
+    "VolunteerProfile",
+  ],
+}),
+//جلب المتطوعين المتاحين للاقتراح منهم
+  getAvailableVolunteers: builder.query({
+    query: () => `/admin/volunteers/available-approved-volunteers/`,
+    providesTags: ['Volunteers'],
+})
+
 
   }),
+  
 });
 
 export const {
   useGetVolunteersQuery,
   useGetVolunteerRequestsQuery,
   useGetEvaluatorsQuery,
+  useGetVolunteerDetailsQuery,
   useApproveVolunteerRequestMutation,
   useRejectVolunteerRequestMutation,
   useSendEvaluationInvitationMutation,
   useRemoveEvaluatorRoleMutation,
-  useGetSuggestedVolunteersQuery,
+  useAssignSuggestedVolunteersMutation,
   useGetRequestDetailsQuery,
   useGetTeamRequestsQuery,
+  useGetAvailableVolunteersQuery
 } = volunteersOptionsApi;

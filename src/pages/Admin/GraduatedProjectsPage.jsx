@@ -16,7 +16,7 @@ const GraduatedProjectsPage = () => {
 
   const filteredProjects = projects.filter((project) => {
     const matchCategory = selectedCategory === "all" || project.category === selectedCategory;
-    const matchSearch = project.name?.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchSearch = project.title?.toLowerCase().includes(searchQuery.toLowerCase());
     return matchCategory && matchSearch;
   });
 

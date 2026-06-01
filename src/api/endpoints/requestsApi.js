@@ -24,7 +24,9 @@ export const requestsApi = apiSlice.injectEndpoints({
     // جلب طلبات التطوع فقط
     // -----------------------------
     getVolunteerRequests: builder.query({
+
       query: () => 'volunteers/join-requests/',
+
       providesTags: ['Requests'],
     }),
 
@@ -32,7 +34,9 @@ export const requestsApi = apiSlice.injectEndpoints({
     // جلب طلب تطوع محدد بواسطة ID
     // -----------------------------
     getVolunteerRequestById: builder.query({
+
       query: (id) => `volunteers/join-request-details/${id}/`,
+
       providesTags: (result, error, id) => [{ type: 'Requests', id }],
 }),
   }),

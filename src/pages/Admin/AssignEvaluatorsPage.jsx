@@ -126,26 +126,19 @@ const AssignEvaluatorsPage = () => {
 
   const columns = [
     {
-      key: "actions",
-      label: "الإجراءات",
-      render: (row) => (
-        <Checkbox
-          name={`ev-${row.id}`}
-          checked={sel.includes(row.id)}
-          onChange={() =>
-            toggle(row.id)
-          }
-        />
-      ),
-    },
-    {
-      key: "additional_skills",
-      label: "المهارات الإضافية",
-      render: (row) =>
-        row.additional_skills?.join(
-          " - "
-        ) || "—",
-    },
+  key: "actions",
+  label: "الإجراءات",
+  render: (row) => (
+    <div className="flex justify-center items-center w-full">
+      <Checkbox
+        name={`ev-${row.id}`}
+        checked={sel.includes(row.id)}
+        onChange={() => toggle(row.id)}
+      />
+    </div>
+  ),
+},
+    
     {
       key: "primary_skills",
       label: "المهارات الأساسية",

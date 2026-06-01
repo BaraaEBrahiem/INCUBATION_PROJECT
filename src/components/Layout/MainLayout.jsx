@@ -8,7 +8,7 @@ const MainLayout = ({ children, header, footer }) => {
       {header}
 
       {/* المحتوى */}
-      <main className="flex-1 lg:mt-[80px]">
+      <main className="flex-1 lg:mt-20">
         {children || <Outlet />}
       </main>
 

@@ -1,53 +1,64 @@
-const UserInfoCard = ({ user }) => {
+const UserInfoCard = ({ basicInfo }) => {
+  if (!basicInfo) return null;
+
   return (
-    <div className="bg-white p-8 rounded-lg shadow-lg mb-6">
- 
+    <div className="bg-white p-8 rounded-lg shadow-lg mb-6" dir="rtl">
       <div className="space-y-15">
-
+        
+        {/* الصف الأول: البيانات الأساسية*/}
         <div className="flex justify-between items-center">
-        {/* البريد الإلكتروني */}
-        <div>
-          <p className="text-xl font-bold">البريد الإلكتروني</p>
-          <p className="font-medium">{user.email}</p>
+
+          {/* الاسم */}
+          <div>
+            <p className="text-xl font-bold">الاسم</p>
+            <p className="font-medium text-gray-750">{basicInfo.full_name}</p>
+          </div>
+
+
+          {/* البريد الإلكتروني */}
+          <div>
+            <p className="text-xl font-bold">البريد الإلكتروني</p>
+            <p className="font-medium text-gray-750">{basicInfo.email}</p>
+          </div>
+
+          {/* الرقم */}
+          <div>
+            <p className="text-xl font-bold">الرقم</p>
+            <p className="font-medium text-gray-750">{basicInfo.phone}</p>
+          </div>
+
+         
         </div>
 
-        {/* الرقم */}
-        <div>
-          <p className="text-xl font-bold">الرقم</p>
-          <p className="font-medium">{user.phone}</p>
-        </div>
+        {/* الصف الثاني: الأدوار والحالة والحقول الإضافية */}
+        <div className="flex justify-between items-center"> 
+          
+          {/*تاريخ الانضمام */}
+          <div>
+            <p className="text-xl font-bold">تاريخ الانضمام</p>
+            <p className="font-medium text-gray-750">{basicInfo.joined_at}</p>
+          </div>
+          {/* الأدوار التي قام بها (محدث ليتوافق مع مصفوفة all_roles) */}
+          <div>
+            <p className="text-xl font-bold">الأدوار التي قام بها</p>
+            <p className="font-medium text-gray-750">
+              {basicInfo.all_roles && basicInfo.all_roles.length > 0
+                ? basicInfo.all_roles.join("، ")
+                : "لا يوجد أدوار مسجلة"}
+            </p>
+          </div>
 
-        {/* تاريخ الانضمام */}
-        <div>
-          <p className="text-xl font-bold">تاريخ الانضمام</p>
-          <p className="font-medium">{user.joinedAt}</p>
-        </div>
-        </div>
 
-        <div className="flex justify-between items-center">
-        {/* الأدوار التي قام بها */}
-        <div>
-          <p className="text-xl font-bold">الأدوار التي قام بها</p>
-          <p className="font-medium">{user.rolesHistory.join("، ")}</p>
-        </div>
-
-        {/* الموقع */}
-        <div>
-          <p className="text-xl font-bold">الموقع</p>
-          <p className="font-medium">{user.location}</p>
-        </div>
-
-        {/* آخر نشاط */}
-        <div>
-          <p className="text-xl font-bold">آخر نشاط</p>
-          <p className="font-medium">{user.lastActive}</p>
-        </div>
-
-        {/* حالة الحساب */}
-        <div>
-          <p className="text-xl font-bold">حالة الحساب</p>
-          <p className="font-medium">{user.status}</p>
-        </div>
+          <div>
+            <p className="text-xl font-bold">حالة الحساب</p>
+            <span
+              className={`font-bold ${
+                basicInfo.is_active ? "text-green-color" : "text-red-color"
+              }`}
+            >
+              {basicInfo.is_active ? "نشط" : "مجمد"}
+            </span>
+          </div>
         </div>
 
       </div>

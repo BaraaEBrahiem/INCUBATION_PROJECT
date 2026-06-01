@@ -1,43 +1,26 @@
+import React from 'react';
+import avatar from '../assets/images/avatar.jpg';
 const ProfileHeader = ({ profile }) => {
-  return (
-    <div className="relative bg-main-color text-white py-6 px-25 flex flex-col md:flex-row items-center gap-6">
+  if (!profile) return null;
 
-      {/* صورة المستشار */}
+  return (
+    <div className=" text-white md:px-25 flex flex-col md:flex-row items-center gap-6" dir="rtl">
       <img 
-        src={profile.image}
+        src={profile.avatar || avatar}
         alt={profile.name}
         className="w-32 h-32 rounded-full object-cover"
       />
 
-      {/* المعلومات */}
-      <div className="flex-1 flex flex-col gap-2">
-
-        <h2 className="text-2xl font-bold">{profile.name}</h2>
-        <p className="text-gray-300">من {profile.city}</p>
-        <p className="font-semibold text-lg">{profile.specialty}</p>
-
-        {/* الوصف */}
-        <p className="text-gray-300 leading-relaxed">
+      <div className="flex-1 flex flex-col gap-2 text-center md:text-right">
+        <h2 className="text-4xl font-bold">{profile.name}</h2>
+        <p className="text-gray-300 text-lg">من {profile.residence}</p>
+        <p className="font-semibold text-4xl text-white">{profile.primary_skills}</p>
+        <p className="text-gray-200 leading-relaxed max-w-xl">
           {profile.bio}
         </p>
-
-        {/* الروابط */}
-        <div className="flex flex-col mt-2 font-medium">
-          {profile.github && (
-            <a href={profile.github} className="hover:underline">{profile.github}</a>
-          )}
-          {profile.linkedin && (
-            <a href={profile.linkedin} className="hover:underline">{profile.linkedin}</a>
-          )}
-          {profile.behance && (
-            <a href={profile.behance} className="hover:underline">{profile.behance}</a>
-          )}
-        </div>
-
       </div>
-
     </div>
-  )
-}
+  );
+};
 
-export default ProfileHeader
+export default ProfileHeader;

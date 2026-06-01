@@ -81,12 +81,14 @@ const LoginPage = () => {
         name: decoded.full_name || response.user?.name || decoded.email,
         roles: normalizedRoles,
       };
+      const refreshToken = response.refresh || response.refreshToken;
 
       // تخزين البيانات في Redux
       dispatch(setCredentials({
         user: user,
         token: accessToken,
         userId: user.id,
+        refreshToken: refreshToken
       }));
 
       // تحديث السياق (Context)
@@ -101,6 +103,10 @@ const LoginPage = () => {
         navigate("/ideaowner-mainpage");
       } else if (user.roles.includes("volunteer") || user.roles.includes("متطوع")) {
         navigate("/volunteer-mainpage");
+      } else if (user.roles.includes("evaluator") || user.roles.includes("مقيم")) {
+        navigate("/volunteer-evaluated-mainpage");
+      } else if (user.roles.includes("incubator") || user.roles.includes("مراجع")) {
+        navigate("/volunteer-incubated-mainpage");
       } else {
         navigate("/visitor-mainpage");
       }

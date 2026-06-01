@@ -8,7 +8,7 @@ const AdminLayout = ({adminName, email}) => {
       {/* Sidebar */}
       <AdminSidebar adminName={adminName} email={email}/>
 
-        <main className="flex-grow bg-white-color lg:mr-40 w-full min-h-screen ">
+        <main className="grow bg-white-color lg:mr-40 w-full min-h-screen ">
         <Outlet context={{}} />
         </main>
       </div>

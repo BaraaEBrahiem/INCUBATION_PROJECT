@@ -9,7 +9,7 @@ export const exhibitionApi = apiSlice.injectEndpoints({
     // -----------------------------
     setExhibitionDate: builder.mutation({
       query: (data) => ({
-        url: '/admin/exhibition/set-date/',
+        url: '/admin/exhibition/create/',
         method: 'POST',
         body: data,
       }),
