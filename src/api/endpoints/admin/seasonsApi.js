@@ -16,7 +16,7 @@ export const seasonsApi = apiSlice.injectEndpoints({
       providesTags: (result, error, id) => [{ type: 'IncubationSeasons', id }],
     }),
 
-    // إنشاء موسم جديد (بدون form_config)
+    
     createIncubationSeason: builder.mutation({
       query: (data) => ({
         url: `/admin/seasons/create/`,

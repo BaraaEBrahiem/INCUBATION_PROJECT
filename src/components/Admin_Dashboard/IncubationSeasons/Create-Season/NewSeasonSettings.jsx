@@ -2,14 +2,17 @@ import React, { useState } from "react";
 import Input from "../../../Input";
 import Textarea from "../../../Textarea";
 import Button from "../../../Button";
+import { showSuccess, showError } from "../../../../Utils/toast";
+import { useCreateIncubationSeasonMutation } from "../../../../api/endpoints/admin/seasonsApi";
 
-const NewSeasonSettings = ({ onSubmit}) => {
+const NewSeasonSettings = ({ onSubmit }) => {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [start_date, setStart_date] = useState("");
   const [end_date, setEnd_date] = useState("");
   const [errors, setErrors] = useState({});
-  const [submitError, setSubmitError] = useState("");
+
+  const [createIncubationSeason, { isLoading: isCreating }] = useCreateIncubationSeasonMutation();
 
   const validate = () => {
     const newErrors = {};
@@ -28,7 +31,6 @@ const NewSeasonSettings = ({ onSubmit}) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setSubmitError("");
 
     if (!validate()) return;
 
@@ -39,22 +41,31 @@ const NewSeasonSettings = ({ onSubmit}) => {
       end_date,
     };
 
-    onSubmit(payload);
+    try {
 
-    setName("");
-    setDescription("");
-    setStart_date("");
-    setEnd_date("");
+      const responseData = await createIncubationSeason(payload).unwrap();
+      showSuccess("تم إنشاء وحفظ بيانات الموسم بنجاح");
+
+  
+      if (onSubmit) {
+        onSubmit(responseData); 
+      }
+
+      // تصفير الحقول محلياً بعد نجاح العملية بسلام
+      setName("");
+      setDescription("");
+      setStart_date("");
+      setEnd_date("");
+    } catch (err) {
+      console.error("Create Season Error:", err);
+      // عرض رسالة الخطأ القادمة من الباك إند أو رسالة افتراضية
+      showError(err?.data?.detail || err?.data?.message || "حدث خطأ أثناء معالجة البيانات");
+    }
   };
 
   return (
-    <div className="bg-white p-6 rounded-lg shadow-md">
+    <div className="bg-white p-6 rounded-lg shadow-md" dir="rtl">
       <form onSubmit={handleSubmit} className="space-y-6">
-        {submitError && (
-          <div className="bg-red-100 text-red-700 p-3 rounded mb-4 text-center">
-            {submitError}
-          </div>
-        )}
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="flex flex-col gap-4">
@@ -69,6 +80,7 @@ const NewSeasonSettings = ({ onSubmit}) => {
               }}
               placeholder="اكتب اسم الموسم"
               error={errors.name}
+              disabled={isCreating} // تعطيل الحقل أثناء الإرسال
               required
             />
 
@@ -83,6 +95,7 @@ const NewSeasonSettings = ({ onSubmit}) => {
               rows={4}
               placeholder="وصفاً مختصراً عن الموسم"
               error={errors.description}
+              disabled={isCreating} // تعطيل الحقل أثناء الإرسال
               required
             />
           </div>
@@ -98,6 +111,7 @@ const NewSeasonSettings = ({ onSubmit}) => {
                 if (errors.start_date) setErrors({ ...errors, start_date: "" });
               }}
               error={errors.start_date}
+              disabled={isCreating} // تعطيل الحقل أثناء الإرسال
               required
             />
 
@@ -111,6 +125,7 @@ const NewSeasonSettings = ({ onSubmit}) => {
                 if (errors.end_date) setErrors({ ...errors, end_date: "" });
               }}
               error={errors.end_date}
+              disabled={isCreating} // تعطيل الحقل أثناء الإرسال
               required
             />
           </div>
@@ -119,8 +134,9 @@ const NewSeasonSettings = ({ onSubmit}) => {
         <div className="flex justify-end gap-3">
           <Button
             type="submit"
-            label="حفظ الإعدادات"
+            label={isCreating ? "جاري الحفظ والإنشاء..." : "حفظ الإعدادات"}
             className="bg-main-color"
+            disabled={isCreating} // تعطيل الزر أثناء التخاطب مع السيرفر
           />
         </div>
       </form>

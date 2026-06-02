@@ -38,19 +38,20 @@ const IncubationSeasonsPage = () => {
       key: "actions",
       label: "الإجراءات",
       render: (row) => (
+     
         <NavLinkUniversal
           to={`/incubation-seasons/${row.id}`}
           label={<Button label="عرض التفاصيل" className="bg-main-color" />}
         />
       ),
     },
-   {
+    {
       key: "status",
       label: "الحالة الحالية",
       render: (row) => {
         const phase = row.status?.phase?.toString().toUpperCase().trim() || "";
         const getPhaseLabel = () => {
-          if (row.status?.is_open) return "قيد التقديم";
+          if (row.status?.is_open) return "قيد التتقديم";
           
           switch (phase) {
             case "SUBMISSION": return "قيد التقديم";

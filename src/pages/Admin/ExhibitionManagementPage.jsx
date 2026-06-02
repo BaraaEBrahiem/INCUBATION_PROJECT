@@ -10,7 +10,7 @@ import {
 import AdminNavbar from "../../components/AdminNavbar";
 import PageTabs from "../../components/Admin_Dashboard/PageTabs";
 import ExhibitionSchedule from "../../components/Admin_Dashboard/Exhibition-management/ExhibitionSchedule";
-import FormBuilder from "../../components/Admin_Dashboard/IncubationSeasons/Create-Season/FormBuilder";
+import FormBuilder from "../../components/Admin_Dashboard/IncubationSeasons/Create-Season/FormBuilderManager.jsx";
 import CardRequests from "../../components/Admin_Dashboard/Exhibition-management/CardRequests";
 import ExhibitionRecord from "../../components/Admin_Dashboard/Exhibition-management/ExhibitionRecord";
 
