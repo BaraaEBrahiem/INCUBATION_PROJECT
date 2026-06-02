@@ -42,9 +42,9 @@ const CreateSeasonPage = () => {
   };
 
   return (
-    <div className="p-6 bg-gray-50 min-h-screen" dir="rtl">
+    <div className=" container p-6 min-h-screen" dir="rtl">
       {/* رأس الصفحة والعناوين */}
-      <div className="mb-6">
+      <div className=" mb-6">
         <h1 className="text-2xl font-bold text-gray-800">إنشاء موسم حاضنة جديد</h1>
         <p className="text-sm text-gray-500 mt-1">
           قم بتهيئة إعدادات الموسم وتواريخ التقديم، ثم صمم استمارة قبول الطلبات الخاصة به.
