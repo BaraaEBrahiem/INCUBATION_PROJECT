@@ -4,35 +4,38 @@ import Modal from "./Modal";
 import Select from "./Select";
 import Input from "./Input";
 import { useSelector } from "react-redux";
+
+// استيراد دوال التوست المخصصة لإظهار التنبيهات بشكل أنيق
+import { showSuccess, showError } from "../utils/toast";
+
 // import { useSendConsultationRequestMutation } from "../api/endpoints/consultationsApi";
 
 const ConsultationRequestBtn = ({ consultant }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [help_type, setHelp_type] = useState("");
+  const [requiredSkill, setRequiredSkill] = useState(""); 
   const [description, setDescription] = useState("");
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
+  const [error, setError] = useState(""); // يخص فقط حقول الإدخال الفارغة محلياً داخل المودال
 
   // const [sendRequest, { isLoading }] = useSendConsultationRequestMutation();
 
-  // جلب userId من Redux (إذا كان الباك إند لا يطلبه بالـ Payload فيمكنك عدم إرساله، حيث يعتمد الباك على الـ ID بالـ URL والـ Token)
+  // جلب userId من Redux
   const userId = useSelector((state) => state.auth.userId);
 
   const open = () => {
     setIsOpen(true);
     setError("");
-    setSuccess("");
   };
   const close = () => {
     setIsOpen(false);
     setHelp_type("");
+    setRequiredSkill("");
     setDescription("");
     setError("");
-    setSuccess("");
   };
 
   const handleSubmit = async () => {
-    // التحقق من الحقول
+    // التحقق من الحقول المحلية داخل المودال قبل الإرسال
     if (!help_type) {
       setError("الرجاء اختيار نوع الاستشارة");
       return;
@@ -47,40 +50,41 @@ const ConsultationRequestBtn = ({ consultant }) => {
     }
 
     // -------------------------------------------------------------
-    // T0D0: بعد الربط هذا الكود الجاهز والمطابق للباك إند تماماً بالصورة
+    // الرمز الجاهز والمطابق للباك إند تماماً بناءً على صورة البوستمان [IMG_20260601_201257_315.png]
     // -------------------------------------------------------------
     // try {
-    //   // نمرر الـ consultant?.id كـ parameter للـ Mutation ليتم وضعه في الـ URL تلقائياً
     //   await sendRequest({
-    //     consultantId: consultant?.id, 
-    //     body: {
-    //       required_skill: requiredSkill, // مطابقة للبوستمان
-    //       help_type: consultationType,   // تم تعديل القيم بالأسفل لتُرسل ONGOING أو ONETIME
-    //       description: description,
-    //     }
+    //     volunteer: consultant?.id || 1, // تم ضبط الحقل ليرسل اسم المفتاح "volunteer" للسيرفر
+    //     description: description,
+    //     help_type: help_type,
+    //     required_skill: requiredSkill,
     //   }).unwrap();
     //   
-    //   setSuccess("تم إرسال طلب الاستشارة بنجاح");
-    //   setTimeout(() => {
-    //     close();
-    //   }, 1500);
+    //   showSuccess("تم إرسال طلب الاستشارة بنجاح");
+    //   close();
     // } catch (err) {
     //   console.error("Error sending consultation request:", err);
-    //   // قراءة الخطأ من detail أو message حسب الـ API
-    //   setError(err?.data?.detail  err?.data?.message  "حدث خطأ في إرسال الطلب");
+    //   
+    //   // إطلاق الخطأ العام "non_field_errors" عبر توست منبثق بدلاً من النص الثابت
+    //   if (err?.data?.non_field_errors && Array.isArray(err.data.non_field_errors)) {
+    //     showError(err.data.non_field_errors[0]); // ستعرض التوست: "لديك طلب استشارة قيد الانتظار"
+    //   } else {
+    //     showError(err?.data?.detail  err?.data?.message  "حدث خطأ في إرسال الطلب");
+    //   }
     // }
 
-    // حالياً: محاكاة للإرسال
-    console.log("إرسال طلب استشارة:", {
-      consultantId: consultant?.id,
-      userId: userId,
-      help_type,
+    // حالياً: محاكاة للإرسال متوافقة مع الـ Payload والتوست الجديد
+    console.log("إرسال طلب استشارة (مطابق للبوستمان):", {
+      volunteer: consultant?.id || 1,
       description,
+      help_type,
+      required_skill: requiredSkill,
+      userId: userId, 
     });
-    setSuccess("تم إرسال طلب الاستشارة بنجاح (محاكاة متوافقة)");
-    setTimeout(() => {
-      close();
-    }, 1500);
+    
+    // للمحاكاة وتجربة التوست الناجح:
+    showSuccess("تم إرسال طلب الاستشارة بنجاح");
+    close();
   };
 
   return (
@@ -119,7 +123,7 @@ const ConsultationRequestBtn = ({ consultant }) => {
               المستشار: {consultant.name}
             </p>
           )}
-{/* تعديل 2: تغيير الـ values لتطابق تماماً النصوص الإنجليزية المتوقعة في الباك إند (ONGOING / ONETIME) */}
+ {/* نوع الاستشارة (ONGOING / ONETIME) */}
           <Select
             placeholder="اختر نوع الاستشارة"
             label="نوع الاستشارة"
@@ -134,7 +138,7 @@ const ConsultationRequestBtn = ({ consultant }) => {
             ]}
           />
 
-          {/* تعديل 3: إضافة حقل إدخال المهارة المطلوبة ليطابق required_skill بالباك إند */}
+          {/* المهارة المطلوبة المطابقة لـ required_skill */}
           <Input
             type="text"
             label="المهارة المطلوبة"
@@ -146,6 +150,7 @@ const ConsultationRequestBtn = ({ consultant }) => {
             }}
           />
 
+          {/* حقل الشرح المطابق لـ description */}
           <Input
             type="text"
             label="شرح مختصر"
@@ -157,8 +162,8 @@ const ConsultationRequestBtn = ({ consultant }) => {
             }}
           />
 
+          {/* أخطاء التحقق من الحقول الفارغة فقط تظهر هنا لمنع الإرسال بالخطأ */}
           {error && <p className="text-red-500 text-sm font-bold">{error}</p>}
-          {success && <p className="text-green-500 text-sm font-bold">{success}</p>}
         </form>
       </Modal>
     </>

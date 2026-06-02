@@ -42,7 +42,7 @@ import ConsultantsPage from "../pages/IdeaOwner/ConsultantsPage";
 import ConsultantsListPage from "../pages/IdeaOwner/ConsultantsListPage";
 import TeamPage from "../pages/IdeaOwner/TeamPage";
 import IdeaOwnerMainPage from "../pages/IdeaOwner/IdeaOwnerMainPage";
-import TeamRequestPage from "../pages/IdeaOwner/TeamRequestPage";
+import TeamRequestPage from "../pages/Incubation/TeamRequestPage";
 import IncubationStagesPage from "../pages/IdeaOwner/IncubationStagesPage";
 import VolunteerCenterPage from "../pages/Volunteer/VolunteerCenterPage";
 import VolunteerMainPage from "../pages/Volunteer/VolunteerMainPage";
@@ -50,8 +50,6 @@ import VolunteerRequestsPage from "../pages/Volunteer/VolunteerRequestsPage";
 import ScheduleManagementPage from "../pages/Volunteer/ScheduleManagementPage";
 import AddWorkshopPage from "../pages/Volunteer/AddWorkshopPage";
 import AssignedProjectsPage from "../pages/Volunteer/AssignedProjectsPage";
-import CampWorkshopsPage from "../pages/Volunteer/CampWorkShopPage";
-import CampProjectsPage from "../pages/Volunteer/CampProjectsPage";
 
 import WorkshopsPage from "../pages/Volunteer/WorkshopsPage";
 import WorkshopInfoPage from "../pages/Volunteer/WorkshopInfoPage";
@@ -95,7 +93,6 @@ import AdminProjectsDetailsPage from "../pages/Admin/AdminProjectsDetailsPage";
 import GraduatedProjectsPage from "../pages/Admin/GraduatedProjectsPage";
 import CampWorkshopsPage from "../pages/Volunteer/CampWorkshopsPage";
 import CampProjectsPage from "../pages/Volunteer/CampProjectsPage";
-import SelectingVolunteerPage from "../pages/Admin/SelectingVolunteerPage";
 
 const AppRoutes = () => {
     const { roles } = useRole();
@@ -159,8 +156,8 @@ const AppRoutes = () => {
           <Route path="/settings" element={<SettingsPage />} />
           <Route path="/change-password" element={<ChangePasswordPage />} />
           <Route path="/consultants" element={<ConsultantsPage />} />
-          <Route path="/team" element={<TeamPage />} />
           <Route path="/consultantslist/:categoryId" element={<ConsultantsListPage />} />
+           <Route path="/team" element={<TeamPage />} />
         </Route>
       )}
 
@@ -243,12 +240,13 @@ const AppRoutes = () => {
         <Route element={<DashboardLayout roles={roles} userName="مايا محمد" email="maya@example.com" />}>
           <Route path="/volunteer-profile" element={<EditVolunteerProfilePage />} />
           <Route path="/contact" element={<ContactPage />} />
+          
           <Route path="/settings" element={<SettingsPage />} />
           <Route path="/change-password" element={<ChangePasswordPage />} />
           <Route path="/volunteer-center" element={<VolunteerCenterPage />} />
           <Route path="/volunteer-request/:id" element={<VolunteerRequestDetailsPage />} />
           <Route path="/consultants" element={<ConsultantsPage />} />
-          <Route path="/team" element={<TeamPage />} />
+         
           <Route path="/assigned-projects-page" element={<AssignedProjectsPage />} />
            <Route path="/requests-page" element={<VolunteerRequestsPage />} />
           <Route path="/workshop-page" element={<WorkshopsPage />} />

@@ -1,11 +1,10 @@
-
-import { apiSlice } from "../apiSlice";
+ import { apiSlice } from "../apiSlice";
 
 export const incubationApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
 
     // -----------------------------
-    // 1) جلب تقدم مراحل الاحتضان لمستخدم معين
+    // 1) جلب تقدم مراحل الاحتضان لمستخدم معين (ملغي حذفه - تم الحفاظ عليه)
     // -----------------------------
     getIncubationProgress: builder.query({
       query: (userId) => `/incubation/progress/${userId}/`,
@@ -13,7 +12,7 @@ export const incubationApi = apiSlice.injectEndpoints({
     }),
 
     // -----------------------------
-    // 2) تحديث المرحلة الحالية
+    // 2) تحديث المرحلة الحالية (ملغي حذفه - تم الحفاظ عليه)
     // -----------------------------
     updateIncubationStage: builder.mutation({
       query: ({ userId, currentStage, stageData }) => ({
@@ -25,179 +24,149 @@ export const incubationApi = apiSlice.injectEndpoints({
     }),
 
     // -----------------------------
-    // 3) جلب بيانات المعسكر (المرحلة 1)
+    // 3) جلب بيانات الداشبورد العامة (تُستخدم كـ Dashboard العام في الواجهات)
     // -----------------------------
-    getCampData: builder.query({
-      query: () => `/bootcamp/owner-bootcamp/sessions/`,
+    getDashboard: builder.query({
+      query: () => `/ideas/idea-dashboard/`,
+      method: 'GET',
       providesTags: ['Incubation'],
     }),
 
     // -----------------------------
-    // 4) حفظ بيانات المعسكر (المرحلة 1)
-    // -----------------------------
-    saveCampData: builder.mutation({
-      query: ({ userId, data }) => ({
-        url: `/incubation/camp/${userId}/`,
-        method: 'POST',
-        body: data,
-      }),
-      invalidatesTags: ['Incubation'],
-    }),
-
-    getNextSession: builder.query({
-      query: () => ({
-        url: 'bootcamp/owner-bootcamp/next-session/', // الـ URL الخاص بالصورة الثانية تماماً
-        method: 'GET',
-      }),
-      providesTags: ['Incubation']
-    }),
-    // -----------------------------
-    // 5) طلب غياب عن جلسة (المرحلة 1)
+    // 5) طلب غياب عن جلسة (المرحلة 1) - تم ضبط الـ Body ليتوافق مع الكود
     // -----------------------------
     requestAbsence: builder.mutation({
-      query: ({ userId, reason, sessionId }) => ({
+      query: ({ reason, session_id }) => ({
         url: '/bootcamp/owner-bootcamp/absence-request/',
         method: 'POST',
-        body: { userId, reason, sessionId },
+        body: { reason, session_id },
       }),
       invalidatesTags: ['Incubation'],
     }),
 
-    // -----------------------------
-    // 6) تحديث الحضور (عند حضور جلسة) (المرحلة 1)
-    // -----------------------------
-    updateAttendance: builder.mutation({
-      query: ({ userId, sessionId, attended }) => ({
-        url: '/incubation/camp/attendance/',
-        method: 'PATCH',
-        body: { userId, sessionId, attended },
-      }),
-      invalidatesTags: ['Incubation'],
+    // =========================================================================
+    // ✨ إضافات المرحلة الثانية (CommitteeStage)
+    // =========================================================================
+    // جلب حالة التقييم
+    getEvaluationStatus: builder.query({
+      query: () => "/evaluations/evaluation-session-status/",
+      method: 'GET',
+      providesTags: ['Incubation'],
     }),
 
-    // -----------------------------
-    // 7) جلب بيانات تقييم اللجنة (المرحلة 2)
-    // -----------------------------
-    getCommitteeEvaluation: builder.query({
-      query: (userId) => `/incubation/committee/${userId}/`,
+    // جلب ملاحظات اللجنة
+    getEvaluationNotes: builder.query({
+      query: (userId) => `/evaluations/ideas/${userId}/notes/`,
+      method: 'GET',
+      providesTags: ['Incubation'],
+    }),
+
+    // =========================================================================
+    // ✨ إضافات المرحلة الثالثة (FollowupStage)
+    // =========================================================================
+    // جلب نظرة عامة عن الاحتضان (next_meeting_date)
+    getIncubationOverview: builder.query({
+      query: (ideaId) => `/evaluations/incubation/${ideaId}/overview/`,
+      method: 'GET',
+      providesTags: ['Incubation'],
+    }),
+
+    // جلب الملاحظات الأخيرة للمشروع
+    getLatestNotes: builder.query({
+      query: (userId) => `/evaluations/incubation/${userId}/latest-notes/`,
+      method: 'GET',
+      providesTags: ['Incubation'],
+    }),
+
+    // =========================================================================
+    // ✨ إضافات المرحلة الرابعة (ExhibitionStage)
+    // =========================================================================
+    // جلب بيانات المعرض (الأسئلة والفورم الحالي)
+    getExhibitionDashboard: builder.query({
+      query: () => `/ideas/exhibition/dashboard/`,
+      method:"GET",
       providesTags: ['Incubation'],
     }),
 
     // -----------------------------
-    // 8) حفظ تقييم اللجنة (المرحلة 2)
-    // -----------------------------
-    saveCommitteeEvaluation: builder.mutation({
-      query: ({ userId, data }) => ({
-        url: `/incubation/committee/${userId}/`,
-        method: 'POST',
-        body: data,
-      }),
-      invalidatesTags: ['Incubation'],
-    }),
-
-    // -----------------------------
-    // 9) جلب بيانات مرحلة المتابعة (المرحلة 3)
-    // -----------------------------
-    getFollowupData: builder.query({
-      query: (userId) => `/incubation/followup/${userId}/`,
-      providesTags: ['Incubation'],
-    }),
-
-    // -----------------------------
-    // 10) حفظ بيانات مرحلة المتابعة (المرحلة 3)
-    // -----------------------------
-    saveFollowupData: builder.mutation({
-      query: ({ userId, data }) => ({
-        url: `/incubation/followup/${userId}/`,
-        method: 'POST',
-        body: data,
-      }),
-      invalidatesTags: ['Incubation'],
-    }),
-
-    // -----------------------------
-    // 11) حل ملاحظة (تحديث حالة الملاحظة) (المرحلة 3)
-    // -----------------------------
-    resolveNote: builder.mutation({
-      query: ({ userId, noteId }) => ({
-        url: `/incubation/followup/note/${noteId}/resolve/`,
-        method: 'PATCH',
-        body: { userId },
-      }),
-      invalidatesTags: ['Incubation'],
-    }),
-
-    // -----------------------------
-    // 12) جلب بيانات المعرض المحفوظة مسبقاً (المرحلة 4)
-    // -----------------------------
-    getExhibitionData: builder.query({
-      query: (userId) => `/incubation/exhibition/${userId}/`,
-      providesTags: ['Incubation'],
-    }),
-
-    // -----------------------------
-    // 13) حفظ بيانات المعرض (المرحلة 4)
+    // 13) حفظ بيانات المعرض (المرحلة 4) - تم ضبط الـ Body ليتوافق مع الكود
     // -----------------------------
     saveExhibitionData: builder.mutation({
-      query: (formData) => ({
+      query: ({ data }) => ({
         url: '/ideas/exhibition/submit/',
         method: 'POST',
-        body: formData,
+        body: data,
       }),
       invalidatesTags: ['Incubation'],
     }),
+
     // -----------------------------
-    // جلب معلومات الاحتضان (لصفحة عرض المعلومات فقط)
+    // جلب قائمة المحتضنين (لصفحة الادارة) (ملغي حذفه - تم الحفاظ عليه)
     // -----------------------------
-    getIncubationInfo: builder.query({
-      query: () => `/ideas/exhibition/dashboard/`,
-      providesTags: ['Incubation'],
-    }),
-    // -----------------------------
-    // جلب قائمة المحتضنين (لصفحة الادارة)
     getIncubated: builder.query({
       query: () => '/admin/incubated/',
       providesTags: ['Incubated'],
-}),
-// -----------------------------
-// جلب تفاصيل طلب احتضان محدد
+    }),
+ // -----------------------------
+    // جلب تفاصيل طلب احتضان محدد (ملغي حذفه - تم الحفاظ عليه)
+    // -----------------------------
     getIncubationRequest: builder.query({
       query: (id) => `/ideas/project-details/${id}/`,
       providesTags: (result, error, id) => [{ type: 'IncubationRequests', id }],
-}),
+    }),
+
+    // =========================================================================
+    // 🔥 [تمت الإضافة بنجاح]: الحقول والـ Endpoints الخاصة بفورم إنشاء الفكرة
+    // =========================================================================
+    
+    // 1. جلب هيكلية الفورم والمَسودّة الحالية للفكرة (GET)
+    getIdeaFormDesign: builder.query({
+      query: (seasonId) => `/ideas/seasons/${seasonId}/submission-form/`,
+      providesTags: ['IdeaFormConfig'],
+    }),
+
+    // 2. حفظ بيانات الخطوة الحالية مؤقتاً عند الضغط على التالي (POST)
+    saveFormStep: builder.mutation({
+      query: ({ seasonId, step, data }) => ({
+        url: `/ideas/seasons/${seasonId}/save-step/`,
+        method: 'POST',
+        body: { step, data },
+      }),
+      invalidatesTags: ['IdeaFormConfig'], // لتحديث الـ Cache والمسودة تلقائياً بسحب البيانات الجديد
+    }),
+
+    // 3. الإرسال النهائي وتثبيت الفكرة وإصدار الـ PDF (POST)
+    submitFinalIdea: builder.mutation({
+      query: (seasonId) => ({
+        url: `/ideas/seasons/${seasonId}/submit-idea/`,
+        method: 'POST',
+        body: {}, // الـ Body فارغ تماماً حسب مواصفات الباك إند
+      }),
+      invalidatesTags: ['IdeaFormConfig'],
+    }),
 
   }),
 });
 
 export const {
-  // المراحل العامة
+  // المراحل العامة والإدارة القديمة
   useGetIncubationProgressQuery,
   useUpdateIncubationStageMutation,
-
-  // المرحلة 1: المعسكر
-  useGetCampDataQuery,
-  useSaveCampDataMutation,
-  useRequestAbsenceMutation,
-  useUpdateAttendanceMutation,
-
-  // المرحلة 2: تقييم اللجنة
-  useGetCommitteeEvaluationQuery,
-  useSaveCommitteeEvaluationMutation,
-
-  // المرحلة 3: الاحتضان والمتابعة
-  useGetFollowupDataQuery,
-  useSaveFollowupDataMutation,
-  useResolveNoteMutation,
-
-  // المرحلة 4: المعرض
-  useGetExhibitionDataQuery,
-  useSaveExhibitionDataMutation,
-
-  // جلب معلومات الاحتضان (لصفحة عرض المعلومات فقط)
-  useGetIncubationInfoQuery,
-
-  // جلب قائمة المحتضنين (لصفحة الادارة)
   useGetIncubatedQuery,
-  // جلب تفاصيل طلب احتضان محدد
   useGetIncubationRequestQuery,
+
+  // الـ Hooks المطلوبة للمراحل الأربعة بالأسماء الصحيحة
+  useGetDashboardQuery,           
+  useRequestAbsenceMutation,       
+  useGetEvaluationStatusQuery,     
+  useGetEvaluationNotesQuery,      
+  useGetIncubationOverviewQuery,   
+  useGetLatestNotesQuery,          
+  useGetExhibitionDashboardQuery,  
+  useSaveExhibitionDataMutation,   
+
+  // 🔥 [تمت الإضافة بنجاح]: الـ Hooks التلقائية المستخرجة لفورم الفكرة
+  useGetIdeaFormDesignQuery,
+  useSaveFormStepMutation,
+  useSubmitFinalIdeaMutation,
 } = incubationApi;

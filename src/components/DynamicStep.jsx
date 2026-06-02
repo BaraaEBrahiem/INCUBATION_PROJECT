@@ -1,18 +1,24 @@
- // src/components/Forms/DynamicStep.js
-import React from "react";
+ import React from "react";
 import Input from "./Input";
 import Select from "./Select";
 
+const FALLBACK_PRODUCT_OPTIONS = [
+  { value: "app", label: "تطبيق موبايل" },
+  { value: "website", label: "موقع إلكتروني" },
+  { value: "device", label: "جهاز / عتاد مادي" },
+  { value: "service", label: "خدمة" }
+];
+
 const DynamicStep = ({ stepName, fields, form, errors, handleChange, sectors = [] }) => {
   
-  // دالة لعرض الحقل حسب نوعه
   const renderField = (field) => {
-    const fieldName = field.key; 
+    const fieldName = field.name; 
+    if (!fieldName) return null;
+
     const value = form[fieldName];
-    const error = errors[fieldName];
+    const error = errors ? errors[fieldName] : "";
     const fieldConfig = field;
 
-    // حقول خاصة (تختلف عن الـ Input العادي)
     switch (fieldName) {
       case "sector": {
         return (
@@ -31,7 +37,10 @@ const DynamicStep = ({ stepName, fields, form, errors, handleChange, sectors = [
       }
       
       case "product_type": {
-        const productOptions = fieldConfig.choices?.map(c => ({ value: c.value, label: c.label })) || [];
+        const productOptions = fieldConfig.choices && fieldConfig.choices.length > 0
+          ? fieldConfig.choices.map(c => ({ value: c.value, label: c.label }))
+          : FALLBACK_PRODUCT_OPTIONS;
+
         return (
           <Select
             key={fieldName}
@@ -60,9 +69,8 @@ const DynamicStep = ({ stepName, fields, form, errors, handleChange, sectors = [
                   type="radio"
                   name={fieldName}
                   value="true"
-                  // التعديل هنا: يفحص الحالتين (المحلي والباكيند) لضمان بقاء الزر مفعلاً
                   checked={value === true || value === "true" || value === "yes"}
-                  onChange={(e) => handleChange(fieldName, true)} // نمرر true مباشرة
+                  onChange={() => handleChange(fieldName, true)} 
                 />
                 نعم
               </label>
@@ -71,8 +79,12 @@ const DynamicStep = ({ stepName, fields, form, errors, handleChange, sectors = [
                   type="radio"
                   name={fieldName}
                   value="false"
-                  checked={value === false ||  value === "false" ||  value === "no"}
-                  onChange={(e) => handleChange(fieldName, false)} // نمرر false مباشرة
+                  checked={value === false || value === "false" || value === "no"}
+                  onChange={() => {
+                    handleChange(fieldName, false);
+                    handleChange("ايميلات اعضاء الفريق", []);
+                    handleChange("team_members_names_local", "");
+                  }}
                 />
                 لا
               </label>
@@ -82,30 +94,35 @@ const DynamicStep = ({ stepName, fields, form, errors, handleChange, sectors = [
         );
       }
       
-      // تفكيك الحقل الواحد إلى حقلين (أعضاء الفريق + إيميلات أعضاء الفريق)
-      case "اعضاء الفريق": {
-        // التعديل هنا: إظهار الحقول إذا كانت القيمة true أو "yes"
-        if (form.team !== true && form.team !== "yes" && form.team !== "true") return null;
+      // التعديل المشترك: دعم المفاتيح العربية، إظهار حقل الأسماء محلياً، وطباعة معلومات الـ Case بالكونسول
+      case "team_members":
+      case "ايميلات اعضاء الفريق": { 
+        if (form.team !== true && form.team !== "true" && form.team !== "yes") return null;
         
+        // طباعة تأكيدية بالمتصفح لمعرفة أن الـ Case يعمل بشكل صحيح ومثالي
+
         return (
           <div key={fieldName} className="space-y-4 w-full">
-            {/* الحقل الأول: أسماء الأعضاء */}
+ {/* حقل الأسماء المحلي للعرض بالواجهة (UI) */}
             <Input
-              label="أعضاء الفريق"
-              name="teamMembersName" // يحفظ في الـ state تحت هذا الاسم
-              value={form["teamMembersName"] || ""}
-              onChange={(e) => handleChange("teamMembersName", e.target.value)}
-              error={errors["teamMembersName"]}
-              placeholder="أسماء الأعضاء مفصولة بفواصل"
-              required={fieldConfig.required}
+              label="أسماء أعضاء الفريق"
+              name="team_members_names_local" 
+              value={form["team_members_names_local"] || ""}
+              onChange={(e) => handleChange("team_members_names_local", e.target.value)}
+              error={errors ? errors["team_members_names_local"] : ""}
+              placeholder="أسماء الأعضاء مفصولة بفواصل (مثال: أحمد, محمد)"
             />
 
-            {/* الحقل الثاني: إيميلات الأعضاء */}
- <Input
-              label={fieldConfig.label || "ايميلات اعضاء الفريق"}
-              name={fieldName} // يحفظ في الـ state تحت المفتاح الأساسي القادم من الـ API
-              value={value || ""}
-              onChange={(e) => handleChange(fieldName, e.target.value)}
+            {/* حقل الإيميلات المربوط بالسيرفر كـ مصفوفة Array */}
+            <Input
+              label={fieldConfig.label || "إيميلات أعضاء الفريق"}
+              name={fieldName}
+              value={Array.isArray(value) ? value.join(", ") : (value || "")}
+              onChange={(e) => {
+                const val = e.target.value;
+                const emailArray = val.split(",").map(email => email.trim()).filter(email => email !== "");
+                handleChange(fieldName, emailArray);
+              }}
               error={error}
               placeholder={fieldConfig.placeholder || "example@email.com, another@email.com"}
               required={fieldConfig.required}
@@ -131,7 +148,7 @@ const DynamicStep = ({ stepName, fields, form, errors, handleChange, sectors = [
       
       default: {
         const inputType = fieldConfig.type === "email" ? "email" : 
-                          fieldConfig.type === "number" ? { type: "number", inputMode: "numeric" } : "text";
+                          fieldConfig.type === "number" ? "number" : "text";
         
         return (
           <Input
@@ -152,7 +169,7 @@ const DynamicStep = ({ stepName, fields, form, errors, handleChange, sectors = [
 
   return (
     <div className="space-y-6">
-      <h2 className="text-xl font-bold text-second-color mb-4">{stepName}</h2>
+      {stepName && <h2 className="text-xl font-bold text-second-color mb-4">{stepName}</h2>}
       <div className="space-y-4">
         {fields.map(field => renderField(field))}
       </div>

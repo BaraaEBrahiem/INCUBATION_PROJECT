@@ -1,4 +1,5 @@
-import Input from "../Input"
+import React from "react";
+import Input from "../Input";
 
 const StepPersonalInfo = ({ form, errors, handleChange }) => {
   return (
@@ -9,8 +10,8 @@ const StepPersonalInfo = ({ form, errors, handleChange }) => {
         label="الاسم"
         placeholder="ما هو اسمك؟"
         name="name"
-        value={form.name}
-        onChange={handleChange}
+        value={form.name || ""}
+        onChange={(e) => handleChange("name", e.target.value)}
         error={errors.name}
         className="w-1/2"
       />
@@ -19,24 +20,24 @@ const StepPersonalInfo = ({ form, errors, handleChange }) => {
         label="رقم الهاتف"
         placeholder="ما هو رقم هاتفك؟"
         type="tel"
-        name="tel"
-        value={form.tel}
-        onChange={handleChange}
-        error={errors.tel}
+        name="phone"
+        value={form.phone || ""}
+        onChange={(e) => handleChange("phone", e.target.value)}
+        error={errors.phone}
         className="w-1/2 text-right"
       />
 
       <Input
         label="المحافظة"
         placeholder="ما هي محافظتك؟"
-        name="city"
-        value={form.city}
-        onChange={handleChange}
-        error={errors.city}
+        name="recidence" // مطابقة لإملاء السيرفر الحرفي المتواجد بالمسودة
+        value={form.recidence || ""}
+        onChange={(e) => handleChange("recidence", e.target.value)}
+        error={errors.recidence}
         className="w-1/2"
       />
     </>
-  )
-}
+  );
+};
 
-export default StepPersonalInfo
+export default StepPersonalInfo;
