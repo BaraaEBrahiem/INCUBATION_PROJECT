@@ -12,7 +12,7 @@ import {
   useCreateCriterionMutation,
   useUpdateCriterionMutation,
   useDeleteCriterionMutation,
-  useSaveCriteriaMutation,
+  usePublishCriteriaMutation,
 } from "../../../api/endpoints/evaluationApi";
 
 const CriteriaManager = () => {
@@ -32,8 +32,8 @@ const CriteriaManager = () => {
   const [deleteCriterionApi] =
     useDeleteCriterionMutation();
 
-  const [saveCriteria] =
-    useSaveCriteriaMutation();
+  const [publishCriteria] =
+    usePublishCriteriaMutation();
 
   const [showPreview, setShowPreview] =
     useState(false);
@@ -44,7 +44,7 @@ const CriteriaManager = () => {
   const [isSubmitting, setIsSubmitting] =
     useState(false);
 
-  // تحميل البيانات من API
+  // تحميل البيانات
   useEffect(() => {
     if (!criteriaFromApi) return;
 
@@ -63,53 +63,67 @@ const CriteriaManager = () => {
   }, [criteriaFromApi]);
 
   // تعديل معيار
-  const updateCriterion =
-    async (
-      id,
-      field,
-      value
-    ) => {
-      const criterion =
-        criteria.find(
-          (c) => c.id === id
-        );
+  const updateTimers = {};
 
-      if (!criterion) return;
+const updateCriterion = (
+  id,
+  field,
+  value
+) => {
+  // حدّث الواجهة مباشرة
+  setCriteria((prev) => {
+    const updated = prev.map((c) =>
+      c.id === id
+        ? { ...c, [field]: value }
+        : c
+    );
 
-      const updatedCriterion =
-        {
-          ...criterion,
-          [field]: value,
-        };
-
-      // تحديث فوري بالواجهة
-      setCriteria((prev) =>
-        prev.map((c) =>
-          c.id === id
-            ? updatedCriterion
-            : c
-        )
+    // جيب العنصر المحدث
+    const updatedCriterion =
+      updated.find(
+        (c) => c.id === id
       );
 
-      try {
-        await updateCriterionApi(
-          {
-            id,
-            title:
-              updatedCriterion.title,
-            max_score:
-              updatedCriterion.max_score,
-          }
-        ).unwrap();
-      } 
-      catch (err) {
-        console.error(err);
-        showError(
-          " "
-        );
-        refetch();
-      }
-    };
+    // امسح التايمر القديم
+    if (updateTimers[id]) {
+      clearTimeout(
+        updateTimers[id]
+      );
+    }
+
+    // debounce
+    updateTimers[id] =
+  setTimeout(async () => {
+    // لا تبعث إذا العنوان فاضي
+    if (
+      !updatedCriterion.title?.trim()
+    ) {
+      return;
+    }
+
+    try {
+      await updateCriterionApi({
+        id,
+        title:
+          updatedCriterion.title,
+        max_score:
+          Number(
+            updatedCriterion.max_score
+          ),
+      }).unwrap();
+    } catch (err) {
+      console.error(err);
+      showError(
+        err?.data?.detail ||
+          err?.data?.message ||
+          "فشل تعديل المعيار"
+      );
+    }
+  }, 700);
+
+    return updated;
+  });
+};
 
   // حذف معيار
   const deleteCriterion =
@@ -130,8 +144,10 @@ const CriteriaManager = () => {
         );
       } catch (err) {
         console.error(err);
+
         showError(
-          "فشل حذف المعيار"
+          err?.data?.detail ||
+            "فشل حذف المعيار"
         );
       }
     };
@@ -141,13 +157,11 @@ const CriteriaManager = () => {
     async () => {
       try {
         const response =
-          await createCriterion(
-            {
-              title:
-                " ",
-              max_score: 0,
-            }
-          ).unwrap();
+          await createCriterion({
+            title:
+              "معيار جديد",
+            max_score: 1,
+          }).unwrap();
 
         setCriteria((prev) => [
           ...prev,
@@ -159,13 +173,16 @@ const CriteriaManager = () => {
         );
       } catch (err) {
         console.error(err);
+
         showError(
-          "فشل إضافة معيار"
+          err?.data?.detail ||
+            err?.data?.message ||
+            "فشل إضافة معيار"
         );
       }
     };
 
-  // مجموع الدرجات
+  // المجموع
   const total =
     criteria.reduce(
       (sum, c) =>
@@ -204,10 +221,10 @@ const CriteriaManager = () => {
       setIsSubmitting(true);
 
       try {
-        await saveCriteria().unwrap();
+        await publishCriteria().unwrap();
 
         showSuccess(
-          "تم نشر المعايير بنجاح"
+          "تم نشر النموذج بنجاح"
         );
 
         refetch();
@@ -215,7 +232,8 @@ const CriteriaManager = () => {
         console.error(err);
 
         showError(
-          err?.data?.message ||
+          err?.data?.detail ||
+            err?.data?.message ||
             "حدث خطأ في النشر"
         );
       } finally {
@@ -226,8 +244,7 @@ const CriteriaManager = () => {
   if (isLoading) {
     return (
       <div className="text-center py-10">
-        جاري تحميل
-        المعايير...
+        جاري تحميل المعايير...
       </div>
     );
   }
@@ -236,8 +253,7 @@ const CriteriaManager = () => {
     return (
       <div className="text-center py-10">
         <p className="text-red-500 mb-4">
-          حدث خطأ في تحميل
-          المعايير
+          حدث خطأ في تحميل المعايير
         </p>
 
         <button
@@ -255,9 +271,7 @@ const CriteriaManager = () => {
       <ExportReview
         criteria={criteria}
         onBack={() =>
-          setShowPreview(
-            false
-          )
+          setShowPreview(false)
         }
       />
     );
@@ -270,21 +284,15 @@ const CriteriaManager = () => {
     >
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
         <h2 className="text-xl font-bold text-black">
-          بناء معايير
-          التقييم
+          بناء معايير التقييم
         </h2>
 
         <button
-          onClick={
-            addCriterion
-          }
+          onClick={addCriterion}
           className="flex items-center gap-2 text-main-color font-bold hover:opacity-80 transition text-base"
         >
-          <BiPlusCircle
-            size={22}
-          />
-          إضافة معيار
-          جديد
+          <BiPlusCircle size={22} />
+          إضافة معيار جديد
         </button>
       </div>
 
@@ -308,21 +316,18 @@ const CriteriaManager = () => {
       {criteria.length >
         0 && (
         <div className="mt-8 py-6 border-t border-gray-100 text-center">
-          <p className="text-main-color font-bold flex flex-col sm:flex-row justify-center items-center gap-2">
-            <span className="text-xl">
-              المجموع الكلي
-              للدرجات
-              القصوى :
+          <p className="text-main-color font-bold flex justify-center gap-2">
+            <span>
+              المجموع الكلي:
             </span>
-
-            <span className="text-xl font-black">
+            <span>
               {total}
             </span>
           </p>
         </div>
       )}
 
-      <div className="flex flex-col sm:flex-row gap-3 mt-6 w-full max-w-sm mx-auto">
+      <div className="flex gap-3 mt-6 w-full max-w-sm mx-auto">
         <button
           onClick={
             handlePublish
@@ -330,7 +335,7 @@ const CriteriaManager = () => {
           disabled={
             isSubmitting
           }
-          className={`flex-1 bg-main-color text-white py-2 px-4 rounded-lg font-bold text-xl ${
+          className={`flex-1 bg-main-color text-white py-2 px-4 rounded-lg font-bold ${
             isSubmitting
               ? "opacity-50"
               : ""
@@ -347,7 +352,7 @@ const CriteriaManager = () => {
               true
             )
           }
-          className="flex-1 border border-second-color text-black py-2 px-4 rounded-lg font-bold text-xl"
+          className="flex-1 border border-second-color py-2 px-4 rounded-lg font-bold"
         >
           معاينة النموذج
         </button>

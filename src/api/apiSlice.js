@@ -75,6 +75,7 @@ export const apiSlice = createApi({
     'CampProjects',
     'AdminUser',
     'Ideas',
+    
   ],
   endpoints: () => ({}),
 });

@@ -18,11 +18,17 @@ export const campApi = apiSlice.injectEndpoints({
       query: () => '/admin/bootcamp/status/',
       providesTags: ['Camp'],
     }),
+    getIncubatedcamp: builder.query({
+  query: () =>
+    "/admin/bootcamp/attendance/decisions/",
+  providesTags: ["Incubated"],
+}),
 
   }),
 });
 
 export const {
+  useGetIncubatedcampQuery,
   useEndCampMutation,
   useGetCampStatusQuery,
 } = campApi;

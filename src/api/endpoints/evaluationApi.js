@@ -107,13 +107,13 @@ export const evaluationApi = apiSlice.injectEndpoints({
     deleteCriterion: builder.mutation({
       query: (id) => ({
         url: `/admin/evaluations/criteria/${id}/delete/`,
-        method: 'POST',
+        method: 'DELETE',
       }),
       invalidatesTags: ['Criteria'],
     }),
 
     // نشر المعايير (بدون body)
-    saveCriteria: builder.mutation({
+    publishCriteria: builder.mutation({
       query: () => ({
         url: `/admin/evaluations/criteria/publish/`,
         method: 'POST',
@@ -210,7 +210,7 @@ export const {
   useCreateCriterionMutation,
   useUpdateCriterionMutation,
   useDeleteCriterionMutation,
-  useSaveCriteriaMutation,
+  usePublishCriteriaMutation,
 
   // الملاحظات
   useGetNotesQuery,

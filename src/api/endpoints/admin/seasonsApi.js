@@ -1,11 +1,12 @@
 // src/api/endpoints/admin/seasonsApi.js
 import { apiSlice } from "../../apiSlice";
+console.log("SEASONS API LOADED");
 
 export const seasonsApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
 
     // جلب مواسم الاحتضان
-    getIncubationSeasons: builder.query({
+    getAdminIncubationSeasons: builder.query({
       query: () => `/admin/seasons/`,
       providesTags: ['IncubationSeasons'],
     }),
@@ -60,7 +61,7 @@ closeSubmissions: builder.mutation({
 });
 
 export const {
-  useGetIncubationSeasonsQuery,
+  useGetAdminIncubationSeasonsQuery,
   useGetSeasonDetailsQuery,
   useCreateIncubationSeasonMutation,
   useUpdateIncubationSeasonMutation,

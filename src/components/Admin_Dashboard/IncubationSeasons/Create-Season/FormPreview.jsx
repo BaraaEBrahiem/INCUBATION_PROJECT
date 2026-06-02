@@ -59,54 +59,88 @@ const FormPreview = ({ fields }) => {
         );
 
       case "select":
-        return (
-          <div className="flex flex-col gap-1 mb-4">
-            <label className="font-medium text-sm">
-              <span className="text-red-500">{requiredMark}</span>
-            </label>
-            <Select
-              label={field.label}
+  return (
+    <div className="flex flex-col gap-2 mb-4">
+      <label className="font-medium text-sm">
+        {field.label}
+        <span className="text-red-500">
+          {requiredMark}
+        </span>
+      </label>
+
+      <select
+        disabled
+        className="w-full border border-second-color rounded-md px-3 py-2 bg-white"
+      >
+        <option value="">
+          اختر
+        </option>
+
+        {field.options?.map(
+          (opt, i) => (
+            <option
+              key={i}
+              value={opt}
+            >
+              {opt}
+            </option>
+          )
+        )}
+      </select>
+    </div>
+  );
+
+case "radio":
+  return (
+    <div className="flex flex-col gap-2 mb-4">
+      <label className="font-medium text-sm">
+        {field.label}
+        <span className="text-red-500">
+          {requiredMark}
+        </span>
+      </label>
+
+      {field.options?.map(
+        (opt, i) => (
+          <label
+            key={i}
+            className="flex items-center gap-2 text-sm"
+          >
+            <input
+              type="radio"
               disabled
-              options={field.options}
+              name={field.id}
             />
-          </div>
-        );
+            {opt}
+          </label>
+        )
+      )}
+    </div>
+  );
 
-      case "radio":
-        return (
-          <div className="flex flex-col gap-1 mb-4">
-            <label className="font-medium text-sm">
-              {field.label}
-              <span className="text-red-500">{requiredMark}</span>
-            </label>
-            <div className="flex flex-col gap-2">
-              {field.options.map((opt, i) => (
-                <label key={i} className="flex items-center gap-2 text-sm">
-                  <RadioGroup label={opt} disabled />
-                </label>
-              ))}
-            </div>
-          </div>
-        );
+case "checkbox":
+  return (
+    <div className="flex flex-col gap-1 mb-4">
+      <label className="font-medium text-sm">
+        {field.label}
+        <span className="text-red-500">
+          {requiredMark}
+        </span>
+      </label>
 
-      case "checkbox":
-        return (
-          <div className="flex flex-col gap-1 mb-4">
-            <label className="font-medium text-sm">
-                {field.label}
-              <span className="text-red-500">{requiredMark}</span>
-            </label>
-
-            <div className="flex flex-col gap-2">
-              {field.options.map((opt, i) => (
-                <label key={i} className="flex items-center gap-2 text-sm">
-                  <Checkbox label={opt} disabled />
-                </label>
-              ))}
-            </div>
-          </div>
-        );
-
+      <div className="flex flex-col gap-2">
+        {field.options?.map(
+          (opt, i) => (
+            <Checkbox
+              key={i}
+              label={opt}
+              disabled
+            />
+          )
+        )}
+      </div>
+    </div>
+  );
       default:
         return null;
     }

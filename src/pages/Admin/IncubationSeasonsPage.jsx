@@ -5,14 +5,14 @@ import NavLinkUniversal from "../../components/NavLinkUniversal";
 import Button from "../../components/Button";
 import AdminNavbar from "../../components/AdminNavbar";
 import Select from "../../components/Select";
-import { useGetIncubationSeasonsQuery } from "../../api/endpoints/admin/seasonsApi";
+import { useGetAdminIncubationSeasonsQuery } from "../../api/endpoints/admin/seasonsApi";
 
 const IncubationSeasonsPage = () => {
   const [selectedYear, setSelectedYear] = useState("all");
   const navigate = useNavigate();
 
   // جلب كل المواسم مرة واحدة
-  const { data: allSeasons = [], isLoading, error } = useGetIncubationSeasonsQuery();
+  const { data: allSeasons = [], isLoading, error } = useGetAdminIncubationSeasonsQuery();
 
   // استخراج السنوات المتاحة من البيانات
   const getYearFromDate = (dateStr) => dateStr ? new Date(dateStr).getFullYear() : null;
@@ -38,19 +38,20 @@ const IncubationSeasonsPage = () => {
       key: "actions",
       label: "الإجراءات",
       render: (row) => (
+     
         <NavLinkUniversal
           to={`/incubation-seasons/${row.id}`}
           label={<Button label="عرض التفاصيل" className="bg-main-color" />}
         />
       ),
     },
-   {
+    {
       key: "status",
       label: "الحالة الحالية",
       render: (row) => {
         const phase = row.status?.phase?.toString().toUpperCase().trim() || "";
         const getPhaseLabel = () => {
-          if (row.status?.is_open) return "قيد التقديم";
+          if (row.status?.is_open) return "قيد التتقديم";
           
           switch (phase) {
             case "SUBMISSION": return "قيد التقديم";

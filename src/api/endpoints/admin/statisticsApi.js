@@ -1,43 +1,88 @@
 import { apiSlice } from "../../apiSlice";
 
-export const statisticsApi = apiSlice.injectEndpoints({
-  endpoints: (builder) => ({
+export const statisticsApi =
+  apiSlice.injectEndpoints({
+    endpoints: (
+      builder
+    ) => ({
 
-    // 1) إحصائيات عامة للصفحة
-    getStatisticsStats: builder.query({
-      query: () => "admin/statistics/stats/",
-      providesTags: ["Statistics"],
+      // =====================================
+      // إحصائيات عامة
+      // =====================================
+      getStatisticsStats:
+        builder.query({
+          query: () =>
+            "admin/dashboard/statistics/overview/",
+          providesTags: [
+            "Statistics",
+          ],
+        }),
+
+      // =====================================
+      // الموسم الحالي
+      // =====================================
+      getCurrentSeasonStatistics:
+        builder.query({
+          query: () =>
+            "admin/dashboard/statistics/current-season/",
+          providesTags: [
+            "Statistics",
+          ],
+        }),
+
+      // =====================================
+      // تحليل القطاعات
+      // =====================================
+      getSectorAnalysis:
+        builder.query({
+          query: () =>
+            "admin/dashboard/statistics/sectors/",
+          providesTags: [
+            "Statistics",
+          ],
+        }),
+
+      // =====================================
+      // دورة حياة المشاريع
+      // =====================================
+      getProjectLifecycle:
+        builder.query({
+          query: () =>
+            "admin/dashboard/statistics/lifecycle/",
+          providesTags: [
+            "Statistics",
+          ],
+        }),
+
+      // =====================================
+      // مجالات الخبرة
+      // =====================================
+      getExpertiseFields:
+        builder.query({
+          query: () =>
+            "admin/dashboard/statistics/expertise/",
+          providesTags: [
+            "Statistics",
+          ],
+        }),
+
+      // =====================================
+      // مقارنة المواسم
+      // =====================================
+      getIncubationSeasons:
+        builder.query({
+          query: () =>
+            "admin/dashboard/statistics/seasons-comparison/",
+          providesTags: [
+            "Statistics",
+          ],
+        }),
     }),
-
-    // 2) تحليل القطاعات
-    getSectorAnalysis: builder.query({
-      query: () => "admin/statistics/sector-analysis/",
-      providesTags: ["Statistics"],
-    }),
-
-    // 3) دورة حياة المشاريع
-    getProjectLifecycle: builder.query({
-      query: () => "admin/statistics/project-lifecycle/",
-      providesTags: ["Statistics"],
-    }),
-
-    // 4) مجالات الخبرة
-    getExpertiseFields: builder.query({
-      query: () => "admin/statistics/expertise-fields/",
-      providesTags: ["Statistics"],
-    }),
-
-    // 5) مواسم الاحتضان
-    getIncubationSeasons: builder.query({
-      query: () => "admin/statistics/incubation-seasons/",
-      providesTags: ["Statistics"],
-    }),
-
-  }),
-});
+  });
 
 export const {
   useGetStatisticsStatsQuery,
+  useGetCurrentSeasonStatisticsQuery,
   useGetSectorAnalysisQuery,
   useGetProjectLifecycleQuery,
   useGetExpertiseFieldsQuery,

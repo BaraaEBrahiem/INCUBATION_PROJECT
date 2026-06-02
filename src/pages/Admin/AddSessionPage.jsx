@@ -9,6 +9,7 @@ import {useAddSessionMutation } from "../../api/endpoints/admin/sessionsApi";
 import { useGetVolunteersQuery } from "../../api/endpoints/admin/volunteersOptionsApi";
 
 const AddSessionPage = () => {
+  
   const params = useParams();
   const seasonId = params.seasonId || params.season_id || params.id;
   const navigate = useNavigate();
@@ -17,7 +18,7 @@ const AddSessionPage = () => {
 
   const [session, setSession] = useState({
     title: "",
-    trainer_name: "",
+    trainer: "", 
     tasks: "",
     location: "",
     start_time: "",
@@ -26,13 +27,13 @@ const AddSessionPage = () => {
   });
 
   const [errors, setErrors] = useState({});
-
+ 
   // تحويل بيانات المدربين من الباك إلى الشكل المطلوب للـ Select
   let volunteers = [];
   if (volunteersData?.volunteers) {
-    volunteers = volunteersData.volunteers.map(v => ({ value: v.id, label: v.name }));
+    volunteers = volunteersData.volunteers.map(v => ({ value: v.user_id, label: v.name }));
   } else if (Array.isArray(volunteersData)) {
-    volunteers = volunteersData.map(v => ({ value: v.id, label: v.name }));
+    volunteers = volunteersData.map(v => ({ value: v.user_id, label: v.name }));
   }
 
   const handleChange = (field, value) => {
@@ -43,7 +44,7 @@ const AddSessionPage = () => {
   const validate = () => {
     const newErrors = {};
     if (!session.title) newErrors.title = "عنوان الجلسة مطلوب";
-    // if (!session.trainer) newErrors.trainer = "يرجى اختيار المدرب";
+    if (!session.trainer) newErrors.trainer = "يرجى اختيار المدرب";
     if (!session.location) newErrors.location = "موقع المعسكر مطلوب";
     if (!session.start_time) newErrors.start_time = "وقت بدء الجلسة مطلوب";
     if (!session.end_time) newErrors.end_time = "وقت انتهاء الجلسة مطلوب";
@@ -100,10 +101,15 @@ const AddSessionPage = () => {
         <Select
           label="تعيين المدرب"
           value={session.trainer}
-          onChange={(e) => handleChange("trainer", e.target.value)}
+          onChange={(e) =>
+  handleChange(
+    "trainer",
+    Number(e.target.value)
+  )
+}
           options={volunteers}
           placeholder="اختر المدرب"
-          error={errors.trainer_name}
+          error={errors.trainer}
           disabled={isLoadingVolunteers}
         />
         <Input
