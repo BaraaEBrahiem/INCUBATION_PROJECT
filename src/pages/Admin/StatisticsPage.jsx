@@ -154,13 +154,10 @@ const StatisticsPage = () => {
     ) || null;
 
   const lifecycle =
-    lifecycleData.find(
-      (item) =>
-        item.year ===
-        Number(
-          activeYear
-        )
-    ) || null;
+  lifecycleData.find(
+    (item) =>
+      item.year === Number(activeYear)
+  ) ?? lifecycleData[0] ?? null;
 
   const seasons =
     seasonsData || [];
