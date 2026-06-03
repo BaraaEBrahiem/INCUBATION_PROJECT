@@ -3,44 +3,34 @@ import Button from "../Button";
 import Input from "../Input";
 import Select from "../Select";
 import Modal from "../Modal";
-import { useSelector } from "react-redux";
 
-// TODO: بعد الربط استخدمي هذا الـ hook
-// import { useSendTeamRequestMutation } from "../api/endpoints/teamApi";
+import { useSendTeamRequestMutation } from "../../api/endpoints/teamApi"; 
 
 const TeamRequestForm = () => {
   const [title, setTitle] = useState("");
   const [skill, setSkill] = useState("");
   const [count, setCount] = useState("");
-  const [errors, setErrors] = useState({});
   const [description, setDescription] = useState("");
-  const [showSuccess, setShowSuccess] = useState(false);
+  
+  const [errors, setErrors] = useState({});
   const [apiError, setApiError] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
 
-  // جلب userId من Redux
-  const userId = useSelector((state) => state.auth.userId);
-
-  // const [sendTeamRequest, { isLoading }] = useSendTeamRequestMutation();
+  const [sendTeamRequest, { isLoading: isSubmitting }] = useSendTeamRequestMutation();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setApiError("");
 
-    const formData = {
-      title,
-      skill,
-      count,
-      description,
-    };
-
-    // التحقق من الحقول
+    // التحقق من الحقول قبل الإرسال
     const newErrors = {};
-    Object.keys(formData).forEach((element) => {
-      if (!formData[element]) newErrors[element] = "هذا الحقل مطلوب";
-    });
+    if (!title.trim()) newErrors.title = "هذا الحقل مطلوب";
+    if (!skill) newErrors.skill = "هذا الحقل مطلوب";
+    if (!count) newErrors.count = "هذا الحقل مطلوب";
+    if (!description.trim()) newErrors.description = "هذا الحقل مطلوب";
 
     // التحقق من عدد المتطوعين
-    if (count && (count < 1 || count > 4)) {
+    if (count && (Number(count) < 1 || Number(count) > 4)) {
       newErrors.count = "عدد المتطوعين يجب أن يكون بين 1 و 4";
     }
 
@@ -50,45 +40,32 @@ const TeamRequestForm = () => {
       return;
     }
 
-    setIsSubmitting(true);
-    setApiError("");
+    try {
+     
+      await sendTeamRequest({
+        title: title.trim(),
+        skill_required: skill,        
+        members_needed: Number(count), 
+        description: description.trim(),
+      }).unwrap();
 
-    // TODO: بعد الربط هذا الكود بدل console.log
-    // try {
-    //   await sendTeamRequest({
-    //     userId: userId,
-    //     title: title,
-    //     skill: skill,
-    //     requiredCount: count,
-    //     description: description,
-    //   }).unwrap();
-    //   setShowSuccess(true);
-    //   // تفريغ النموذج
-    //   setTitle("");
-    //   setSkill("");
-    //   setCount("");
-    //   setDescription("");
-    // } catch (error) {
-    //   console.error("Error sending team request:", error);
-    //   setApiError(error?.data?.message || "حدث خطأ في إرسال الطلب");
-    // } finally {
-    //   setIsSubmitting(false);
-    // }
+      // 3. في حال النجاح
+      setShowSuccess(true);
+      
+      // تفريغ النموذج تماماً
+      setTitle("");
+      setSkill("");
+      setCount("");
+      setDescription("");
+    } catch (error) {
+      console.error("Error sending team request:", error);
 
-    // حالياً: محاكاة للإرسال
-    console.log("Form Data to backend:", {
-      userId,
-      title,
-      skill,
-      requiredCount: count,
-      description,
-    });
-    setShowSuccess(true);
-    setTitle("");
-    setSkill("");
-    setCount("");
-    setDescription("");
-    setIsSubmitting(false);
+      setApiError(
+        error?.data?.message || 
+        error?.data?.detail || 
+        "حدث خطأ في إرسال الطلب، يرجى المحاولة لاحقاً"
+      );
+    }
   };
 
   const handleCloseModal = () => {
@@ -97,17 +74,18 @@ const TeamRequestForm = () => {
 
   return (
     <>
-      <form onSubmit={handleSubmit} className="flex flex-col gap-6 p-6 w-1/2">
-        {/* عرض خطأ API */}
+      <form onSubmit={handleSubmit} className="flex flex-col gap-6 p-6 w-full md:w-1/2 bg-white rounded-xl shadow-sm">
+        
+       
         {apiError && (
-          <div className="bg-red-100 text-red-700 p-3 rounded text-center">
+          <div className="bg-red-50 border border-red-200 text-red-700 p-3 rounded-lg text-center font-semibold text-sm">
             {apiError}
           </div>
         )}
 
         <Input
           label="عنوان الفكرة"
-          placeholder="عنوان الفكرة"
+          placeholder="أدخل عنوان الفكرة أو المشروع"
           value={title}
           error={errors.title}
           onChange={(e) => setTitle(e.target.value)}
@@ -131,40 +109,44 @@ const TeamRequestForm = () => {
         <Input
           label="عدد المتطوعين المطلوبين"
           type="number"
-          placeholder="4 على الأكثر"
-          value={count > 0 && count <= 4 ? count : ""}
+          placeholder="من 1 إلى 4 متطوعين كحد أقصى"
+          value={count}
           onChange={(e) => setCount(e.target.value)}
           error={errors.count}
         />
 
         <Input
-          label="شرح مختصر عن الفكرة"
-          placeholder="وصف الفكرة"
+          label="شرح مختصر عن الفكرة والمهام المطلوبة"
+          placeholder="اكتب وصفاً جذاباً للفكرة ليتشجع المتطوعون على الانضمام"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           error={errors.description}
         />
 
         <Button
-          label={isSubmitting ? "جاري الإرسال..." : "إرسال الطلب"}
-          className="bg-main-color w-full"
+          label={isSubmitting ? "جاري إرسال الطلب..." : "إرسال طلب بناء الفريق"}
+          className="bg-main-color w-full py-3 text-white font-bold rounded-xl transition-all disabled:opacity-70"
           type="submit"
           disabled={isSubmitting}
         />
       </form>
 
+      {/* مودال النجاح المستقر */}
       <Modal
         isOpen={showSuccess}
         onClose={handleCloseModal}
-        title="طلبك قيد المعالجة من قبل الإدارة سيتم إعلامك عند موافقة أي متطوع"
+        title="تم إرسال طلبك بنجاح!"
         footer={
           <Button
             label="حسناً"
             onClick={handleCloseModal}
-            className="bg-main-color"
+            className="bg-main-color text-white px-6 py-2 rounded-lg"
           />
         }
       >
+        <p className="text-gray-600 text-sm leading-relaxed text-center py-2">
+          طلبك حالياً قيد المعالجة والمراجعة من قبل الإدارة. سيتم إعلامك فوراً عند موافقة أي متطوع على الانضمام لفريقك.
+        </p>
       </Modal>
     </>
   );
