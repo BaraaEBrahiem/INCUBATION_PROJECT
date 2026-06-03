@@ -8,8 +8,8 @@ export const teamApi = apiSlice.injectEndpoints({
     // إرسال طلب فريق (من TeamRequestForm)
     // -----------------------------
     sendTeamRequest: builder.mutation({
-      query: (data, id) => ({
-        url: `/volunteers/join/create/${id}`,
+      query: (data) => ({
+        url: "/ideas/team-request/",
         method: 'POST',
         body: data,
       }),
@@ -20,7 +20,7 @@ export const teamApi = apiSlice.injectEndpoints({
     // جلب الفريق الحالي (لصاحب الفكرة)
     // -----------------------------
     getTeam: builder.query({
-      query: () => '/team/current/',
+      query: () => '/ideas/team/',
       providesTags: ['Team'],
     }),
 
