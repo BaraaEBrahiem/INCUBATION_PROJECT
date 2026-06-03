@@ -12,22 +12,26 @@ export const getMainPageByRole = (roles) => {
     return homeRoutes.visitor;
   }
 
-  if (roles.includes("admin")) {
+  const normalizedRoles = roles.map(role => 
+    typeof role === 'string' ? role.toLowerCase().trim() : role
+  );
+
+  if (normalizedRoles.includes("admin")) {
     return homeRoutes.admin;
   }
-  if (roles.includes("idea_owner")) {
+  if (normalizedRoles.includes("idea_owner")) {
     return homeRoutes.idea_owner;
   }
-  if (roles.includes("evaluator")) {
+  if (normalizedRoles.includes("evaluator")) {
     return homeRoutes.evaluator;
   }
-  if (roles.includes("incubator")) {
+  if (normalizedRoles.includes("incubator")) {
     return homeRoutes.incubator;
   }
-  if (roles.includes("volunteer")) {
+  if (normalizedRoles.includes("volunteer")) {
     return homeRoutes.volunteer;
   }
-  if (roles.includes("visitor")) {
+  if (normalizedRoles.includes("visitor")) {
     return homeRoutes.visitor;
   }
   

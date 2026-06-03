@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import StatsCards from "../../components/Admin_Dashboard/StatsCards";
 import ProjectsChart from "../../components/Admin_Dashboard/Charts/ProjectsChart";
-import RecentActivity from "../../components/Admin_Dashboard/RecentActivity";
 import QuickAccess from "../../components/Admin_Dashboard/QuickAccess";
 import AdminNavbar from "../../components/AdminNavbar";
 import Modal from "../../components/Modal";
@@ -42,11 +41,6 @@ const AdminMainPage = () => {
   // 3) لاحقاً: جلب النشاط الأخير من API
   // const { data: activityData } = useGetDashboardRecentActivityQuery();
   //
-  //fallback قبل الربط:
-  const fallbackActivity = null; // RecentActivity لديه fallback داخلي
-  const activity = fallbackActivity;
-  // ---------------------------------------------------------
-
   // ---------------------------------------------------------
   // 4) لاحقاً: إرسال إشعار عبر API
   // const [sendNotification] = useSendNotificationMutation();
@@ -96,10 +90,7 @@ const AdminMainPage = () => {
 
         <StatsCards showIcons={true} stats={stats} />
 
-        <div className="flex justify-between items-center gap-4 mt-4">
-
-         
-          <RecentActivity items={activity} />
+        <div className="flex justify-center items-center gap-4 mt-4 w-full">
 
           <ProjectsChart data={chart} />
 

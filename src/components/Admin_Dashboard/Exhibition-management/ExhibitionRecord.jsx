@@ -43,6 +43,7 @@ export default function ExhibitionRecord() {
           year: ex.year,
           exhibitionId:
             ex.id,
+            
         },
       }
     );

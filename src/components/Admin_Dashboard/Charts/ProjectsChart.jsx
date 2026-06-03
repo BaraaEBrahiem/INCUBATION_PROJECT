@@ -11,10 +11,10 @@ const ProjectsChart = ({ data }) => {
   ];
 
   return (
-    <div className="bg-white p-6 rounded-lg shadow w-150">
+    <div className="bg-white p-6 rounded-lg shadow w-full">
       <h2 className="text-xl font-semibold mb-4">المشاريع المنجزة</h2>
 
-      <div style={{ height: 300 }}>
+      <div style={{ height: 300, width: "100%" }}>
         <ResponsiveBar
           data={chartData}
           keys={["value"]}

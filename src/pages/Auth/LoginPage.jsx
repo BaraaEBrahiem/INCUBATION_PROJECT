@@ -99,7 +99,7 @@ const LoginPage = () => {
       // التوجيه التلقائي بناءً على الدور المخزن
       if (user.roles.includes("admin")) {
         navigate("/admin-mainpage");
-      } else if (user.roles.includes("ideaowner") || user.roles.includes("صاحب فكرة")) {
+      } else if (user.roles.includes("idea_owner") || user.roles.includes("صاحب فكرة")) {
         navigate("/ideaowner-mainpage");
       } else if (user.roles.includes("volunteer") || user.roles.includes("متطوع")) {
         navigate("/volunteer-mainpage");
