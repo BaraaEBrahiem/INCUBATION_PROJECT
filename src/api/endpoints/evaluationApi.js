@@ -4,6 +4,130 @@ import { apiSlice } from "../apiSlice";
 export const evaluationApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
 
+
+
+    //===========================
+    // فتح الفورم
+    //==========================
+
+    getEvaluationForm: builder.query({
+      query: (idea_id) =>
+        `/evaluations/evaluation-form/${idea_id}/`,
+      providesTags: (result, error, idea_id) => [
+        { type: "Evaluation", id: idea_id },
+      ],
+    }),
+
+    //============================
+    // حفظ الدرجات (Save Draft)
+    //============================
+
+    saveEvaluation: builder.mutation({
+      query: ({ idea_id, scores }) => ({
+        url: `/evaluations/idea/${idea_id}/evaluate/`,
+        method: "POST",
+        body: {
+          scores,
+        },
+      }),
+    }),
+
+    //========================
+    // إرسال التقييم النهائي
+    //========================
+
+    submitEvaluationFinal: builder.mutation({
+      query: (idea_id) => ({
+        url: `/evaluations/idea/${idea_id}/submit/`,
+        method: "POST",
+      }),
+    }),
+
+    //==========================
+    //جلب ملاحظات المقيم
+    //==========================
+
+    getEvaluationNotes: builder.query({
+      query: (idea_id) =>
+        `/evaluations/evaluation-notes/${idea_id}/`,
+      providesTags: (result, error, idea_id) => [
+        { type: "Notes", id: idea_id },
+      ],
+    }),
+
+    //=========================
+    //إضافة ملاحظة جديدة
+    //=========================
+
+    createEvaluationNote: builder.mutation({
+      query: ({ idea_id, note }) => ({
+        url: `/evaluations/evaluation-notes/${idea_id}/`,
+        method: "POST",
+        body: {
+          note,
+        },
+      }),
+      invalidatesTags: (result, error, { idea_id }) => [
+        { type: "Notes", id: idea_id },
+      ],
+    }),
+
+    //الاحتضان
+
+    //================================
+    //جلب مراجعات الاحتضان السابقة
+    //================================
+
+    getIncubationReviews: builder.query({
+      query: (idea_id) =>
+        `/evaluations/incubation-review/${idea_id}/`,
+      providesTags: (result, error, idea_id) => [
+        { type: "Incubation", id: idea_id },
+      ],
+    }),
+
+    //====================================
+    //إرسال مراجعة احتضان
+    //====================================
+
+    createIncubationReview: builder.mutation({
+      query: ({ idea_id, progress_score, notes }) => ({
+        url: `/evaluations/incubation-review/${idea_id}/`,
+        method: "POST",
+        body: {
+          progress_score,
+          notes,
+        },
+      }),
+      invalidatesTags: (result, error, { idea_id }) => [
+        { type: "Incubation", id: idea_id },
+      ],
+    }),
+
+
+    //============================
+    // أقرب جلسة تقييم / احتضان
+    //============================
+
+    getNextUpcomingSession: builder.query({
+      query: () =>
+        "/evaluations/next-upcoming-session/",
+      providesTags: ["Evaluation"],
+    }),
+
+
+    // ============================
+    // المشاريع المسندة للمقيم
+    // ============================
+
+    getMyAssignments: builder.query({
+      query: () => "/evaluations/my-assignments/",
+      providesTags: ["Evaluation"],
+    }),
+
+
+
+
     // -----------------------------
     // 1) المشاريع للتقييم
     // -----------------------------
@@ -225,4 +349,22 @@ export const {
   //قبول ورفض المشروع بعد التقييم
    useApproveProjectMutation,
    useRejectProjectMutation,
+
+
+   //تقييم و احتضان يوزر سايد
+
+    useGetEvaluationFormQuery,
+    useSaveEvaluationMutation,
+    useSubmitEvaluationFinalMutation,
+
+    useGetEvaluationNotesQuery,
+    useCreateEvaluationNoteMutation,
+
+    useGetIncubationReviewsQuery,
+    useCreateIncubationReviewMutation, 
+
+    useGetMyAssignmentsQuery,
+
+    useGetNextUpcomingSessionQuery,
+     
 } = evaluationApi;

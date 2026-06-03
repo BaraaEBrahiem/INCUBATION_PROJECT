@@ -4,6 +4,8 @@ import Button from '../../components/Button';
 import LastExhibition from '../../components/LastExhibition';
 import LastWorkshops from '../../components/LastWorkshops';
 import NearestWorkshopCard from '../../components/Workshop/NearestWorkshopCard';
+import NextUpcomingSessionCard
+from "../Evaluation/NextUpcomingSessionCard";
 
 // import { useGetNearestWorkshopQuery } from '../../api/endpoints/workshopsApi';
 
@@ -43,6 +45,7 @@ const VolunteerMainPage = () => {
           <div className="bg-white p-6 rounded-lg shadow-lg mb-8 text-center text-gray-500">جاري تحميل أقرب ورشة...</div>
         ) : ( */}
           <NearestWorkshopCard workshop={activeWorkshop} />
+          <NextUpcomingSessionCard />
         {/* )} */}
 
         <LastWorkshops />

@@ -93,6 +93,10 @@ import CampWorkshopsPage from "../pages/Volunteer/CampWorkshopsPage";
 import CampProjectsPage from '../pages/Volunteer/CampProjectsPage';
 import SelectingVolunteerPage from "../pages/Admin/SelectingVolunteerPage";
 
+import IncubationReviewPage from "../pages/Evaluation/IncubationReviewPage";
+
+import PublicWorkshopDetailsPage from "../pages/Volunteer/PublicWorkshopDetailsPage";
+
 const AppRoutes = () => {
    const { roles } = useRole();
     const userNavOptions = useMemo(() => {
@@ -178,6 +182,10 @@ const AppRoutes = () => {
           <Route path="/volunteer-request/:id" element={<VolunteerRequestDetailsPage />} />
           <Route path="/CampWorkShopsPage" element={<CampWorkshopsPage/>}/>
           <Route path="/CampProjectsPage/:workshopId" element={<CampProjectsPage />} />
+          <Route
+            path="/public-workshops/:workshop_id"
+            element={<PublicWorkshopDetailsPage />}
+          />
         </Route>
       )}
 
@@ -215,10 +223,14 @@ const AppRoutes = () => {
           <Route path="/workshop-page" element={<WorkshopsPage />} />
            <Route path="/workshopinfo/:id" element={<WorkshopInfoPage />} />
            <Route path="/schedule-page" element={<ScheduleManagementPage />} />
-            <Route path="/evaluationform" element={<EvaluationFormPage />} />
-            <Route path="/notes/:id" element={<NotesPage />} />
+            <Route path="/evaluationform/:idea_id" element={<EvaluationFormPage />} />
+            <Route path="/notes/:idea_id" element={<NotesPage />} />
            <Route path="/assigned-projects-page" element={<AssignedProjectsPage />} />
           <Route path="/volunteer-request/:id" element={<VolunteerRequestDetailsPage />} />
+          <Route
+            path="/incubation-review/:idea_id"
+            element={<IncubationReviewPage />}
+          />
         </Route>
       )}
 

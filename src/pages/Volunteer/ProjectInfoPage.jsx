@@ -1,34 +1,80 @@
 import React from 'react';
-// import { useParams } from 'react-router-dom';
 import InfoRow from '../../components/InfoRow';
 import Button from '../../components/Button';
-
-// import { useGetAssignProjectInfoQuery } from '../../api/endpoints/projectsInfoApi';
+import { useParams, useNavigate } from "react-router-dom";
+import { useGetCurrentPhaseQuery } from "../../api/endpoints/seasonApi";
+import {
+  useGetAssignProjectInfoQuery,
+} from "../../api/endpoints/projectInfoApi";
 
 const ProjectInfoPage = () => {
-  // const { id } = useParams();
-  // const { data, isLoading, error } = useGetAssignProjectInfoQuery(id);
-  // const projectData = data || {};
+  const { id } = useParams();
+  const navigate = useNavigate();
 
-  const projectData = {
-    meeting_date: "2024-07-15T14:30:00Z",
-    project_details: {
-      project_title: "منصة الشراكة الرقمية (Digital Partnership Platform)",
-      editor_name: "ريم العلي",
-      product_type: "منصة برمجية (SaaS) وتطبيق ويب." ,
-      owner_name: "ريم فهد العلي",
-      phone: "0987123456",
-      specialization: "هندسة برمجيات",
-      email: "reem.alali@example.com",
-      idea_title: "منصة لربط المشاريع الناشئة بالمستشارين والمتطوعين في مجال الذكاء الاصطناعي.",
-      target_audience: "التقنية المالية (FinTech) والتجارة الإلكترونية.",
-      description: "بناء منصة SaaS لتقديم خدمة مطابقة ذكية (Smart Matching) تربط الشركات الناشئة التي تحتاج إلى تطوير حلول الذكاء الاصطناعي (AI) بالخبراء المستعدين لتقديم خدماتهم بالساعة أو مقابل حصة بسيطة.",
-      problem: "تواجه الشركات الناشئة صعوبة في العثور على خبراء موثوقين في مجال الذكاء الاصطناعي لتطوير حلولها، بينما يمتلك العديد من الخبراء مهارات قيمة لا يتم استغلالها بشكل كامل.",
+  const {
+    data,
+    isLoading,
+    error,
+    refetch,
+  } = useGetAssignProjectInfoQuery(id);
+
+  const {
+    data: phaseData,
+  } = useGetCurrentPhaseQuery();
+  
+  const projectData = data || {};
+
+
+  const handleOpenForm = () => {
+    const ideaId = projectData?.idea_id;
+
+    if (!ideaId) {
+      alert("تعذر معرفة المشروع");
+      return;
     }
+
+    const currentPhase = phaseData?.phase?.code;
+
+    if (currentPhase === "INCUBATION") {
+      navigate(`/incubation-review/${ideaId}`);
+      return;
+    }
+
+    if (currentPhase === "EVALUATION") {
+      navigate(`/evaluationform/${ideaId}`);
+      return;
+    }
+
+    alert("المرحلة الحالية لا تدعم النماذج");
   };
 
-  // if (isLoading) return <div className="text-center mt-10 font-bold">جاري تحميل تفاصيل المشروع...</div>;
-  // if (error) return <div className="text-center mt-10 text-red-500 font-bold">حدث خطأ أثناء تحميل البيانات من السيرفر.</div>;
+
+  if (isLoading) {
+    return (
+      <div className="text-center mt-10 font-bold">
+        جاري تحميل تفاصيل المشروع...
+      </div>
+    );
+  }
+
+
+
+  if (error) {
+    return (
+      <div className="text-center mt-10">
+        <p className="text-red-500 font-bold mb-4">
+          حدث خطأ أثناء تحميل البيانات
+        </p>
+
+        <button
+          onClick={refetch}
+          className="bg-main-color text-white px-4 py-2 rounded"
+        >
+          إعادة المحاولة
+        </button>
+      </div>
+    );
+  }
   // -------------------------------------------------------------------
 
   return (
@@ -38,7 +84,7 @@ const ProjectInfoPage = () => {
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4 border-b pb-4">
           <div className="text-right">
             <h1 className="text-second-color text-xl md:text-2xl font-bold mb-2">تفاصيل المشروع</h1>
-            <span className='text-main-color font-bold text-sm md:text-base'>تاريخ الجلسة: {projectData?.meeting_date}</span>
+            <span className='text-main-color font-bold text-sm md:text-base'>تاريخ الجلسة: {projectData?.meeting_date ? new Date(projectData.meeting_date).toLocaleString("ar"): "غير محدد"}</span>
           </div>
         </div>
         
@@ -80,6 +126,16 @@ const ProjectInfoPage = () => {
             </div>
           </div>
         </div>
+
+        {/* زر الفورم */}
+        <div className="flex justify-end mt-6">
+          <Button
+            label="فورم التقييم والملاحظات"
+            onClick={handleOpenForm}
+            className="bg-main-color"
+          />
+        </div>
+        
 
       </div>
     </div>

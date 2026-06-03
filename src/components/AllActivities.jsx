@@ -20,7 +20,7 @@ const AllActivities = ({ activities }) => {
             >
               <NavLinkUniversal
                 label="عرض التفاصيل"
-                to={`/workshops/${activity.id}`}
+                to={`/public-workshops/${activity.id}`}
               />
             </ActivityCard>
 
