@@ -7,7 +7,7 @@ export const dashboardApi = apiSlice.injectEndpoints({
       query: () => 'ideas/idea-dashboard/', 
       providesTags: ['Dashboard'], 
     }),
-    // حقن ميزة إرسال طلب الغياب للباك اند
+    //حقن ميزة إرسال طلب الغياب
     requestAbsence: builder.mutation({
       query: (body) => ({
         url: 'bootcamp/owner-bootcamp/absence-request/',
