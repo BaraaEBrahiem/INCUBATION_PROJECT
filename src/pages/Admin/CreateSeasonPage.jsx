@@ -35,36 +35,16 @@ const CreateSeasonPage = () => {
       }).unwrap();
       
       showSuccess("تم إنشاء الموسم الجديد وتصميم الاستمارة بالكامل بنجاح! 🎉");
-    } catch (error) {
-  console.log(
-    "FULL ERROR:",
-    error
-  );
-
-  console.log(
-    "STATUS:",
-    error?.status
-  );
-
-  console.log(
-    "BACKEND RESPONSE:",
-    error?.data
-  );
-
-  console.log(
-    JSON.stringify(
-      error?.data,
-      null,
-      2
-    )
-  );
-}
+    } catch (err) {
+      console.error("Form Publish Error:", err);
+      showError(err?.data?.detail || err?.data?.message || "حدث خطأ أثناء نشر استمارة النموذج");
+    }
   };
 
   return (
-    <div className="p-6 bg-gray-50 min-h-screen" dir="rtl">
+    <div className=" container p-6 min-h-screen" dir="rtl">
       {/* رأس الصفحة والعناوين */}
-      <div className="mb-6">
+      <div className=" mb-6">
         <h1 className="text-2xl font-bold text-gray-800">إنشاء موسم حاضنة جديد</h1>
         <p className="text-sm text-gray-500 mt-1">
           قم بتهيئة إعدادات الموسم وتواريخ التقديم، ثم صمم استمارة قبول الطلبات الخاصة به.

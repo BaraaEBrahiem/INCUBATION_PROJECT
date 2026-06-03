@@ -13,18 +13,20 @@ const FormBuilderCanvas = ({ fields, updateField, deleteField }) => {
 
   const getFieldTypeLabel = (type) => {
     switch (type) {
-      case "shortText":
+      case "short_text":
         return "نص قصير";
-      case "longText":
+      case "long_text":
         return "نص طويل";
-      case "radio":
-        return "اختيار (Radio)";
-      case "select":
+      case "yes_no":
+  return "نعم / لا";
+      case "single_choice":
         return "قائمة منسدلة";
       case "number":
         return "سؤال رقمي / رقم";
-      case "checkbox":
+      case "multiple_choice":
         return "اختيار متعدد (Checkbox)";
+      case "image":
+  return "رفع صورة";
       default:
         return "حقل";
     }
@@ -71,9 +73,9 @@ const FormBuilderCanvas = ({ fields, updateField, deleteField }) => {
             <QuestionProperties field={field} updateField={updateField} />
 
             {/* خيارات الحقول (select – radio – checkbox) */}
-            {["select", "radio", "checkbox"].includes(field.type) && (
-              <OptionsEditor field={field} updateField={updateField} />
-            )}
+            {["single_choice", "multiple_choice"].includes(field.type) && (
+  <OptionsEditor field={field} updateField={updateField} />
+)}
           </div>
         ))}
       </div>

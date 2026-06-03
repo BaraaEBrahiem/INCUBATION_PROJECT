@@ -138,10 +138,6 @@ const AdminProjectDetailsPage =
                 "غير محدد"}
             </InfoRow>
 
-            <InfoRow label="نوع المنتج :">
-              {project.product_type ||
-                "لا يوجد منتج محدد حالياً"}
-            </InfoRow>
           </div>
 
           {/* معلومات شخصية */}

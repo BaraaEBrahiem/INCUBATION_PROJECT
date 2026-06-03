@@ -13,7 +13,7 @@ const FieldTypesPanel = ({ addField }) => {
     { type: "longText", label: "نص طويل", icon: <LuText /> },
     { type: "select_multiple", label: "اختيار متعدد", icon: <FaCheckSquare /> },
     { type: "select", label: "قائمة منسدلة", icon: <RiFileList3Fill /> },
-    { type: "radio", label: "سؤال نعم / لا", icon: <FaCheckCircle /> },
+    {type: "boolean",label: "سؤال نعم / لا",icon: <FaCheckCircle />},
     { type: "number", label: "ادخال رقم", icon: <TbNumbers /> },
   ];
 

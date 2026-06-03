@@ -52,7 +52,7 @@ const CampHeader = ({ seasonId }) => {
           onClick={() => navigate("/admin/incubated")}
           className="bg-white text-xl border border-second-color px-4 py-2 rounded-md flex items-center gap-2"
         >
-          المحتضنين <MdPeople className="inline-block" />
+          نتائج المعسكر <MdPeople className="inline-block" />
         </button>
       </div>
 

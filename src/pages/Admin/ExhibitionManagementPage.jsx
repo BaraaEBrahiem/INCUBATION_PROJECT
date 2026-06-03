@@ -134,7 +134,7 @@ const ExhibitionManagementPage =
 
                     // تحويل البيانات لتناسب الباك
                     const questions =
-                      formConfig.fields.map(
+                      formConfig.questions.map(
                         (
                           field
                         ) => ({

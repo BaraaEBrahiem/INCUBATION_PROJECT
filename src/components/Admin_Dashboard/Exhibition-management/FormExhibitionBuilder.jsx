@@ -27,18 +27,25 @@ const FormExhibitionBuilder = ({ onSubmit, isSubmitting = false, initialFields =
 
   // إضافة حقل جديد
   const addField = (type) => {
-    const newField = {
-      id: crypto.randomUUID(),
-      type,
-      label: "",
-      required: false,
-      options:
-        type === "select" || type === "radio" || type === "checkbox"
-          ? []
-          : null,
-    };
-    setFields((prev) => [...prev, newField]);
+  const newField = {
+    id: crypto.randomUUID(),
+    type,
+    label: "",
+    required: false,
+
+    options: [
+      "single_choice",
+      "multiple_choice",
+    ].includes(type)
+      ? []
+      : null,
   };
+
+  setFields((prev) => [
+    ...prev,
+    newField,
+  ]);
+};
 
   // تعديل حقل
   const updateField = (id, updatedData) => {
@@ -71,15 +78,24 @@ const FormExhibitionBuilder = ({ onSubmit, isSubmitting = false, initialFields =
     setIsPublishing(true);
     try {
       // تحويل الحقول إلى الشكل الذي يتوقعه الباك (إذا لزم)
-      const formConfig = {
-        fields: fields.map(({ id, type, label, required, options }) => ({
-          name: id, // أو يمكن استخدام id كـ name مؤقتاً
-          type,
-          label,
-          required,
-          options,
-        })),
-      };
+      
+
+const formConfig = {
+  questions: fields.map((field) => ({
+    id: field.id,
+    type: field.type,
+    label: field.label,
+    required: field.required,
+
+    options:
+      field.options?.map((opt) => ({
+        label:
+          typeof opt === "string"
+            ? opt
+            : opt.label,
+      })) || [],
+  })),
+};
       await onSubmit(formConfig);
     } catch (err) {
       console.error(err);

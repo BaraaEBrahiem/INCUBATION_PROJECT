@@ -28,7 +28,7 @@ export const seasonsApi = apiSlice.injectEndpoints({
     }),
 
     // نشر الموسم (تفعيله وفتح باب التقديم)
-    publishSeason: builder.mutation({
+    publishNewSeason: builder.mutation({
       query: (pk) => ({
         url: `/admin/seasons/${pk}/publish/`,
         method: 'POST',
@@ -39,8 +39,8 @@ export const seasonsApi = apiSlice.injectEndpoints({
     // إلحاق mutations أخرى (تحديث، إغلاق، ...)
     updateIncubationSeason: builder.mutation({
       query: ({ id, data }) => ({
-        url: `/admin/seasons/${id}/`,
-        method: 'PUT',
+        url: `/admin/seasons/${id}/update/`,
+        method: 'PATCH',
         body: data,
       }),
       invalidatesTags: (result, error, { id }) => [{ type: 'IncubationSeasons', id }],
@@ -66,5 +66,5 @@ export const {
   useCreateIncubationSeasonMutation,
   useUpdateIncubationSeasonMutation,
   useCloseSubmissionsMutation,
-  usePublishSeasonMutation,
+  usePublishNewSeasonMutation,
 } = seasonsApi;

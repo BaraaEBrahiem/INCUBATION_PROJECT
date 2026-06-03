@@ -29,7 +29,7 @@ const ApplicationsReview = ({ season, applications }) => {
           className="bg-main-color"
         />
         }
-        to={`/admin/incubation_seasons/applications/${row.id}`}
+        to={`/admin/projects-details/${row.id}`}
         />
       ),
     },  

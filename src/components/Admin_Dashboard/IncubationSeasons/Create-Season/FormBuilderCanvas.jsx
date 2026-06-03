@@ -35,6 +35,8 @@ const FormBuilderCanvas = ({ fields, updateField, deleteField }) => {
         return "اختيار (Radio)";
       case "select":
         return "قائمة منسدلة";
+      case "boolean":
+        return "سؤال نعم / لا";
       case "number":
         return "سؤال رقمي / رقم";
       case "checkbox":
@@ -90,9 +92,9 @@ const FormBuilderCanvas = ({ fields, updateField, deleteField }) => {
 
               <QuestionProperties field={field} updateField={updateField} />
 
-              {["select", "radio", "checkbox", "select_multiple"].includes(field.type) && !isStatic && (
-                <OptionsEditor field={field} updateField={updateField} />
-              )}
+              {["select", "select_multiple"].includes(field.type) && !isStatic && (
+  <OptionsEditor field={field} updateField={updateField} />
+)}
             </div>
           );
         })}
