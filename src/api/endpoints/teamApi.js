@@ -32,16 +32,17 @@ export const teamApi = apiSlice.injectEndpoints({
       providesTags: ['SuggestedVolunteers'],
     }),
 
-    // -----------------------------
-    // إضافة متطوع إلى الفريق
-    // -----------------------------
-    addToTeam: builder.mutation({
-      query: (volunteerId) => ({
-        url: `/team/add/${volunteerId}/`,
-        method: 'POST',
-      }),
-      invalidatesTags: ['Team', 'SuggestedVolunteers'],
-    }),
+   // -----------------------------
+    // إرسال طلب الانضمام
+    // ----------------------------- 
+   sendJoinRequest: builder.mutation({
+  query: ({ volunteer_user_id, body }) => ({
+    url: `/volunteers/join/create/${volunteer_user_id}/`, 
+    method: 'POST',
+    body: body, 
+  }),
+  invalidatesTags: ['TeamRequests', 'SuggestedVolunteers'],
+}),
 
     // -----------------------------
     // جلب طلبات الفريق (لصاحب الفكرة)
@@ -69,4 +70,5 @@ export const {
   useAddToTeamMutation,
   useGetTeamRequestsQuery,
   useGetTeamRequestByIdQuery,
+  useSendJoinRequestMutation
 } = teamApi;
