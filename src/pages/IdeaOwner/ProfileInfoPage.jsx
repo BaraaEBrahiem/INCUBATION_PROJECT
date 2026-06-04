@@ -19,7 +19,7 @@ const ProfileInfoPage = () => {
   const { userId } = useParams();
   const navigate = useNavigate();
   const currentUserId = useSelector((state) => state.auth.userId); 
-  const userRole = useSelector((state) => state.auth.role) || ""; 
+  const userRoles = useSelector((state) => state.auth.roles) || [];
 
   const targetUserId = userId || currentUserId;
 
@@ -33,10 +33,12 @@ const ProfileInfoPage = () => {
   const [description, setDescription] = useState("");
   const [tasks, setTasks] = useState("");
   const [validationError, setValidationError] = useState("");
+  const [requiredSkill, setRequiredSkill] = useState("");
 
   const [sendJoinRequest, { isLoading: isSubmittingJoin }] = useSendJoinRequestMutation();
 
-  const isIncubated = userRole.includes("incubator") || userRole === "incubator";
+  const isIncubated = userRoles.includes("incubator");
+  
 
   const isOwnProfile = String(targetUserId) === String(currentUserId);
 
@@ -66,6 +68,7 @@ const ProfileInfoPage = () => {
     setDescription("");
     setTasks("");
     setValidationError("");
+    setRequiredSkill("");
   };
 
   const handleJoinSubmit = async () => {
@@ -78,13 +81,18 @@ const ProfileInfoPage = () => {
       return;
     }
 
+    if (!requiredSkill.trim()) {
+      setValidationError("الرجاء تحديد المهارة المطلوبة");
+      return;
+    }
+
     try {
       await sendJoinRequest({
         volunteer_user_id: targetUserId,
         body: {
           description: description.trim(),
           tasks: tasks.trim(),
-          required_skill: profileData?.primary_skills || profileData?.specialization, 
+          required_skill: requiredSkill.trim(),
         }
       }).unwrap();
 
@@ -93,7 +101,11 @@ const ProfileInfoPage = () => {
     } catch (err) {
       console.error("Join request failed:", err);
    
-      const errorMsg = err?.data?.detail || err?.data?.non_field_errors?.[0] || "حدث خطأ أثناء إرسال طلب الانضمام";
+      const errorMsg =
+        err?.data?.detail ||
+        err?.data?.non_field_errors?.[0] ||
+        Object.values(err?.data || {})?.[0]?.[0] ||
+        "حدث خطأ أثناء إرسال طلب الانضمام";
       showError(errorMsg);
     }
   };
@@ -137,11 +149,11 @@ const ProfileInfoPage = () => {
           />
         </div>
       </div>
-
+      
       <Modal
         isOpen={isJoinModalOpen}
         onClose={handleCloseJoinModal}
-        title={`دعوة انضمام للمشروع: ${profileData?.full_name || ''}`}
+        title={`دعوة انضمام للمشروع: ${profileData?.name || ''}`}
         footer={
           <div className="flex gap-3 justify-end w-full">
             <Button 
@@ -171,6 +183,17 @@ const ProfileInfoPage = () => {
             value={description}
             onChange={(e) => {
               setDescription(e.target.value);
+              setValidationError("");
+            }}
+          />
+
+          <Input
+            type="text"
+            label="المهارة المطلوبة"
+            placeholder="مثال: Backend أو Frontend أو UI/UX"
+            value={requiredSkill}
+            onChange={(e) => {
+              setRequiredSkill(e.target.value);
               setValidationError("");
             }}
           />

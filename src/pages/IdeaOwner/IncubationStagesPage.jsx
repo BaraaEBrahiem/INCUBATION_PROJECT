@@ -44,9 +44,9 @@ const IncubationStagesPage = () => {
       case "BOOTCAMP":
         return <CampStage data={stageData} onComplete={refetch} />;
       case "EVALUATION":
-        return <CommitteeStage committeeResult={stageData} onComplete={refetch} />;
+        return <CommitteeStage data={stageData} onComplete={refetch} />;
       case "INCUBATION":
-        return <FollowupStage notes={stageData?.notes || []} allNotesResolved={stageData?.allNotesResolved || false} onComplete={refetch} />;
+        return <FollowupStage data={stageData} onComplete={refetch} />;
       case "EXHIBITION":
         return <ExhibitionStage data={stageData} onComplete={refetch} />;
       case "GRADUATED_NEGATIVE":

@@ -1,8 +1,9 @@
 import React from "react";
 import ConsultationRequestBtn from "../ConsultationRequestBtn";
 import AlertBox from "../AlertBox";
-import NavLinkUniversal from "../NavLinkUniversal";
-import Button from "../Button";
+import NavLinkUniversal from '../NavLinkUniversal';
+import TeamCard from "../TeamCard";
+import Button from "../Button"
 
 const FollowupStage = ({ data }) => {
 
@@ -77,7 +78,7 @@ const FollowupStage = ({ data }) => {
             <ul className="divide-y divide-gray-100">
               {notes.map((note, index) => {
                 // التعامل المرن مع البيانات سواء كانت كائن (Object) يحتوي على حقول أو نص مباشر من الـ Serializer
-                const noteText = typeof note === "object" ? note?.text : note;
+                const noteText = typeof note === "object" ? note?.notes || note?.text || note?.content : note;
                 const isResolved = typeof note === "object" ? (note?.is_resolved || note?.resolved) : false;
 
                 return (
@@ -113,17 +114,29 @@ const FollowupStage = ({ data }) => {
       </div>
 
       {/* قسم طلب الاستشارة أو الدعم من الحاضنة لمساعدتهم في حل الملاحظات */}
-      <div className="pt-4 border-t border-gray-100 max-w-3xl flex flex-col sm:flex-row justify-center items-start sm:items-center gap-4">
+      <div className="pt-4 border-t border-gray-100 max-w-3xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div>
+          <h4 className="font-bold text-gray-750 text-sm">تواجهون صعوبة في حل الملاحظات؟</h4>
+          <p className="text-gray-500 text-xs">يمكنكم حجز جلسة استشارية فورية مع أحد موجهي الحاضنة لمساعدتكم.</p>
+        </div>
         <NavLinkUniversal
-          label={<Button label="طلب استشارة" className='bg-main-color' />}
+          label={"طلب استشارة" }
           to="/consultants"
+          className="bg-main-color text-white px-4 py-2 rounded-lg font-bold text-sm transition-colors hover:bg-main-color/90"
         />
-         {/* صندوق طلب فريق */}
+        {/* صندوق طلب فريق */}
         {can_request_team && (
+          <div className="pt-4 border-t border-gray-100 max-w-3xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <div>
+              <h4 className="font-bold text-gray-750 text-sm"> ليس لديك فريق ؟</h4>
+               <p className="text-gray-500 text-xs">هل ترغب بطلب متطوعين لمساعدتك في تنفيذ مشروعك ؟</p> 
+            </div>
             <NavLinkUniversal
-              label={<Button label="طلب فريق" className='bg-main-color' />}
+              label={"طلب فريق" }
               to="/TeamRequestPage"
+              className="bg-main-color text-white px-4 py-2 rounded-lg font-bold text-sm transition-colors hover:bg-main-color/90"
             />
+          </div>
         )}
       </div>
     </div>

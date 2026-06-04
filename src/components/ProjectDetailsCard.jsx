@@ -7,18 +7,17 @@ const ProjectDetailsCard = ({ project }) => {
     team_members = [],
     project_goal,
     project_services = [],
-    emails = [],
     owner_email,
     projectLink,
     image
   } = project || {};
 
-  const contactEmail = owner_email || (emails.length > 0 ? emails[0] : null);
+  const contactEmail = owner_email;
 
   return (
     <div className="container mx-auto max-w-5xl bg-white p-6 md:p-8  text-right" dir="rtl">
       <h2 className="text-2xl text-second-color font-bold mb-8 border-b border-gray-100 pb-3">
-        تفاصيل وثيقة المشروع
+         تفاصيل المشروع 
       </h2>
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8 items-start">

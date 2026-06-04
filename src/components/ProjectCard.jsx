@@ -41,6 +41,10 @@ const ProjectCard = ({ project, ShowImage = false, details = "general" }) => {
         <div className='flex flex-col gap-2 w-full md:flex-1 text-right' dir='rtl'>
             <p className="text-lg md:text-xl"><span className='font-bold'>اسم المشروع: </span>{project.title}</p>
             <p className="text-lg md:text-xl"><span className='font-bold'>الفئة: </span>{project.sector}</p>
+            <p className="text-lg md:text-xl">
+              <span className='font-bold'>صاحب المشروع: </span>
+              {project.owner}
+            </p>
             <p className="text-lg md:text-xl"><span className='font-bold'>أعضاء الفريق: </span>{project.team_members?.join(", ") || ""}</p>
 
             {showFavorites && !ShowImage && (

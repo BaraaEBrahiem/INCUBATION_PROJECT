@@ -11,6 +11,7 @@ const ConsultationRequestBtn = ({ consultant }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [helpType, setHelpType] = useState("");
   const [description, setDescription] = useState("");
+  const [requiredSkill, setRequiredSkill] = useState("");
   const [validationError, setValidationError] = useState("");
 
   const [sendRequest, { isLoading }] = useSendConsultationRequestMutation();
@@ -24,6 +25,7 @@ const ConsultationRequestBtn = ({ consultant }) => {
     setIsOpen(false);
     setHelpType("");
     setDescription("");
+    setRequiredSkill("");
     setValidationError("");
   };
 
@@ -38,14 +40,19 @@ const ConsultationRequestBtn = ({ consultant }) => {
       return;
     }
 
+    if (!requiredSkill.trim()) {
+      setValidationError("الرجاء إدخال المهارة المطلوبة");
+      return;
+    }
+
     try {
       
       await sendRequest({
-        volunteer_user_id: consultant?.id, 
+        volunteer_user_id: consultant?.user_id, 
         body: {
           help_type: helpType,
           description: description.trim(),
-          required_skill: consultant?.primary_skills, 
+          required_skill: requiredSkill.trim(),
         }
       }).unwrap();
 
@@ -54,7 +61,11 @@ const ConsultationRequestBtn = ({ consultant }) => {
     } catch (err) {
       console.error("Error sending consultation request:", err);
     
-      const errorMsg = err?.data?.detail || err?.data?.[0] || "حدث خطأ في إرسال طلب الاستشارة";
+      const errorMsg =
+        err?.data?.detail ||
+        err?.data?.non_field_errors?.[0] ||
+        Object.values(err?.data || {})?.[0]?.[0] ||
+        "حدث خطأ في إرسال طلب الاستشارة";
       showError(errorMsg);
     }
   };
@@ -72,7 +83,7 @@ const ConsultationRequestBtn = ({ consultant }) => {
         onClose={close}
         title="طلب استشارة جديدة"
         footer={
-          <div className="flex gap-3 justify-center w-full">
+          <div className="flex gap-3 justify-end w-full">
             <Button 
               label={isLoading ? "جاري الإرسال..." : "إرسال الطلب"} 
               className="bg-main-color text-white px-6" 
@@ -107,9 +118,20 @@ const ConsultationRequestBtn = ({ consultant }) => {
               setValidationError("");
             }}
             options={[
-              { label: "استشارة حرة", value: "استشارة" },
-              { label: "متابعة دورية ومستمرة", value: "متابعة دورية" },
+              { label: "استشارة لمرة واحدة", value: "ONE_TIME", },
+              { label: "متابعة دورية", value: "ONGOING", },
             ]}
+          />
+
+          <Input
+            type="text"
+            label="المهارة المطلوبة"
+            placeholder="مثال: Backend أو Frontend أو UI/UX"
+            value={requiredSkill}
+            onChange={(e) => {
+              setRequiredSkill(e.target.value);
+              setValidationError("");
+            }}
           />
 
           {/* يفضل تحويل هذا لـ Textarea مستقبلاً لسهولة الكتابة */}

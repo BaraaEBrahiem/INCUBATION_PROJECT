@@ -44,7 +44,7 @@ const TeamPage = () => {
       {/* هيدر الصفحة يبقى ظاهراً دائماً */}
       <div className="border-b border-gray-100 pb-4">
         <h1 className="text-3xl font-bold text-second-color">إدارة وبناء الفريق</h1>
-        <p className="text-gray-500 text-sm mt-1">تصفح أعضاء فريقك الحاليين أو قم بقبول المتطوعين الموصى بهم من قبل الإدارة.</p>
+        <p className="text-gray-500 text-sm mt-1">تصفح أعضاء فريقك الحاليين أو قم بارسال طلبات انضمام الى المتطوعين الموصى بهم من قبل الإدارة.</p>
       </div>
 
       {/* التبويبات الذكية */}

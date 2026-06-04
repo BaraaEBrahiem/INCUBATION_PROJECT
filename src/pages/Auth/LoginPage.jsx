@@ -88,7 +88,8 @@ const LoginPage = () => {
         user: user,
         token: accessToken,
         userId: user.id,
-        refreshToken: refreshToken
+        refreshToken: refreshToken,
+        roles: normalizedRoles,
       }));
 
       // تحديث السياق (Context)

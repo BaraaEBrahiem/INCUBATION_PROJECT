@@ -33,7 +33,12 @@ const CampStage = ({ data, onComplete }) => {
       setTimeout(() => setAbsenceSuccess(""), 4000);
     } catch (err) {
       console.error("Error requesting absence:", err);
-      setAbsenceError(err?.data?.message || "حدث خطأ في إرسال طلب الغياب");
+      setAbsenceError(
+        err?.data?.detail ||
+        err?.data?.message ||
+        Object.values(err?.data || {})?.[0]?.[0] ||
+        "حدث خطأ في إرسال طلب الغياب"
+        );
     }
   };
 

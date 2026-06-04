@@ -7,6 +7,8 @@ import { useRole } from "../../hooks/useRole";
 const IdeaOwnerMainPage = () => {
   const { roles } = useRole();
 
+  
+
   const hideVolunteerOption =
     roles.includes("ideaOwner") && roles.includes("volunteer");
 

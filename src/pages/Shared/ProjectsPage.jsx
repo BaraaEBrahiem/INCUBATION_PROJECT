@@ -86,19 +86,11 @@ const rawProjects = (serverProjects && serverProjects.length > 0)
     if (exhibitionYear) return `مشاريع معرض التخرج ${exhibitionYear}`;
     return "معرض المشاريع المتخرجة والريادية";
   };
-  const filteredProjects = rawProjects.filter((project) => {
-    
-    const matchCategory =
-      selectedCategory === "all" || 
-      project.sector?.toLowerCase() === selectedCategory.toLowerCase();
-
   
-    const matchSearch =
-      !searchQuery.trim() ||
-      project.title?.toLowerCase().includes(searchQuery.toLowerCase());
-
-    return matchCategory && matchSearch;
-  });
+const filteredProjects = rawProjects.filter((project) =>
+  !searchQuery.trim() ||
+  project.title?.toLowerCase().includes(searchQuery.toLowerCase())
+);
 
   const categories = [
     { id: "all", label: "الكل", icon: <LuFileStack /> },

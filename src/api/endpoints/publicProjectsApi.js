@@ -49,7 +49,7 @@ export const publicProjectsApi =
           ],
         }),
 
-      // ✅ المقيمين الحاليين للمشروع المحتضن
+      //  المقيمين الحاليين للمشروع المحتضن
       getIncubationEvaluators:
         builder.query({
           query: (

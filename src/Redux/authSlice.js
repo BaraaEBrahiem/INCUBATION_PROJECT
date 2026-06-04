@@ -4,12 +4,16 @@ const savedToken = localStorage.getItem("token");
 const savedRefreshToken = localStorage.getItem("refreshToken");
 const savedUser = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")) : null;
 const savedUserId = localStorage.getItem("userId");
+const savedRoles = localStorage.getItem("roles")
+  ? JSON.parse(localStorage.getItem("roles"))
+  : [];
 
 const initialState = {
   user: savedUser,
   token: savedToken,
   refreshToken: savedRefreshToken,
   userId: savedUserId,
+  roles: savedRoles,
   isAuthenticated: !!savedToken,
 };
 
@@ -18,17 +22,19 @@ const authSlice = createSlice({
   initialState,
   reducers: {
     setCredentials: (state, action) => {
-      const { user, token, refreshToken, userId } = action.payload;
+      const { user, token, refreshToken, roles, userId } = action.payload;
       
       state.user = user;
       state.token = token;
       state.userId = userId;
+      state.roles = roles || [];
       state.isAuthenticated = true;
       if (refreshToken) state.refreshToken = refreshToken;
 
       localStorage.setItem("token", token);
       localStorage.setItem("user", JSON.stringify(user));
       localStorage.setItem("userId", userId);
+      localStorage.setItem("roles", JSON.stringify(roles || []));
       if (refreshToken) localStorage.setItem("refreshToken", refreshToken);
     },
     updateAccessToken: (state, action) => {
@@ -46,6 +52,7 @@ const authSlice = createSlice({
       localStorage.removeItem("refreshToken");
       localStorage.removeItem("user");
       localStorage.removeItem("userId");
+      localStorage.removeItem("roles");
     },
   },
 });
