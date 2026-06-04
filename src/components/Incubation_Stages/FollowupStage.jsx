@@ -113,34 +113,23 @@ const FollowupStage = ({ data }) => {
         )}
       </div>
 
-      {/* قسم طلب الاستشارة أو الدعم من الحاضنة لمساعدتهم في حل الملاحظات */}
-      <div className="pt-4 border-t border-gray-100 max-w-3xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div>
-          <h4 className="font-bold text-gray-750 text-sm">تواجهون صعوبة في حل الملاحظات؟</h4>
-          <p className="text-gray-500 text-xs">يمكنكم حجز جلسة استشارية فورية مع أحد موجهي الحاضنة لمساعدتكم.</p>
-        </div>
+     {/* قسم طلب الاستشارة أو الدعم من الحاضنة لمساعدتهم في حل الملاحظات */}
+      <div className="pt-4 border-t border-gray-100 max-w-3xl flex flex-col sm:flex-row justify-center items-start sm:items-center gap-4">
         <NavLinkUniversal
-          label={"طلب استشارة" }
+          label={<Button label="طلب استشارة" className='bg-main-color' />}
           to="/consultants"
-          className="bg-main-color text-white px-4 py-2 rounded-lg font-bold text-sm transition-colors hover:bg-main-color/90"
         />
         {/* صندوق طلب فريق */}
         {can_request_team && (
-          <div className="pt-4 border-t border-gray-100 max-w-3xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-            <div>
-              <h4 className="font-bold text-gray-750 text-sm"> ليس لديك فريق ؟</h4>
-               <p className="text-gray-500 text-xs">هل ترغب بطلب متطوعين لمساعدتك في تنفيذ مشروعك ؟</p> 
-            </div>
             <NavLinkUniversal
               label={"طلب فريق" }
               to="/TeamRequestPage"
               className="bg-main-color text-white px-4 py-2 rounded-lg font-bold text-sm transition-colors hover:bg-main-color/90"
             />
-          </div>
         )}
       </div>
-    </div>
+          </div>
   );
-};
+  };
 
 export default FollowupStage;
