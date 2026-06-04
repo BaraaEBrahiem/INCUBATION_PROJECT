@@ -5,7 +5,7 @@ import Select from "./Select";
 import Input from "./Input";
 import { showSuccess, showError } from "../Utils/toast";
 
-import { useSendConsultationRequestMutation } from "../api/endpoints/consultantsApi";
+import { useSendConsultationRequestMutation } from "../api/endpoints/consultationsApi";
 
 const ConsultationRequestBtn = ({ consultant }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -72,7 +72,7 @@ const ConsultationRequestBtn = ({ consultant }) => {
         onClose={close}
         title="طلب استشارة جديدة"
         footer={
-          <div className="flex gap-3 justify-end w-full">
+          <div className="flex gap-3 justify-center w-full">
             <Button 
               label={isLoading ? "جاري الإرسال..." : "إرسال الطلب"} 
               className="bg-main-color text-white px-6" 
@@ -80,7 +80,7 @@ const ConsultationRequestBtn = ({ consultant }) => {
               disabled={isLoading}
             />
             <button 
-              className="border border-gray-300 hover:bg-gray-50 text-gray-700 px-5 py-2 rounded-xl text-sm font-medium cursor-pointer transition-all" 
+              className="border border-second-color hover:bg-gray-50 text-gray-700 px-5 py-2 rounded-sm text-sm font-medium cursor-pointer transition-all" 
               onClick={close}
             >
               إلغاء
