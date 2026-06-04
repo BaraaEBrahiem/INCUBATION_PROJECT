@@ -5,12 +5,12 @@ import LoadingOverlay from "../../components/LoadingOverlay";
 import { showError } from "../../utils/toast"; 
 
 
-import { useGetPublicProjectDetails } from "../../api/endpoints/publicProjectsApi";
+import { useGetProjectDetailsQuery } from "../../api/endpoints/publicProjectsApi";
 
 const ProjectDetailsPage = () => {
   const { id } = useParams();
 
-  const { data: project, isLoading, error } = useGetPublicProjectDetails(id);
+  const { data: project, isLoading, error } = useGetProjectDetailsQuery(id);
 
   useEffect(() => {
     if (error) {
