@@ -11,7 +11,7 @@ export function buildUserNavOptions(roles) {
   let mainRole = "visitor";
 
   if (roles.includes("idea_owner")) {
-    mainRole = "ideaOwner";
+    mainRole = "idea_owner";
   } else if (roles.includes("evaluator")) {
     mainRole = "evaluator";
   } else if (roles.includes("incubator")) {

@@ -1,6 +1,8 @@
 import React from "react";
 import ConsultationRequestBtn from "../ConsultationRequestBtn";
 import AlertBox from "../AlertBox";
+import NavLinkUniversal from "../NavLinkUniversal";
+import Button from "../Button";
 
 const FollowupStage = ({ data }) => {
 
@@ -123,16 +125,10 @@ const FollowupStage = ({ data }) => {
         />
          {/* صندوق طلب فريق */}
         {can_request_team && (
-          <div className="bg-white flex justify-between items-center p-4 mb-8 rounded">
-            <p className='font-bold text-2xl'>
-              ليس لديك فريق هل ترغب بطلب متطوعين <br />لمساعدتك في تنفيذ مشروعك
-            </p>
-
             <NavLinkUniversal
               label={<Button label="طلب فريق" className='bg-main-color' />}
               to="/TeamRequestPage"
             />
-          </div>
         )}
       </div>
     </div>

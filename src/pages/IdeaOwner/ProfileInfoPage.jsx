@@ -36,7 +36,7 @@ const ProfileInfoPage = () => {
 
   const [sendJoinRequest, { isLoading: isSubmittingJoin }] = useSendJoinRequestMutation();
 
-  const isIdeaOwner = userRole.includes("volunteer") || userRole === "volunteer";
+  const isIncubated = userRole.includes("incubator") || userRole === "incubator";
 
   const isOwnProfile = String(targetUserId) === String(currentUserId);
 
@@ -116,7 +116,7 @@ const ProfileInfoPage = () => {
         </div>
 
         {/* شريط الإجراءات والعمليات  وبشرط ألا يكون بروفايله الشخصي */}
-        {isIdeaOwner && !isOwnProfile && (
+        {isIncubated && !isOwnProfile && (
           <div className="flex items-center justify-center gap-4 mt-10 bg-gray-50 p-4 rounded-2xl border border-gray-100 max-w-2xl mx-auto">
             <Button 
               label="طلب انضمام للفريق" 
@@ -137,7 +137,7 @@ const ProfileInfoPage = () => {
           />
         </div>
       </div>
-      
+
       <Modal
         isOpen={isJoinModalOpen}
         onClose={handleCloseJoinModal}

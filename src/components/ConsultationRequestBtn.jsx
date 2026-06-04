@@ -5,7 +5,7 @@ import Select from "./Select";
 import Input from "./Input";
 import { showSuccess, showError } from "../Utils/toast";
 
-import { useSendConsultationRequestMutation } from "../api/endpoints/consultantsApi";
+import { useSendConsultationRequestMutation } from "../api/endpoints/consultationsApi";
 
 const ConsultationRequestBtn = ({ consultant }) => {
   const [isOpen, setIsOpen] = useState(false);
