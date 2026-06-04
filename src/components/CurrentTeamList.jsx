@@ -8,7 +8,6 @@ const CurrentTeamList = ({ members }) => {
           key={m.id}
           name={m.name}
           email={m.email}
-          role={m.role}
           buttonLabel="مراسلة"
           onButtonClick={() => console.log("مراسلة", m.name)}
         />

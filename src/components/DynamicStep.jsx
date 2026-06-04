@@ -1,141 +1,180 @@
-// src/components/Forms/DynamicStep.js
 import React from "react";
 import Input from "./Input";
 import Select from "./Select";
 
-const DynamicStep = ({ stepName, fields, form, errors, handleChange, sectors = [] }) => {
-  
-  // دالة لعرض الحقل حسب نوعه
-  const renderField = (field) => {
-    const fieldName = field.name;
-    const value = form[fieldName];
-    const error = errors[fieldName];
-    const fieldConfig = field;
+const DynamicStep = ({
+  stepName,
+  fields = [],
+  form,
+  errors,
+  handleChange,
+}) => {
 
-    // حقول خاصة (تختلف عن الـ Input العادي)
-    switch (fieldName) {
-      case "sector": {
+  const renderField = (field) => {
+    const fieldKey = field.key;
+
+    if (!fieldKey) return null;
+
+    const value = form[fieldKey];
+    const error = errors?.[fieldKey];
+
+    switch (field.type) {
+
+      case "select":
         return (
           <Select
-            key={fieldName}
-            label={fieldConfig.label || "القطاع"}
-            name={fieldName}
+            key={field.id}
+            label={field.label}
+            name={fieldKey}
             value={value || ""}
-            onChange={(e) => handleChange(fieldName, e.target.value)}
+            onChange={(e) =>
+              handleChange(fieldKey, e.target.value)
+            }
+            options={
+              field.choices?.map((choice) => ({
+                value: choice.value,
+                label: choice.label,
+              })) || []
+            }
             error={error}
-            options={sectors}
-            placeholder={fieldConfig.placeholder || "اختر القطاع"}
-            required={fieldConfig.required}
+            placeholder={field.placeholder || field.label}
+            required={field.required}
           />
         );
-      }
-      
-      case "hasTeam": {
+
+      case "boolean":
         return (
-          <div key={fieldName} className="space-y-2">
+          <div
+            key={field.id}
+            className="space-y-2"
+          >
             <label className="font-bold block">
-              {fieldConfig.label || "هل لديك فريق؟"}
-              {fieldConfig.required && <span className="text-red-500 mr-1">*</span>}
+              {field.label}
+
+              {field.required && (
+                <span className="text-red-500 mr-1">
+                  *
+                </span>
+              )}
             </label>
+
             <div className="flex gap-4">
+
               <label className="flex items-center gap-2">
                 <input
                   type="radio"
-                  name={fieldName}
-                  value="yes"
-                  checked={value === "yes"}
-                  onChange={(e) => handleChange(fieldName, e.target.value)}
+                  name={fieldKey}
+                  checked={value === true}
+                  onChange={() =>
+                    handleChange(fieldKey, true)
+                  }
                 />
                 نعم
               </label>
+
               <label className="flex items-center gap-2">
                 <input
                   type="radio"
-                  name={fieldName}
-                  value="no"
-                  checked={value === "no"}
-                  onChange={(e) => handleChange(fieldName, e.target.value)}
+                  name={fieldKey}
+                  checked={value === false}
+                  onChange={() =>
+                    handleChange(fieldKey, false)
+                  }
                 />
                 لا
               </label>
+
             </div>
-            {error && <p className="text-red-500 text-sm">{error}</p>}
+
+            {error && (
+              <p className="text-red-500 text-sm">
+                {error}
+              </p>
+            )}
           </div>
         );
-      }
-      
-      case "teamMembers":
-      case "teamEmails": {
-        // تظهر فقط إذا hasTeam = yes
-        if (form.hasTeam !== "yes") return null;
-        
-        const labels = {
-          teamMembers: "أعضاء الفريق",
-          teamEmails: "البريد الإلكتروني لكل عضو"
-        };
-        
-        const placeholders = {
-          teamMembers: "أسماء الأعضاء مفصولة بفواصل",
-          teamEmails: "example@email.com, another@email.com"
-        };
-        
+
+      case "list_text":
+
+        if (
+          field.key === "team_members" &&
+          form.team !== true
+        ) {
+          return null;
+        }
+
         return (
           <Input
-            key={fieldName}
-            label={fieldConfig.label || labels[fieldName]}
-            name={fieldName}
+            key={field.id}
+            label={field.label}
+            name={fieldKey}
+            value={
+              Array.isArray(value)
+                ? value.join(", ")
+                : ""
+            }
+            onChange={(e) => {
+
+            const values =
+              e.target.value
+                .split(/,|،/)
+                .map((item) => item.trim())
+                .filter(Boolean);
+
+              handleChange(
+                fieldKey,
+                values
+              );
+
+            }}
+            error={error}
+            placeholder={
+              field.placeholder ||
+              "value1, value2, value3"
+            }
+            required={field.required}
+          />
+        );
+
+      case "text":
+
+      default:
+        return (
+          <Input
+            key={field.id}
+            label={field.label}
+            name={fieldKey}
+            type="text"
             value={value || ""}
-            onChange={(e) => handleChange(fieldName, e.target.value)}
+            onChange={(e) =>
+              handleChange(
+                fieldKey,
+                e.target.value
+              )
+            }
             error={error}
-            placeholder={fieldConfig.placeholder || placeholders[fieldName]}
-            required={fieldConfig.required}
+            placeholder={field.placeholder || field.label}
+            required={field.required}
           />
         );
-      }
-      
-      case "image": {
-        return (
-          <Input
-            key={fieldName}
-            label={fieldConfig.label || "رفع صورة"}
-            name={fieldName}
-            type="file"
-            accept="image/*"
-            onChange={(e) => handleChange(fieldName, e.target.files[0])}
-            error={error}
-            required={fieldConfig.required}
-          />
-        );
-      }
-      
-      default: {
-        // الحقول العادية حسب نوعها
-        const inputType = fieldConfig.type === "email" ? "email" : 
-                          fieldConfig.type === "number" ? { type: "number", inputMode: "numeric" } : fieldConfig.type === "text" ? "text" : "text";
-        
-        return (
-          <Input
-            key={fieldName}
-            label={fieldConfig.label || fieldName}
-            name={fieldName}
-            type={inputType}
-            value={value || ""}
-            onChange={(e) => handleChange(fieldName, e.target.value)}
-            error={error}
-            placeholder={fieldConfig.placeholder}
-            required={fieldConfig.required}
-          />
-        );
-      }
     }
   };
 
   return (
     <div className="space-y-6">
-      <h2 className="text-xl font-bold text-second-color mb-4">{stepName}</h2>
+
+      {stepName && (
+        <h2 className="text-xl font-bold text-second-color">
+          {stepName}
+        </h2>
+      )}
+
       <div className="space-y-4">
-        {fields.map(field => renderField(field))}
+        {[...fields]
+          .sort((a, b) => a.order - b.order)
+          .map(renderField)}
       </div>
+
     </div>
   );
 };

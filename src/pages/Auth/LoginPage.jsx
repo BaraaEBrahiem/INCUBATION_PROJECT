@@ -88,7 +88,8 @@ const LoginPage = () => {
         user: user,
         token: accessToken,
         userId: user.id,
-        refreshToken: refreshToken
+        refreshToken: refreshToken,
+        roles: normalizedRoles,
       }));
 
       // تحديث السياق (Context)
@@ -100,7 +101,7 @@ const LoginPage = () => {
       if (user.roles.includes("admin")) {
         navigate("/admin-mainpage");
       } else if (user.roles.includes("idea_owner") || user.roles.includes("صاحب فكرة")) {
-        navigate("/idea_owner-mainpage");
+        navigate("/ideaowner-mainpage");
       } else if (user.roles.includes("volunteer") || user.roles.includes("متطوع")) {
         navigate("/volunteer-mainpage");
       } else if (user.roles.includes("evaluator") || user.roles.includes("مقيم")) {

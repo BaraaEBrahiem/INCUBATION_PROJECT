@@ -106,6 +106,8 @@ export const apiSlice = createApi({
     'AdminUser',
     'Ideas',
     'FormStructure',
+    'IdeaFormConfig',
+    'Dashboard',
   ],
   endpoints: () => ({}),
 });

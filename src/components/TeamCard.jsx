@@ -1,5 +1,5 @@
 import Button from "./Button"
-const TeamCard = ({ name, email, role, buttonLabel, onButtonClick }) => {
+const TeamCard = ({ name, email, primary_skill, buttonLabel, onButtonClick }) => {
    return (
     <div className="p-3 md:p-8 border border-second-color rounded-xl shadow">
       
@@ -7,8 +7,8 @@ const TeamCard = ({ name, email, role, buttonLabel, onButtonClick }) => {
         <p className="font-bold">الاسم: {name}</p>
         <p className="font-bold">البريد الإلكتروني: {email}</p>
 
-        {role && (
-          <p className="font-bold">الدور: {role}</p>
+        {primary_skill && (
+          <p className="font-bold">الدور: {primary_skill}</p>
         )}
       </div>
 

@@ -1,90 +1,97 @@
-import React, { useState } from "react";
+import React, { useState, /*useEffect*/ } from "react";
 import CurrentTeamList from "../../components/CurrentTeamList";
 import SuggestedVolunteersList from "../../components/SuggestedVolunteerList";
-// import { useGetTeamQuery, useGetSuggestedVolunteersQuery } from "../../api/endpoints/teamApi";
+import LoadingOverlay from "../../components/LoadingOverlay"; 
+
+// import { showError } from "../../Utils/toast"; 
+
+import { useGetTeamQuery, useGetSuggestedVolunteersQuery } from "../../api/endpoints/teamApi";
 
 const TeamPage = () => {
   const [activeTab, setActiveTab] = useState("current");
 
-  // TODO: بعد الربط هذا السطر بدل البيانات الثابتة
-  // const { data: teamData, isLoading: isTeamLoading, error: teamError } = useGetTeamQuery();
-  // const { data: suggestedData, isLoading: isSuggestedLoading, error: suggestedError } = useGetSuggestedVolunteersQuery();
+  // جلب البيانات من السيرفر
+  const { data: teamData, isLoading: isTeamLoading, error: teamError } = useGetTeamQuery();
+  const { data: suggestedData, isLoading: isSuggestedLoading, error: suggestedError } = useGetSuggestedVolunteersQuery();
 
-  // -----------------------------
-  // بيانات ثابتة حالياً (تتحذف بعد الربط)
-  // -----------------------------
-  const hasTeam = false;
+  // // مفعول جانبي (Effect) لإطلاق التوست فور حدوث أي خطأ في جلب البيانات من الباك اند
+  // useEffect(() => {
+  //   if (teamError || suggestedError) {
+  //     const errorMsg = 
+  //       teamError?.data?.detail || 
+  //       suggestedError?.data?.detail || 
+  //       "حدث خطأ أثناء تحديث بيانات الفريق من السيرفر";
+      
+  //     showError(errorMsg);
+  //   }
+  // }, [teamError, suggestedError]);
 
-  const currentTeam = [
-    { id: 1, name: "مايا المحمد", email: "maya123@gmail.com" },
-    { id: 2, name: "مايا المحمد", email: "maya123@gmail.com" },
-    { id: 3, name: "مايا المحمد", email: "maya123@gmail.com" },
-  ];
+  if (isTeamLoading || isSuggestedLoading) {
+    return (
+      <LoadingOverlay>
+        جاري تحميل بيانات الفريق والمتطوعين المقترحين... يرجى الانتظار
+      </LoadingOverlay>
+    );
+  }
 
-  const suggestedVolunteers = [
-    { id: 1, name: "مايا المحمد", email: "maya123@gmail.com", role: "backend" },
-    { id: 2, name: "مايا المحمد", email: "maya123@gmail.com", role: "frontend" },
-    { id: 3, name: "مايا المحمد", email: "مايا المحمد", role: "design" },
-    { id: 4, name: "مايا المحمد", email: "مايا المحمد", role: "testing" },
-  ];
-
-  // TODO: بعد الربط  هذا الكود لاستخراج البيانات من API
-  // const hasTeam = teamData?.hasTeam || false;
-  // const currentTeam = teamData?.members || [];
-  // const suggestedVolunteers = suggestedData?.volunteers || [];
-
-  // TODO: بعد الربط حالة التحميل والخطأ
-  // if (isTeamLoading || isSuggestedLoading) {
-  //   return (
-  //     <div className="container py-6">
-  //       <p className="text-center text-gray-500 mt-20">جاري تحميل البيانات...</p>
-  //     </div>
-  //   );
-  // }
-
-  // if (teamError || suggestedError) {
-  //   return (
-  //     <div className="container py-6">
-  //       <p className="text-center text-red-500 mt-20">حدث خطأ في تحميل البيانات</p>
-  //     </div>
-  //   );
-  // }
+  const hasTeam = teamData?.has_team || false; 
+  const currentTeam = teamData?.current_team || []; 
+  const suggestedVolunteers = suggestedData || []; 
 
   return (
-    <div className="container py-6">
-      <h1 className="text-3xl font-bold text-second-color mb-6">الفريق</h1>
+    <div className="container py-6 px-4 md:px-8 max-w-7xl mx-auto space-y-6">
+      
+      {/* هيدر الصفحة يبقى ظاهراً دائماً */}
+      <div className="border-b border-gray-100 pb-4">
+        <h1 className="text-3xl font-bold text-second-color">إدارة وبناء الفريق</h1>
+        <p className="text-gray-500 text-sm mt-1">تصفح أعضاء فريقك الحاليين أو قم بارسال طلبات انضمام الى المتطوعين الموصى بهم من قبل الإدارة.</p>
+      </div>
 
-      {/* التبويبات */}
-      <div className="flex gap-4 mb-6">
-        {/* تبويب الفريق الحالي */}
+      {/* التبويبات الذكية */}
+      <div className="flex gap-3 bg-gray-50 p-1.5 rounded-2xl w-fit border border-gray-100">
         <button
           onClick={() => setActiveTab("current")}
-          className={`px-4 py-2 rounded-xl border cursor-pointer ${
-            activeTab === "current" ? "bg-second-color text-white font-bold" : "bg-white"
+          className={`px-6 py-2.5 rounded-xl font-bold text-xl transition-all cursor-pointer ${
+            activeTab === "current"
+              ? "bg-second-color text-white shadow-sm"
+              : "text-gray-600 hover:bg-gray-100/70"
           }`}
         >
-          الفريق الحالي
+          الفريق الحالي ({currentTeam.length})
         </button>
 
-        {/* تبويب المتطوعين المقترحين يظهر فقط إذا صاحب الفكرة ليس لديه فريق */}
         {!hasTeam && (
           <button
             onClick={() => setActiveTab("suggested")}
-            className={`px-4 py-2 rounded-xl border cursor-pointer ${
-              activeTab === "suggested" ? "bg-second-color text-white font-bold" : "bg-white"
+            className={`px-6 py-2.5 rounded-xl font-bold text-sm transition-all cursor-pointer ${
+              activeTab === "suggested"
+                ? "bg-second-color text-white shadow-sm"
+                : "text-gray-600 hover:bg-gray-100/70"
             }`}
           >
-            المتطوعون المقترحون
+            المتطوعون المقترحون ({suggestedVolunteers.length})
           </button>
         )}
       </div>
 
-      {/* المحتوى */}
-      {activeTab === "current" ? (
-        <CurrentTeamList members={currentTeam} />
-      ) : (
-        <SuggestedVolunteersList volunteers={suggestedVolunteers} />
-      )}
+      {/* عرض القوائم أو عرض رسالة تنبيهية خفيفة في حال فشل الاتصال */}
+      <div className="bg-white rounded-2xl border border-gray-100 p-4 md:p-6 min-h-[40vh]">
+        {teamError || suggestedError ? (
+          <div className="flex flex-col items-center justify-center py-12 text-center">
+            <p className="text-gray-400 text-sm font-medium">فشل في عرض القوائم بسبب مشكلة في الاتصال.</p>
+            <button 
+              onClick={() => window.location.reload()} 
+              className="mt-3 text-xs font-bold text-second-color underline cursor-pointer"
+            >
+              إعادة تحميل الصفحة
+            </button>
+          </div>
+        ) : activeTab === "current" ? (
+          <CurrentTeamList members={currentTeam} />
+        ) : (
+          <SuggestedVolunteersList volunteers={suggestedVolunteers} />
+        )}
+      </div>
     </div>
   );
 };

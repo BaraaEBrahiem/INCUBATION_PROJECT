@@ -4,6 +4,21 @@ export const publicProjectsApi =
   apiSlice.injectEndpoints({
     endpoints: (builder) => ({
 
+      //مشاريع المعرض للمستخدمين 
+      getUserPublicProjects:builder.query({
+      query: (sector) => {
+        const params = sector && sector !== "all" ? `?sector=${sector}` : "";
+        return `/ideas/exhibition-projects/${params}`;
+      },
+      providesTags: ['PublicProjects'],
+    }),
+
+    //تفاصيل مشروع المعرض لصفحة التفاصيل
+    getProjectDetails: builder.query({
+      query: (id) => `/ideas/projects/${id}/`, 
+      providesTags: (result, error, id) => [{ type: "PublicProjects", id }],
+    }),
+
       // جلب مشروع واحد للعرض العام
       getPublicProjectById:
         builder.query({
@@ -34,7 +49,7 @@ export const publicProjectsApi =
           ],
         }),
 
-      // ✅ المقيمين الحاليين للمشروع المحتضن
+      //  المقيمين الحاليين للمشروع المحتضن
       getIncubationEvaluators:
         builder.query({
           query: (
@@ -68,6 +83,8 @@ export const publicProjectsApi =
   });
 
 export const {
+  useGetUserPublicProjectsQuery,
+  useGetProjectDetailsQuery,
   useGetPublicProjectByIdQuery,
   useGetPublicProjectsQuery,
   useGetIncubatedProjectsQuery,

@@ -1,64 +1,17 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Button from "../Button";
 import Input from "../Input";
 import AlertBox from "../AlertBox";
-// import { useSelector } from "react-redux";
-// import { useGetCampDataQuery, useRequestAbsenceMutation, useUpdateAttendanceMutation } from "../../api/endpoints/incubationApi";
+import { useRequestAbsenceMutation } from "../../api/endpoints/dashboardApi"
 
-const CampStage = ({ onComplete }) => {
+const CampStage = ({ data, onComplete }) => {
   const [absenceReason, setAbsenceReason] = useState("");
   const [absenceError, setAbsenceError] = useState("");
   const [absenceSuccess, setAbsenceSuccess] = useState("");
-
-  // جلب userId من Redux
-  // const userId = useSelector((state) => state.auth.userId);
-
-  // TODO: بعد الربط  هذا السطر بدل البيانات الثابتة
-  // const { data: campData, isLoading, error, refetch } = useGetCampDataQuery(userId);
-  // const [requestAbsence, { isLoading: isRequestingAbsence }] = useRequestAbsenceMutation();
-  // const [updateAttendance] = useUpdateAttendanceMutation();
-
-  const totalSessions = 8;
-  const attendedSessions = 2;
-  const attendanceRate = (attendedSessions / totalSessions) * 100;
-
-  const nextSession = {
-    title: "عنوان الجلسة القادمة",
-    date: "السبت 15/7/2025",
-    time: "2:00 - 5:00 pm",
-    location: "قاعة خاصة خلف كلية العلوم",
-    description: "وصف بسيط عن الجلسة"
-  };
-
-  const sessions = [
-    {
-      title: "روبوت سيباك",
-      date: "10/12/2025",
-      trainer: "أحمد",
-      tasks: "تجهيز أول صفحتين من العرض التقديمي",
-      time: "2-5",
-      status: "انتهت"
-    },
-    {
-      title: "روبوت سيباك",
-      date: "10/12/2025",
-      trainer: "أحمد",
-      tasks: "تجهيز أول صفحتين من العرض التقديمي",
-      time: "2-5",
-      status: "انتهت"
-    }
-  ];
-
-  // TODO: بعد الربط هذا الكود لاستخراج البيانات من API
-  // const totalSessions = campData?.totalSessions || 0;
-  // const attendedSessions = campData?.attendedSessions || 0;
-  // const attendanceRate = totalSessions > 0 ? (attendedSessions / totalSessions) * 100 : 0;
-  // const nextSession = campData?.nextSession || {};
-  // const sessions = campData?.sessions || [];
-
-  // -----------------------------
-  // طلب الغياب
-  // -----------------------------
+  const [requestAbsence, { isLoading: isRequestingAbsence }] = useRequestAbsenceMutation();
+  const nextSession = data?.next_session;
+  const sessions = data?.sessions || [];
+  const isAbsenceEnabled = data?.absence_request_enabled;
   const handleAbsenceRequest = async () => {
     if (!absenceReason.trim()) {
       setAbsenceError("الرجاء إدخال سبب الغياب");
@@ -68,140 +21,119 @@ const CampStage = ({ onComplete }) => {
     setAbsenceError("");
     setAbsenceSuccess("");
 
-    // TODO: بعد الربط هذا الكود
-    // try {
-    //   await requestAbsence({
-    //     userId: userId,
-    //     reason: absenceReason,
-    //     sessionId: nextSession?.id
-    //   }).unwrap();
-    //   setAbsenceSuccess("تم إرسال طلب الغياب بنجاح");
-    //   setAbsenceReason("");
-    //   setTimeout(() => setAbsenceSuccess(""), 3000);
-    // } catch (error) {
-    //   console.error("Error requesting absence:", error);
-    //   setAbsenceError(error?.data?.message || "حدث خطأ في إرسال طلب الغياب");
-    // }
-
-    // حالياً: محاكاة للإرسال
-    console.log("سبب الغياب:", absenceReason);
-    setAbsenceSuccess("تم إرسال طلب الغياب بنجاح");
-    setAbsenceReason("");
-    setTimeout(() => setAbsenceSuccess(""), 3000);
+    try {
+  
+      await requestAbsence({ reason: absenceReason.trim() }).unwrap();
+      
+      setAbsenceSuccess("تم إرسال طلب الغياب بنجاح");
+      setAbsenceReason("");
+      
+      if (onComplete) onComplete();
+      
+      setTimeout(() => setAbsenceSuccess(""), 4000);
+    } catch (err) {
+      console.error("Error requesting absence:", err);
+      setAbsenceError(
+        err?.data?.detail ||
+        err?.data?.message ||
+        Object.values(err?.data || {})?.[0]?.[0] ||
+        "حدث خطأ في إرسال طلب الغياب"
+        );
+    }
   };
 
-  // -----------------------------
-  // التحقق من نسبة الحضور لإكمال المرحلة
-  // -----------------------------
-  useEffect(() => {
-    if (attendanceRate >= 75) {
-      onComplete();
-    }
-  }, [attendanceRate, onComplete]);
-
-  // if (isLoading) {
-  //   return (
-  //     <div className="p-6 space-y-8 min-h-screen">
-  //       <p className="text-center text-gray-500">جاري تحميل بيانات المعسكر...</p>
-  //     </div>
-  //   );
-  // }
-
-  // if (error) {
-  //   return (
-  //     <div className="p-6 space-y-8 min-h-screen">
-  //       <p className="text-center text-red-500">حدث خطأ في تحميل البيانات</p>
-  //       <button 
-  //         onClick={refetch}
-  //         className="bg-main-color text-white px-4 py-2 rounded mt-4 mx-auto block"
-  //       >
-  //         إعادة المحاولة
-  //       </button>
-  //     </div>
-  //   );
-  // }
-
-  
   return (
-    <div className=" md:p-6 space-y-8 min-h-screen overflow-x-hidden bg-white-color">
-
-      {/* التنبيه: جعلناه يأخذ العرض كاملاً */}
+    <div className="md:p-6 space-y-8 min-h-screen overflow-x-hidden bg-white-color">
+      
+      {/* رسالة التنبيه */}
       <div className="w-full">
         <AlertBox message="تأكد من حضور الجلسات بنسبة 75% وعدم تأخير تسليم المهام المطلوبة لتجنب التأثير على استمرارك في الحاضنة." />
       </div>
-      {/* نسبة الحضور */}
-      <div className="bg-white p-4 rounded-lg w-fit shadow-lg">
-        <p className="font-bold">نسبة الحضور: {attendanceRate.toFixed(1)}%</p>
-        <p>الجلسات الحاضرة: {attendedSessions} من {totalSessions}</p>
-      </div>
+      {nextSession ? (
+        <div className="bg-white p-5 rounded-lg shadow-lg space-y-3 border border-r-4 border-r-main-color max-w-2xl">
+          <h3 className="font-bold text-lg text-second-color border-b pb-2">تفاصيل الجلسة القادمة</h3>
+          <p><span className="font-bold text-gray-700">العنوان:</span> {nextSession.title}</p>
+          <p><span className="font-bold text-gray-700">التاريخ:</span> {nextSession.date || "غير محدد بعد"}</p>
+          <p><span className="font-bold text-gray-700">الوقت:</span> {nextSession.time_range || "غير محدد"}</p>
+          <p><span className="font-bold text-gray-700">الموقع:</span> {nextSession.location || "أونلاين / غير محدد"}</p>
+          <p><span className="font-bold text-gray-700">المهام المطلوبة:</span> {nextSession.tasks || "لا يوجد مهام حالية"}</p>
+        </div>
+      ) : (
+        <div className="bg-gray-50 p-4 rounded-lg text-gray-600 shadow-sm border max-w-2xl">
+          لا توجد جلسات قادمة مجدولة حالياً في المعسكر التدريبي.
+        </div>
+      )}
 
-      {/* معلومات الجلسة القادمة */}
-      <div className="bg-white p-4 rounded-lg shadow-lg space-y-2 w-100">
-        <p><span className="font-bold">الجلسة القادمة:</span> {nextSession.title}</p>
-        <p><span className="font-bold">التاريخ:</span> {nextSession.date}</p>
-        <p><span className="font-bold">الوقت:</span> {nextSession.time}</p>
-        <p><span className="font-bold">الموقع:</span> {nextSession.location}</p>
-        <p><span className="font-bold">وصف بسيط:</span> {nextSession.description}</p>
-      </div>
+      {/* مكوّن طلب الغياب - يظهر فقط إذا سمح الباك اند وكانت هناك جلسة قادمة */}
+      {isAbsenceEnabled && nextSession && (
+        <div className="bg-white p-5 rounded-lg shadow-lg space-y-4 max-w-xl border border-gray-100">
+          <p className="font-bold text-second-color">هل ستغيب عن الجلسة القادمة؟ تقدّم بطلب عذر:</p>
 
-      {/* طلب غياب */}
-      <div className="space-y-3">
-        <p className="font-bold">هل ستغيب عن الجلسة الحالية؟</p>
+          {absenceError && <p className="text-red-500 text-sm font-medium">⚠️ {absenceError}</p>}
+          {absenceSuccess && <p className="text-green-600 text-sm font-medium">✓ {absenceSuccess}</p>}
 
-        {absenceError && <p className="text-red-500 text-sm">{absenceError}</p>}
-        {absenceSuccess && <p className="text-green-500 text-sm">{absenceSuccess}</p>}
+          <Input
+            label="سبب الغياب"
+            placeholder="اشرح بشكل مختصر ومقنع سبب غيابك للإدارة"
+            value={absenceReason}
+            onChange={(e) => {
+              setAbsenceReason(e.target.value);
+              setAbsenceError("");
+            }}
+            className="w-full"
+          />
 
-        <Input
-          label="شرح"
-          placeholder="اشرح بشكل مختصر سبب غيابك"
-          value={absenceReason}
-          onChange={(e) => {
-            setAbsenceReason(e.target.value);
-            setAbsenceError("");
-          }}
-          className="w-80"
-        />
-
-        <Button
-          label="طلب غياب"
-          className="bg-main-color text-white"
-          onClick={handleAbsenceRequest}
-          // disabled={isRequestingAbsence}
-        />
-      </div>
-
-      {/* جدول الجلسات */}
+          <Button
+            label={isRequestingAbsence ? "جاري الإرسال..." : "تقديم طلب الغياب"}
+            className="bg-main-color text-white px-6 py-2 rounded-lg"
+            onClick={handleAbsenceRequest}
+            disabled={isRequestingAbsence}
+          />
+        </div>
+      )}
       <div className="w-full">
-        <h3 className="text-xl font-bold text-second-color mb-4">جدول الجلسات</h3>
-        <div className="overflow-x-auto rounded-lg shadow-lg border border-second-color">
-            <table className="w-full text-center bg-white border-collapse min-w-[700px]">
-              <thead className="bg-gray-50">
-          
-            <tr>
-              <th className="p-2">عنوان الجلسة</th>
-              <th className="p-2">التاريخ</th>
-              <th className="p-2">المدرب</th>
-              <th className="p-2">المهام المطلوبة</th>
-              <th className="p-2">الوقت</th>
-              <th className="p-2">الحالة</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            {sessions.map((s, i) => (
-              <tr key={i} className="border-t border-second-color">
-                <td className="p-2">{s.title}</td>
-                <td className="p-2">{s.date}</td>
-                <td className="p-2">{s.trainer}</td>
-                <td className="p-2">{s.tasks}</td>
-                <td className="p-2">{s.time}</td>
-                <td className="p-2">{s.status}</td>
+        <h3 className="text-xl font-bold text-second-color mb-4">جدول جلسات المعسكر</h3>
+        <div className="overflow-x-auto rounded-lg shadow-lg border border-gray-200">
+          <table className="w-full text-center bg-white border-collapse min-w-[700px]">
+            <thead className="bg-gray-100 text-gray-700 font-semibold border-b">
+              <tr>
+                <th className="p-3">عنوان الجلسة</th>
+                <th className="p-3">التاريخ</th>
+                <th className="p-3">المدرب</th>
+                <th className="p-3">المهام المطلوبة</th>
+                <th className="p-3">التوقيت</th>
+                <th className="p-3">الحالة</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {sessions.length > 0 ? (
+                sessions.map((s) => (
+                  <tr key={s.id} className="border-b hover:bg-gray-50 transition-colors">
+                    <td className="p-3 font-medium text-gray-900">{s.title}</td>
+                    <td className="p-3 text-gray-600">{s.date || "-"}</td>
+                    <td className="p-3 text-gray-600">{s.trainer_name || "غير محدد"}</td>
+                    <td className="p-3 text-gray-500 text-sm max-w-xs truncate" title={s.tasks}>{s.tasks || "لا يوجد"}</td>
+                    <td className="p-3 text-gray-600">
+                      {s.start_time && s.end_time ? `${s.start_time.slice(0, 5)} - ${s.end_time.slice(0, 5)}` : "-"}
+                    </td>
+                    <td className="p-3">
+                      <span className={`px-2.5 py-1 rounded-full text-xs font-bold ${
+                        s.session_status === "انتهت" ? "bg-gray-100 text-gray-600" : "bg-green-100 text-green-700"
+                      }`}>
+                        {s.session_status}
+                      </span>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="6" className="p-8 text-gray-400">لا يوجد جلسات مضافة في هذا الموسم حتى الآن.</td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
-    </div>
     </div>
   );
 };
