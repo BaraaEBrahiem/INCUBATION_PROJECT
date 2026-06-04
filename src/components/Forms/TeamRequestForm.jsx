@@ -52,6 +52,8 @@ const TeamRequestForm = () => {
     e.preventDefault();
     setApiError("");
 
+    const newErrors = {};
+
     // التحقق من الحقول قبل الإرسال
     if (selectedSkills.length === 0) newErrors.skill = "الرجاء اختيار مهارة واحدة على الأقل";
     if (!description.trim()) newErrors.description = "هذا الحقل مطلوب";
