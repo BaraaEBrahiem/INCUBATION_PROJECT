@@ -72,7 +72,7 @@ const ConsultationRequestBtn = ({ consultant }) => {
         onClose={close}
         title="طلب استشارة جديدة"
         footer={
-          <div className="flex gap-3 justify-end w-full">
+          <div className="flex gap-3 justify-center w-full">
             <Button 
               label={isLoading ? "جاري الإرسال..." : "إرسال الطلب"} 
               className="bg-main-color text-white px-6" 
