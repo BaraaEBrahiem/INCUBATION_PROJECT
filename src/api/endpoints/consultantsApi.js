@@ -10,12 +10,12 @@ export const consultantsApi = apiSlice.injectEndpoints({
       providesTags: ['Consultants'],
     }),
 
-    // جلب المستشارين حسب الاختصاص
-    getConsultantsBySpecialty: builder.query({
-      query: (specialty) => `/consultants/specialty/${specialty}/`,
-      providesTags: (result, error, specialty) => [{ type: 'Consultants', id: specialty }],
-    }),
+// جلب المستشارين حسب الاختصاص 
+  getConsultantsBySpecialty: builder.query({
 
+    query: (primarySkill) => `volunteers/consultants/${primarySkill}/`, 
+    providesTags: ['Consultants'],
+  }),
     // جلب مستشار محدد بواسطة ID
     getConsultantById: builder.query({
       query: (id) => `/consultants/${id}/`,
