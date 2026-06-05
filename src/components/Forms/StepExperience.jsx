@@ -29,6 +29,13 @@ const StepExperience = ({ form, errors, handleChange, expertiseOptions}) => {
         options={expertiseOptions}
         error={errors.primary_skills}  
       />
+       <Input
+        label="السكن"
+        name="residence"
+        value={form.residence}
+        onChange={handleChange}
+        error={errors.residence}
+      />
     </div>
   )
 }
