@@ -87,7 +87,7 @@ const SKILL_MAPPING = {
           footer={
             <Button
               label="حسناً"
-              onClick={() => navigate("/visitor-mainpage")}
+              onClick={() => navigate(-1)}
               className="bg-main-color px-6"
             />
           }

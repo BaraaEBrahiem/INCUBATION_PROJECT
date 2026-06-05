@@ -13,14 +13,6 @@ const StepPreferences = ({ form, errors, handleChange }) => {
       />
 
       <Input
-        label="السكن"
-        name="residence"
-        value={form.residence}
-        onChange={handleChange}
-        error={errors.residence}
-      />
-
-      <Input
         label="الاختصاص"
         name="specialization"
         value={form.specialization}

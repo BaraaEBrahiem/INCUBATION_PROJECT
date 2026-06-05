@@ -1,4 +1,3 @@
-// src/api/endpoints/workshopsApi.js
 import { apiSlice } from "../apiSlice";
 
 export const workshopsApi = apiSlice.injectEndpoints({
@@ -71,7 +70,7 @@ getCampWorkshopProjects: builder.query({
 
   transformResponse: (response) => response.results,
 
-  providesTags: (result, error, id) =>
+  providesTags: (result) =>
     result
       ? [
           ...result.map(({ id }) => ({
