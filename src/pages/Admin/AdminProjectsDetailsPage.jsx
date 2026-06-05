@@ -137,7 +137,6 @@ const AdminProjectDetailsPage =
               {project.editor_name ||
                 "غير محدد"}
             </InfoRow>
-
           </div>
 
           {/* معلومات شخصية */}

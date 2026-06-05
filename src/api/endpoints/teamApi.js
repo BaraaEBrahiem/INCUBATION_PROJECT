@@ -9,7 +9,7 @@ export const teamApi = apiSlice.injectEndpoints({
     // -----------------------------
     sendTeamRequest: builder.mutation({
       query: (data) => ({
-        url: '/team/requests/',
+        url: "/ideas/team-request/",
         method: 'POST',
         body: data,
       }),
@@ -20,7 +20,7 @@ export const teamApi = apiSlice.injectEndpoints({
     // جلب الفريق الحالي (لصاحب الفكرة)
     // -----------------------------
     getTeam: builder.query({
-      query: () => '/team/current/',
+      query: () => '/ideas/team/',
       providesTags: ['Team'],
     }),
 
@@ -28,26 +28,27 @@ export const teamApi = apiSlice.injectEndpoints({
     // جلب المتطوعين المقترحين (لصاحب الفكرة الذي ليس لديه فريق)
     // -----------------------------
     getSuggestedVolunteers: builder.query({
-      query: () => '/team/suggested/',
+      query: () => '/ideas/suggested-volunteers/',
       providesTags: ['SuggestedVolunteers'],
     }),
 
-    // -----------------------------
-    // إضافة متطوع إلى الفريق
-    // -----------------------------
-    addToTeam: builder.mutation({
-      query: (volunteerId) => ({
-        url: `/team/add/${volunteerId}/`,
-        method: 'POST',
-      }),
-      invalidatesTags: ['Team', 'SuggestedVolunteers'],
-    }),
+   // -----------------------------
+    // إرسال طلب الانضمام
+    // ----------------------------- 
+   sendJoinRequest: builder.mutation({
+  query: ({ volunteer_user_id, body }) => ({
+    url: `/volunteers/join/create/${volunteer_user_id}/`, 
+    method: 'POST',
+    body: body, 
+  }),
+  invalidatesTags: ['TeamRequests', 'SuggestedVolunteers'],
+}),
 
     // -----------------------------
     // جلب طلبات الفريق (لصاحب الفكرة)
     // -----------------------------
     getTeamRequests: builder.query({
-      query: () => '/team/requests/',
+      query: () => '/ideas/team-request/',
       providesTags: ['TeamRequests'],
     }),
 
@@ -55,7 +56,7 @@ export const teamApi = apiSlice.injectEndpoints({
     // جلب تفاصيل طلب فريق محدد
     // -----------------------------
     getTeamRequestById: builder.query({
-      query: (id) => `/team/requests/${id}/`,
+      query: (id) => `/volunteers/join-request-details/${id}/`,
       providesTags: (result, error, id) => [{ type: 'TeamRequests', id }],
     }),
 
@@ -69,4 +70,5 @@ export const {
   useAddToTeamMutation,
   useGetTeamRequestsQuery,
   useGetTeamRequestByIdQuery,
+  useSendJoinRequestMutation
 } = teamApi;

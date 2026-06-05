@@ -7,7 +7,7 @@ const baseNav = {
     { label: "المفضلة", to: "/favoritespage", scrollId: "" },
   ],
 
-  ideaOwner: [
+  idea_owner: [
     { label: "الرئيسية", to: "/ideaowner-mainpage", scrollId: "" },
     { label: "المشاريع", to: "/projectspage", scrollId: "" },
     { label: "النشاطات", to: "/activitiespage", scrollId: "" },
@@ -24,15 +24,17 @@ const baseNav = {
 export const navOptions = {
   ...baseNav,
 
-  volunteer_evaluator: [
+  evaluator: [
      { label: "الرئيسية", to: "/volunteer-evaluated-mainpage", scrollId: "" },
     { label: "المشاريع", to: "/projectspage", scrollId: "" },
     { label: "النشاطات", to: "/activitiespage", scrollId: "" },
   ],
 
-  volunteer_incubated: [
+  incubator: [
      { label: "الرئيسية", to: "/volunteer-incubated-mainpage", scrollId: "" },
     { label: "المشاريع", to: "/projectspage", scrollId: "" },
     { label: "النشاطات", to: "/activitiespage", scrollId: "" },
+     { label: "مراحل الاحتضان", to: "/incubation-stages", scrollId: "" },
+
   ],
 };

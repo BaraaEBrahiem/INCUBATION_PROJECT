@@ -1,188 +1,275 @@
-// src/components/Forms/IdeaForm.js
-import React, { useReducer, useState } from "react";
+import React, { useReducer, useState, useEffect } from "react";
+
 import Button from "../Button";
 import Stepper from "../Stepper";
 import DynamicStep from "../DynamicStep";
-import { initialForm, ideaReducer } from "../../hooks/useIdeaReducer";
-import { useGetIdeaFormDesignQuery } from "../../api/endpoints/formConfigApi";
 
+import {
+  initialForm,
+  ideaReducer,
+} from "../../hooks/useIdeaReducer";
 
-const FALLBACK_SECTORS = [
-  { value: "agriculture", label: "الزراعة" },
-  { value: "education", label: "التعليم" },
-  { value: "health", label: "الصحة" },
-  { value: "energy", label: "الطاقة" }
-];
+import {
+  useGetIdeaFormDesignQuery,
+  useSaveFormStepMutation,
+  useSubmitFinalIdeaMutation,
+} from "../../api/endpoints/ideaSubmissionApi";
 
-const FALLBACK_STEPS = [
-  {
-    name: "المعلومات الشخصية",
-    fields: [
-      { name: "name", label: "الاسم", type: "text", required: true },
-      { name: "city", label: "المدينة", type: "text", required: true },
-      { name: "tel", label: "رقم الهاتف", type: "tel", required: true }
-    ]
-  },
-  {
-    name: "معلومات الفكرة",
-    fields: [
-      { name: "title", label: "عنوان الفكرة", type: "text", required: true },
-      { name: "sector", label: "القطاع", type: "select", required: true },
-      { name: "description", label: "وصف الفكرة", type: "text", required: true },
-      { name: "productType", label: "نوع المنتج", type: "text", required: true }
-    ]
-  },
-  {
-    name: "تفاصيل إضافية",
-    fields: [
-      { name: "targetAudience", label: "الجمهور المستهدف", type: "text", required: true },
-      { name: "productProblem", label: "المشكلة التي يحلها المنتج", type: "text", required: true },
-      { name: "projectDuration", label: "مدة المشروع", type: "text", required: true }
-    ]
-  },
-  {
-    name: "الفريق",
-    fields: [
-      { name: "hasTeam", label: "هل لديك فريق؟", type: "radio", required: false },
-      { name: "teamMembers", label: "أعضاء الفريق", type: "text", required: false },
-      { name: "teamEmails", label: "البريد الإلكتروني لكل عضو", type: "text", required: false }
-    ]
-  }
-];
+const IdeaForm = ({ seasonId, onSubmit }) => {
+  const {
+    data: formData,
+    isLoading,
+    isError,
+  } = useGetIdeaFormDesignQuery(seasonId);
 
-/**
- * IdeaForm – نموذج تقديم فكرة الاحتضان
- * @param {Function} onSubmit - دالة تُستدعى عند إرسال النموذج، تستقبل form data.
- * @param {string} seasonId - معرف الموسم (يُمرر من الصفحة الأم).
- */
-const IdeaForm = ({ onSubmit, seasonId }) => {
-  const { data: formConfigFromApi, isLoading: isConfigLoading } = useGetIdeaFormDesignQuery(seasonId);
+  const [saveFormStep] =
+    useSaveFormStepMutation();
 
-  const [form, dispatch] = useReducer(ideaReducer, initialForm);
-  const [errors, setErrors] = useState({});
-  const [currentStep, setCurrentStep] = useState(0);
+  const [submitFinalIdea] =
+    useSubmitFinalIdeaMutation();
 
-  // استخراج إعدادات الفورم من الـ API (أو استخدام fallback)
-  const ideaFormConfig = formConfigFromApi?.idea_form || {};
-  const sectors = ideaFormConfig.sectors || FALLBACK_SECTORS;
-  const steps = ideaFormConfig.steps || FALLBACK_STEPS;
-  const requiredFields = ideaFormConfig.requiredFields || [];
+  const [form, dispatch] =
+    useReducer(
+      ideaReducer,
+      initialForm
+    );
 
-  const hasMultipleSteps = steps.length > 1;
+  const [errors, setErrors] =
+    useState({});
 
-  const handleChange = (field, value) => {
-    dispatch({ type: "UPDATE_FIELD", field, value });
-    if (errors[field]) setErrors((prev) => ({ ...prev, [field]: "" }));
+  const [currentStep, setCurrentStep] =
+    useState(0);
+
+  const steps = formData?.steps || [];
+
+  useEffect(() => {
+    if (!formData) return;
+
+    dispatch({
+      type: "SET_DRAFT",
+      payload: formData.draft_data || {},
+    });
+
+    setCurrentStep(
+      (formData.current_step || 1) - 1
+    );
+  }, [formData]);
+
+  const handleChange = (
+    field,
+    value
+  ) => {
+    dispatch({
+      type: "UPDATE_FIELD",
+      field,
+      value,
+    });
+
+    if (errors[field]) {
+      setErrors((prev) => ({
+        ...prev,
+        [field]: "",
+      }));
+    }
   };
 
   const validateStep = () => {
-    const currentStepFields = steps[currentStep]?.fields || [];
+    const currentFields =
+      steps[currentStep]?.questions || [];
+
     const newErrors = {};
 
-    currentStepFields.forEach((field) => {
-      if (field.required && !form[field.name]) {
-        newErrors[field.name] = `${field.label || field.name} مطلوب`;
-      }
-      if (requiredFields.includes(field.name) && !form[field.name]) {
-        newErrors[field.name] = `${field.label || field.name} مطلوب`;
+    currentFields.forEach((field) => {
+      const value =
+        form[field.key];
+
+      if (
+        field.required &&
+        (
+          value === undefined ||
+          value === null ||
+          value === "" ||
+          (
+            Array.isArray(value) &&
+            value.length === 0
+          )
+        )
+      ) {
+        newErrors[field.key] =
+          `${field.label} مطلوب`;
       }
     });
 
-    if (form.hasTeam === "yes") {
-      if (!form.teamMembers) newErrors.teamMembers = "أعضاء الفريق مطلوبون";
-      if (!form.teamEmails) newErrors.teamEmails = "البريد الإلكتروني لكل عضو مطلوب";
-    }
+    if (
+      form.team === true
+    ) {
+      const teamMembers =
+        form.team_members;
 
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const handleNext = () => validateStep() && setCurrentStep((prev) => prev + 1);
-  const handlePrevious = () => setCurrentStep((prev) => prev - 1);
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (hasMultipleSteps && !validateStep()) return;
-
-    if (!hasMultipleSteps) {
-      const allFields = steps.flatMap((s) => s.fields);
-      const newErrors = {};
-      allFields.forEach((field) => {
-        if ((field.required || requiredFields.includes(field.name)) && !form[field.name]) {
-          newErrors[field.name] = `${field.label || field.name} مطلوب`;
-        }
-      });
-      if (Object.keys(newErrors).length > 0) {
-        setErrors(newErrors);
-        return;
+      if (
+        !Array.isArray(teamMembers) ||
+        teamMembers.length === 0
+      ) {
+        newErrors.team_members =
+          "يجب إدخال إيميلات أعضاء الفريق";
       }
     }
 
-    // إرسال البيانات إلى الصفحة الأم
-    onSubmit(form);
+    setErrors(newErrors);
+
+    return (
+      Object.keys(newErrors).length === 0
+    );
   };
 
-  if (isConfigLoading) {
+  const handleNext = async () => {
+    if (!validateStep()) return;
+
+    const currentFields =
+      steps[currentStep]?.questions || [];
+
+    const payload = {};
+
+    currentFields.forEach((field) => {
+      payload[field.key] =
+        form[field.key];
+    });
+
+    try {
+      await saveFormStep({
+        seasonId,
+        step: currentStep + 1,
+        data: payload,
+      }).unwrap();
+
+      setCurrentStep(
+        (prev) => prev + 1
+      );
+    } catch (error) {
+      if (error?.data) {
+        setErrors(error.data);
+      }
+    }
+  };
+
+  const handlePrevious = () => {
+    setCurrentStep(
+      (prev) => prev - 1
+    );
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!validateStep()) return;
+
+    try {
+      const result =
+        await submitFinalIdea(
+          seasonId
+        ).unwrap();
+
+      if (onSubmit) {
+        onSubmit(result);
+      }
+    } catch (error) {
+      if (error?.data) {
+        setErrors(error.data);
+      }
+    }
+  };
+
+  if (isLoading) {
     return (
-      <div className="container space-y-6">
-        <p className="text-center text-gray-500 py-10">جاري تحميل الفورم...</p>
+      <div className="container py-10">
+        <p className="text-center">
+          جاري تحميل الفورم...
+        </p>
       </div>
     );
   }
 
-  // if (!formConfigFromApi && !isConfigLoading) {
-  //   return (
-  //     <div className="container space-y-6">
-  //       <p className="text-center text-red-500 py-10">فشل تحميل تصميم النموذج</p>
-  //     </div>
-  //   );
-  // }
-
-  // صيغة الخطوة الواحدة (بدون Stepper)
-  if (!hasMultipleSteps) {
-    const allFields = steps[0]?.fields || [];
-    const stepName = steps[0]?.name || "نموذج التسجيل";
+  if (isError) {
     return (
-      <form onSubmit={handleSubmit} className="container space-y-6">
-        <DynamicStep
-          stepName={stepName}
-          fields={allFields}
-          form={form}
-          errors={errors}
-          handleChange={handleChange}
-          sectors={sectors}
-        />
-        <div className="flex justify-center mt-4">
-          <Button label="إرسال" type="submit" className="w-50 bg-main-color text-white px-4 py-2 rounded" />
-        </div>
-      </form>
+      <div className="container py-10">
+        <p className="text-center text-red-500">
+          فشل تحميل الفورم
+        </p>
+      </div>
     );
   }
 
-  // صيغة متعددة الخطوات (مع Stepper)
-  const currentStepFields = steps[currentStep]?.fields || [];
-  const currentStepName = steps[currentStep]?.name || "";
+  const currentFields =
+    steps[currentStep]?.questions || [];
+
+  const currentStepTitle =
+    steps[currentStep]?.title || "";
+
+  const completedSteps =
+    formData?.completed_steps || [];
+
+  const totalSteps =
+    formData?.total_steps ||
+    steps.length;
+
+  const canSubmit =
+    currentStep === steps.length - 1 &&
+    completedSteps.length === totalSteps;
+
   return (
-    <form onSubmit={handleSubmit} className="container space-y-6">
-      <Stepper steps={steps.map((s) => s.name)} current={currentStep} />
+    <form
+      onSubmit={handleSubmit}
+      className="container space-y-6"
+    >
+      <Stepper
+        steps={steps.map(
+          (step) => step.title
+        )}
+        current={currentStep}
+      />
+
       <DynamicStep
-        stepName={currentStepName}
-        fields={currentStepFields}
+        stepName={
+          currentStepTitle
+        }
+        fields={currentFields}
         form={form}
         errors={errors}
-        handleChange={handleChange}
-        sectors={sectors}
+        handleChange={
+          handleChange
+        }
       />
-      <div className="flex gap-4">
-        {currentStep < steps.length - 1 && (
-          <Button label="التالي" type="button" onClick={handleNext} className="w-50 bg-main-color text-white px-4 py-2 rounded" />
-        )}
+
+      <div className="flex gap-4 mt-6">
+
         {currentStep > 0 && (
-          <Button label="رجوع" type="button" onClick={handlePrevious} className="w-50 bg-main-color px-4 py-2 rounded" />
+          <Button
+            label="رجوع"
+            type="button"
+            onClick={
+              handlePrevious
+            }
+            className="w-50 bg-gray-300 px-4 py-2 rounded"
+          />
         )}
-        {currentStep === steps.length - 1 && (
-          <Button label="إرسال" type="submit" className="w-50 bg-main-color text-white px-4 py-2 rounded" />
+
+        {!canSubmit ? (
+          <Button
+            label="التالي"
+            type="button"
+            onClick={
+              handleNext
+            }
+            className="w-50 bg-main-color text-white px-4 py-2 rounded"
+          />
+        ) : (
+          <Button
+            label="إرسال النهائي"
+            type="submit"
+            className="w-50 bg-main-color text-white px-4 py-2 rounded"
+          />
         )}
+
       </div>
     </form>
   );

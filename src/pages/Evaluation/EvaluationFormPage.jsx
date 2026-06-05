@@ -1,53 +1,78 @@
-import React, { useState } from 'react';
+import React, { useEffect,useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { BiMinus, BiPlus } from 'react-icons/bi';
 import Button from '../../components/Button';
 import NavLinkUniversal from '../../components/NavLinkUniversal';
 import { showSuccess, showError } from '../../Utils/toast';
-// import { useGetCriteriaQuery } from '../../api/endpoints/evaluationApi';
-// import { useSubmitEvaluationMutation } from '../../api/endpoints/evaluationApi';
+import {
+  useGetEvaluationFormQuery,
+  useSaveEvaluationMutation,
+  useSubmitEvaluationFinalMutation,
+} from "../../api/endpoints/evaluationApi";
 
 const EvaluationFormPage = () => {
   const { idea_id } = useParams();
 
- 
-  // const { data: criteriaFromApi, isLoading, error } = useGetCriteriaQuery();
-  // const [submitEvaluation, { isLoading: isSubmitting }] = useSubmitEvaluationMutation();
+  const {
+    data: formData,
+    isLoading,
+    error,
+  } = useGetEvaluationFormQuery(idea_id);
+
+  const [saveEvaluation] =
+    useSaveEvaluationMutation();
+
+  const [submitEvaluationFinal] =
+    useSubmitEvaluationFinalMutation();
+
+
+  useEffect(() => {
+    if (!formData?.criteria) return;
+
+    const mergedScores =
+      formData.criteria.map((criterion) => {
+
+        const existingScore =
+          formData.scores.find(
+            (s) =>
+              s.criterion === criterion.id
+          );
+
+        return {
+          id: criterion.id,
+          title: criterion.title,
+          max_score: criterion.max_score,
+          value:
+            existingScore?.score ?? 0,
+        };
+      });
+
+    setScores(mergedScores);
+
+  }, [formData]);
 
  
-  const fallbackCriteria = [
-    { id: 1, title: 'وضوح الفرصة السّوقية (Market Opportunity)', max_score : 5 },
-    { id: 2, title: 'وضوح مقترح القيمة (Value Proposition)', max_score : 5 },
-    { id: 3, title: 'وضوح نموذج الأعمال (Business Model)', max_score : 5 },
-    { id: 4, title: 'وضوح العتبة التنافسية (Competitive Advantage)', max_score : 5 },
-    { id: 5, title: 'وضوح الترويج في السوق (Marketing)', max_score : 5 },
-    { id: 6, title: 'وضوح آليات الوصول للزبائن (Sales)', max_score : 5 },
-    { id: 7, title: 'اكتمال النموذج الأولي (Prototype/MVP)', max_score : 5 },
-    { id: 8, title: 'اكتمال الشكل القانوني للشركة', max_score : 5 },
-    { id: 9, title: 'تقييم الخطة والإنجاز والمخاطر', max_score : 5 },
-    { id: 10, title: 'تقييم تجانس الفريق', max_score : 5 },
-  ];
+
+
+ 
+
 
   // تحويل المعايير الثابتة إلى الشكل المطلوب للتقييم
-  const initialScores = fallbackCriteria.map((item) => ({
-    id: item.id,
-    title: item.title,
-    max_score: item.max_score,
-    value: 0,
-  }));
 
-  const [scores, setScores] = useState(initialScores);
+
+  const [scores, setScores] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // بعد الربط، سيتم تحديدها بناءً على وجود criteriaFromApi
-  const isFormPublished = true; // سيُستبدل بـ !!criteriaFromApi?.length
+  const isFormPublished =
+  formData?.is_published ?? false; 
 
   const updateScore = (id, delta) => {
     setScores((prevScores) =>
       prevScores.map((item) => {
         if (item.id === id) {
           const newValue = item.value + delta;
-          if (newValue >= 0 && newValue <= 5) {
+          if (newValue >= 0 && newValue <= item.max_score) {
             return { ...item, value: newValue };
           }
         }
@@ -59,60 +84,61 @@ const EvaluationFormPage = () => {
   const totalScore = scores.reduce((sum, item) => sum + item.value, 0);
 
   const handleSubmit = async () => {
-    if (!isFormPublished) {
-      showError('لم تقم الإدارة بنشر نموذج التقييم بعد. يرجى الانتظار.');
-      return;
-    }
-
-    setIsSubmitting(true);
 
     try {
-      // const evaluationData = {
-      //   idea_id: idea_id,
-      //   scores: scores.map(s => ({ criteriaId: s.id, score: s.value })),
-      //   totalScore: totalScore,
-      // };
-      // await submitEvaluation(evaluationData).unwrap();
 
-      // محاكاة نجاح العملية (تتحذف عند الربط)
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      await saveEvaluation({
+        idea_id,
+        scores: scores.map((item) => ({
+          criterion: item.id,
+          score: item.value,
+        })),
+      }).unwrap();
 
-      showSuccess('تم إرسال التقييم بنجاح');
-      // يمكن إعادة تعيين الدرجات إذا أردت
-      // setScores(initialScores);
+      await submitEvaluationFinal(
+        idea_id
+      ).unwrap();
+
+      showSuccess(
+        "تم إرسال التقييم بنجاح"
+      );
+
     } catch (err) {
+
       console.error(err);
-      showError(err?.data?.message || 'حدث خطأ في إرسال التقييم');
-    } finally {
-      setIsSubmitting(false);
+
+      showError(
+        err?.data?.detail ||
+        "حدث خطأ أثناء إرسال التقييم"
+      );
     }
   };
 
-  // if (isLoading) {
-  //   return (
-  //     <div className="bg-white-color p-4 flex flex-col items-center justify-center">
-  //       <div className="container text-center py-20">
-  //         <p className="text-gray-500">جاري تحميل معايير التقييم...</p>
-  //       </div>
-  //     </div>
-  //   );
-  // }
+   if (isLoading) {
+     return (
+       <div className="bg-white-color p-4 flex flex-col items-center justify-center">
+         <div className="container text-center py-20">
+           <p className="text-gray-500">جاري تحميل نموذج التقييم...</p>
+         </div>
+       </div>
+     );
+   }
 
-  // if (error) {
-  //   return (
-  //     <div className="bg-white-color p-4 flex flex-col items-center justify-center">
-  //       <div className="container text-center py-20">
-  //         <p className="text-red-500 mb-3">حدث خطأ في تحميل معايير التقييم</p>
-  //         <button
-  //           onClick={() => window.location.reload()}
-  //           className="bg-main-color text-white px-4 py-2 rounded"
-  //         >
-  //           إعادة المحاولة
-  //         </button>
-  //       </div>
-  //     </div>
-  //   );
-  // }
+   if (error) {
+     return (
+       <div className="bg-white-color p-4 flex flex-col items-center justify-center">
+         <div className="container text-center py-20">
+           <p className="text-red-500 mb-3">حدث خطأ في تحميل معايير التقييم</p>
+           <button
+             onClick={() => window.location.reload()}
+             className="bg-main-color text-white px-4 py-2 rounded"
+           >
+             إعادة المحاولة
+           </button>
+         </div>
+       </div>
+     );
+   }
 
   if (!isFormPublished) {
     return (
@@ -140,7 +166,7 @@ const EvaluationFormPage = () => {
 
         <div className="p-6 md:p-8 bg-white font-bold text-2xl">
           <div className="flex justify-between mb-8 text-black" dir="ltr">
-            <span className="text-center">الدرجة (الحد الأقصى {fallbackCriteria[0].max_score})</span>
+            <span className="text-center">الدرجة الحد الأقصى 5</span>
             <span className="text-center">بند التقييم</span>
           </div>
 

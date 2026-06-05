@@ -64,4 +64,5 @@ export const {
   useGetProjectDetailsQuery,
   useGetAdminProjectDetailsQuery,
   useScheduleFollowUpMutation,
+  useGetAssignProjectInfoQuery,
 } = projectsInfoApi;

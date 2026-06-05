@@ -5,7 +5,7 @@ export const scheduleApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
 
     // -----------------------------
-    // جلب الجدول بالكامل (مواعيد + أجازات)
+    // جلب المواعيد 
     // -----------------------------
     getSchedule: builder.query({
       query: () => '/volunteers/my-availability/',
@@ -44,7 +44,15 @@ export const scheduleApi = apiSlice.injectEndpoints({
         method: 'POST',
         body: holidayData,
       }),
-      invalidatesTags: ['Schedule'],
+      invalidatesTags: ['Vacations'],
+    }),
+
+    // -----------------------------
+    // جلب الأجازات
+    //-----------------------------
+    getVacations: builder.query({
+      query: () => '/volunteers/vacations/',
+      providesTags: ['Vacations'],
     }),
 
     // -----------------------------
@@ -55,7 +63,7 @@ export const scheduleApi = apiSlice.injectEndpoints({
         url: `/volunteers/vacations/${id}/delete/`,
         method: 'DELETE',
       }),
-      invalidatesTags: ['Schedule'],
+      invalidatesTags: ['Vacations'],
     }),
 
   }),
@@ -67,4 +75,5 @@ export const {
   useDeleteAppointmentMutation,
   useAddHolidayMutation,
   useDeleteHolidayMutation,
+  useGetVacationsQuery,
 } = scheduleApi;

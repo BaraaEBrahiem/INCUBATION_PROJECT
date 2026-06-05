@@ -10,6 +10,7 @@ import {
 import AdminNavbar from "../../components/AdminNavbar";
 import PageTabs from "../../components/Admin_Dashboard/PageTabs";
 import ExhibitionSchedule from "../../components/Admin_Dashboard/Exhibition-management/ExhibitionSchedule";
+
 import FormExhibitionBuilder from "../../components/Admin_Dashboard/Exhibition-management/FormExhibitionBuilder";
 import CardRequests from "../../components/Admin_Dashboard/Exhibition-management/CardRequests";
 import ExhibitionRecord from "../../components/Admin_Dashboard/Exhibition-management/ExhibitionRecord";
@@ -112,6 +113,7 @@ const ExhibitionManagementPage =
             {activeTab ===
               "create-card" && (
               <FormExhibitionBuilder
+
                 initialFields={
                   location
                     .state
@@ -135,6 +137,7 @@ const ExhibitionManagementPage =
                     // تحويل البيانات لتناسب الباك
                     const questions =
                       formConfig.questions.map(
+
                         (
                           field
                         ) => ({
@@ -157,6 +160,7 @@ const ExhibitionManagementPage =
                               : field.type ===
                                 "yesNo"
                               ? "yes_no"
+                                                          
                               : field.type,
 
                           label:

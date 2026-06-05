@@ -199,6 +199,7 @@ const UserDetailsPage = () => {
     navigate(`/workshopinfo/${taskId}`);
 
   const handleViewProject = (projectId) =>
+
     navigate(`/admin/projects-details/${projectId}`);
 
   if (isLoading) {

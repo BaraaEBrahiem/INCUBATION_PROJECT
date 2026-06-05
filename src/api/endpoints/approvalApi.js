@@ -23,15 +23,22 @@ export const approvalApi = apiSlice.injectEndpoints({
     }),
 
     handleConsultationDecision: builder.mutation({
-      query: ({ id, decision, reason = "" }) => ({
-        url: `/volunteers/consultations/${id}/decision/`,
+      query: ({ id, action }) => ({
+        url: `volunteers/consultations/${id}/decision/`,
         method: "POST",
-        body: { 
-          decision,
-          reason 
-        },
+        body: { action },
+  
       }),
-      invalidatesTags: ["Volunteers", "Approvals"], 
+      invalidatesTags: ["Requests"],
+    }),
+
+    handleJoinRequestDecision: builder.mutation({
+      query: ({ id, action }) => ({
+        url: `volunteers/join-requests/${id}/decision/`,
+        method: "POST",
+        body: { action },
+      }),
+      invalidatesTags: ["Requests"],
     }),
 
   }),
@@ -42,4 +49,5 @@ export const {
   useApproveGeneralMutation,
   useRejectGeneralMutation,
   useHandleConsultationDecisionMutation,
+  useHandleJoinRequestDecisionMutation,
 } = approvalApi;

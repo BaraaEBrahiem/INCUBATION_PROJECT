@@ -314,15 +314,9 @@ const VolunteersPage = () => {
       </h2>
 
       <CategoryFilterBar
-        categories={
-          categories
-        }
-        selected={
-          selected
-        }
-        onSelect={
-          setSelected
-        }
+        categories={categories}
+        selected={selected}
+        onSelect={setSelected}
         className="bg-white-color"
       />
 
@@ -344,9 +338,7 @@ const VolunteersPage = () => {
         </div>
       ) : (
         <ConsultantsList
-          consultants={
-            currentData
-          }
+          consultants={currentData}
           role="admin"
         />
       )}

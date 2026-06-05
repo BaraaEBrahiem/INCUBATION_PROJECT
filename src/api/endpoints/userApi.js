@@ -31,7 +31,7 @@ export const userApi = apiSlice.injectEndpoints({
     // 4) رفع صورة شخصية (اختياري)
     uploadAvatar: builder.mutation({
       query: (formData) => ({
-        url: "users/avatar/",      // ← لاحقاً نعدّل الرابط
+        url: "users/avatar/",       
         method: "POST",
         body: formData,
       }),

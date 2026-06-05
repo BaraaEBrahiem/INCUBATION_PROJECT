@@ -12,7 +12,7 @@ export const workshopsApi = apiSlice.injectEndpoints({
 
     // جلب ورشة محددة بواسطة ID
     getWorkshopById: builder.query({
-      query: (id) => `volunteers/workshop-details/${id}/`,
+      query: (id) => `/volunteers/public-workshopsdetails/${id}/`,
       providesTags: (result, error, id) => [{ type: 'Workshop', id }],
     }),
 
@@ -20,7 +20,9 @@ export const workshopsApi = apiSlice.injectEndpoints({
     getAllWorkshops: builder.query({
       query: (params = {}) => {
         const queryString = new URLSearchParams(params).toString();
-        return `/workshops/${queryString ? `?${queryString}` : ''}`;
+
+        return `volunteers/workshops/${queryString ? `?${queryString}` : ''}`;
+
       },
       providesTags: ['Workshop'],
     }),
@@ -42,29 +44,58 @@ export const workshopsApi = apiSlice.injectEndpoints({
   //جلب ورشات المعسكر للمتطوع
   getCampWorkshops: builder.query({
   query: () => '/bootcamp/my-bootcamp-sessions/',
+  transformResponse: (response) => response.results,
+
   providesTags: (result) =>
     result
       ? [
-          ...result.map(({ id }) => ({ type: 'Workshop', id })),
+          ...result.map(({ id }) => ({
+            type: 'Workshop',
+            id,
+          })),
           { type: 'CampWorkshops', id: 'LIST' },
         ]
-      : [{ type: 'Workshop', id: 'LIST' }],
+      : [{ type: 'CampWorkshops', id: 'LIST' }],
 }),
- //عرض الافكار يلي بحالة المعسكر
 
+
+    // جلب أقرب ورشة عمل (لصفحة المتطوع الرئيسية)
+    getNearestWorkshop: builder.query({
+      query: () => '/volunteers/nearest-workshop/',
+      providesTags: ['Workshop'],
+    }),
+
+//عرض الافكار يلي بحالة المعسكر
 getCampWorkshopProjects: builder.query({
   query: (id) => `/bootcamp/bootcamp-sessions/${id}/ideas/`,
-  providesTags: (result, error, id) => [{ type: 'CampProjects', id: id }],
+
+  transformResponse: (response) => response.results,
+
+  providesTags: (result, error, id) =>
+    result
+      ? [
+          ...result.map(({ id }) => ({
+            type: 'CampProjects',
+            id,
+          })),
+          { type: 'CampProjects', id: 'LIST' },
+        ]
+      : [{ type: 'CampProjects', id: 'LIST' }],
 }),
+
 
 // دالة تحديث حالة الحضور والغياب للمشروع
 updateProjectAttendance: builder.mutation({
-  query: ({ idea_id, status }) => ({
-    url: `/admin/camp/projects/${idea_id}/attendance/`,
+  query: ({ sessionId, idea_id, status }) => ({
+    url: `/bootcamp/bootcamp-sessions/${sessionId}/attendance/`,
     method: 'POST',
-    body: { status },
+    body: {
+      idea_id,
+      status,
+    },
   }),
-  invalidatesTags: (result, error, { idea_id }) => ['CampProjects', idea_id],
+
+  invalidatesTags: [{ type: 'CampProjects', id: 'LIST' }],
 }),
 
   }),
@@ -79,4 +110,5 @@ export const {
   useGetCampWorkshopsQuery,
   useGetCampWorkshopProjectsQuery,
   useUpdateProjectAttendanceMutation,
+  useGetNearestWorkshopQuery,
 } = workshopsApi;

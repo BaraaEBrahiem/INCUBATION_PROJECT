@@ -134,6 +134,7 @@ const AssignEvaluatorsPage = () => {
         name={`ev-${row.user_id}`}
         checked={sel.includes(row.user_id)}
         onChange={() => toggle(row.user_id)}
+
       />
     </div>
   ),

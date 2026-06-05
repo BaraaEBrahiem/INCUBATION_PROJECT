@@ -7,7 +7,7 @@ import { useRole } from "../../hooks/useRole";
 const IdeaOwnerMainPage = () => {
   const { roles } = useRole();
 
-  const hasTeam = false;
+  
 
   const hideVolunteerOption =
     roles.includes("ideaOwner") && roles.includes("volunteer");
@@ -26,20 +26,6 @@ const IdeaOwnerMainPage = () => {
             <NavLinkUniversal
               label={<Button label="تطوع الآن" className="bg-main-color" />}
               to="/volunteerform"
-            />
-          </div>
-        )}
-
-        {/* صندوق طلب فريق */}
-        {!hasTeam && (
-          <div className="bg-white flex justify-between items-center p-4 mb-8 rounded">
-            <p className='font-bold text-2xl'>
-              ليس لديك فريق هل ترغب بطلب متطوعين <br />لمساعدتك في تنفيذ مشروعك
-            </p>
-
-            <NavLinkUniversal
-              label={<Button label="طلب فريق" className='bg-main-color' />}
-              to="/TeamRequestPage"
             />
           </div>
         )}

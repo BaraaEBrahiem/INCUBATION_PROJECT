@@ -8,7 +8,7 @@ export const authApi = apiSlice.injectEndpoints({
     // -----------------------------
     register: builder.mutation({
       query: (data) => ({
-        url: "accounts/register/",//backend URL
+        url: "/accounts/register/",
         method: "POST",
         body: data,
       }),
@@ -20,7 +20,7 @@ export const authApi = apiSlice.injectEndpoints({
     // -----------------------------
     login: builder.mutation({
       query: (data) => ({
-        url: "/accounts/login/",//backend URL 
+        url: "/accounts/login/", 
         method: "POST",
         body: data,
       }),
@@ -32,7 +32,7 @@ export const authApi = apiSlice.injectEndpoints({
     // -----------------------------
     forgotPassword: builder.mutation({
       query: (data) => ({
-        url: "accounts/forgot-password/",
+        url: "/accounts/forgot-password/",
         method: "POST",
         body: data,
       }),
@@ -43,7 +43,8 @@ export const authApi = apiSlice.injectEndpoints({
     // -----------------------------
     verifyOtp: builder.mutation({
       query: (data) => ({
-        url: "accounts/verify-password-otp/",
+        url: "/accounts/verify-password-otp/",
+
         method: "POST",
         body: data,
       }),
@@ -54,7 +55,7 @@ export const authApi = apiSlice.injectEndpoints({
     // -----------------------------
     newPassword: builder.mutation({
       query: (data) => ({
-        url: "accounts/reset-password/",
+        url: "/accounts/reset-password/",
         method: "POST",
         body: data,
       }),
@@ -65,7 +66,7 @@ export const authApi = apiSlice.injectEndpoints({
     // -----------------------------
     refreshToken: builder.mutation({
       query: (data) => ({
-        url: "auth/refresh/",
+        url: "/auth/refresh/",
         method: "POST",
         body: data,
       }),

@@ -16,15 +16,33 @@ const CampProjectsPage = () => {
 
   const [updateAttendance, { isLoading: isUpdating }] = useUpdateProjectAttendanceMutation();
 
-  const handleStatusChange = async (projectId, newStatus) => {
+  const handleStatusChange = async (ideaId, newStatus) => {
+
     if (isUpdating) return;
 
     try {
 
-      await updateAttendance({ projectId, status: newStatus }).unwrap();
-      showSuccess(newStatus === 'present' ? "تم تسجيل حضور المشروع بنجاح" : "تم تسجيل غياب المشروع");
+      await updateAttendance({
+        sessionId: workshopId,
+        idea_id: ideaId,
+        status: newStatus,
+      }).unwrap();
+
+      showSuccess(
+        newStatus === 'present'
+          ? 'تم تسجيل حضور المشروع بنجاح'
+          : 'تم تسجيل غياب المشروع'
+      );
+
     } catch (err) {
-      showError(err?.data?.message || "حدث خطأ أثناء تحديث حالة الحضور.");
+
+      console.error(err);
+
+      showError(
+        err?.data?.message ||
+        err?.data?.non_field_errors?.[0] ||
+        'حدث خطأ أثناء تحديث حالة الحضور.'
+      );
     }
   };
 

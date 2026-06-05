@@ -1,60 +1,30 @@
 import React, { useState } from 'react'
 import AllActivities from '../../components/AllActivities';
 import SearchBar from '../../components/SearchBar';
-import activity1 from '../../assets/images/activity-1.jpg';
-import activity2 from '../../assets/images/activity-2.jpg';
-import activity3 from '../../assets/images/activity-3.png';
+
 import { LuFileStack } from "react-icons/lu";
 import { RxCountdownTimer } from "react-icons/rx";
 import CategoryFilterBar from '../../components/CategoryFilterBar';
 import { IoRocketOutline } from "react-icons/io5";
 import { MdDoneAll } from "react-icons/md";
-// import { useGetActivitiesQuery } from '../../api/endpoints/activitiesApi';
+import { useGetActivitiesQuery } from '../../api/endpoints/activitiesApi';
 
 const ActivitiesPage = () => {
   const [selectedStatus, setSelectedStatus] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
 
-  // const { data: activitiesFromApi, isLoading } = useGetActivitiesQuery();
+  //const { data: activitiesFromApi, isLoading } = useGetActivitiesQuery();
 
   //static مؤقتة
-  const fallbackActivities = [
-    {
-      image: activity1,
-      title: "هل ترغب بأن تكون جزءاً من المستقبل التكنولوجي",
-      description: "دورة تدريب مدربين روبوت سبارك",
-      status: "منتهية",
-      trainer: "محمد احمد",
-      count: 25,
-    },
-    {
-      image: activity2,
-      title: "هل ترغب بأن تكون جزءاً من المستقبل التكنولوجي؟",
-      description: "دورة تدريب مدربين روبوت سبارك",
-      status: "لم تبدأ بعد",
-      trainer: "محمد احمد",
-      count: 25,
-    },
-    {
-      image: activity3,
-      title: "هل ترغب بأن تكون جزءاً من المستقبل التكنولوجي؟",
-      description: "دورة تدريب مدربين روبوت سبارك",
-      status: "بدأت حديثاً",
-      trainer: "محمد احمد",
-      count: 25,
-    },
-    {
-      image: activity1,
-      title: "هل ترغب بأن تكون جزءاً من المستقبل التكنولوجي؟",
-      description: "دورة تدريب مدربين روبوت سبارك",
-      status: "منتهية",
-      trainer: "محمد احمد",
-      count: 25,
-    },
-  ];
+
 
   // activities = activitiesFromApi
-  const activities = fallbackActivities;
+  const {
+    data: activities = [],
+    isLoading,
+    error,
+  } = useGetActivitiesQuery();
+
 
   const filteredActivities = activities.filter((activity) => {
     const matchStatus =
@@ -72,6 +42,22 @@ const ActivitiesPage = () => {
     { id: "لم تبدأ بعد", label: "لم تبدأ بعد", icon: <RxCountdownTimer /> },
     { id: "بدأت حديثاً", label: "بدأت حديثاً", icon: <IoRocketOutline /> },
   ];
+
+  if (isLoading) {
+    return (
+      <div className="text-center py-20 text-gray-500">
+        جاري تحميل الورشات...
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="text-center py-20 text-red-500">
+        حدث خطأ أثناء تحميل الورشات
+      </div>
+    );
+  }
 
   return (
     <div className='container mt-20'>
