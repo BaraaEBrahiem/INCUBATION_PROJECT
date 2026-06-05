@@ -4,26 +4,31 @@ export const apiSlice = createApi({
   reducerPath: "api",
  baseQuery: fetchBaseQuery({
     baseUrl: "http://127.0.0.1:8000/api/", //backend URL
-    prepareHeaders: (headers, { getState }) => {
-      const state = getState();
-      
-      // سطر طباعة سيكشف لنا هيكل الريدوكس بالكامل
-      console.log("=== MY EXACT REDUX STORE STATE ===", state);
+    prepareHeaders: (headers, { getState, endpoint }) => {
+  const publicEndpoints = [
+    "register",
+    "login",
+    "forgotPassword",
+    "verifyOtp",
+    "newPassword",
+  ];
 
-      const token = state.auth?.token || 
-                    state.auth?.accessToken || 
-                    state.auth?.access ||
-                    state.Auth?.token ||
-                    state.Auth?.accessToken;
+  // لا ترسل توكن للصفحات العامة
+  if (publicEndpoints.includes(endpoint)) {
+    return headers;
+  }
 
-      if (token) {
-        headers.set("Authorization", `Bearer ${token}`);
-      } else {
-        console.warn("⚠️ API Slice: لم يتم العثور على التوكن في الريدوكس ستيت!");
-      }
-      
-      return headers;
-    },
+  const token = getState()?.auth?.token;
+
+  if (token) {
+    headers.set(
+      "Authorization",
+      `Bearer ${token}`
+    );
+  }
+
+  return headers;
+},
   }),
   tagTypes: [
     "Auth",
