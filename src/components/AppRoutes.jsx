@@ -94,6 +94,7 @@ import CampProjectsPage from '../pages/Volunteer/CampProjectsPage';
 import SelectingVolunteerPage from "../pages/Admin/SelectingVolunteerPage";
 
 import IncubationReviewPage from "../pages/Evaluation/IncubationReviewPage";
+import IncubationProjectInfoPage from "../pages/Incubation/IncubationProjectInfoPage";
 
 import PublicWorkshopDetailsPage from "../pages/Volunteer/PublicWorkshopDetailsPage";
 
@@ -262,7 +263,8 @@ const AppRoutes = () => {
       <Route path="/TeamRequestPage" element={<TeamRequestPage />} />
       <Route path="/AddworkshopPage" element={<AddWorkshopPage />} />
       <Route path="/projectinfo/:id" element={<ProjectInfoPage />} />
-      <Route path="/incubationinfo" element={<IncubationInfoPage />} />
+      <Route path="/incubation-projectinfo/:id" element={<IncubationProjectInfoPage />} />
+      <Route path="/incubationinfo/:idea_id" element={<IncubationInfoPage />} />
       <Route path="/profileinfo/:userId" element={<ProfileInfoPage />} />
        <Route
             path="/public-workshops/:workshop_id"
