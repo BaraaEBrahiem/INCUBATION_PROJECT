@@ -8,7 +8,9 @@ import Button from "../../components/Button";
 import AdminNavbar from "../../components/AdminNavbar";
 import ProjectsTable from "../../components/Admin_Dashboard/ProjectsTable";
 import { showSuccess, showError } from "../../Utils/toast";
-
+import {
+  useScheduleMeetingMutation
+} from "../../api/endpoints/incubationApi";
 
 const ProjectsManagementPage = () => {
   const [open, setOpen] = useState(false);
@@ -18,7 +20,10 @@ const ProjectsManagementPage = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const navigate = useNavigate();
-
+  const [
+  scheduleMeeting
+] =
+useScheduleMeetingMutation();
   // فتح مودال تحديد الموعد
   const openScheduleModal = (ideaId) => {
     setSelectedIdeaId(ideaId);
@@ -26,39 +31,88 @@ const ProjectsManagementPage = () => {
   };
 
   // تعيين موعد التقييم
-  const handleSetMeeting = async () => {
+  const handleSetMeeting =
+  async () => {
+
     if (!schedule) {
-      showError("يرجى تحديد موعد التقييم");
+      showError(
+        "يرجى تحديد موعد التقييم"
+      );
       return;
     }
 
-    setIsSubmitting(true);
+    if (
+      !selectedIdeaId
+    ) {
+      showError(
+        "لم يتم تحديد مشروع"
+      );
+      return;
+    }
+
+    setIsSubmitting(
+      true
+    );
 
     try {
-      // محاكاة مؤقتة قبل الربط مع API
-      await new Promise((resolve) =>
-        setTimeout(resolve, 500)
-      );
+
+      // تقسيم datetime-local
+      const [
+        date,
+        time
+      ] =
+        schedule.split(
+          "T"
+        );
+
+      await scheduleMeeting({
+        ideaId:
+          selectedIdeaId,
+
+        date,
+
+        time:
+          time.slice(
+            0,
+            5
+          ), // HH:mm
+      }).unwrap();
 
       showSuccess(
-        `تم تعيين موعد التقييم للمشروع رقم ${selectedIdeaId} بنجاح`
+        "تم تعيين موعد التقييم بنجاح"
       );
 
-      setModalOpen(false);
-      setSelectedIdeaId(null);
+      setModalOpen(
+        false
+      );
+
+      setSelectedIdeaId(
+        null
+      );
+
       setSchedule("");
 
-    } catch (error) {
-      console.error(error);
+    } catch (
+      error
+    ) {
+
+      console.error(
+        error
+      );
 
       showError(
-        error?.data?.message ||
+        error?.data
+          ?.detail ||
         "حدث خطأ في تعيين الموعد"
       );
 
     } finally {
-      setIsSubmitting(false);
+
+      setIsSubmitting(
+        false
+      );
     }
+
   };
 
   // تعيين المقيمين

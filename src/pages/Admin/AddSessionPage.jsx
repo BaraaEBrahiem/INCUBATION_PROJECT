@@ -66,7 +66,7 @@ const AddSessionPage = () => {
       navigate(-1);
     } catch (err) {
       console.error(err);
-      showError(err?.data?.message || "حدث خطأ في إضافة الجلسة");
+      showError(err?.data?.details || "حدث خطأ في إضافة الجلسة");
     }
   };
 

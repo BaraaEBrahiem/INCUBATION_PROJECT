@@ -86,37 +86,6 @@ const baseQueryWithReauth = async (args, api, extraOptions) => {
 };
 
 export const apiSlice = createApi({
-
-  reducerPath: "api",
- baseQuery: fetchBaseQuery({
-    baseUrl: "http://127.0.0.1:8000/api/", //backend URL
-    prepareHeaders: (headers, { getState, endpoint }) => {
-  const publicEndpoints = [
-    "register",
-    "login",
-    "forgotPassword",
-    "verifyOtp",
-    "newPassword",
-  ];
-
-  // لا ترسل توكن للصفحات العامة
-  if (publicEndpoints.includes(endpoint)) {
-    return headers;
-  }
-
-  const token = getState()?.auth?.token;
-
-  if (token) {
-    headers.set(
-      "Authorization",
-      `Bearer ${token}`
-    );
-  }
-
-  return headers;
-},
-  }),
- 
   baseQuery: baseQueryWithReauth,
   tagTypes: [
     "Auth", "User", "Roles", "Projects", "Workshop", "WorkshopInfo",
@@ -131,7 +100,6 @@ export const apiSlice = createApi({
     "ExhibitionsList", "ExhibitionForm", "IncubationSeasons",
     "IncubationRequests", 'GraduatedProjects', 'CampProjects',
     'AdminUser', 'Ideas', 'FormStructure', 'IdeaFormConfig'
-
   ],
   endpoints: () => ({}),
 });

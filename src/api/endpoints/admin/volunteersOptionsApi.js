@@ -23,7 +23,7 @@ export const volunteersOptionsApi = apiSlice.injectEndpoints({
     }),
 
     //جلب طلبات الفريق
-    getTeamRequests: builder.query({
+    getadminTeamRequests: builder.query({
       query: () => '/admin/volunteers/team-request-owners/',
       providesTags: ['VolunteerRequests'],
 
@@ -111,6 +111,6 @@ export const {
   useRemoveEvaluatorRoleMutation,
   useAssignSuggestedVolunteersMutation,
   useGetRequestDetailsQuery,
-  useGetTeamRequestsQuery,
+  useGetadminTeamRequestsQuery,
   useGetAvailableVolunteersQuery
 } = volunteersOptionsApi;

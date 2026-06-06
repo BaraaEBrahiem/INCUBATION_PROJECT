@@ -235,8 +235,7 @@ export default function ProjectsTable({
                 e.stopPropagation();
 
                 openProjectDetails(
-                  row.idea_id ||
-                    row.id
+                  row.idea_id 
                 );
               }}
               className="bg-main-color text-white px-4 py-2 rounded-lg text-sm hover:bg-[#1e3356]"
@@ -252,8 +251,8 @@ export default function ProjectsTable({
                 e.stopPropagation();
 
                 onOpenScheduleModal?.(
-                  row.idea_id ||
-                    row.id
+                  row.idea_id 
+                    
                 );
               }}
               className="bg-main-color text-white px-4 py-2 rounded-lg text-sm hover:bg-[#1e3356]"
@@ -301,8 +300,8 @@ export default function ProjectsTable({
               e.stopPropagation();
 
               openEvaluators(
-                row.idea_id ||
-                  row.id
+                row.idea_id 
+                  
               );
             }}
           >

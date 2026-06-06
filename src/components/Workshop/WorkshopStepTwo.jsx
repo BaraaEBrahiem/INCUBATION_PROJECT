@@ -43,18 +43,21 @@ const WorkshopStepTwo = ({
       {/* صورة الدورة */}
       <div>
         <Input
-          label="صورة للورشة (اختياري)"
-          type="file"
-          accept="image/*"
-          onChange={(e) => {
-            const file = e.target.files[0];
-            if (file) {
-              const imageURL = URL.createObjectURL(file);
-              setFormData(prev => ({ ...prev, image: imageURL }));
-            }
-          }}
-          className="w-full"
-        />
+  label="صورة للورشة (اختياري)"
+  type="file"
+  accept="image/*"
+  onChange={(e) => {
+  const file = e.target.files[0];
+
+  if (file) {
+    setFormData(prev => ({
+      ...prev,
+      image: file
+    }));
+  }
+}}
+  className="w-full"
+/>
       </div>
 
       {/* وقت الدورة */}

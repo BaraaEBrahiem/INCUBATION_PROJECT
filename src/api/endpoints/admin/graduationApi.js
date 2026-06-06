@@ -3,7 +3,7 @@ import { apiSlice } from "../../apiSlice";
 export const graduationApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     
-    getEvaluationNotes: builder.query({
+    getIncubationNotes: builder.query({
       query: (idea_id) => ({
         url: `/admin/incubations/ideas/${idea_id}/latest-review/`,
         method: "GET",
@@ -37,7 +37,7 @@ export const graduationApi = apiSlice.injectEndpoints({
 });
 
 export const {
-  useGetEvaluationNotesQuery,
+  useGetIncubationNotesQuery,
   useSubmitGraduationDecisionMutation,
   useGetGraduatedProjectsQuery,
 } = graduationApi;

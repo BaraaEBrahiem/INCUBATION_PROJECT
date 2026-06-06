@@ -6,7 +6,7 @@ import {
   useGetVolunteersQuery,
   useGetVolunteerRequestsQuery,
   useGetEvaluatorsQuery,
-  useGetTeamRequestsQuery,
+  useGetadminTeamRequestsQuery,
 } from "../../api/endpoints/admin/volunteersOptionsApi";
 
 import avatarDefault from "../../assets/images/avatar.jpg";
@@ -45,7 +45,7 @@ const VolunteersPage = () => {
   const {
     data: teamRequestsResponse,
     isLoading: isLoadingTeamRequests,
-  } = useGetTeamRequestsQuery();
+  } = useGetadminTeamRequestsQuery();
 
   // ==========================
   // Days translation
@@ -150,7 +150,7 @@ const VolunteersPage = () => {
           item.name ||
           item.full_name,
 
-        specialization:
+        primary_skills:
           item.specialization ||
           item.primary_skills,
 
@@ -178,8 +178,8 @@ const VolunteersPage = () => {
           item.name ||
           item.full_name,
 
-        specialization:
-          item.specialization ||
+        primary_skills:
+          item.primary_skills ||
           "متقدم بطلب تطوع",
 
         avatar:
@@ -204,8 +204,8 @@ const VolunteersPage = () => {
           item.name ||
           item.full_name,
 
-        specialization:
-          item.specialization ||
+        primary_skills:
+          item.primary_skills ||
           "مقيم",
 
         avatar:

@@ -73,12 +73,12 @@ const PublicWorkshopDetailsPage = () => {
         </h1>
 
         {workshop.image && (
-          <img
-            src={workshop.image}
-            alt={workshop.title}
-            className="w-full h-96 object-cover rounded-lg mb-6"
-          />
-        )}
+  <img
+    src={workshop.image}
+    alt={workshop.title}
+    className="w-full h-96 object-cover rounded-lg mb-6"
+  />
+)}
 
         <div
           className="space-y-4 text-right"

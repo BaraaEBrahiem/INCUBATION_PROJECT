@@ -12,9 +12,10 @@ export const workshopsApi = apiSlice.injectEndpoints({
 
     // جلب ورشة محددة بواسطة ID
     getWorkshopById: builder.query({
-      query: (id) => `/volunteers/public-workshopsdetails/${id}/`,
+      query: (id) => `/admin/workshops/${id}/`,
       providesTags: (result, error, id) => [{ type: 'Workshop', id }],
     }),
+    
 
     // جلب جميع الورشات (لصفحة WorkshopsPage)
     getAllWorkshops: builder.query({

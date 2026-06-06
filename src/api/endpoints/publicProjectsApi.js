@@ -60,6 +60,14 @@ export const publicProjectsApi =
             `/admin/incubations/ideas/${projectId}/mentors/`,
         }),
 
+        
+      getGraduatedpublicProjects: builder.query({
+  query: () =>
+    "admin/exhibition/publicprojects/graduated/",
+  providesTags: [
+    "Projects",
+  ],
+}),
       // تعيين مقيمين احتضان
       assignIncubationEvaluators:
         builder.mutation({
@@ -92,4 +100,5 @@ export const {
   useGetIncubatedProjectsQuery,
   useGetIncubationEvaluatorsQuery,
   useAssignIncubationEvaluatorsMutation,
+  useGetGraduatedpublicProjectsQuery,
 } = publicProjectsApi;

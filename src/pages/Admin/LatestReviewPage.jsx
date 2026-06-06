@@ -4,14 +4,14 @@ import { useNavigate, useParams } from "react-router-dom";
 import { IoMdArrowBack } from "react-icons/io";
 import { showSuccess, showError } from "../../Utils/toast";
 
-import { useGetEvaluationNotesQuery, useSubmitGraduationDecisionMutation } from '../../api/endpoints/admin/graduationApi';
+import { useGetIncubationNotesQuery, useSubmitGraduationDecisionMutation } from '../../api/endpoints/admin/graduationApi';
 
 const LatestReviewPage = () => {
   const navigate = useNavigate();
   const { idea_id } = useParams();
 
 
-  const { data, isLoading: isNotesLoading, error: isError } = useGetEvaluationNotesQuery(idea_id);
+  const { data, isLoading: isNotesLoading, error: isError } = useGetIncubationNotesQuery(idea_id);
   
 
   const [submitGraduation, { isLoading: isSubmitting }] = useSubmitGraduationDecisionMutation();

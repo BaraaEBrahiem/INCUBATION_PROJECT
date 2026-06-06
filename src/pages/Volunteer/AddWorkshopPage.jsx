@@ -67,13 +67,31 @@ const AddWorkshopPage = () => {
       .map(obj => obj.trim())
       .filter(Boolean);
 
-    const finalPayload = {
-      ...formData,
-      objectives: cleanedObjectives
-    };
+    const form = new FormData();
 
-    try {
-      await addWorkshop(finalPayload).unwrap();
+// الحقول العادية
+form.append("title", formData.title);
+form.append("category", formData.category);
+form.append("target_audience", formData.target_audience);
+form.append("description", formData.description);
+form.append("capacity", formData.capacity);
+form.append("sessions", formData.sessions);
+form.append("start_date", formData.start_date);
+form.append("end_date", formData.end_date);
+form.append("time_from", formData.time_from);
+form.append("time_to", formData.time_to);
+
+// arrays لازم تنرسل JSON string
+form.append("days", JSON.stringify(formData.days));
+form.append("objectives", JSON.stringify(cleanedObjectives));
+
+// الصورة
+if (formData.image instanceof File) {
+  form.append("image", formData.image);
+}
+
+try {
+  await addWorkshop(form).unwrap();
       alert("تم حفظ الورشة بنجاح");
       setFormData({
         time_from: "",

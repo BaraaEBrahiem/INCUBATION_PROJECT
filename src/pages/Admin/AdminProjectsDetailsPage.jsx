@@ -51,7 +51,7 @@ const AdminProjectDetailsPage =
           "GRADUATED_POSITIVE"
         ) {
           navigate(
-            `/ProjectDetails/${id}`,
+            `/ProjectDetails/${project.idea_id}`,
             {
               replace:
                 true,
