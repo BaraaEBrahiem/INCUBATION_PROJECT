@@ -20,6 +20,12 @@ export const projectsInfoApi = apiSlice.injectEndpoints({
       query: (id) => `admin/ideas/${id}/details/`,
       providesTags: ["Projects"],
     }),
+   //جلب تفاصيل المشروع في مرحلة الاحتضان
+    getProjectIncubationInfo: builder.query({
+      query: () => `/ideas/project-details/`,
+      providesTags: ["Projects"],
+    }),
+
      //جلب تفاصيل المشروع للادمن
     getAdminProjectDetails: builder.query({
       query: (id) => `admin/ideas/${id}/details/`,
@@ -65,4 +71,5 @@ export const {
   useGetAdminProjectDetailsQuery,
   useScheduleFollowUpMutation,
   useGetAssignProjectInfoQuery,
+  useGetProjectIncubationInfoQuery,
 } = projectsInfoApi;

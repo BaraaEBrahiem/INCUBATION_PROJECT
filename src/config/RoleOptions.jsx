@@ -42,9 +42,7 @@ export const RoleOptions = {
   ...baseRoles,
 
   incubator: [
-    ...baseRoles.volunteer,
-    { label: "المستشارين", link: "/consultants", icon: <BsPersonWorkspace /> },
-    { label: "الفريق", link: "/team", icon: <GrGroup /> },
+    ...baseRoles.idea_owner,
   ],
 
   evaluator: [

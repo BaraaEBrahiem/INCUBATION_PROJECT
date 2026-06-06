@@ -34,7 +34,7 @@ const Exhibition = ({id}) => {
         <h1 className='text-second-color font-semibold text-[40px] mb-10'>المعرض</h1>
         <div className='flex flex-col gap-5'>
         {projects.map((project, index) => (
-          <ProjectCard key={index} project={project} ShowImage={true} />
+          <ProjectCard key={index} project={project} ShowImage={true}  details='general'/>
         ))}
         </div>
       </div>

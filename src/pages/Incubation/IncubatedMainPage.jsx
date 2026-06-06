@@ -13,7 +13,7 @@ const IncubatedMainPage = () => {
       
       
 
-        <div className="container mt-15">
+        <div className="container mt-10">
      
             <NearestWorkshopCard />
                {/* صندوق طلب فريق */}

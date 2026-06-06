@@ -182,10 +182,6 @@ const AppRoutes = () => {
           <Route path="/volunteer-request/:id" element={<VolunteerRequestDetailsPage />} />
           <Route path="/CampWorkShopsPage" element={<CampWorkshopsPage/>}/>
           <Route path="/CampProjectsPage/:workshopId" element={<CampProjectsPage />} />
-          <Route
-            path="/public-workshops/:workshop_id"
-            element={<PublicWorkshopDetailsPage />}
-          />
         </Route>
       )}
 
@@ -199,10 +195,10 @@ const AppRoutes = () => {
         </Route>
       )}
 
-      {/* ---------------- VOLUNTEER EVALUATOR ---------------- */}
+      {/* ---------------- EVALUATOR ---------------- */}
       {roles.includes("evaluator") && (
         <Route element={<MainLayout header={<UserNavbar navOptions={userNavOptions} />} footer={null} />}>
-          <Route path="/volunteer-evaluated-mainpage" element={<EvaluatedMainPage />} />
+          <Route path="/evaluator-mainpage" element={<EvaluatedMainPage />} />
           <Route path="/projectspage" element={<ProjectsPage />} />
           <Route path="/activitiespage" element={<ActivitiesPage />} />
           <Route path="/notificationspage" element={<NotificationsPage />} />
@@ -234,10 +230,10 @@ const AppRoutes = () => {
         </Route>
       )}
 
-      {/* ---------------- VOLUNTEER INCUBATED ---------------- */}
+      {/* ---------------- INCUBATOR ---------------- */}
       {roles.includes("incubator") && (
         <Route element={<MainLayout header={<UserNavbar navOptions={userNavOptions} />} footer={null} />}>
-          <Route path="/volunteer-incubated-mainpage" element={<IncubatedMainPage />} />
+          <Route path="/incubator-mainpage" element={<IncubatedMainPage />} />
           <Route path="/projectspage" element={<ProjectsPage />} />
           <Route path="/activitiespage" element={<ActivitiesPage />} />
           <Route path="/notificationspage" element={<NotificationsPage />} />
@@ -248,18 +244,12 @@ const AppRoutes = () => {
 
       {roles.includes("incubator") && (
         <Route element={<DashboardLayout roles={roles} userName="" email="" />}>
-          <Route path="/volunteer-profile" element={<EditVolunteerProfilePage />} />
+          <Route path="/profile" element={<ProfilePage userName="" email="" />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/settings" element={<SettingsPage />} />
           <Route path="/change-password" element={<ChangePasswordPage />} />
-          <Route path="/volunteer-center" element={<VolunteerCenterPage />} />
-          <Route path="/volunteer-request/:id" element={<VolunteerRequestDetailsPage />} />
           <Route path="/consultants" element={<ConsultantsPage />} />
           <Route path="/team" element={<TeamPage />} />
-          <Route path="/assigned-projects-page" element={<AssignedProjectsPage />} />
-           <Route path="/requests-page" element={<VolunteerRequestsPage />} />
-          <Route path="/workshop-page" element={<WorkshopsPage />} />
-           <Route path="/schedule-page" element={<ScheduleManagementPage />} />
           <Route path="/consultantslist/:categoryId" element={<ConsultantsListPage />} />
         </Route>
       )}
@@ -274,6 +264,10 @@ const AppRoutes = () => {
       <Route path="/projectinfo/:id" element={<ProjectInfoPage />} />
       <Route path="/incubationinfo" element={<IncubationInfoPage />} />
       <Route path="/profileinfo/:userId" element={<ProfileInfoPage />} />
+       <Route
+            path="/public-workshops/:workshop_id"
+            element={<PublicWorkshopDetailsPage />}
+          />
 
      {/* ---------------- Admin ---------------- */}
       {roles.includes("admin") && (

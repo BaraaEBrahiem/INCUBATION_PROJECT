@@ -21,6 +21,7 @@ const AllActivities = ({ activities }) => {
               <NavLinkUniversal
                 label="عرض التفاصيل"
                 to={`/public-workshops/${activity.id}`}
+                className="mt-4 bg-main-color text-white py-2 px-4 rounded hover:bg-second-color transition"
               />
             </ActivityCard>
 

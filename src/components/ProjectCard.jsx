@@ -21,19 +21,12 @@ const ProjectCard = ({ project, ShowImage = false, details = "general" }) => {
   }
 
   return (
-    <div className='flex flex-col md:flex-row-reverse items-center justify-between bg-white-color rounded-xl shadow-md p-4 border border-second-color w-full gap-16' dir='ltr'>
+    <div className='flex flex-col md:flex-row-reverse items-center justify-between bg-white-color rounded-xl shadow-md py-2 px-4 border border-second-color w-full gap-16' dir='ltr'>
         
 
         {ShowImage && (
           <div className="mt-4">
-            <SignupLink
-              label={
-                "عرض التفاصيل"
-              }
-              className={
-                "bg-main-color text-white px-6 py-2 rounded-lg inline-block"
-              }
-            />
+            <img src={project.image} alt={project.title} className="h-[300px] object-cover rounded-lg" />
           </div>
         )}
 

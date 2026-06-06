@@ -66,6 +66,7 @@ useEffect(() => {
 
     const formattedAppointments = scheduleData.map((apt) => ({
       id: apt.id,
+      // eslint-disable-next-line
       text: `${reverseDayMap[apt.day]} : من ${formatBackendTime(apt.from)} إلى ${formatBackendTime(apt.to)}`,
       day: apt.day,
       from: apt.from,

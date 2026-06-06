@@ -98,7 +98,7 @@ const TeamRequestForm = () => {
 
   return (
     <>
-      <form onSubmit={handleSubmit} className="flex flex-col gap-6 p-6 w-full md:w-[800px] text-right animate-fadeIn" dir="rtl">
+      <form onSubmit={handleSubmit} className="flex flex-col gap-10 p-6 w-full md:w-[800px] text-right animate-fadeIn" dir="rtl">
         
         {apiError && (
           <div className="bg-red-50 border border-red-200 text-red-700 p-3 rounded-lg text-center font-semibold text-sm">

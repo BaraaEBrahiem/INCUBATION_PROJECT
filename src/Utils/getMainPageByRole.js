@@ -2,8 +2,8 @@ const homeRoutes = {
   visitor: "/visitor-mainpage",
   idea_owner: "/ideaowner-mainpage",
   volunteer: "/volunteer-mainpage",
-  evaluator: "/volunteer-evaluated-mainpage",
-  incubator: "/volunteer-incubated-mainpage",
+  evaluator: "/evaluator-mainpage",
+  incubator: "/incubator-mainpage",
   admin: "/admin-mainpage",
 };
 

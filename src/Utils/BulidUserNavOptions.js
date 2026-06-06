@@ -24,8 +24,8 @@ export function buildUserNavOptions(roles) {
     visitor: "/visitor-mainpage",
     idea_owner: "/ideaowner-mainpage",
     volunteer: "/volunteer-mainpage",
-    evaluator: "/volunteer-evaluated-mainpage",
-    incubator: "/volunteer-incubated-mainpage",
+    evaluator: "/evaluator-mainpage",
+    incubator: "/incubator-mainpage",
   };
 
   const homeLink = { label: "الرئيسية", to: homeRoutes[mainRole] || "/visitor-mainpage", scrollId: "" };

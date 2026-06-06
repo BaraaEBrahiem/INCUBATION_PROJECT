@@ -12,6 +12,7 @@ import {
 } from "../../api/endpoints/volunteerprofileApi"
 import Select from "../../components/Select"
 import {showSuccess, showError} from "../../Utils/toast"
+import { useNavigate } from "react-router-dom"
 
 const EditVolunteerProfilePage = () => {
   const EXPERTISE_OPTIONS = [
@@ -21,7 +22,7 @@ const EditVolunteerProfilePage = () => {
     { value: "Legal", label: "Legal" },
     { value: "Backend", label: "Backend" }
   ];
-
+  const navigate = useNavigate()
   const [state, dispatch] = useReducer(profileReducer, initialProfileState)
   const userId = useSelector((state) => state.auth.userId)
 
@@ -112,7 +113,7 @@ const EditVolunteerProfilePage = () => {
         </div>
       </div>
 
-      <div className="bg-white border border-second-color rounded-xl px-8 py-6 shadow-lg">
+      <div className="bg-white border border-second-color rounded-xl px-8 py-4 shadow-lg">
         <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-5">
           <Input label="الاسم" value={state.name || state.full_name || ""} onChange={handleChange("name")} />
           <Input label="البريد الإلكتروني" type="email" value={state.email || ""} onChange={handleChange("email")} />
@@ -149,10 +150,12 @@ const EditVolunteerProfilePage = () => {
           </div>
 
           <div className="col-span-2 flex justify-center gap-6 mt-4">
-            <NavLinkUniversal
-              label={<Button label="عرض كما يظهر للآخرين" className="bg-main-color" />}
-              to={`/profileinfo/${userId}`}
+            <Button 
+            label="عرض كما يظهر للآخرين" 
+            className="bg-main-color" 
+            onClick={() => navigate(`/profileinfo/${userId}`)} 
             />
+            
             <Button
               type="submit"
               label={isUpdating ? "جاري الحفظ..." : "حفظ التعديلات"}
