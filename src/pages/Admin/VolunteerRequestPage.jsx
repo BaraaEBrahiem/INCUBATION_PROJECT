@@ -191,6 +191,16 @@ const VolunteerRequestPage = () => {
   const isEvaluator =
     request.is_evaluator;
 
+  const daysInArabic = {
+  SATURDAY: "السبت",
+  SUNDAY: "الأحد",
+  MONDAY: "الإثنين",
+  TUESDAY: "الثلاثاء",
+  WEDNESDAY: "الأربعاء",
+  THURSDAY: "الخميس",
+  FRIDAY: "الجمعة",
+};
+
   return (
     <div
       className="p-6 bg-white-color min-h-screen"
@@ -236,20 +246,20 @@ const VolunteerRequestPage = () => {
         {/* معلومات التطوع */}
         <div className="bg-white p-4 rounded-lg shadow-lg mb-6">
           <InfoRow label="أوقات الإتاحة الأسبوعية">
-            {request.availability?.length >
-            0 ? (
-              request.availability.map(
-                (item, index) => (
-                  <div key={index}>
-                    {item.day}: {item.from} -{" "}
-                    {item.to}
-                  </div>
-                )
-              )
-            ) : (
-              <p>لا يوجد</p>
-            )}
-          </InfoRow>
+  {request.availability?.length > 0 ? (
+    request.availability.map(
+      (item, index) => (
+        <div key={index}>
+          {daysInArabic[item.day] || item.day}
+          {" : "}
+          {item.from} - {item.to}
+        </div>
+      )
+    )
+  ) : (
+    <p>لا يوجد</p>
+  )}
+</InfoRow>
 
           <InfoRow label="الدافع للتطوع">
             {request.motivation}
@@ -267,15 +277,7 @@ const VolunteerRequestPage = () => {
         {/* الهدف والخبرات */}
         <div className="bg-white p-4 rounded-lg shadow-lg mb-6">
           <InfoRow label="تفضيلات الاستشارة">
-  <div className="flex flex-col gap-1">
-    {request.volunteer_type?.map((item, index) => (
-      <div key={index}>
-        {typeof item === "object"
-          ? Object.values(item).join(" - ")
-          : item}
-      </div>
-    ))}
-  </div>
+  {request.volunteer_type || "لا يوجد"}
 </InfoRow>
 
 

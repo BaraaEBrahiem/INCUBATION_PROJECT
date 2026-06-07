@@ -51,7 +51,7 @@ const AdminProjectDetailsPage =
           "GRADUATED_POSITIVE"
         ) {
           navigate(
-            `/ProjectDetails/${id}`,
+            `/ProjectDetails/${project.idea_id}`,
             {
               replace:
                 true,
@@ -136,11 +136,6 @@ const AdminProjectDetailsPage =
             <InfoRow label="مسؤول التعديل :">
               {project.editor_name ||
                 "غير محدد"}
-            </InfoRow>
-
-            <InfoRow label="نوع المنتج :">
-              {project.product_type ||
-                "لا يوجد منتج محدد حالياً"}
             </InfoRow>
           </div>
 

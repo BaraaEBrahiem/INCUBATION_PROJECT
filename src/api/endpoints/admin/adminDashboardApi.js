@@ -5,19 +5,19 @@ export const adminDashboardApi = apiSlice.injectEndpoints({
 
     // 1) إحصائيات لوحة التحكم
     getDashboardStats: builder.query({
-      query: () => "admin/dashboard/stats/",
+      query: () => "admin/dashboard/statistics/current-season/",
       providesTags: ["Dashboard"],
     }),
 
     // 2) بيانات الرسم البياني للمشاريع
     getDashboardProjectsChart: builder.query({
-      query: () => "admin/dashboard/projects-chart/",
+      query: () => "admin/dashboard/statistics/graduated-projects-chart/",
       providesTags: ["Dashboard"],
     }),
 
     // 3) النشاط الأخير
     getDashboardRecentActivity: builder.query({
-      query: () => "admin/dashboard/recent-activity/",
+      query: () => "admin/dashboard/notifications/broadcast/",
       providesTags: ["Dashboard"],
     }),
 

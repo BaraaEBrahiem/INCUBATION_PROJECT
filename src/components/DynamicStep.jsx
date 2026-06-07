@@ -93,7 +93,54 @@ const DynamicStep = ({
             )}
           </div>
         );
+       case "image":
+    return (
+      <div
+        key={field.id}
+        className="space-y-2"
+      >
+        <label className="font-bold block">
+          {field.label}
 
+          {field.required && (
+            <span className="text-red-500 mr-1">
+              *
+            </span>
+          )}
+        </label>
+
+        <input
+          type="file"
+          accept="image/*"
+          onChange={(e) =>
+            handleChange(
+              fieldKey,
+              e.target.files?.[0] || null
+            )
+          }
+          className="w-full border border-gray-300 rounded-lg p-2 bg-white"
+        />
+
+        {/* Preview */}
+        {value && (
+          <img
+            src={
+              value instanceof File
+                ? URL.createObjectURL(value)
+                : value
+            }
+            alt="preview"
+            className="w-40 h-40 object-cover rounded-lg border mt-2"
+          />
+        )}
+
+        {error && (
+          <p className="text-red-500 text-sm">
+            {error}
+          </p>
+        )}
+      </div>
+    );
       case "list_text":
 
         if (

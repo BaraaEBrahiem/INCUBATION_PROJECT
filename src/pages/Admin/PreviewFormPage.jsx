@@ -4,7 +4,8 @@ import {
   useNavigate,
 } from "react-router-dom";
 
-import FormPreview from "../../components/Admin_Dashboard/IncubationSeasons/Create-Season/FormPreview";
+import FormPreview from "../../components/Admin_Dashboard/Exhibition-management/FormPreview";
+
 import Button from "../../components/Button";
 
 const PreviewFormPage = () => {

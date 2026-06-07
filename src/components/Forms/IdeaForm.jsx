@@ -141,15 +141,23 @@ const IdeaForm = ({ seasonId, onSubmit }) => {
         step: currentStep + 1,
         data: payload,
       }).unwrap();
+      console.log("FORM DATA:", payload);
 
       setCurrentStep(
         (prev) => prev + 1
       );
     } catch (error) {
-      if (error?.data) {
-        setErrors(error.data);
-      }
-    }
+  console.log("FULL ERROR", error);
+  console.log("ERROR DATA", error?.data);
+
+  alert(
+    JSON.stringify(
+      error?.data,
+      null,
+      2
+    )
+  );
+}
   };
 
   const handlePrevious = () => {

@@ -125,6 +125,7 @@ const UsersTable = ({
     {
       key: "actions",
       label: "الإجراءات",
+
       render: (row) => (
         <div className="flex flex-col gap-2">
           <Button

@@ -13,11 +13,13 @@ import {
 // خيارات الخبرات (ثابتة)
 // -----------------------------
 const EXPERTISE_OPTIONS = [
+
   { value: "UI/UX", label: "UI/UX" },
   { value: "Frontend", label: "Frontend" },
   { value: "Marketing", label: "Marketing" },
   { value: "Legal", label: "Legal" },
   {value: "Backend", label: "Backend"}
+
 ];
 
 const VolunteerForm = ({
@@ -155,6 +157,7 @@ const VolunteerForm = ({
           />
         )}
 
+
        {step === 2 && (
   <StepAvailability
     availability={form.availability} 
@@ -162,6 +165,7 @@ const VolunteerForm = ({
     onAvailabilityChange={handleAvailabilityChange} 
   />
 )}
+
 
         <div className="flex justify-between items-center">
           <Button

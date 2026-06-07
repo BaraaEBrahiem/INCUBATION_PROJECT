@@ -8,6 +8,11 @@ export const projectsInfoApi = apiSlice.injectEndpoints({
       query: (id) => `evaluations/my-assignments_details/${id}/`,
       providesTags: ['Projects'],
     }),
+    //جلب تفاصيل المشروع في مرحلة الاحتضان
+    getProjectIncubationInfo: builder.query({
+      query: () => `/ideas/project-details/`,
+      providesTags: ["Projects"],
+    }),
 
     // معلومات المشروع (داخل لوحة التحكم)
     getProjectInfo: builder.query({

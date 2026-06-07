@@ -115,6 +115,24 @@ export const incubationApi = apiSlice.injectEndpoints({
       providesTags: (result, error, id) => [{ type: 'IncubationRequests', id }],
     }),
 
+    scheduleMeeting:
+builder.mutation({
+  query: ({
+    ideaId,
+    date,
+    time
+  }) => ({
+    url:
+      `/admin/incubations/ideas/${ideaId}/meetings/schedule/`,
+    method:
+      "POST",
+    body: {
+      date,
+      time
+    }
+  })
+})
+
 
 
   }),
@@ -126,6 +144,7 @@ export const {
   useUpdateIncubationStageMutation,
   useGetIncubatedQuery,
   useGetIncubationRequestQuery,
+  useScheduleMeetingMutation,
 
   // الـ Hooks المطلوبة للمراحل الأربعة بالأسماء الصحيحة
   useGetDashboardQuery,           

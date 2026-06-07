@@ -209,14 +209,14 @@ export default function CardRequestDetailsPage() {
 
           {/* الصورة */}
           <div className="md:w-1/2 bg-gray-100 flex items-center justify-center min-h-[550px]">
-            {data?.avatar ? (
+
+            {data?.project_image ? (
               <img
-                src={
-                  data.avatar
-                }
-                alt="project"
-                className="w-full h-full object-cover"
-              />
+  src={`http://127.0.0.1:8000${encodeURI(data.project_image)}`}
+  alt={data.owner_name}
+  className="w-full h-full object-contain"
+/>
+
             ) : (
               <div className="text-center text-gray-400">
                 <IoImageOutline className="text-8xl mx-auto mb-4" />

@@ -4,6 +4,7 @@ const DataTable = ({
   onRowClick,
   selectedRowId,
 }) => {
+  
   return (
     <div className="bg-white rounded-lg shadow p-4">
       <table
@@ -29,7 +30,10 @@ const DataTable = ({
           {data.map((row) => {
             const rowId =
               row.idea_id ||
-              row.id;
+              row.id ||
+              row.season_id;
+              console.log("DATA TABLE ROW:", row);
+              console.log(rowId)
 
             return (
               <tr

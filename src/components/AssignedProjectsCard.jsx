@@ -18,17 +18,17 @@ const AssignedProjectsCard = ({ project }) => {
 
       <p>
         <span className="font-bold text-xl">الاسم: </span>
-        {project.name}
+        {project.owner_name}
       </p>
 
       <p>
         <span className="font-bold text-xl">البريد الإلكتروني: </span>
-        {project.email}
+        {project.owner_email}
       </p>
 
       <p>
         <span className="font-bold text-xl">عنوان المشروع: </span>
-        {project.projectTitle}
+        {project.idea_title}
       </p>
 
       <NavLinkUniversal

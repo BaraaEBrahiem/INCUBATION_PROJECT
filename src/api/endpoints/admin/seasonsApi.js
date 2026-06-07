@@ -1,11 +1,12 @@
 // src/api/endpoints/admin/seasonsApi.js
 import { apiSlice } from "../../apiSlice";
+console.log("SEASONS API LOADED");
 
 export const seasonsApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
 
     // جلب مواسم الاحتضان
-    getIncubationSeasons: builder.query({
+    getAdminIncubationSeasons: builder.query({
       query: () => `/admin/seasons/`,
       providesTags: ['IncubationSeasons'],
     }),
@@ -27,7 +28,7 @@ export const seasonsApi = apiSlice.injectEndpoints({
     }),
 
     // نشر الموسم (تفعيله وفتح باب التقديم)
-    publishSeason: builder.mutation({
+    publishNewSeason: builder.mutation({
       query: (pk) => ({
         url: `/admin/seasons/${pk}/publish/`,
         method: 'POST',
@@ -38,8 +39,8 @@ export const seasonsApi = apiSlice.injectEndpoints({
     // إلحاق mutations أخرى (تحديث، إغلاق، ...)
     updateIncubationSeason: builder.mutation({
       query: ({ id, data }) => ({
-        url: `/admin/seasons/${id}/`,
-        method: 'PUT',
+        url: `/admin/seasons/${id}/update/`,
+        method: 'PATCH',
         body: data,
       }),
       invalidatesTags: (result, error, { id }) => [{ type: 'IncubationSeasons', id }],
@@ -60,10 +61,10 @@ closeSubmissions: builder.mutation({
 });
 
 export const {
-  useGetIncubationSeasonsQuery,
+  useGetAdminIncubationSeasonsQuery,
   useGetSeasonDetailsQuery,
   useCreateIncubationSeasonMutation,
   useUpdateIncubationSeasonMutation,
   useCloseSubmissionsMutation,
-  usePublishSeasonMutation,
+  usePublishNewSeasonMutation,
 } = seasonsApi;

@@ -35,9 +35,8 @@ const ParticipantsSection = () => {
         decision,
       }).unwrap();
 
-      const successMsg = actionType === "approve"
-        ? "تم قبول المشارك بنجاح. سيتم إرسال الإشعار."
-        : "تم رفض المشارك. سيتم إرسال الإشعار.";
+      const successMsg = actionType === "accept"
+        ? "تم قبول المشارك بنجاح. سيتم إرسال الإشعار.": "تم رفض المشارك. سيتم إرسال الإشعار.";
       showSuccess(successMsg);
       setIsModalOpen(false);
       refetch(); // تحديث القائمة (سيختفي المشارك بعد القرار)

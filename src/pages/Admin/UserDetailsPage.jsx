@@ -32,6 +32,7 @@ const UserDetailsPage = () => {
       console.log("البيانات القادمة من الباك إند:", serverUser);
     }
   }, [serverUser]);
+
   const [freezeUser] = useFreezeUserMutation();
   const [activateUser] = useActivateUserMutation();
   const [updateUserRoles] = useUpdateUserRolesMutation();
@@ -198,7 +199,8 @@ const UserDetailsPage = () => {
     navigate(`/workshopinfo/${taskId}`);
 
   const handleViewProject = (projectId) =>
-    navigate(`/projectinfo/${projectId}`);
+
+    navigate(`/admin/projects-details/${projectId}`);
 
   if (isLoading) {
     return (

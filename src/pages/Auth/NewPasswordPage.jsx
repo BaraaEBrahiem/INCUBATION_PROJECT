@@ -58,11 +58,13 @@ const NewPasswordPage = () => {
     }
 
     try {
+      
       await newPassword({
-        email: email,
-        otp: otp,
-        new_password: form.password,
-      }).unwrap();
+  email,
+  otp,
+  password: form.password,
+  confirm_password: form.confirmPassword,
+}).unwrap();
 
       // تم بنجاح، التوجيه إلى صفحة تسجيل الدخول
       navigate("/login", { 

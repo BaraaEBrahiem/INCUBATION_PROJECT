@@ -265,7 +265,10 @@ const AppRoutes = () => {
       <Route path="/incubation-projectinfo/:id" element={<IncubationProjectInfoPage />} />
       <Route path="/incubationinfo/:idea_id" element={<IncubationInfoPage />} />
       <Route path="/profileinfo/:userId" element={<ProfileInfoPage />} />
-      <Route path="/public-workshops/:workshop_id" element={<PublicWorkshopDetailsPage />} />
+       <Route
+            path="/public-workshops/:workshop_id"
+            element={<PublicWorkshopDetailsPage />}
+          />
 
       {/* ---------------- Admin ---------------- */}
       {roles.includes("admin") && (
