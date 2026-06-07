@@ -1,9 +1,8 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom"; 
 import { useRole } from "../hooks/useRole";
 import { useMemo } from "react";
-import { buildUserNavOptions } from"../Utils/BulidUserNavOptions";
-import AssignIncubationEvaluatorsPage
-from "../pages/Admin/AssignIncubationEvaluatorsPage";
+import { buildUserNavOptions } from "../Utils/BulidUserNavOptions";
+import AssignIncubationEvaluatorsPage from "../pages/Admin/AssignIncubationEvaluatorsPage";
 import DashboardLayout from "./layout/DashboardLayout";
 import AdminLayout from "./Layout/AdminLayout";
 
@@ -23,7 +22,6 @@ import VolunteerFormPage from "../pages/Shared/VolunteerFormPage";
 
 import MainLayout from "./Layout/MainLayout";
 import UserNavbar from "./UserNavbar";
-
 
 import VisitorMainPage from "../pages/Visitor/VisitorMainPage";
 import ProjectsPage from "../pages/Shared/ProjectsPage";
@@ -73,7 +71,7 @@ import VolunteerRequestPage from "../pages/Admin/VolunteerRequestPage";
 import VolunteersPage from "../pages/Admin/VolunteersPage";
 import AdminSettingsPage from "../pages/Admin/AdminSettingsPage";
 import IncubationSeasonsPage from "../pages/Admin/IncubationSeasonsPage";
-import SeasonDetailsPage from "../pages/Admin/SeasonDetailsPage"
+import SeasonDetailsPage from "../pages/Admin/SeasonDetailsPage";
 import IncubationRequestDetails from "../pages/Admin/IncubationRequestDetails";
 import CreateSeasonPage from "../pages/Admin/CreateSeasonPage";
 import PreviewFormPage from "../pages/Admin/PreviewFormPage";
@@ -90,7 +88,7 @@ import LatestReviewPage from "../pages/Admin/LatestReviewPage";
 import AdminProjectsDetailsPage from "../pages/Admin/AdminProjectsDetailsPage";
 import GraduatedProjectsPage from "../pages/Admin/GraduatedProjectsPage";
 import CampWorkshopsPage from "../pages/Volunteer/CampWorkshopsPage";
-import CampProjectsPage from '../pages/Volunteer/CampProjectsPage';
+import CampProjectsPage from "../pages/Volunteer/CampProjectsPage";
 import SelectingVolunteerPage from "../pages/Admin/SelectingVolunteerPage";
 
 import IncubationReviewPage from "../pages/Evaluation/IncubationReviewPage";
@@ -99,13 +97,13 @@ import IncubationProjectInfoPage from "../pages/Incubation/IncubationProjectInfo
 import PublicWorkshopDetailsPage from "../pages/Volunteer/PublicWorkshopDetailsPage";
 
 const AppRoutes = () => {
-   const { roles } = useRole();
-    const userNavOptions = useMemo(() => {
-        return buildUserNavOptions(roles || []);
-    }, [roles]);
+  const { roles } = useRole();
+  const userNavOptions = useMemo(() => {
+    return buildUserNavOptions(roles || []);
+  }, [roles]);
+
   return (
     <Routes>
-
       {/* Landing Routes */}
       <Route path="/" element={<LandingPage1 />} />
       <Route path="/about" element={<LandingPage2 />} />
@@ -122,26 +120,31 @@ const AppRoutes = () => {
       <Route path="/ideaform" element={<IdeaFormPage />} />
       <Route path="/volunteerform" element={<VolunteerFormPage />} />
 
-      {/* ---------------- VISITOR ---------------- */}
-      {roles.includes("visitor") && (
-        <Route element={<MainLayout header={<UserNavbar navOptions={userNavOptions} />} footer={null} />}>
-          <Route path="/visitor-mainpage" element={<VisitorMainPage />} />
-          <Route path="/projectspage" element={<ProjectsPage />} />
-          <Route path="/activitiespage" element={<ActivitiesPage />} />
-          <Route path="/favoritespage" element={<FavoritesPage />} />
-          <Route path="/notificationspage" element={<NotificationsPage />} />
-          <Route path="/messagespage" element={<MessagesPage />} />
-        </Route>
-      )}
+      {/* ---------------- VISITOR (تم تفكيك الـ && لحماية الـ DOM من الشلل الـ Routing) ---------------- */}
+      <Route element={<MainLayout header={<UserNavbar navOptions={userNavOptions} />} footer={null} />}>
+       <Route 
+    path="/visitor-mainpage" 
+    element={
+      roles.includes("visitor") || localStorage.getItem("access_token") ? (
+        <VisitorMainPage />
+      ) : (
+        <Navigate to="/login" replace />
+      )
+    } 
+  />
+        <Route path="/projectspage" element={<ProjectsPage />} />
+        <Route path="/activitiespage" element={<ActivitiesPage />} />
+        <Route path="/favoritespage" element={<FavoritesPage />} />
+        <Route path="/notificationspage" element={<NotificationsPage />} />
+        <Route path="/messagespage" element={<MessagesPage />} />
+      </Route>
 
-      {roles.includes("visitor") && (
-        <Route element={<DashboardLayout roles={roles} userName="" email="" />}>
-          <Route path="/profile" element={<ProfilePage userName="" email="" />} />
-          <Route path="/contact" element={<ContactPage />} />
-          <Route path="/settings" element={<SettingsPage />} />
-          <Route path="/change-password" element={<ChangePasswordPage />} />
-        </Route>
-      )}
+      <Route element={<DashboardLayout roles={roles} userName="" email="" />}>
+        <Route path="/profile" element={<ProfilePage userName="" email="" />} />
+        <Route path="/contact" element={<ContactPage />} />
+        <Route path="/settings" element={<SettingsPage />} />
+        <Route path="/change-password" element={<ChangePasswordPage />} />
+      </Route>
 
       {/* ---------------- IDEA OWNER ---------------- */}
       {roles.includes("idea_owner") && (
@@ -181,7 +184,7 @@ const AppRoutes = () => {
           <Route path="/workshopinfo/:id" element={<WorkshopInfoPage />} />
           <Route path="/assigned-projects-page" element={<AssignedProjectsPage />} />
           <Route path="/volunteer-request/:id" element={<VolunteerRequestDetailsPage />} />
-          <Route path="/CampWorkShopsPage" element={<CampWorkshopsPage/>}/>
+          <Route path="/CampWorkShopsPage" element={<CampWorkshopsPage />} />
           <Route path="/CampProjectsPage/:workshopId" element={<CampProjectsPage />} />
         </Route>
       )}
@@ -204,7 +207,6 @@ const AppRoutes = () => {
           <Route path="/activitiespage" element={<ActivitiesPage />} />
           <Route path="/notificationspage" element={<NotificationsPage />} />
           <Route path="/messagespage" element={<MessagesPage />} />
-          
         </Route>
       )}
 
@@ -216,18 +218,15 @@ const AppRoutes = () => {
           <Route path="/change-password" element={<ChangePasswordPage />} />
           <Route path="/evaluation-center" element={<EvaluationCenterPage />} />
           <Route path="/volunteer-center" element={<VolunteerCenterPage />} />
-           <Route path="/requests-page" element={<VolunteerRequestsPage />} />
+          <Route path="/requests-page" element={<VolunteerRequestsPage />} />
           <Route path="/workshop-page" element={<WorkshopsPage />} />
-           <Route path="/workshopinfo/:id" element={<WorkshopInfoPage />} />
-           <Route path="/schedule-page" element={<ScheduleManagementPage />} />
-            <Route path="/evaluationform/:idea_id" element={<EvaluationFormPage />} />
-            <Route path="/notes/:idea_id" element={<NotesPage />} />
-           <Route path="/assigned-projects-page" element={<AssignedProjectsPage />} />
+          <Route path="/workshopinfo/:id" element={<WorkshopInfoPage />} />
+          <Route path="/schedule-page" element={<ScheduleManagementPage />} />
+          <Route path="/evaluationform/:idea_id" element={<EvaluationFormPage />} />
+          <Route path="/notes/:idea_id" element={<NotesPage />} />
+          <Route path="/assigned-projects-page" element={<AssignedProjectsPage />} />
           <Route path="/volunteer-request/:id" element={<VolunteerRequestDetailsPage />} />
-          <Route
-            path="/incubation-review/:idea_id"
-            element={<IncubationReviewPage />}
-          />
+          <Route path="/incubation-review/:idea_id" element={<IncubationReviewPage />} />
         </Route>
       )}
 
@@ -239,7 +238,7 @@ const AppRoutes = () => {
           <Route path="/activitiespage" element={<ActivitiesPage />} />
           <Route path="/notificationspage" element={<NotificationsPage />} />
           <Route path="/messagespage" element={<MessagesPage />} />
-           <Route path="/incubation-stages" element={<IncubationStagesPage />} />
+          <Route path="/incubation-stages" element={<IncubationStagesPage />} />
         </Route>
       )}
 
@@ -256,7 +255,7 @@ const AppRoutes = () => {
       )}
 
       {/* صفحات مشتركة */}
-       <Route path="/workshopinfo/:id" element={<WorkshopInfoPage />} />
+      <Route path="/workshopinfo/:id" element={<WorkshopInfoPage />} />
       <Route path="/evaluationform" element={<EvaluationFormPage />} />
       <Route path="/notes" element={<NotesPage />} />
       <Route path="/exhibition-card/:id" element={<ExhibitionCardPage />} />
@@ -266,12 +265,9 @@ const AppRoutes = () => {
       <Route path="/incubation-projectinfo/:id" element={<IncubationProjectInfoPage />} />
       <Route path="/incubationinfo/:idea_id" element={<IncubationInfoPage />} />
       <Route path="/profileinfo/:userId" element={<ProfileInfoPage />} />
-       <Route
-            path="/public-workshops/:workshop_id"
-            element={<PublicWorkshopDetailsPage />}
-          />
+      <Route path="/public-workshops/:workshop_id" element={<PublicWorkshopDetailsPage />} />
 
-     {/* ---------------- Admin ---------------- */}
+      {/* ---------------- Admin ---------------- */}
       {roles.includes("admin") && (
         <Route element={<AdminLayout adminName="" email="" />}>
           <Route path="/admin-mainpage" element={<AdminMainPage />} />
@@ -289,31 +285,29 @@ const AppRoutes = () => {
           <Route path="/admin/incubated" element={<IncubatedPage />} />
           <Route path="/admin/workshops" element={<WorkshopsTablePage />} />
           <Route path="/workshops/:id" element={<WorkshopDetailsPage />} />
-          <Route path="/admin/evaluation" element={<EvaluationManagementPage/>} />
-          <Route path= "/admin/assign-evaluators/:id" element={<AssignEvaluatorsPage />} />
+          <Route path="/admin/evaluation" element={<EvaluationManagementPage />} />
+          <Route path="/admin/assign-evaluators/:id" element={<AssignEvaluatorsPage />} />
           <Route path="/admin/assigned-projects" element={<ProjectsManagementPage />} />
-          <Route path="/admin/exhibition" element={<ExhibitionManagementPage/>} />
+          <Route path="/admin/exhibition" element={<ExhibitionManagementPage />} />
           <Route path="/requests-details/:submissionId" element={<CardRequestDetailsPage />} />
-           <Route path="/Selectingvolunteer/:teamRequestId" element={<SelectingVolunteerPage />} />
+          <Route path="/Selectingvolunteer/:teamRequestId" element={<SelectingVolunteerPage />} />
         </Route>
-      )} 
-      {roles.includes("admin") && (
-      <Route>
-      <Route path="/admin/users/:id" element={<UserDetailsPage />} />
-      <Route path="/admin/incubation_seasons/applications/:id" element={<IncubationRequestDetails />} />
-      <Route path="/admin/tasks/:taskId" element={<TaskDetailsPage />} />
-      <Route path="/admin/details/:id" element={<VolunteerRequestPage />} />
-      <Route path="/messagespage" element={<MessagesPage />} />
-      <Route path="/notificationspage" element={<NotificationsPage />} />
-      <Route path="/projectspage" element={<ProjectsPage />} />
-      <Route path="/admin/assign-incubation-evaluators/:id" element={<AssignIncubationEvaluatorsPage />}/>
-      <Route path="/admin/latest-review/:idea_id" element={<LatestReviewPage />} />
-      <Route path="/admin/projects-details/:id" element={<AdminProjectsDetailsPage />} />
-      <Route path="/admin/graduated-projects" element= {<GraduatedProjectsPage/>} />
-      
-      </Route>
       )}
-      
+      {roles.includes("admin") && (
+        <Route>
+          <Route path="/admin/users/:id" element={<UserDetailsPage />} />
+          <Route path="/admin/incubation_seasons/applications/:id" element={<IncubationRequestDetails />} />
+          <Route path="/admin/tasks/:taskId" element={<TaskDetailsPage />} />
+          <Route path="/admin/details/:id" element={<VolunteerRequestPage />} />
+          <Route path="/messagespage" element={<MessagesPage />} />
+          <Route path="/notificationspage" element={<NotificationsPage />} />
+          <Route path="/projectspage" element={<ProjectsPage />} />
+          <Route path="/admin/assign-incubation-evaluators/:id" element={<AssignIncubationEvaluatorsPage />} />
+          <Route path="/admin/latest-review/:idea_id" element={<LatestReviewPage />} />
+          <Route path="/admin/projects-details/:id" element={<AdminProjectsDetailsPage />} />
+          <Route path="/admin/graduated-projects" element={<GraduatedProjectsPage />} />
+        </Route>
+      )}
     </Routes>
   );
 };
