@@ -1,19 +1,20 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
-import App from "./App";
-import { RoleProvider } from "./Context/RoleContext";
-import { Provider } from "react-redux";
-import store from "./Redux/store"
 
-ReactDOM.createRoot(document.getElementById("root")).render(
-  <Provider store={store}>
+import { Provider } from "react-redux";
+
+import store from "./Redux/store";
+import App from "./App";
+
+ReactDOM.createRoot(
+  document.getElementById("root")
+).render(
   <React.StrictMode>
-    <BrowserRouter>
-      <RoleProvider>
+    <Provider store={store}>
+      <BrowserRouter>
         <App />
-      </RoleProvider>
-    </BrowserRouter>
+      </BrowserRouter>
+    </Provider>
   </React.StrictMode>
-  </Provider>
 );

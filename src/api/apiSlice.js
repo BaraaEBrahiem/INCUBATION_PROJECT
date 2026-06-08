@@ -51,7 +51,7 @@ const baseQueryWithReauth = async (args, api, extraOptions) => {
         // إرسال طلب التجديد للسيرفر
         const refreshResult = await baseQuery(
           {
-            url: "accounts/token/refresh/", // 👈 مسار نظيف يتوافق مع الـ baseUrl
+            url: "accounts/token/refresh/", //  مسار نظيف يتوافق مع الـ baseUrl
             method: "POST",
             body: { refresh: refreshToken },
           },
@@ -100,6 +100,7 @@ export const apiSlice = createApi({
     "ExhibitionsList", "ExhibitionForm", "IncubationSeasons",
     "IncubationRequests", 'GraduatedProjects', 'CampProjects',
     'AdminUser', 'Ideas', 'FormStructure', 'IdeaFormConfig', 'ChatSessions', 'ChatDetails',
+    "Conversations"
   ],
   endpoints: () => ({}),
 });
