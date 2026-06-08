@@ -1,9 +1,9 @@
 const WorkshopCard = ({ workshop, status }) => {
 
   const statusStyles = {
-    pending: "text-yellow-600",
-    rejected: "text-red-color",
-    accepted: "text-green-color"
+    PENDING: "text-yellow-600",
+    REJECTED: "text-red-color",
+    ACCEPTED: "text-green-color"
   }
 
 return (

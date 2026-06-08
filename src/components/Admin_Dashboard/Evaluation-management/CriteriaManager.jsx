@@ -65,65 +65,42 @@ const CriteriaManager = () => {
   // تعديل معيار
   const updateTimers = {};
 
-const updateCriterion = (
-  id,
-  field,
-  value
-) => {
-  // حدّث الواجهة مباشرة
-  setCriteria((prev) => {
-    const updated = prev.map((c) =>
-      c.id === id
-        ? { ...c, [field]: value }
-        : c
-    );
-
-    // جيب العنصر المحدث
-    const updatedCriterion =
-      updated.find(
-        (c) => c.id === id
+  const updateCriterion = (id, field, value) => {
+    setCriteria((prev) => {
+      const updated = prev.map((c) =>
+        c.id === id ? { ...c, [field]: value } : c
       );
 
-    // امسح التايمر القديم
-    if (updateTimers[id]) {
-      clearTimeout(
-        updateTimers[id]
-      );
-    }
+      const updatedCriterion = updated.find((c) => c.id === id);
 
-    // debounce
-    updateTimers[id] =
-  setTimeout(async () => {
-    // لا تبعث إذا العنوان فاضي
-    if (
-      !updatedCriterion.title?.trim()
-    ) {
-      return;
-    }
+      if (updateTimers[id]) {
+        clearTimeout(updateTimers[id]);
+      }
 
-    try {
-      await updateCriterionApi({
-        id,
-        title:
-          updatedCriterion.title,
-        max_score:
-          Number(
-            updatedCriterion.max_score
-          ),
-      }).unwrap();
-    } catch (err) {
-      console.error(err);
-      showError(
-        err?.data?.detail ||
-          err?.data?.message ||
-          "فشل تعديل المعيار"
-      );
-    }
-  }, 700);
+      updateTimers[id] = setTimeout(async () => {
+        if (!updatedCriterion?.title?.trim()) {
+          return;
+        }
 
-    return updated;
-  });
-};
+        try {
+          await updateCriterionApi({
+            id,
+            title: updatedCriterion.title,
+            max_score: Number(updatedCriterion.max_score),
+          }).unwrap();
+        } catch (err) {
+          console.error(err);
+          showError(
+            err?.data?.detail ||
+              err?.data?.message ||
+              "فشل تعديل المعيار"
+          );
+        }
+      }, 700);
+
+      return updated;
+    });
+  };
 
   // حذف معيار
   const deleteCriterion =

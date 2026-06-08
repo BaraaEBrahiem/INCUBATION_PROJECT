@@ -14,6 +14,7 @@ import {
   useSaveFormStepMutation,
   useSubmitFinalIdeaMutation,
 } from "../../api/endpoints/ideaSubmissionApi";
+import { showInfo } from "../../Utils/toast";
 
 const IdeaForm = ({ seasonId, onSubmit }) => {
   const {
@@ -49,7 +50,7 @@ const IdeaForm = ({ seasonId, onSubmit }) => {
       type: "SET_DRAFT",
       payload: formData.draft_data || {},
     });
-
+   //eslint-disable-next-line react-hooks/exhaustive-deps
     setCurrentStep(
       (formData.current_step || 1) - 1
     );
@@ -150,7 +151,7 @@ const IdeaForm = ({ seasonId, onSubmit }) => {
   console.log("FULL ERROR", error);
   console.log("ERROR DATA", error?.data);
 
-  alert(
+  showInfo(
     JSON.stringify(
       error?.data,
       null,

@@ -4,7 +4,7 @@ import WorkshopStepOne from "../../components/Workshop/WorkshopStepOne";
 import WorkshopStepTwo from "../../components/Workshop/WorkshopStepTwo";
 import { useAddWorkshopMutation } from "../../api/endpoints/workshopsApi";
 
-import {showError} from "../../Utils/toast"
+import {showError, showSuccess} from "../../Utils/toast"
 
 
 const AddWorkshopPage = () => {
@@ -92,7 +92,7 @@ if (formData.image instanceof File) {
 
 try {
   await addWorkshop(form).unwrap();
-      alert("تم حفظ الورشة بنجاح");
+      showSuccess("تم اضافة الورشة بنجاح");
       setFormData({
         time_from: "",
         time_to: "",

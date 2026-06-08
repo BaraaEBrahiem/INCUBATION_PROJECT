@@ -281,15 +281,22 @@ const VolunteerRequestPage = () => {
 </InfoRow>
 
 
-          <InfoRow label="مجالات الخبرة الإضافية">
+   <InfoRow label="مجالات الخبرة الإضافية">
   <div className="flex flex-col gap-1">
-    {request.additional_skills?.map((skill, index) => (
-      <div key={index}>
-        {typeof skill === "object"
-          ? Object.values(skill).join(" - ")
-          : skill}
-      </div>
-    ))}
+    {Array.isArray(request.additional_skills) ? (
+      request.additional_skills.map((skill, index) => (
+        <div key={index}>
+          {typeof skill === "object"
+            ? Object.values(skill).join(" - ")
+            : skill}
+        </div>
+      ))
+    ) : typeof request.additional_skills === "string" && request.additional_skills.trim() !== "" ? (
+
+      <div>{request.additional_skills}</div>
+    ) : (
+      <div className="text-gray-400">لا يوجد مهارات إضافية</div>
+    )}
   </div>
 </InfoRow>
               

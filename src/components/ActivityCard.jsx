@@ -11,8 +11,8 @@ const ActivityCard = ({
     children
   })=> {
   return (
-    <div className="bg-white rounded-lg shadow overflow-hidden mb-4">
-      <img src={image} alt={title} className="w-full h-40 object-cover" />
+    <div className="bg-white rounded-lg shadow overflow-hidden mb-4 w-[350px]">
+      <img src={image} alt={title} className="w-full h-45 object-cover" />
       <div className="p-4">
         <div className="flex justify-between items-center mb-2">
           <p><RxCountdownTimer className="inline-block mx-1 text-second-color"/>{status}</p>

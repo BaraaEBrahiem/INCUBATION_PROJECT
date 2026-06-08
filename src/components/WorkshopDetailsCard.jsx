@@ -139,7 +139,7 @@ const WorkshopDetailsCard = ({
 
             <p className="text-lg">
               <span className="font-bold">
-                الفئة:
+               📌 الفئة:
               </span>{" "}
               {workshop?.category ||
                 "غير محدد"}
@@ -147,7 +147,7 @@ const WorkshopDetailsCard = ({
 
             <p className="text-lg">
   <span className="font-bold">
-    الأهداف:
+    📌 الأهداف:
   </span>
 
   {workshop?.objectives ? (
@@ -175,7 +175,7 @@ const WorkshopDetailsCard = ({
 
             <p className="text-lg">
               <span className="font-bold">
-                الفئة المستهدفة:
+                📌 الفئة المستهدفة:
               </span>{" "}
               {workshop?.target_audience ||
                 "غير محدد"}
@@ -183,7 +183,7 @@ const WorkshopDetailsCard = ({
 
             <p className="text-lg">
               <span className="font-bold">
-                تاريخ البداية:
+                📅تاريخ البداية:
               </span>{" "}
               {
                 workshop?.start_date
@@ -192,7 +192,7 @@ const WorkshopDetailsCard = ({
 
             <p className="text-lg">
               <span className="font-bold">
-                تاريخ النهاية:
+                📅تاريخ النهاية:
               </span>{" "}
               {
                 workshop?.end_date
@@ -201,7 +201,7 @@ const WorkshopDetailsCard = ({
 
             <p className="text-lg">
               <span className="font-bold">
-                الوقت:
+                🕒 الوقت:
               </span>{" "}
               {
                 workshop?.time_from
@@ -214,7 +214,7 @@ const WorkshopDetailsCard = ({
 
             <p className="text-lg">
   <span className="font-bold">
-    الأيام:
+    📆 الأيام:
   </span>
 
   <div className="mt-2 space-y-1">
@@ -264,7 +264,7 @@ const WorkshopDetailsCard = ({
 
             <p className="text-lg">
               <span className="font-bold">
-                عدد الجلسات:
+               📌 عدد الجلسات:
               </span>{" "}
               {workshop?.sessions ||
                 0}
@@ -272,7 +272,7 @@ const WorkshopDetailsCard = ({
 
             <p className="text-lg">
   <span className="font-bold">
-    الحالة:
+    📌 الحالة:
   </span>{" "}
   <span
     className={`font-bold ${
@@ -303,7 +303,7 @@ const WorkshopDetailsCard = ({
               "REJECTED" && (
               <div className="bg-red-50 border border-red-200 rounded-xl p-4">
                 <h3 className="font-bold text-red-600 mb-2">
-                  سبب الرفض
+                  📌 سبب الرفض
                 </h3>
 
                 <p className="text-gray-700">

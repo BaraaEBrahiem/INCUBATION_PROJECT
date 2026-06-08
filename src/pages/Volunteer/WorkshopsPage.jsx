@@ -1,113 +1,108 @@
- import React from 'react';
+import React from 'react';
 import Button from '../../components/Button';
 import NavLinkUniversal from '../../components/NavLinkUniversal';
 import { useGetAllWorkshopsQuery } from '../../api/endpoints/workshopsApi';
 
 const WorkshopsPage = () => {
-  
-  //  بعد الربط هذا السطر بدل البيانات الثابتة
-const { data: workshopsFromApi = [], isLoading, error, refetch } = useGetAllWorkshopsQuery();
-  
-
+  const { data: workshopsFromApi = [], isLoading, error, refetch } = useGetAllWorkshopsQuery();
   const workshops = workshopsFromApi;
- 
 
-   if (isLoading) {
+  if (isLoading) {
+    return (
+      <div className="bg-white-color min-h-screen bg-gray-50 p-8 flex justify-center items-start">
+        <div className="w-full text-center">
+          <p>جاري تحميل الورشات...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
     return (
       <div className="bg-white-color min-h-screen bg-gray-50 p-8 flex justify-center items-start">
         <div className="w-full max-w-6xl text-center">
-           <p>جاري تحميل الورشات...</p>
+          <NavLinkUniversal 
+            label={
+              <Button
+                label={"إضافة ورشة"}
+                className='bg-main-color hover:bg-main-color/90 transition-colors'
+              />
+            }
+            to={"/AddworkshopPage"} 
+          />
+          <div className="w-full text-center mt-4">
+            <p className="text-red-500">حدث خطأ في تحميل الورشات</p>
+            <Button label="إعادة المحاولة" onClick={refetch} className="bg-main-color mt-4" />
+          </div>
         </div>
-       </div>
-     );
-   }
-
-   if (error) {
-     return (
-       <div className="bg-white-color min-h-screen bg-gray-50 p-8 flex justify-center items-start">
-         <div className="w-full max-w-6xl text-center">
-           <p className="text-red-500">حدث خطأ في تحميل الورشات</p>
-           <Button label="إعادة المحاولة" onClick={refetch} className="bg-main-color mt-4" />
-         </div>
-       </div>
-     );
-   }
+      </div>
+    );
+  }
 
   const getStatusText = (status) => {
     switch (status) {
-      case "ACCEPTED":
-        return "مقبولة";
-
-      case "REJECTED":
-        return "مرفوضة";
-
-      case "PENDING":
-        return "قيد المراجعة";
-
-      default:
-        return status;
+      case "ACCEPTED": return "مقبولة";
+      case "REJECTED": return "مرفوضة";
+      case "PENDING": return "قيد المراجعة";
+      default: return status;
     }
   };
 
-  // دالة لتحديد لون الحالة
   const getStatusColor = (status) => {
     switch (status) {
-      case "ACCEPTED":
-        return "text-green-600";
-      case "REJECTED":
-        return "text-red-600";
-      case "PENDING":
-        return "text-yellow-600";
-      default:
-        return "text-gray-600";
+      case "ACCEPTED": return "text-green-600";
+      case "REJECTED": return "text-red-600";
+      case "PENDING": return "text-yellow-600";
+      default: return "text-gray-600";
     }
   };
 
   return (
-    <div className="bg-white-color min-h-screen bg-gray-50 p-8 flex justify-center items-start">
-      <div className="w-full max-w-6xl">
-        <h2 className="text-second-color text-2xl font-bold m-6">ورش العمل</h2>
+    <div className="bg-white-color min-h-screen bg-gray-50 p-6 w-full flex justify-center items-start">
+      {/* 🚀 قمنا بتغيير max-w-6xl إلى w-full لتكبير المساحة بالكامل */}
+      <div className="w-full px-4"> 
+        <h2 className="text-second-color text-2xl font-bold my-6">ورش العمل</h2>
 
-        <div className="bg-white rounded-lg shadow-lg shadow-gray-400 border border-gray-100 p-8" dir='rtl'>
-          
+        <div className="bg-white rounded-lg shadow-lg shadow-gray-400 border border-gray-100 p-6" dir='rtl'>
           <h2 className="text-right text-xl font-bold mb-6 text-black">ورشاتي</h2>
 
-          <div className="overflow-x-auto">
-            <table className="w-full border-collapse">
+          {/* 🚀 إزالة السكرول الأفقي تماماً وجعل الجدول مفروداً بالكامل */}
+          <div className="w-full">
+            <table className="w-full border-collapse table-auto">
               <thead>
-                <tr className="border-b-2 border-second-color font-bold pb-4 px-2 whitespace-nowrap">
-                  <th>اسم الورشة</th>
-                  <th>البدء</th>
-                  <th>الانتهاء</th>
-                  <th>عدد الجلسات</th>
-                  <th>الايام</th>
-                  <th>الوقت</th>
-                  <th>المجال</th>
-                  <th>الحالة</th>
-                  <th>الاجراء</th>
+                <tr className="border-b-2 border-second-color font-bold pb-4 text-right whitespace-nowrap bg-gray-50/70">
+                  <th className="py-4 px-4 text-right text-sm md:text-base">اسم الورشة</th>
+                  <th className="py-4 px-4 text-right text-sm md:text-base">البدء</th>
+                  <th className="py-4 px-4 text-right text-sm md:text-base">الانتهاء</th>
+                  <th className="py-4 px-4 text-center text-sm md:text-base">عدد الجلسات</th>
+                  <th className="py-4 px-4 text-right text-sm md:text-base">الأيام</th>
+                  <th className="py-4 px-4 text-right text-sm md:text-base">الوقت</th>
+                  <th className="py-4 px-4 text-right text-sm md:text-base">المجال</th>
+                  <th className="py-4 px-4 text-right text-sm md:text-base">الحالة</th>
+                  <th className="py-4 px-4 text-center text-sm md:text-base">الإجراء</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-50">
+              <tbody className="divide-y divide-gray-100">
                 {workshops.map((item) => (
-                  <tr key={item.id} className="text-md">
-                    <td className="py-6 px-2">{item.title}</td>
-                    <td className="py-6 px-2">{item.start_date}</td>
-                    <td className="py-6 px-2">{item.end_date}</td>
-                    <td className="py-6 px-2">{item.sessions}</td>
-                    <td className="py-6 px-2 leading-relaxed">{item.days}</td>
-                    <td className="py-6 px-2">{item.time_from} - {item.time_to}</td>
-                    <td className="py-6 px-2">{item.category}</td>
-                    <td className="py-6 px-2">
-                      <span className={getStatusColor(item.status)}>
+                  <tr key={item.id} className="text-md hover:bg-gray-50/50 transition-colors whitespace-nowrap">
+                    {/* 🚀 تركنا اسم الورشة يأخذ المساحة المريحة له دون قص جبري قاسي */}
+                    <td className="py-5 px-4 text-right font-medium text-black">{item.title}</td>
+                    <td className="py-5 px-4 text-right text-gray-600">{item.start_date}</td>
+                    <td className="py-5 px-4 text-right text-gray-600">{item.end_date}</td>
+                    <td className="py-5 px-4 text-center text-gray-600">{item.sessions}</td>
+                    <td className="py-5 px-4 text-right text-gray-600 leading-relaxed">{item.days}</td>
+                    <td className="py-5 px-4 text-right text-gray-600">{item.time_from} - {item.time_to}</td>
+                    <td className="py-5 px-4 text-right text-gray-500">{item.category}</td>
+                    <td className="py-5 px-4 text-right">
+                      <span className={`${getStatusColor(item.status)} font-semibold`}>
                         {getStatusText(item.status)}
                       </span>
                     </td>
-                    <td className="py-4">
+                    <td className="py-4 px-4 text-center">
                       <NavLinkUniversal 
-                        label={<Button label="عرض التفاصيل" className="bg-main-color"/>}
+                        label={<Button label="عرض التفاصيل" className="bg-main-color px-4 py-1.5 text-sm rounded"/>}
                         to={`/workshopinfo/${item.id}`} 
                       />
-                    
                     </td>
                   </tr>
                 ))}
@@ -115,16 +110,14 @@ const { data: workshopsFromApi = [], isLoading, error, refetch } = useGetAllWork
             </table>
           </div>
 
-          <div className="flex flex-col items-start mt-6 gap-3">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center mt-8 gap-4">
             <NavLinkUniversal 
-              label={<Button label="اضافة ورشة تدريب" className="bg-main-color text-white px-6 py-2 rounded-md" />}
-               يمكنك تعديل المسار حسب مشروعك
-           to = "/AddWorkShopPage"
-           />
+              label={<Button label="إضافة ورشة تدريب" className="bg-main-color text-white px-6 py-2 rounded-md" />}
+              to="/AddWorkShopPage"
+            />
             <NavLinkUniversal 
-            
-          label={<Button label="ورشات المعسكر" className="bg-main-color text-white px-6 py-2 rounded-md" />}
-          to= "/CampWorkShopsPage"
+              label={<Button label="ورشات المعسكر" className="bg-main-color text-white px-6 py-2 rounded-md" />}
+              to="/CampWorkShopsPage"
             />
           </div>
 

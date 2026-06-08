@@ -51,7 +51,7 @@ const IncubationSeasonsPage = () => {
       render: (row) => {
         const phase = row.status?.phase?.toString().toUpperCase().trim() || "";
         const getPhaseLabel = () => {
-          if (row.status?.is_open) return "قيد التتقديم";
+          if (row.status?.is_open) return "قيد التقديم";
           
           switch (phase) {
             case "SUBMISSION": return "قيد التقديم";

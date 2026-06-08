@@ -99,7 +99,7 @@ export const apiSlice = createApi({
     "Exhibition", "ExhibitionProjects", "ExhibitionCardRequests",
     "ExhibitionsList", "ExhibitionForm", "IncubationSeasons",
     "IncubationRequests", 'GraduatedProjects', 'CampProjects',
-    'AdminUser', 'Ideas', 'FormStructure', 'IdeaFormConfig'
+    'AdminUser', 'Ideas', 'FormStructure', 'IdeaFormConfig', 'ChatSessions', 'ChatDetails',
   ],
   endpoints: () => ({}),
 });

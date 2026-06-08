@@ -64,30 +64,19 @@ const PublicWorkshopDetailsPage = () => {
   }
 
   return (
-    <div className="container mx-auto py-8">
-
-      <div className="bg-white rounded-lg shadow-lg p-8">
-
-        <h1 className="text-3xl font-bold text-second-color mb-6 text-right">
+    <div className="container mx-auto py-20"> 
+    <h1 className="text-3xl font-bold text-second-color mb-3 text-right">
           {workshop.title}
         </h1>
-
-        {workshop.image && (
-  <img
-    src={workshop.image}
-    alt={workshop.title}
-    className="w-full h-96 object-cover rounded-lg mb-6"
-  />
-)}
-
+      <div className="flex justify-center items-center gap-4 p-8">
         <div
-          className="space-y-4 text-right"
+          className="space-y-8 text-right"
           dir="rtl"
         >
 
           <div>
-            <span className="font-bold">
-              الوصف:
+            <span className="font-bold pb-5">
+             📌 الوصف:
             </span>
             <p className="mt-2">
               {workshop.description}
@@ -96,21 +85,21 @@ const PublicWorkshopDetailsPage = () => {
 
           <div>
             <span className="font-bold">
-              تاريخ البدء:
+             📅 تاريخ البدء:
             </span>{" "}
             {workshop.start_date}
           </div>
 
           <div>
             <span className="font-bold">
-              أيام الورشة:
+             📆 أيام الورشة:
             </span>{" "}
             {workshop.days}
           </div>
 
           <div>
             <span className="font-bold">
-              الوقت:
+             🕒 الوقت:
             </span>{" "}
             {formatTime(workshop.time_from)}
             {" - "}
@@ -119,14 +108,23 @@ const PublicWorkshopDetailsPage = () => {
 
           <div>
             <span className="font-bold">
-              الدورة مناسبة لـ:
+             🎯 الدورة مناسبة لـ:
             </span>{" "}
             {workshop.target_audience}
           </div>
 
         </div>
 
-        <div className="mt-8 flex justify-end">
+        
+       {workshop.image && (
+        <img
+          src={workshop.image}
+          alt={workshop.title}
+          className="w-full h-96 object-cover rounded-lg mb-6"
+        />
+       )}
+      </div>
+<div className="mt-8 flex justify-center">
 
           <Button
             label={
@@ -140,9 +138,6 @@ const PublicWorkshopDetailsPage = () => {
           />
 
         </div>
-
-      </div>
-
     </div>
   );
 };

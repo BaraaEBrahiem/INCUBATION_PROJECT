@@ -42,7 +42,7 @@ return (
       footer={
         <Button
           label="اذهب إلى لوحة التحكم"
-          onClick={() => navigate("/dashboard")}
+          onClick={() => navigate("/profile")}
           className="bg-main-color"
         />
       }

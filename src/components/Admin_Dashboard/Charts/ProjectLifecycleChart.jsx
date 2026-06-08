@@ -87,7 +87,7 @@ const ProjectLifecycleChart = ({ data }) => {
           colors={["#0F766E"]}
           lineWidth={3}
           pointSize={10}
-          pointColor="#ffffff"
+          pointColor="#0F766E"
           pointBorderWidth={3}
           pointBorderColor={{
             from: "serieColor",

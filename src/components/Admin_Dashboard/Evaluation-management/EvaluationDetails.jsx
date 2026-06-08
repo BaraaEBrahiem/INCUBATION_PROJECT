@@ -5,7 +5,6 @@ import Button from "../../Button";
 
 const EvaluationDetails = ({
   evaluators = [],
-  selectedProject,
   onBack,
   onAccept,
   onReject,
@@ -122,21 +121,21 @@ const EvaluationDetails = ({
               {/* الاسم + الصورة */}
               <div className="flex items-start justify-between mb-4">
                 <div className="flex-1">
-                  <h2 className="font-bold text-md text-second-color mb-1">
+                  <h2 className="font-bold text-2xl text-second-color mb-1">
                     {ev.evaluator_name ||
                       "غير معروف"}
                   </h2>
 
-                  <p className="text-sm text-black">
+                  <p className="text-xl text-black">
                     <span className="font-bold">
-                      اختصاص:
+                      اختصاص: <br/>
                     </span>{" "}
                     {ev.specialization ||
                       "-"}
                   </p>
                 </div>
 
-                <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-gray-100 shadow-md">
+                <div className="w-16 h-18 rounded-full overflow-hidden border-2 border-gray-100 shadow-md">
                   <img
                     src={
                       ev.evaluator_image ||
@@ -150,19 +149,11 @@ const EvaluationDetails = ({
 
               {/* الملاحظات */}
               <div className="text-right">
-                <p className="text-md font-bold text-black mb-1">
+                <p className="text-xl font-bold text-black mb-1">
                   الملاحظات:
                 </p>
 
-                <div className="text-sm text-black leading-relaxed space-y-1">
-                  <p>
-                    تكتب هنا ملاحظات
-                    المقيم{" "}
-                    {ev.evaluator_name
-                      ?.split(" ")?.[0] ||
-                      ""}
-                  </p>
-
+                <div className="text-xl text-black leading-relaxed space-y-1">
                   <p className="text-black">
                     "
                     {ev.notes ||

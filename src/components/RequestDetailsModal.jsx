@@ -54,10 +54,10 @@ const RequestDetailsModal = ({
             نوع المهارة المطلوبة :
           </span>
           <span className="text-black">
-  {data?.skill_required
-    ? Object.values(data.skill_required).join(" - ")
-    : "-"}
-</span>
+            {data?.skill_required
+              ? Object.values(data.skill_required)
+              : ""}
+          </span>
 
           <span className="font-bold text-black">
             عدد المتطوعين المطلوبين :

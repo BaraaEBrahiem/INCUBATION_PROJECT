@@ -19,7 +19,7 @@ const CampWorkshopsPage = () => {
   }
 
   return (
-    <div className="bg-gray-50 min-h-screen p-10 flex justify-center items-start">
+    <div className="container  min-h-screen p-10 flex justify-center items-start">
       <div className="w-full max-w-[1400px]">
         
         {/* العناوين الخارجية */}

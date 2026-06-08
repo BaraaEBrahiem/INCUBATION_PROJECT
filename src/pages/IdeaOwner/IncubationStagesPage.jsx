@@ -56,7 +56,7 @@ const IncubationStagesPage = () => {
           </div>
         );
       default:
-        return <div className="text-center mt-10">مرحلة غير معروفة</div>;
+        return <div className="text-center mt-10">مرحلة لم تبدأ بعد</div>;
     }
   };
 

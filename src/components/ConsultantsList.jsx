@@ -63,11 +63,11 @@ const ConsultantsList = ({
             <img src={c.avatar || avatarDefault} className="w-20 h-20 rounded-full object-cover" alt={c.full_name || c.name} />
 
             <div className="flex-1">
-              <p className="font-bold">{c.full_name || c.name}</p>
-              {c.primary_skills && <p className="text-sm font-semibold text-gray-600">{c.primary_skills}</p>}
+              <p className="font-bold text-xl">{c.full_name || c.name}</p>
+              {c.primary_skills && <p className="text-xl font-semibold text-gray-600">{c.primary_skills}</p>}
               
               {c.availability?.map((slot, index) => (
-  <div key={index} className="text-sm text-gray-500">
+  <div key={index} className="text-lg text-gray-500">
     {DAY_TRANSLATIONS[slot.day] || slot.day}
     : من {slot.start_time || slot.from}
     {" "}إلى{" "}
@@ -79,7 +79,7 @@ const ConsultantsList = ({
             {role === "admin" ? (
               <Button
                 label="عرض التفاصيل"
-                className="bg-main-color text-xs md:text-sm px-4 py-2"
+                className="bg-main-color text-xl"
                 onClick={(e) => handleDetails(e, c)}
               />
             ) : (

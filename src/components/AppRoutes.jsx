@@ -95,6 +95,7 @@ import IncubationReviewPage from "../pages/Evaluation/IncubationReviewPage";
 import IncubationProjectInfoPage from "../pages/Incubation/IncubationProjectInfoPage";
 
 import PublicWorkshopDetailsPage from "../pages/Volunteer/PublicWorkshopDetailsPage";
+import AIConsultantChatPage from "../pages/AiConsultantChatPage";
 
 const AppRoutes = () => {
   const { roles } = useRole();
@@ -168,6 +169,7 @@ const AppRoutes = () => {
           <Route path="/team" element={<TeamPage />} />
           <Route path="/consultantslist/:categoryId" element={<ConsultantsListPage />} />
         </Route>
+        
       )}
 
       {/* ---------------- VOLUNTEER ---------------- */}
@@ -179,7 +181,7 @@ const AppRoutes = () => {
           <Route path="/change-password" element={<ChangePasswordPage />} />
           <Route path="/volunteer-center" element={<VolunteerCenterPage />} />
           <Route path="/requests-page" element={<VolunteerRequestsPage />} />
-          <Route path="/workshop-page" element={<WorkshopsPage />} />
+          
           <Route path="/schedule-page" element={<ScheduleManagementPage />} />
           <Route path="/workshopinfo/:id" element={<WorkshopInfoPage />} />
           <Route path="/assigned-projects-page" element={<AssignedProjectsPage />} />
@@ -198,6 +200,7 @@ const AppRoutes = () => {
           <Route path="/messagespage" element={<MessagesPage />} />
         </Route>
       )}
+      <Route path="/workshop-page" element={<WorkshopsPage />} />
 
       {/* ---------------- EVALUATOR ---------------- */}
       {roles.includes("evaluator") && (
@@ -269,6 +272,7 @@ const AppRoutes = () => {
             path="/public-workshops/:workshop_id"
             element={<PublicWorkshopDetailsPage />}
           />
+           <Route path="/ai-consultant/:categoryId" element={<AIConsultantChatPage />}/>
 
       {/* ---------------- Admin ---------------- */}
       {roles.includes("admin") && (
