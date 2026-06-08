@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import ConsultantsList from "../../components/ConsultantsList";
 import LoadingOverlay from "../../components/LoadingOverlay";
 import { showError } from "../../Utils/toast";
-
+import AIConsultantCard from "../../components/AIConsultantCard";
 import { useGetConsultantsBySpecialtyQuery } from "../../api/endpoints/consultantsApi";
 
 const ConsultantsListPage = () => {
@@ -53,11 +53,16 @@ const ConsultantsListPage = () => {
       </div>
 
       {/* عرض قائمة المستشارين أو معالجة حالة المصفوفة الفارغة */}
-      {consultants.length > 0 ? (
-        <div className="bg-white rounded-2xl border border-gray-100 p-4 md:p-6">
-          <ConsultantsList consultants={consultants} />
-        </div>
-      ) : (
+      <div className="bg-white rounded-2xl border border-gray-100 p-4 md:p-6">
+  <AIConsultantCard categoryId={categoryId} />
+</div>
+
+{consultants.length > 0 ? (
+  <div className="bg-white rounded-2xl border border-gray-100 p-4 md:p-6">
+    <ConsultantsList consultants={consultants} />
+  </div>
+) : (
+  
         <div className="flex flex-col items-center justify-center bg-gray-50/50 border border-dashed border-gray-200 rounded-2xl py-16 text-center">
           <span className="text-4xl mb-3">ℹ️</span>
           <p className="text-gray-500 font-bold text-lg">

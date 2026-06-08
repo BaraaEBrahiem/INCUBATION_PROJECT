@@ -97,7 +97,7 @@ import IncubationReviewPage from "../pages/Evaluation/IncubationReviewPage";
 import IncubationProjectInfoPage from "../pages/Incubation/IncubationProjectInfoPage";
 
 import PublicWorkshopDetailsPage from "../pages/Volunteer/PublicWorkshopDetailsPage";
-
+import AIConsultantChatPage from "../pages/AI/AIConsultantChatPage";
 const AppRoutes = () => {
    const { roles } = useRole();
     const userNavOptions = useMemo(() => {
@@ -152,6 +152,7 @@ const AppRoutes = () => {
           <Route path="/notificationspage" element={<NotificationsPage />} />
           <Route path="/messagespage" element={<MessagesPage />} />
           <Route path="/incubation-stages" element={<IncubationStagesPage />} />
+          
         </Route>
       )}
 
@@ -164,6 +165,10 @@ const AppRoutes = () => {
           <Route path="/consultants" element={<ConsultantsPage />} />
           <Route path="/team" element={<TeamPage />} />
           <Route path="/consultantslist/:categoryId" element={<ConsultantsListPage />} />
+          <Route
+  path="/ai-consultant/:categoryId"
+  element={<AIConsultantChatPage />}
+/>
         </Route>
       )}
 
@@ -252,6 +257,10 @@ const AppRoutes = () => {
           <Route path="/consultants" element={<ConsultantsPage />} />
           <Route path="/team" element={<TeamPage />} />
           <Route path="/consultantslist/:categoryId" element={<ConsultantsListPage />} />
+          <Route
+  path="/ai-consultant/:categoryId"
+  element={<AIConsultantChatPage />}
+/>
         </Route>
       )}
 
