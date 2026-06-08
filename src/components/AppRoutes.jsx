@@ -29,8 +29,8 @@ import VisitorMainPage from "../pages/Visitor/VisitorMainPage";
 import ProjectsPage from "../pages/Shared/ProjectsPage";
 import ActivitiesPage from "../pages/Shared/ActivitiesPage";
 import FavoritesPage from "../pages/Visitor/FavoritesPage";
-import NotificationsPage from "../pages/Shared/NotificationsPage";
-import MessagesPage from "../pages/Shared/MessagesPage";
+import NotificationsPage from "../features/notifications/pages/NotificationsPage";
+import MessagesPage from "../features/messaging/pages/MessagesPage";
 
 import ProfileInfoPage from "../pages/IdeaOwner/ProfileInfoPage";
 
@@ -116,7 +116,15 @@ const AppRoutes = () => {
 
       <Route path="/ProjectDetails/:id" element={<ProjectDetailsPage />} />
       <Route path="/workshops/:id" element={<WorkshopDetailsPage />} />
-      <Route path="/messagespage/:id" element={<MessagesPage />} />
+      <Route
+      path="/messagespage"
+      element={<MessagesPage />}
+      />
+
+      <Route
+      path="/messagespage/:id"
+      element={<MessagesPage />}
+      />
 
       <Route path="/ideaform" element={<IdeaFormPage />} />
       <Route path="/volunteerform" element={<VolunteerFormPage />} />

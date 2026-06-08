@@ -25,7 +25,7 @@ const AddWorkshopPage = () => {
     start_date: "",
     end_date: "",
     days: "",
-    image: null,
+    image: "",
   });
 
   const handleSubmit = async () => {
