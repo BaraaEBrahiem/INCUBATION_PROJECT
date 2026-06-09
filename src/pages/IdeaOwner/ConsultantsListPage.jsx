@@ -43,6 +43,7 @@ const ConsultantsListPage = () => {
     <div className="container py-6 px-4 md:px-8 max-w-7xl mx-auto space-y-6">
       
       {/* هيدر الصفحة والـ Category */}
+      <div className="flex justify-between h-fit">
       <div className="border-b border-gray-100 pb-4">
         <h2 className="text-2xl font-bold text-second-color uppercase">
           المستشارون المتاحون: <span className="text-main-color font-medium">{categoryId}</span>
@@ -51,11 +52,13 @@ const ConsultantsListPage = () => {
           يمكنك حجز جلسة استشارية مع الخبراء المعتمدين لتطوير مشروعك.
         </p>
       </div>
+       <AIConsultantCard categoryId={categoryId} />
+      </div>
 
-  <AIConsultantCard categoryId={categoryId} />
+ 
 
 {consultants.length > 0 ? (
-  <div className="bg-white rounded-2xl border border-gray-100 p-4 md:p-6">
+  <div className="rounded-2xl border border-gray-100 p-4">
     <ConsultantsList consultants={consultants} />
   </div>
 ) : (
@@ -77,7 +80,8 @@ const ConsultantsListPage = () => {
             </button>
           )}
         </div>
-      )}
+      )} 
+     
     </div>
   );
 };

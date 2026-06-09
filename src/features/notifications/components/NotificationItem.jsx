@@ -88,7 +88,7 @@ const NotificationItem = ({
             </span>
           </div>
 
-          {notification.has_action && (
+          {/* {notification.has_action && ( */}
             <button
               onClick={handleAction}
               disabled={isLoading}
@@ -104,7 +104,7 @@ const NotificationItem = ({
             >
               عرض التفاصيل
             </button>
-          )}
+          {/* )} */}
         </div>
       </div>
     </div>

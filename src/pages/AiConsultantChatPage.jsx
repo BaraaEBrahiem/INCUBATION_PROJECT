@@ -120,7 +120,7 @@ export default function AIConsultantChatPage() {
   };
 
   return (
-    <div className="flex h-[calc(100vh-64px)] bg-gray-100 overflow-hidden" dir="rtl">
+    <div className="flex min-h-screen bg-gray-100 overflow-hidden" dir="rtl">
       {/* SIDEBAR */}
       <div className="w-90 bg-white border-l border-second-color flex flex-col">
         <div className="p-4 border-b border-second-color">
@@ -169,15 +169,15 @@ export default function AIConsultantChatPage() {
         </div>
 
         {/* MESSAGES */}
-        <div className="flex-1 overflow-y-auto p-6 space-y-4">
+        <div className="container flex-1 overflow-y-auto p-6 space-y-4">
           {localMessages.map((msg, idx) => (
             <div
               key={idx}
               className={`flex ${msg.sender === "user" ? "justify-end" : "justify-start"}`}
             >
               <div
-                className={`px-4 py-3 rounded-2xl max-w-[65%] text-sm leading-relaxed shadow ${
-                  msg.sender === "user" ? "bg-black text-white" : "bg-white border"
+                className={`px-4 py-3 rounded-2xl max-w-[65%] text-md leading-relaxed shadow ${
+                  msg.sender === "user" ? "bg-main-color text-white" : "bg-white border border-second-color"
                 }`}
               >
                 {msg.content}
@@ -190,13 +190,13 @@ export default function AIConsultantChatPage() {
         </div>
 
         {/* INPUT */}
-        <div className="p-4 bg-white border-second-color border-t flex gap-2">
+        <div className="container p-4 flex gap-2 mb-6">
           <input
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && sendMessage()}
             placeholder="اكتب رسالتك للمستشار الذكي..."
-            className=" flex-1 border-2 border-second-color rounded-xl px-4 py-2 focus:outline-none focus:border-l-green-500"
+            className=" flex-1 border-2 border-second-color rounded-xl px-4 py-4 focus:outline-none focus:border-l-green-500"
             disabled={typing}
           />
           <button

@@ -20,25 +20,14 @@ export default function AIConsultantCard({ categoryId }) {
   return (
     <div
       onClick={handleClick}
-      className="cursor-pointer border-2 border-main-color rounded-xl shadow hover:shadow-lg transition"
+      className="ai flex justify-end w-fit mt-1"
     >
-      <div className="flex items-center gap-4 bg-blue-300">
-
-        <div className="w-16 h-16 rounded-full bg-main-color flex items-center justify-center text-white text-2xl">
+        <div className="cursor-pointer w-16 h-16 rounded-full bg-main-color flex items-center justify-center text-white text-2xl" 
+        title = {TITLES[categoryId]}>
           🤖
         </div>
 
-        <div>
-          <h3 className="font-bold text-lg">
-            {TITLES[categoryId]}
-          </h3>
-
-          <p className="text-sm text-gray-500">
-            احصل على استشارة فورية بالذكاء الاصطناعي
-          </p>
-        </div>
 
       </div>
-    </div>
   );
 }
