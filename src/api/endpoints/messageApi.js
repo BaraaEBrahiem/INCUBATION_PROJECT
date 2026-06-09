@@ -18,7 +18,7 @@ export const messageApi = apiSlice.injectEndpoints({
           : [{ type: "Messages", id: "LIST" }],
     }),
 
-    // 2️⃣ جلب رسائل محادثة معينة (يدعم الـ Pagination والـ Real-time المركزي)
+ // 2️⃣ جلب رسائل محادثة معينة
     getConversationMessages: builder.query({
       query: ({ conversationId, cursor, pageSize = 20 }) => ({
         url: `messaging/conversations/${conversationId}/messages/`,
@@ -28,73 +28,65 @@ export const messageApi = apiSlice.injectEndpoints({
         },
       }),
 
-      // 🛡️ حماية الـ الكاش من الانهيار عند عدم تمرير الـ ID أول الرندر
-      serializeQueryArgs: ({ endpointName, queryArgs }) => {
-        if (!queryArgs || !queryArgs.conversationId) {
-          return `${endpointName}-default`;
-        }
-        return `${endpointName}-${queryArgs.conversationId}`;
+      // 🎯 التعديل السحري: جعل مفتاح الكاش هو الـ ID مباشرة لضمان مطابقة الـ Optimistic Update
+      serializeQueryArgs: ({ queryArgs }) => {
+        // إذا تم تمرير كائن يحتوي على المعرف أو المعرف مباشرة
+        const id = queryArgs?.conversationId || queryArgs;
+        return id ? String(id) : "default";
       },
 
-      // دمج الصفحات الجديدة مع الرسائل الحالية (Pagination)
+      // احتفاظ بالقيم القديمة عند جلب صفحات جديدة
       merge: (currentCache, newData) => {
         if (!currentCache?.results) {
           Object.assign(currentCache, newData);
           return;
         }
-
         const existingIds = new Set(currentCache.results.map((message) => message.id));
-
         newData.results.forEach((message) => {
           if (!existingIds.has(message.id)) {
             currentCache.results.push(message);
             existingIds.add(message.id);
           }
         });
-
         currentCache.next = newData.next;
         currentCache.previous = newData.previous;
       },
 
       forceRefetch({ currentArg, previousArg }) {
-        return currentArg?.conversationId !== previousArg?.conversationId;
+        const currentId = currentArg?.conversationId || currentArg;
+        const previousId = previousArg?.conversationId || previousArg;
+        return currentId !== previousId;
       },
 
-      providesTags: (result, error, arg) => [
-        {
-          type: "Messages",
-          id: `CONVERSATION_${arg.conversationId}`,
-        },
-      ],
+      providesTags: (result, error, arg) => {
+        const id = arg?.conversationId || arg;
+        return [{ type: "Messages", id: `CONVERSATION_${id}` }];
+      },
 
-      // ⚡ الربط مع الـ Realtime Central Router الخاص بتطبيقكِ
+      // ربط الـ Real-time
       async onCacheEntryAdded(
-        { conversationId },
+        arg,
         { updateCachedData, cacheDataLoaded, cacheEntryRemoved }
       ) {
+        const conversationId = arg?.conversationId || arg;
         try {
           await cacheDataLoaded;
-
-          // الاستماع لحدث الرسائل الجديدة عبر الـ Router المركزي المحمي الخاص بكِ
           const unsubscribe = eventRouter.on("new_message", (data) => {
-            // التحقق من أن الرسالة القادمة تخص المحادثة المفتوحة حالياً بالواجهة
             if (data && Number(data.conversation) === Number(conversationId)) {
               updateCachedData((draft) => {
                 if (draft?.results) {
                   const exists = draft.results.some((m) => m.id === data.id);
                   if (!exists) {
-                    draft.results.unshift(data); // حقن الرسالة في الأعلى لحظياً
-                  }
+                   draft.results.unshift(data); 
+                   }
                 }
               });
             }
           });
-
-          // تنظيف المستمع فور مغادرة اليوزر للمحادثة لتوفير الذاكرة
           await cacheEntryRemoved;
           unsubscribe();
         } catch (error) {
-          console.error("Real-time cache entry error:", error);
+          console.error("Real-time cache error:", error);
         }
       },
     }),
@@ -107,7 +99,7 @@ export const messageApi = apiSlice.injectEndpoints({
         body: { content },
       }),
 
-      async onQueryStarted(
+     async onQueryStarted(
         { conversationId, content },
         { dispatch, queryFulfilled, getState }
       ) {
@@ -116,11 +108,11 @@ export const messageApi = apiSlice.injectEndpoints({
         const currentUser = state.auth?.user;
         const tempId = `temp-${Date.now()}`;
 
-        // 🚀 تحديث متفائل: حقن الرسالة في الواجهة فوراً كـ "شفافة" قبل رد السيرفر
+        // التحديث المتفائل الفوري باستخدام المعرّف الموحد ليتطابق مع الـ serializeQueryArgs الجديد
         const patchResult = dispatch(
           apiSlice.util.updateQueryData(
             "getConversationMessages",
-            { conversationId },
+            conversationId, // مررنا المعرف مباشرة هنا ليتطابق تماماً
             (draft) => {
               if (!draft) return;
               if (!draft.results) draft.results = [];
@@ -132,7 +124,7 @@ export const messageApi = apiSlice.injectEndpoints({
                 sender_name: currentUser?.full_name || "أنا",
                 content,
                 created_at: new Date().toISOString(),
-                optimistic: true, // لتمييزها بصرياً في الـ Bubble
+                optimistic: true,
               });
             }
           )
@@ -140,11 +132,11 @@ export const messageApi = apiSlice.injectEndpoints({
 
         try {
           const { data } = await queryFulfilled;
-          // استبدال الرسالة المؤقتة بالبيانات الحقيقية القادمة من دجانغو
+          // استبدال الرسالة المؤقتة بالبيانات الحقيقية القادمة من السيرفر
           dispatch(
             apiSlice.util.updateQueryData(
               "getConversationMessages",
-              { conversationId },
+              conversationId, // مررنا المعرف مباشرة هنا أيضاً
               (draft) => {
                 if (!draft?.results) return;
                 const index = draft.results.findIndex((msg) => msg.id === tempId);
@@ -155,7 +147,7 @@ export const messageApi = apiSlice.injectEndpoints({
             )
           );
         } catch {
-          patchResult.undo(); // إلغاء الحقن وإخفاء الرسالة إذا فشل الإنترنت أو حدث خطأ
+          patchResult.undo(); // التراجع عن الحقن المتفائل في حال حدوث خطأ بالشبكة
         }
       },
     }),
