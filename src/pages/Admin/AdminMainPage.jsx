@@ -37,8 +37,7 @@ const AdminMainPage =
     const {
       data:
         statsData,
-      isLoading:
-        statsLoading,
+     
     } =
       useGetDashboardStatsQuery();
 
@@ -46,8 +45,7 @@ const AdminMainPage =
       data:
         chartData =
           [],
-      isLoading:
-        chartLoading,
+     
     } =
       useGetDashboardProjectsChartQuery();
 

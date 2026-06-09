@@ -1,197 +1,67 @@
-import {
-  useGetNotificationsQuery,
-  useMarkAllNotificationsAsReadMutation,
+import React from "react";
+import { 
+  useGetNotificationsQuery, 
+  useMarkAllNotificationsAsReadMutation 
 } from "../../../api/endpoints/notificationApi";
-
 import NotificationItem from "../components/NotificationItem";
 
 const NotificationsPage = () => {
-  const {
-    data = [],
-    isLoading,
-    isError,
-    refetch,
-  } = useGetNotificationsQuery();
+  const { data: notifications = [], isLoading } = useGetNotificationsQuery();
 
-  const [
-    markAllAsRead,
-    { isLoading: markingAll },
-  ] =
-    useMarkAllNotificationsAsReadMutation();
-
-  if (isLoading) {
-    return (
-      <div className="p-6">
-        جاري تحميل الإشعارات...
-      </div>
-    );
-  }
-
-  if (isError) {
-    return (
-      <div className="p-6">
-        <p>حدث خطأ أثناء تحميل الإشعارات</p>
-
-        <button
-          onClick={refetch}
-          className="
-            mt-3
-            px-4
-            py-2
-            border
-            rounded
-          "
-        >
-          إعادة المحاولة
-        </button>
-      </div>
-    );
-  }
-
-  const unreadNotifications =
-    data.filter(
-      (notification) =>
-        !notification.is_read
-    );
-
-  const readNotifications =
-    data.filter(
-      (notification) =>
-        notification.is_read
-    );
+  const [markAll, { isLoading: markAllLoading }] = useMarkAllNotificationsAsReadMutation();
 
   return (
-    <div
-      className="
-        max-w-5xl
-        mx-auto
-        p-6
-      "
-    >
-      <div
-        className="
-          flex
-          justify-between
-          items-center
-          mb-8
-        "
-      >
-        <h1
-          className="
-            text-2xl
-            font-bold
-          "
-        >
-          الإشعارات
-        </h1>
+    <div className="min-h-screen p-4  flex justify-center items-start" dir="rtl">
+      <div className="container max-w-4xl  rounded-xl  p-6">
+        
+        {/* الهيدر العلوي لصفحة الإشعارات */}
+        <div className="flex items-center justify-between pb-4 mb-4">
+          <div>
+            <h1 className="text-2xl font-bold text-black">مركز الإشعارات</h1>
+            <p className="text-sm text-gray-500 mt-1">تابع آخر التحديثات والنشاطات الخاصة بك</p>
+          </div>
 
-        {data.length > 0 && (
-          <button
-            onClick={() =>
-              markAllAsRead()
-            }
-            disabled={markingAll}
-            className="
-              px-4
-              py-2
-              rounded-md
-              bg-main-color
-              text-white
-            "
-          >
-            تعليم الكل كمقروء
-          </button>
-        )}
-      </div>
-
-      {data.length === 0 && (
-        <div
-          className="
-            bg-white
-            border
-            rounded-lg
-            p-8
-            text-center
-          "
-        >
-          لا توجد إشعارات حالياً
+          {notifications.length > 0 && (
+            <button
+              disabled={markAllLoading}
+              onClick={() => markAll()}
+              className="text-sm font-semibold text-white hover:text-blue-800 disabled:text-gray-400 bg-main-color hover:bg-blue-100 px-4 py-2 rounded-lg transition-colors"
+            >
+              {markAllLoading ? "جاري التحديث..." : "تعيين الكل كمقروء"}
+            </button>
+          )}
         </div>
-      )}
 
-      {unreadNotifications.length >
-        0 && (
-        <>
-          <h2
-            className="
-              mb-3
-              text-lg
-              font-semibold
-            "
-          >
-            غير المقروءة
-          </h2>
+        {/* محتوى الإشعارات */}
+        <div className="space-y-2">
+          {isLoading && (
+            <div className="p-8 text-center text-gray-500">
+              <div className="animate-pulse">جاري تحميل الإشعارات...</div>
+            </div>
+          )}
 
-          <div
-            className="
-              bg-white
-              rounded-lg
-              border
-              overflow-hidden
-              mb-8
-            "
-          >
-            {unreadNotifications.map(
-              (notification) => (
-                <NotificationItem
-                  key={
-                    notification.id
-                  }
-                  notification={
-                    notification
-                  }
-                />
-              )
-            )}
-          </div>
-        </>
-      )}
+          {!isLoading && notifications.length === 0 && (
+            <div className="p-12 text-center text-gray-400 border-2  rounded-xl">
+              <div className="text-4xl mb-2">🔔</div>
+              <p className="text-md">صندوق الإشعارات فارغ حالياً</p>
+            </div>
+          )}
 
-      {readNotifications.length >
-        0 && (
-        <>
-          <h2
-            className="
-              mb-3
-              text-lg
-              font-semibold
-            "
-          >
-            المقروءة
-          </h2>
+          {!isLoading && notifications.length > 0 && (
+            <div className="divide-y divide-gray-50 rounded-lg  overflow-hidden">
+              {notifications.map((notification) => (
+                <div 
+                  key={notification.id} 
+                  className="p-1 hover:scale-95 transition-colors"
+                >
+                  <NotificationItem notification={notification} />
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
 
-          <div
-            className="
-              bg-white
-              rounded-lg
-              border
-              overflow-hidden
-            "
-          >
-            {readNotifications.map(
-              (notification) => (
-                <NotificationItem
-                  key={
-                    notification.id
-                  }
-                  notification={
-                    notification
-                  }
-                />
-              )
-            )}
-          </div>
-        </>
-      )}
+      </div>
     </div>
   );
 };

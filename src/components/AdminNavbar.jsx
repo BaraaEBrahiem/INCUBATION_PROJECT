@@ -4,7 +4,7 @@ import NavLinkUniversal from './NavLinkUniversal';
 import { FaRegMessage } from 'react-icons/fa6';
 import { FiSettings } from 'react-icons/fi';
 import Button from './Button';
-import NotificationsIcon from "../components/NotificationsIcon";
+import NotificationBell from "../features/notifications/components/NotificationBell";
 
 const AdminNavbar = ({ BtnLabel, onBtnClick }) => {
   return (
@@ -15,7 +15,7 @@ const AdminNavbar = ({ BtnLabel, onBtnClick }) => {
       <div className="flex items-center gap-6 pl-6">
 
         
-        <NotificationsIcon />
+        <NotificationBell />
 
        
         <NavLinkUniversal 

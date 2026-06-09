@@ -18,6 +18,10 @@ const baseNav = {
     { label: "الرئيسية", to: "/volunteer-mainpage", scrollId: "" },
     { label: "المشاريع", to: "/projectspage", scrollId: "" },
     { label: "النشاطات", to: "/activitiespage", scrollId: "" },
+  ], 
+  admin: [
+     { label: "الرئيسية", to: "/admin-mainpage", scrollId: "" },
+    
   ],
 };
 
@@ -37,6 +41,8 @@ export const navOptions = {
      { label: "مراحل الاحتضان", to: "/incubation-stages", scrollId: "" },
 
   ],
+
+ 
 };
 // أضيفي هذه الدالة في أسفل الملف لديكِ لتبسيط الجلب:
 export const getNavOptionsByRole = (roles) => {
@@ -49,7 +55,7 @@ export const getNavOptionsByRole = (roles) => {
   const rolesArray = Array.isArray(roles) ? roles : [roles];
 
   // إرجاع القائمة المناسبة حسب الأولوية الأعلى للصلاحيات
-  if (rolesArray.includes("admin")) return navOptions.admin || navOptions.visitor; // أضيفي روابط الأدمن هنا إن وجدت
+  if (rolesArray.includes("admin")) return navOptions.admin; 
   if (rolesArray.includes("idea_owner")) return navOptions.idea_owner;
   if (rolesArray.includes("incubator")) return navOptions.incubator;
   if (rolesArray.includes("evaluator")) return navOptions.evaluator;
