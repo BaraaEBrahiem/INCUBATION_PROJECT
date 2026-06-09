@@ -15,10 +15,13 @@ export default function AIConsultantChatPage() {
   const chatEndRef = useRef(null);
 
 
-  const { data: sessions = [], refetch: refetchSessions } = useGetChatSessionsQuery();
+  const { data: sessions = [], refetch: refetchSessions } = useGetChatSessionsQuery(categoryId);
   const { data: sessionDetail} = 
     useGetChatSessionDetailQuery(sessionId, { skip: !sessionId });
-
+  useEffect(() => {
+  setSessionId(null);
+  setLocalMessages([]);
+}, [categoryId]);
 
   useEffect(() => {
     if (sessionDetail && sessionDetail.messages) {
@@ -53,7 +56,7 @@ export default function AIConsultantChatPage() {
       session_id: sessionId,
       consultation_field: categoryId,
     };
-
+    console.log(payload);
     try {
       // 2. نفتح الاتصال المباشر بالباك-أند باستخدام fetch لأن الـ stream يتطلب قراءة التدفق (Reader)
       const response = await fetch("http://127.0.0.1:8000/api/chatbot/chat/", {
@@ -65,7 +68,14 @@ export default function AIConsultantChatPage() {
         body: JSON.stringify(payload),
       });
 
-      if (!response.ok) throw new Error("فشل إرسال الرسالة");
+      if (!response.ok) {
+  const errorData = await response.text();
+
+  console.log("BACKEND ERROR:");
+  console.log(errorData);
+
+  throw new Error(errorData);
+}
 
       const reader = response.body.getReader();
       const decoder = new TextDecoder("utf-8");
@@ -118,6 +128,7 @@ export default function AIConsultantChatPage() {
       setTyping(false);
     }
   };
+  
 
   return (
     <div className="flex h-[calc(100vh-64px)] bg-gray-100 overflow-hidden" dir="rtl">

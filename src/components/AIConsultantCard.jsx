@@ -20,18 +20,9 @@ export default function AIConsultantCard({ categoryId }) {
   return (
     <div
       onClick={handleClick}
-      className="
-        cursor-pointer
-        border-2 border-main-color
-        rounded-xl
-        p-4
-        bg-white
-        shadow
-        hover:shadow-lg
-        transition
-      "
+      className="cursor-pointer border-2 border-main-color rounded-xl shadow hover:shadow-lg transition"
     >
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-4 bg-blue-300">
 
         <div className="w-16 h-16 rounded-full bg-main-color flex items-center justify-center text-white text-2xl">
           🤖

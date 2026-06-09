@@ -52,10 +52,7 @@ const ConsultantsListPage = () => {
         </p>
       </div>
 
-      {/* عرض قائمة المستشارين أو معالجة حالة المصفوفة الفارغة */}
-      <div className="bg-white rounded-2xl border border-gray-100 p-4 md:p-6">
   <AIConsultantCard categoryId={categoryId} />
-</div>
 
 {consultants.length > 0 ? (
   <div className="bg-white rounded-2xl border border-gray-100 p-4 md:p-6">
