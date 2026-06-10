@@ -56,7 +56,7 @@ class MessageRealtimeHandler {
             return;
           }
 
-          draft.results.unshift(
+          draft.results.push(
             message
           );
         }

@@ -1,42 +1,21 @@
 import { useSelector } from "react-redux";
 
-export default function MessageBubble({
-  message,
-}) {
-  const currentUserId =
-    useSelector(
-      (state) =>
-        Number(
-          state.auth.userId
-        )
-    );
+export default function MessageBubble({ message }) {
+  const currentUserId = useSelector((state) => Number(state.auth.userId));
 
-  const isMine =
-    currentUserId ===
-    message.sender_id;
+  // التحقق من هوية المرسل
+  const isMine = currentUserId === Number(message?.sender_id);
 
   return (
-    <div
-      className={`flex mb-3 ${
-        isMine
-          ? "justify-end"
-          : "justify-start"
-      }`}
-    >
+    <div className={`flex mb-3 w-full ${isMine ? "justify-end" : "justify-start"}`}>
       <div
-        className={`
-        max-w-[70%]
-        px-4
-        py-2
-        rounded-lg
-        ${
+        className={`max-w-[70%] px-4 py-2 rounded-2xl text-sm shadow-sm leading-relaxed ${
           isMine
-            ? "bg-blue-500 text-white"
-            : "bg-gray-200"
-        }
-      `}
+            ? "bg-main-color text-white rounded-br-none text-right"
+            : "bg-white border border-scond-color text-gray-800 rounded-bl-none text-right"
+        } ${message?.optimistic ? "opacity-70" : ""}`} // تمييز الرسالة المؤقتة الشفافة حتى ينتهي السيرفر
       >
-        {message.content}
+        <p>{message?.content}</p>
       </div>
     </div>
   );

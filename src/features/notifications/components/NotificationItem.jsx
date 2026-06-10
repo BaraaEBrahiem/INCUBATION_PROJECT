@@ -36,49 +36,27 @@ const NotificationItem = ({
   return (
     <div
       className={`
-        relative
-        border-b
-        p-4
-        transition
-        hover:bg-gray-50
+       mt-3 flex items-start gap-4 p-4 border border-gray-200 rounded-lg relative
         ${
           !notification.is_read
-            ? "bg-cyan-50"
-            : "bg-white"
+            ?  "bg-white-color shadow-sm": "bg-white"
         }
       `}
     >
       {!notification.is_read && (
-        <span
-          className="
-            absolute
-            left-3
-            top-5
-            w-3
-            h-3
-            rounded-full
-            bg-cyan-500
-          "
-        />
+         <span className="absolute top-4 left-2 w-3 h-3 bg-second-color rounded-full"></span>
       )}
 
       <div className="flex gap-4">
-        <img
-          src={logo}
-          alt="logo"
-          className="
-            w-12
-            h-12
-            rounded-full
-            object-cover
-            border
-          "
-        />
+       {/* صورة الإشعار */}
+      <div className="w-15 h-15 shrink-0">
+        <img src={logo} alt="logo" className="w-full h-full object-contain" />
+      </div>
 
         <div className="flex-1">
           <p
             className={`
-              text-sm
+              text-xl
               leading-7
               text-right
               ${
@@ -97,7 +75,7 @@ const NotificationItem = ({
               flex
               flex-wrap
               gap-4
-              text-xs
+              text-sm
               text-gray-500
             "
           >
@@ -110,7 +88,7 @@ const NotificationItem = ({
             </span>
           </div>
 
-          {notification.has_action && (
+          {/*{notification.has_action && ( */}
             <button
               onClick={handleAction}
               disabled={isLoading}
@@ -121,12 +99,12 @@ const NotificationItem = ({
                 rounded-md
                 bg-main-color
                 text-white
-                text-sm
+                text-md
               "
             >
               عرض التفاصيل
             </button>
-          )}
+          {/*)} */ }
         </div>
       </div>
     </div>

@@ -1,6 +1,13 @@
 const UnreadBadge = ({
   count = 0,
 }) => {
+
+    console.log(
+    "BADGE RENDER",
+    count,
+    typeof count,
+  );
+  
   if (!count) {
     return null;
   }

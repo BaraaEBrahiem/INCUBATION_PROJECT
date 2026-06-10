@@ -1,13 +1,11 @@
 import MessageBubble from "./MessageBubble";
 
-export default function MessageList({
-  messages,
-}) {
+export default function MessageList({ messages = [] }) {
   return (
-    <div className="flex-1">
+    <div className="flex flex-col w-full">
       {messages.map((message) => (
         <MessageBubble
-          key={message.id}
+          key={message.id }
           message={message}
         />
       ))}
