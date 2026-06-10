@@ -173,10 +173,32 @@ export const messageApi = apiSlice.injectEndpoints({
       ],
     }),
 
-    // 6️⃣ جلب إجمالي الرسائل غير المقروءة لكل التطبيق (للـ Navbar العلوي مثلاً)
+   // 6️⃣ جلب إجمالي الرسائل غير المقروءة لكل التطبيق (للـ Navbar العلوي)
     getGlobalUnreadMessagesCount: builder.query({
       query: () => "messaging/messages/unread-count/",
       providesTags: [{ type: "Messages", id: "GLOBAL_UNREAD" }],
+      
+      async onCacheEntryAdded(
+        arg,
+        { updateCachedData, cacheDataLoaded, cacheEntryRemoved }
+      ) {
+        try {
+          await cacheDataLoaded;
+          
+          const unsubscribe = eventRouter.on("new_message", () => {
+            updateCachedData((draft) => {
+              if (draft && typeof draft.count === "number") {
+                draft.count += 1;
+              }
+            });
+          });
+
+          await cacheEntryRemoved;
+          unsubscribe();
+        } catch (error) {
+          console.error("Global unread count real-time error:", error);
+        }
+      },
     }),
   }),
 });
