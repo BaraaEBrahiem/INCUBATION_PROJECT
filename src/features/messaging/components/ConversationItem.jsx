@@ -6,9 +6,9 @@ const ConversationItem = ({ conversation, isSelected }) => {
 
   return (
     <Link
-      to={`/messages/${conversation.id}`}
-      className={`flex items-center gap-3 p-4 border-b hover:bg-gray-50 transition-colors ${
-        isSelected ? "bg-white-color" : ""
+      to={`/messagespage/${conversation.id}`}
+      className={`flex items-center gap-3 p-4  hover:bg-gray-50 transition-colors ${
+        isSelected ? "bg-white-color" : "bg-white"
       }`}
     >
       <div className="w-12 h-12 rounded-full border-2 border-second-color flex items-center justify-center font-bold">

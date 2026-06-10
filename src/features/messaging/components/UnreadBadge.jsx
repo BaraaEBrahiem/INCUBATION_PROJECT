@@ -14,7 +14,7 @@ const UnreadBadge = ({
         rounded-full
         bg-red-500
         text-white
-        text-xs
+        text-md
         flex
         items-center
         justify-center

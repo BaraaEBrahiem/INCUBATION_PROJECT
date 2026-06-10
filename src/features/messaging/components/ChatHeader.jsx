@@ -8,7 +8,7 @@ export default function ChatHeader({ conversation }) {
     conversation?.participants?.find((user) => user.id !== currentUserId);
 
   return (
-    <div className="border-b p-4 flex items-center justify-between bg-white">
+    <div className="border-b border-second-color p-4 flex items-center justify-between bg-white">
       <div>
         <h2 className="font-semibold text-gray-800">
           {otherUser?.full_name || "مستخدم"}
