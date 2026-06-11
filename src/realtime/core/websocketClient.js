@@ -31,14 +31,13 @@ class WebSocketClient {
     this.socket = new WebSocket(url);
 
     this.socket.onopen = (event) => {
+      console.log("WS OPEN");
+
       this.status = SOCKET_STATUS.CONNECTED;
 
-      this.openListeners.forEach((listener) =>
-        listener(event)
+      this.openListeners.forEach(
+        (listener) => listener(event)
       );
-      this.socket.onopen = () => {
-        console.log("WS OPEN");
-      };
     };
 
     this.socket.onmessage = (event) => {
@@ -54,6 +53,11 @@ class WebSocketClient {
         return;
       }
 
+      console.log(
+        "WS RECEIVED:",
+        parsedData
+      );
+
       this.messageListeners.forEach((listener) =>
         listener(parsedData)
       );
@@ -68,14 +72,17 @@ class WebSocketClient {
     };
 
     this.socket.onclose = (event) => {
+      console.log(
+        "WS CLOSE",
+        event.code,
+        event.reason
+      );
+
       this.status = SOCKET_STATUS.DISCONNECTED;
 
-      this.closeListeners.forEach((listener) =>
-        listener(event)
+      this.closeListeners.forEach(
+        (listener) => listener(event)
       );
-      this.socket.onclose = (event) => {
-        console.log("WS CLOSE", event.code, event.reason);
-      };
     };
   }
 
@@ -92,6 +99,13 @@ class WebSocketClient {
   }
 
   send(payload) {
+
+    console.log(
+      "WS SEND",
+      payload,
+      this.socket?.readyState
+    );
+
     if (!this.isConnected()) {
       return false;
     }

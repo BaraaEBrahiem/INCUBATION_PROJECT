@@ -1,6 +1,8 @@
+// src/features/messaging/pages/MessagesPage.jsx
 import React, { useEffect } from "react";
 import { useParams} from "react-router-dom";
-import logo from "../../../assets/images/logo.png"
+import logo from "../../../assets/images/logo.png";
+
 // استيراد المكونات التي جهزناها ونظفناها معاً
 import ConversationList from "../components/ConversationList";
 import ChatWindow from "../components/ChatWindow";
@@ -47,11 +49,11 @@ export default function MessagesPage() {
 
   return (
     <div className="w-full max-w-7xl mx-auto p-4 md:p-6" dir="rtl">
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 bg-white  overflow-hidden h-[85vh]">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 bg-white border border-gray-100 overflow-hidden h-[85vh]">
         
         {/* ─── الشق الأيمن: قائمة جميع المحادثات ─── */}
         <div className="md:col-span-1 border-l border-gray-100 flex flex-col h-full">
-          <div className="flex items-center p-3 mb-2 border-b bg-gray-50/50">
+           <div className="flex items-center p-3 mb-2 border-b border-second-color bg-gray-50/50">
             <img src={logo} alt="Logo" className="w-16 h-auto" />
             <h1 className="text-xl font-bold text-gray-800">الرسائل</h1>
           </div>

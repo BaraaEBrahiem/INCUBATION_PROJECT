@@ -1,6 +1,6 @@
 import { apiSlice } from "../apiSlice";
 
-import { eventRouter } from "../../realtime/core/eventRouter"; 
+
 
 export const messageApi = apiSlice.injectEndpoints({
   overrideExisting: false,
@@ -63,38 +63,13 @@ export const messageApi = apiSlice.injectEndpoints({
         return [{ type: "Messages", id: `CONVERSATION_${id}` }];
       },
 
-      // ربط الـ Real-time
-      async onCacheEntryAdded(
-        arg,
-        { updateCachedData, cacheDataLoaded, cacheEntryRemoved }
-      ) {
-        const conversationId = arg?.conversationId || arg;
-        try {
-          await cacheDataLoaded;
-          const unsubscribe = eventRouter.on("new_message", (data) => {
-            if (data && Number(data.conversation) === Number(conversationId)) {
-              updateCachedData((draft) => {
-                if (draft?.results) {
-                  const exists = draft.results.some((m) => m.id === data.id);
-                  if (!exists) {
-                   draft.results.unshift(data); 
-                   }
-                }
-              });
-            }
-          });
-          await cacheEntryRemoved;
-          unsubscribe();
-        } catch (error) {
-          console.error("Real-time cache error:", error);
-        }
-      },
+
     }),
 
     // 3️⃣ إرسال الرسالة (يدعم الـ Optimistic UI الشفاف والذكي)
     sendMessage: builder.mutation({
       query: ({ conversationId, content }) => ({
-        url: `messaging/conversations/${conversationId}/send/`,
+        url: `messaging/conversations/${conversationId}/messages/send/`,
         method: "POST",
         body: { content },
       }),
@@ -117,7 +92,7 @@ export const messageApi = apiSlice.injectEndpoints({
               if (!draft) return;
               if (!draft.results) draft.results = [];
               
-              draft.results.unshift({
+              draft.results.push({
                 id: tempId,
                 conversation: conversationId,
                 sender_id: currentUserId,
@@ -173,32 +148,10 @@ export const messageApi = apiSlice.injectEndpoints({
       ],
     }),
 
-   // 6️⃣ جلب إجمالي الرسائل غير المقروءة لكل التطبيق (للـ Navbar العلوي)
+    // 6️⃣ جلب إجمالي الرسائل غير المقروءة لكل التطبيق (للـ Navbar العلوي مثلاً)
     getGlobalUnreadMessagesCount: builder.query({
       query: () => "messaging/messages/unread-count/",
       providesTags: [{ type: "Messages", id: "GLOBAL_UNREAD" }],
-      
-      async onCacheEntryAdded(
-        arg,
-        { updateCachedData, cacheDataLoaded, cacheEntryRemoved }
-      ) {
-        try {
-          await cacheDataLoaded;
-          
-          const unsubscribe = eventRouter.on("new_message", () => {
-            updateCachedData((draft) => {
-              if (draft && typeof draft.count === "number") {
-                draft.count += 1;
-              }
-            });
-          });
-
-          await cacheEntryRemoved;
-          unsubscribe();
-        } catch (error) {
-          console.error("Global unread count real-time error:", error);
-        }
-      },
     }),
   }),
 });

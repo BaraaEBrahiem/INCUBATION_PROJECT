@@ -93,6 +93,11 @@ class EventRouter {
           event.type,
           event
         );
+
+        console.log(
+          "WS EVENT:",
+          event
+        );
     }
   }
 

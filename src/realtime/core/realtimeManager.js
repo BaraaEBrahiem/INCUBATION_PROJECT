@@ -78,12 +78,24 @@ class RealtimeManager {
   }
 
   subscribeConversation(conversationId) {
+
+    console.log(
+      "SUBSCRIBE REQUEST",
+      conversationId,
+      websocketClient.getStatus()
+    );
+
     subscriptionManager.add(conversationId);
 
-    this.send({
+    const sent = this.send({
       type: "SUBSCRIBE_CONVERSATION",
       conversation_id: conversationId,
     });
+
+    console.log(
+      "SUBSCRIBE SENT?",
+      sent
+    );
   }
 
   unsubscribeConversation(conversationId) {

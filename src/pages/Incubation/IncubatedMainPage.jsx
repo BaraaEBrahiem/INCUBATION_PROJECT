@@ -7,9 +7,8 @@ import Button from '../../components/Button';
 import { useRole } from "../../hooks/useRole";
 
 const IncubatedMainPage = () => {
-  const hasTeam = false;
   const { role } = useRole();
-  const isVolunteer = role === 'volunteer';
+  const isVolunteer = role === 'Volunteer';
   return (
     <div className='bg-white-color min-h-screen py-8'>
      <div className="container mt-10">
@@ -27,19 +26,7 @@ const IncubatedMainPage = () => {
       )}
      
             <NearestWorkshopCard />
-               {/* صندوق طلب فريق */}
-        {!hasTeam && (
-          <div className="bg-white flex justify-between items-center p-4 mb-8 rounded">
-            <p className='font-bold text-2xl'>
-              ليس لديك فريق هل ترغب بطلب متطوعين <br />لمساعدتك في تنفيذ مشروعك
-            </p>
-
-            <NavLinkUniversal
-              label={<Button label="طلب فريق" className='bg-main-color' />}
-              to="/TeamRequestPage"
-            />
-          </div>
-        )}
+         
             <div className='bg-white p-6 rounded-lg flex justify-between items-center shadow-lg mb-8'>
          <div>
             <h3 className='font-bold text-2xl mb-2'>الخطوات القادمة</h3>

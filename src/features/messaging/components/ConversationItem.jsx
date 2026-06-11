@@ -4,11 +4,18 @@ import UnreadBadge from "./UnreadBadge";
 const ConversationItem = ({ conversation, isSelected }) => {
   const user = conversation?.other_user;
 
+  console.log(
+  "CONVERSATION RENDER",
+  conversation.id,
+  conversation.unread_count,
+  conversation.last_message
+);
+
   return (
     <Link
       to={`/messagespage/${conversation.id}`}
-      className={`flex items-center gap-3 p-4  hover:bg-gray-50 transition-colors ${
-        isSelected ? "bg-white-color" : "bg-white"
+      className={`flex items-center gap-3 p-4 border border-second-color my-1 hover:bg-gray-50 transition-colors ${
+        isSelected ? "bg-white-color" : ""
       }`}
     >
       <div className="w-12 h-12 rounded-full border-2 border-second-color flex items-center justify-center font-bold">

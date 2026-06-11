@@ -25,7 +25,7 @@ export default function MessageComposer({ conversationId }) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className=" p-4 flex gap-2 bg-white">
+    <form onSubmit={handleSubmit} className="border-t border-second-color p-4 flex gap-2 bg-white">
       <input
         value={content}
         onChange={(e) => setContent(e.target.value)}
@@ -38,7 +38,7 @@ export default function MessageComposer({ conversationId }) {
       <button
         type="submit"
         disabled={isLoading || !content.trim()}
-        className="bg-main-color  text-white disabled:bg-gray-400 px-5 rounded-lg text-sm font-medium transition-colors"
+        className="bg-main-color  text-white disabled:bg-gray-300 px-5 rounded-lg text-sm font-medium transition-colors"
       >
         {isLoading ? "جاري..." : "إرسال"}
       </button>
