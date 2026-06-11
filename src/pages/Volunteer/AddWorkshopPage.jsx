@@ -123,7 +123,8 @@ try {
       </h1>
 
       <div className="container mt-10 md:mt-40 flex flex-col-reverse md:flex-row justify-between items-center gap-10 md:gap-0" dir="rtl">
-        <div className="w-full md:w-[500px]">
+         <WorkshopImage image={formData.image} />
+         <div className="w-full md:w-[500px]">
           {step === 1 && (
             <WorkshopStepOne
               formData={formData}
@@ -143,7 +144,7 @@ try {
             />
           )}
         </div>
-        <WorkshopImage image={formData.image} />
+       
       </div>
     </div>
   );

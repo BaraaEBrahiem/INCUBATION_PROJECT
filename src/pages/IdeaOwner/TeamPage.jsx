@@ -48,7 +48,7 @@ const TeamPage = () => {
       </div>
 
       {/* التبويبات الذكية */}
-      <div className="flex gap-3 bg-gray-50 p-1.5 rounded-2xl w-fit border border-gray-100">
+      <div className="flex gap-3  p-1.5 rounded-2xl w-fit border border-gray-100">
         <button
           onClick={() => setActiveTab("current")}
           className={`px-6 py-2.5 rounded-xl font-bold text-xl transition-all cursor-pointer ${
@@ -75,7 +75,7 @@ const TeamPage = () => {
       </div>
 
       {/* عرض القوائم أو عرض رسالة تنبيهية خفيفة في حال فشل الاتصال */}
-      <div className="bg-white rounded-2xl border border-gray-100 p-4 md:p-6 min-h-[40vh]">
+      <div className=" rounded-2xl border border-gray-100 p-4 md:p-6 min-h-[40vh]">
         {teamError || suggestedError ? (
           <div className="flex flex-col items-center justify-center py-12 text-center">
             <p className="text-gray-400 text-sm font-medium">فشل في عرض القوائم بسبب مشكلة في الاتصال.</p>

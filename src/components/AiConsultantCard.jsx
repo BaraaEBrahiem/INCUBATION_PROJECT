@@ -20,7 +20,7 @@ export default function AIConsultantCard({ categoryId }) {
   return (
     <div
       onClick={handleClick}
-      className="ai flex justify-end w-fit mt-1"
+      className="ai flex justify-end mt-1"
     >
         <div className="cursor-pointer w-16 h-16 rounded-full bg-main-color flex items-center justify-center text-white text-2xl" 
         title = {TITLES[categoryId]}>

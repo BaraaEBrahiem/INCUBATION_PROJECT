@@ -33,7 +33,7 @@ const SectorAnalysisChart = ({
     );
 
   return (
-    <div className="bg-white p-6 w-110 rounded-lg shadow">
+    <div className="bg-white p-10 w-140 rounded-lg shadow">
       <h2 className="text-xl font-semibold mb-4 text-center">
         تحليل القطاعات
       </h2>

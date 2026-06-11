@@ -42,6 +42,7 @@ const CreateSeasonPage = () => {
   };
 
   return (
+    <div className="bg-white-color">
     <div className=" container p-6 min-h-screen" dir="rtl">
       {/* رأس الصفحة والعناوين */}
       <div className=" mb-6">
@@ -55,10 +56,10 @@ const CreateSeasonPage = () => {
       <div className="flex border-b border-gray-200 mb-6 gap-2">
         <button
           onClick={() => setActiveTab("settings")}
-          className={`py-2 px-4 font-semibold text-sm border-b-2 transition-all ${
+          className={`py-2 px-4 font-semibold text-xl border-b-2 rounded-sm transition-all ${
             activeTab === "settings"
-              ? "border-main-color text-main-color"
-              : "border-transparent text-gray-400 hover:text-gray-600"
+              ? "bg-gray-300 text-main-color"
+              : "border-transparent text-gray-500 hover:text-gray-600"
           }`}
         >
           1. إعدادات وتواريخ الموسم
@@ -67,11 +68,11 @@ const CreateSeasonPage = () => {
         <button
           disabled={!createdSeasonId} // قفل التبويب حتى يتم إنشاء الموسم أولاً وحفظه بالباك إند
           onClick={() => setActiveTab("builder")}
-          className={`py-2 px-4 font-semibold text-sm border-b-2 transition-all ${
+          className={`py-2 px-4 font-semibold text-xl border-b-2 transition-all ${
             !createdSeasonId 
               ? "text-gray-300 cursor-not-allowed border-transparent" 
               : activeTab === "builder"
-              ? "border-main-color text-main-color"
+              ? "bg-gray-300 text-main-color"
               : "border-transparent text-gray-400 hover:text-gray-600"
           }`}
         >
@@ -94,6 +95,7 @@ const CreateSeasonPage = () => {
           />
         )}
       </div>
+    </div>
     </div>
   );
 };

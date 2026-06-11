@@ -32,7 +32,7 @@ const EvaluationSection = ({
                     <td className="p-3">
                       <div className="flex gap-1">
                         {asm.roles?.map((r, i) => (
-                          <span key={i} className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded">
+                          <span key={i} className="bg-blue-100 text-blue-800 text-md px-2 py-1 rounded">
                             {r === "EVALUATION" ? "تقييم أولي" : "جلسات احتضان"}
                           </span>
                         ))}
@@ -41,7 +41,7 @@ const EvaluationSection = ({
                     <td className="p-3 text-center">
                       <Button 
                         label="عرض تفاصيل المشروع" 
-                        className="bg-main-color text-xs py-1 px-3"
+                        className="bg-main-color text-md py-1 px-3"
                         onClick={() => onViewProject && onViewProject(asm.idea_id)}
                       />
                     </td>

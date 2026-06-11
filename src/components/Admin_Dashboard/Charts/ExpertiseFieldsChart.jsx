@@ -87,7 +87,7 @@ const ExpertiseFieldsChart = ({
     );
 
   return (
-    <div className="bg-white w-110 p-6 rounded-lg shadow">
+    <div className="bg-white w-140 p-6 rounded-lg shadow">
       <h2 className="text-xl font-semibold mb-4">
         مجالات الخبرة
       </h2>

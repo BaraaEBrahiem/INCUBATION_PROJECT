@@ -42,7 +42,7 @@ const IncubationSeasonsChart = ({
     );
 
   return (
-    <div className="bg-white w-170 p-5 rounded-lg shadow">
+    <div className="bg-white w-150 p-5 rounded-lg shadow">
       <h2 className="text-xl font-semibold mb-3">
         مقارنة أداء مواسم الاحتضان
       </h2>
@@ -162,7 +162,7 @@ const IncubationSeasonsChart = ({
             <div
               style={{
                 padding:
-                  "8px 12px",
+                  "6px 10px",
                 background:
                   "white",
                 border:

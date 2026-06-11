@@ -192,7 +192,7 @@ const FormBuilder = ({
         />
       </div>
 
-      <div className="flex justify-center items-center gap-8 mt-6">
+      <div className="flex justify-center items-center gap-8 mt-2">
         <Button
           label="معاينة النموذج"
           onClick={goToPreview}

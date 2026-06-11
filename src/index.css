@@ -108,8 +108,8 @@
 }
 .ai{
     position: relative;
-    width: 550px;
-    height: 400px;
+    width: fit-content;
+    height: fit-content;
     animation: up-down 1.9s linear infinite;
     
 }

@@ -297,9 +297,7 @@ const AppRoutes = () => {
           <Route path="/admin/settings" element={<AdminSettingsPage />} />
           <Route path="/change-password" element={<ChangePasswordPage />} />
           <Route path="/admin/seasons" element={<IncubationSeasonsPage />} />
-          <Route path="/incubation-seasons/:id" element={<SeasonDetailsPage />} />
-          <Route path="/admin/create-season" element={<CreateSeasonPage />} />
-          <Route path="/admin/preview-form" element={<PreviewFormPage />} />
+         
           <Route path="/admin/add-session/:id" element={<AddSessionPage />} />
           <Route path="/admin/camp-management/:id" element={<CampManagementPage />} />
           <Route path="/admin/incubated" element={<IncubatedPage />} />
@@ -326,7 +324,10 @@ const AppRoutes = () => {
           <Route path="/admin/assign-incubation-evaluators/:id" element={<AssignIncubationEvaluatorsPage />} />
           <Route path="/admin/latest-review/:idea_id" element={<LatestReviewPage />} />
           <Route path="/admin/projects-details/:id" element={<AdminProjectsDetailsPage />} />
-          <Route path="/admin/graduated-projects" element={<GraduatedProjectsPage />} />
+          <Route path="/admin/graduated-projects" element={<GraduatedProjectsPage />} /> 
+          <Route path="/admin/create-season" element={<CreateSeasonPage />} />
+          <Route path="/admin/preview-form" element={<PreviewFormPage />} /> 
+          <Route path="/incubation-seasons/:id" element={<SeasonDetailsPage />} />
         </Route>
       )}
     </Routes>

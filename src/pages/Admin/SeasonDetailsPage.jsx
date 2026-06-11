@@ -62,7 +62,7 @@ const SeasonDetailsPage = () => {
     <div className="w-full min-h-screen bg-white-color pt-10">
       <div className="container">
         <div className="flex justify-end">
-          <Button
+          <button
             onClick={() => {
               if (!id) {
                 showError("لا يمكن تحديد الموسم الحالي");
@@ -70,9 +70,10 @@ const SeasonDetailsPage = () => {
               }
               navigate(`/admin/camp-management/${id}`);
             }}
-            label="إدارة المعسكر"
-            className="bg-main-color text-white rounded px-3 py-1"
-          />
+            className="bg-main-color font-bold text-white text-xl rounded px-7 py-3"
+          >
+           إدارة المعسكر
+          </button>
         </div>
 
         <h1 className="text-xl font-bold mb-6">تفاصيل الموسم</h1>
@@ -80,7 +81,7 @@ const SeasonDetailsPage = () => {
         <div className="flex gap-4 mb-6 border-b pb-2">
           <button
             onClick={() => setActiveTab("settings")}
-            className={`px-4 py-2 font-semibold rounded ${
+            className={`px-7 py-3 font-bold text-xl rounded ${
               activeTab === "settings" ? "bg-main-color text-white" : "bg-white border border-second-color"
             }`}
           >
@@ -88,7 +89,7 @@ const SeasonDetailsPage = () => {
           </button>
           <button
             onClick={() => setActiveTab("form")}
-            className={`px-4 py-2 font-semibold rounded ${
+            className={`px-7 py-3 font-bold text-xl rounded ${
               activeTab === "form" ? "bg-main-color text-white" : "bg-white border border-second-color"
             }`}
           >
@@ -96,7 +97,7 @@ const SeasonDetailsPage = () => {
           </button>
           <button
             onClick={() => setActiveTab("review")}
-            className={`px-4 py-2 font-semibold rounded ${
+            className={`px-7 py-3 font-bold text-xl rounded ${
               activeTab === "review" ? "bg-main-color text-white" : "bg-white border border-second-color"
             }`}
           >

@@ -1,19 +1,30 @@
 import React from 'react'
 import NearestWorkshopCard from '../../components/Workshop/NearestWorkshopCard';
 import LastWorkshops from '../../components/LastWorkshops';
-import LastExhibition from '../../components/LastExhibition';
 import ConsultationRequestBtn from '../../components/ConsultationRequestBtn';
 import NavLinkUniversal from '../../components/NavLinkUniversal';
 import Button from '../../components/Button';
+import { useRole } from "../../hooks/useRole";
 
 const IncubatedMainPage = () => {
   const hasTeam = false;
+  const { role } = useRole();
+  const isVolunteer = role === 'volunteer';
   return (
     <div className='bg-white-color min-h-screen py-8'>
-      
-      
+     <div className="container mt-10">
+      {!isVolunteer && (
+         <div className="bg-white flex justify-between items-center p-4 mb-8 rounded">
+            <p className='font-bold text-2xl'>
+              كن جزءا من فريق الخبراء والمقيمين لدعم<br /> الابتكار في حاضنتنا
+            </p>
 
-        <div className="container mt-10">
+            <NavLinkUniversal
+              label={<Button label="تطوع الآن" className="bg-main-color" />}
+              to="/volunteerform"
+            />
+          </div>
+      )}
      
             <NearestWorkshopCard />
                {/* صندوق طلب فريق */}
@@ -44,7 +55,6 @@ const IncubatedMainPage = () => {
         </div>
         </div>
         <LastWorkshops />
-        <LastExhibition/>
     </div>
 </div>
   )

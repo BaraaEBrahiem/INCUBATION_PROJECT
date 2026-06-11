@@ -178,12 +178,14 @@ const SeasonSettings = ({ season, onSave }) => {
 
         <div className="flex flex-wrap gap-3 justify-between items-center">
           <div className="flex gap-3">
+            {isOpen && season?.id && (
             <Button
               label={isUpdating ? "جاري الحفظ..." : "حفظ التغييرات"}
               onClick={handleSave}
               className="bg-main-color"
               disabled={isSaving}
             />
+            )}
           </div>
           {isOpen && season?.id && (
             <Button

@@ -19,7 +19,7 @@ const ProfileInfoPage = () => {
   const { userId } = useParams();
   const navigate = useNavigate();
   const currentUserId = useSelector((state) => state.auth.userId); 
-  const userRoles = useSelector((state) => state.auth.roles) || [];
+  // const userRoles = useSelector((state) => state.auth.roles) || [];
 
   const targetUserId = userId || currentUserId;
 
@@ -37,7 +37,7 @@ const ProfileInfoPage = () => {
 
   const [sendJoinRequest, { isLoading: isSubmittingJoin }] = useSendJoinRequestMutation();
 
-  const isIncubated = userRoles.includes("incubator");
+  // const isIncubated = userRoles.includes("INCUBATOR");
   
 
   const isOwnProfile = String(targetUserId) === String(currentUserId);
@@ -128,11 +128,11 @@ const ProfileInfoPage = () => {
         </div>
 
         {/* شريط الإجراءات والعمليات  وبشرط ألا يكون بروفايله الشخصي */}
-        {isIncubated && !isOwnProfile && (
-          <div className="flex items-center justify-center gap-4 mt-10 bg-gray-50 p-4 rounded-2xl border border-gray-100 max-w-2xl mx-auto">
+        {/* {isIncubated &&*/ !isOwnProfile && (
+          <div className="flex items-center justify-center gap-4 mt-10 p-4 rounded-2xl max-w-2xl mx-auto">
             <Button 
               label="طلب انضمام للفريق" 
-              className="bg-main-color text-white px-8 py-3 font-bold rounded-xl" 
+              className="bg-main-color rounded-xl py-2.5" 
               onClick={handleOpenJoinModal} 
             />
           
@@ -141,7 +141,7 @@ const ProfileInfoPage = () => {
         )}
 
         {/* زر العودة والتحكم الإداري */}
-        <div className="flex items-center justify-center gap-3 mt-80">
+        <div className="flex items-center justify-center gap-3 mt-60">
           <Button
             label="العودة للصفحة السابقة"
             onClick={() => navigate(-1)}
@@ -155,7 +155,7 @@ const ProfileInfoPage = () => {
         onClose={handleCloseJoinModal}
         title={`دعوة انضمام للمشروع: ${profileData?.name || ''}`}
         footer={
-          <div className="flex gap-3 justify-end w-full">
+          <div className="flex gap-3 justify-center w-full">
             <Button 
               label={isSubmittingJoin ? "جاري إرسال الدعوة..." : "إرسال دعوة الانضمام"} 
               className="bg-main-color text-white px-6" 
@@ -163,7 +163,7 @@ const ProfileInfoPage = () => {
               disabled={isSubmittingJoin}
             />
             <button 
-              className="border border-gray-300 hover:bg-gray-50 text-gray-700 px-5 py-2 rounded-xl text-sm font-medium cursor-pointer transition-all" 
+              className="border border-second-color hover:bg-gray-50 text-gray-700 px-5 py-2 rounded-sm text-sm font-medium cursor-pointer transition-all" 
               onClick={handleCloseJoinModal}
             >
               إلغاء

@@ -1,34 +1,38 @@
 import React from "react";
-import { ResponsiveLine } from "@nivo/line";
+import { ResponsivePie } from "@nivo/pie";
 
 const ProjectLifecycleChart = ({ data }) => {
   // ============================
-  // تجهيز بيانات المخطط
+  // تجهيز بيانات المخطط لتناسب الـ Pie Chart
   // ============================
   const chartData = React.useMemo(() => {
     if (!data) return [];
 
+    // الـ Pie Chart يتوقع مصفوفة مباشرة من العناصر تحتوي على id و value
     return [
       {
-        id: "عدد المشاريع",
-        data: [
-          {
-            x: "تقديم",
-            y: data.submitted || 0,
-          },
-          {
-            x: "حضور المعسكر",
-            y: data.bootcamp || 0,
-          },
-          {
-            x: "محتضنة",
-            y: data.incubated || 0,
-          },
-          {
-            x: "متخرجة",
-            y: data.graduated || 0,
-          },
-        ],
+        id: "تقديم",
+        label: "تقديم",
+        value: data.submitted || 0,
+        color: "#62bb86", // درجات متناسقة من لون الـ تيل الخاص بمشروعك
+      },
+      {
+        id: "حضور المعسكر",
+        label: "حضور المعسكر",
+        value: data.bootcamp || 0,
+        color: "#3a75bb",
+      },
+      {
+        id: "محتضنة",
+        label: "محتضنة",
+        value: data.incubated || 0,
+        color: "#234c7e",
+      },
+      {
+        id: "متخرجة",
+        label: "متخرجة",
+        value: data.graduated || 0,
+        color: "#2d57c0",
       },
     ];
   }, [data]);
@@ -38,7 +42,7 @@ const ProjectLifecycleChart = ({ data }) => {
   // ============================
   if (!data || chartData.length === 0) {
     return (
-      <div className="bg-white w-[680px] h-[380px] flex items-center justify-center rounded-lg shadow border border-gray-100">
+      <div className="bg-white w-[600px] h-[300px] flex items-center justify-center rounded-lg shadow border border-gray-100">
         <p className="text-gray-400 font-medium">
           لا توجد بيانات متاحة لهذا الموسم
         </p>
@@ -48,111 +52,56 @@ const ProjectLifecycleChart = ({ data }) => {
 
   return (
     <div
-      className="bg-white w-[680px] p-6 rounded-lg shadow border border-gray-100"
+      className="bg-white w-[600px] p-6 rounded-lg shadow border border-gray-100"
       dir="rtl"
     >
       {/* العنوان */}
-      <div className="flex justify-between items-center mb-4">
+      <div className="flex justify-between items-center">
         <div>
           <h2 className="text-xl font-semibold text-gray-800">
             دورة حياة المشاريع
           </h2>
-
-          <p className="text-xs text-gray-400 mt-1">
-            {data.season_name} - {data.year}
-          </p>
         </div>
       </div>
 
-      {/* المخطط */}
+      {/* المخطط الدائري */}
       <div style={{ height: 300 }} dir="ltr">
-        <ResponsiveLine
+        <ResponsivePie
           data={chartData}
-          margin={{
-            top: 20,
-            right: 30,
-            bottom: 60,
-            left: 40,
-          }}
-          xScale={{
-            type: "point",
-          }}
-          yScale={{
-            type: "linear",
-            min: 0,
-            max: "auto",
-            stacked: false,
-          }}
-          curve="monotoneX"
-          colors={["#0F766E"]}
-          lineWidth={3}
-          pointSize={10}
-          pointColor="#0F766E"
-          pointBorderWidth={3}
-          pointBorderColor={{
-            from: "serieColor",
-          }}
-          enableGridX={false}
-          enableGridY={true}
-          gridYValues={5}
-          axisTop={null}
-          axisRight={null}
-          axisBottom={{
-            tickSize: 0,
-            tickPadding: 12,
-          }}
-          axisLeft={{
-  tickSize: 0,
-  tickPadding: 10,
-  format: (value) => Number.isInteger(value) ? value : "",
-  tickValues: "every 1",
-}}
-          enableArea={true}
-          areaOpacity={0.08}
-          useMesh={true}
-          enableTouchCrosshair={true}
-          tooltip={({ point }) => (
-            <div className="bg-white shadow-md border rounded-lg px-3 py-2 text-sm">
-              <p className="font-bold text-main-color">
-                {point.data.xFormatted}
+          margin={{ top: 40, right: 80, bottom: 40, left: 80 }}
+          
+          // 🎯 السر هنا: جعل النصف القطري الداخلي 0 يحولها من دونات إلى دائرة عادية ممتلئة
+          innerRadius={0}
+          
+          // تحديد الألوان بناءً على الكائن الممرر في البيانات فوق
+          colors={(datum) => datum.data.color}
+          
+          // إعدادات الخطوط والمسميات الخارجية
+          arcLinkLabelsSkipAngle={10}
+          arcLinkLabelsTextColor="#4B5563"
+          arcLinkLabelsThickness={2}
+          arcLinkLabelsColor={{ from: "color" }}
+          
+          // الأرقام داخل الدائرة
+          arcLabelsSkipAngle={10}
+          arcLabelsTextColor="#ffffff"
+          
+          // تخصيص التولتيب ليطابق تصميمك السابق باللغة العربية
+          tooltip={({ datum }) => (
+            <div className="bg-white shadow-md border rounded-lg px-3 py-2 text-sm text-right" dir="rtl">
+              <p className="font-bold" style={{ color: datum.color }}>
+                {datum.id}
               </p>
-
-              <p className="text-gray-700">
-                عدد المشاريع:{" "}
-                <span className="font-bold">
-                  {point.data.yFormatted}
-                </span>
+              <p className="text-gray-700 mt-0.5">
+                عدد المشاريع: <span className="font-bold">{datum.value}</span>
               </p>
             </div>
           )}
-          legends={[
-            {
-              anchor: "bottom",
-              direction: "row",
-              translateY: 50,
-              itemWidth: 100,
-              itemHeight: 20,
-              symbolSize: 12,
-              symbolShape: "circle",
-            },
-          ]}
+          
           theme={{
             text: {
               fontSize: 12,
-              fill: "#6B7280",
-            },
-            axis: {
-              ticks: {
-                text: {
-                  fill: "#6B7280",
-                },
-              },
-            },
-            grid: {
-              line: {
-                stroke: "#E5E7EB",
-                strokeWidth: 1,
-              },
+              fontFamily: "inherit",
             },
           }}
         />
