@@ -115,8 +115,8 @@ const LatestReviewPage = () => {
 
                 {/* قسم الملاحظات */}
                 <div className="w-full text-right bg-gray-50/50 p-3 rounded-lg">
-                  <h4 className="text-sm font-bold text-gray-700 mb-2">الملاحظات :</h4>
-                  <p className="text-sm text-gray-600 leading-relaxed whitespace-pre-line">
+                  <h4 className="text-md font-bold text-gray-700 mb-2">الملاحظات :</h4>
+                  <p className="text-md text-gray-600 leading-relaxed whitespace-pre-line">
                     {reviews.notes || <span className="text-gray-400 italic">لا توجد ملاحظات مكتوبة</span>}
                   </p>
                 </div>

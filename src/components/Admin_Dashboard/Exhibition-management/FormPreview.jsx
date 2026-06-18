@@ -206,13 +206,13 @@ const FormPreview = ({ fields }) => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 py-10 px-4">
+    <div className="py-4 px-4">
       <div className="max-w-4xl mx-auto bg-white shadow-lg rounded-2xl p-8 border border-gray-100">
         <h2 className="text-2xl font-bold text-center text-main-color mb-8">
           معاينة نموذج المعرض
         </h2>
 
-        <div className="space-y-7">
+        <div className="space-y-4">
           {fields.map((field) => (
             <div
               key={field.id}

@@ -19,10 +19,12 @@ const baseNav = {
     { label: "المشاريع", to: "/projectspage", scrollId: "" },
     { label: "النشاطات", to: "/activitiespage", scrollId: "" },
   ], 
+  
   admin: [
      { label: "الرئيسية", to: "/admin-mainpage", scrollId: "" },
     
   ],
+ 
 };
 
 export const navOptions = {
@@ -51,9 +53,9 @@ export const getNavOptionsByRole = (roles) => {
     return navOptions.visitor;
   }
 
-  // تحويل القيمة إلى مصفوفة دائماً لضمان عدم حدوث كراش (سواء كانت قادمة String أو Array)
-  const rolesArray = Array.isArray(roles) ? roles : [roles];
-
+ const rolesArray = (Array.isArray(roles) ? roles : [roles])
+    .map(role => role.toLowerCase());
+    
   // إرجاع القائمة المناسبة حسب الأولوية الأعلى للصلاحيات
   if (rolesArray.includes("admin")) return navOptions.admin; 
   if (rolesArray.includes("idea_owner")) return navOptions.idea_owner;

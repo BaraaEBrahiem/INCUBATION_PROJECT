@@ -206,28 +206,6 @@ export default function CardRequestDetailsPage() {
       <div className="container mx-auto">
 
         <div className="bg-white shadow-lg rounded overflow-hidden flex flex-col md:flex-row">
-
-          {/* الصورة */}
-          <div className="md:w-1/2 bg-gray-100 flex items-center justify-center min-h-[550px]">
-
-            {data?.project_image ? (
-              <img
-  src={`http://127.0.0.1:8000${encodeURI(data.project_image)}`}
-  alt={data.owner_name}
-  className="w-full h-full object-contain"
-/>
-
-            ) : (
-              <div className="text-center text-gray-400">
-                <IoImageOutline className="text-8xl mx-auto mb-4" />
-                <p>
-                  لا توجد صورة
-                  للمشروع
-                </p>
-              </div>
-            )}
-          </div>
-
           {/* التفاصيل */}
           <div className="md:w-1/2 p-8 text-right">
 
@@ -444,7 +422,26 @@ export default function CardRequestDetailsPage() {
               </div>
             )}
           </div>
-        </div>
+          {/* الصورة */}
+          <div className="md:w-1/2 bg-gray-100 flex items-center justify-center min-h-[550px]">
+
+            {data?.project_image ? (
+              <img
+  src={`http://127.0.0.1:8000${encodeURI(data.project_image)}`}
+  alt={data.owner_name}
+  className="w-full h-full object-contain"
+/>
+
+            ) : (
+              <div className="text-center text-gray-400">
+                <IoImageOutline className="text-8xl mx-auto mb-4" />
+                <p>
+                  لا توجد صورة
+                  للمشروع
+                </p>
+              </div>
+            )}
+          </div>
 
         {/* مودال الرفض */}
         <Modal
@@ -526,6 +523,7 @@ export default function CardRequestDetailsPage() {
           />
         </Modal>
       </div>
+    </div>
     </div>
   );
 }
