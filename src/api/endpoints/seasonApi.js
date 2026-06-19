@@ -7,9 +7,14 @@ export const seasonApi = apiSlice.injectEndpoints({
     getCurrentPhase: builder.query({
       query: () => "/ideas/current-phase/",
     }),
-  }),
+  //جلب الموسم الحالي 
+  getActiveSeason: builder.query({
+  query: () => '/ideas/current-seasons/',
+}),
+}),
 });
 
 export const {
   useGetCurrentPhaseQuery,
+  useGetActiveSeasonQuery,
 } = seasonApi;
