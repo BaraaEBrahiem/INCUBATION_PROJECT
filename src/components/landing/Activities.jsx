@@ -11,7 +11,7 @@ const activities = [
     title: "هل ترغب بأن تكون جزءاً من المستقبل التكنولوجي",
     description: "دورة تدريب مدربين روبوت سبارك",
     status: "منتهية",
-    trainer: "محمد احمد",
+    trainer_name: "محمد احمد",
     count: 25,
   },
   {
@@ -19,7 +19,7 @@ const activities = [
     title: "هل ترغب بأن تكون جزءاً من المستقبل التكنولوجي؟",
     description: "دورة تدريب مدربين روبوت سبارك",
     status: "لم تبدأ بعد",
-    trainer: "محمد احمد",
+    trainer_name: "محمد احمد",
     count: 25,
   },
   {
@@ -27,7 +27,7 @@ const activities = [
     title: "هل ترغب بأن تكون جزءاً من المستقبل التكنولوجي؟",
     description: "دورة تدريب مدربين روبوت سبارك",
     status: "بدأت حديثاً",
-    trainer: "محمد احمد",
+    trainer_name: "محمد احمد",
     count: 25,
   },
   {
@@ -35,7 +35,7 @@ const activities = [
     title: "هل ترغب بأن تكون جزءاً من المستقبل التكنولوجي؟",
     description: "دورة تدريب مدربين روبوت سبارك",
     status: "منتهية",
-    trainer: "محمد احمد",
+    trainer_name: "محمد احمد",
     count: 25,
   },
   

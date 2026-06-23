@@ -21,8 +21,8 @@ const quickLinks = [
 const joinLinks = [
   { label: "تسجيل الدخول", to: "/login" },
   { label: "أنشئ حسابك الآن", to: "/signup" },
-  { label: "تطوع الآن", to: "/volunteerform" },
-  { label: "قدم فكرتك", to: "/ideaform" }
+  { label: "تطوع الآن", to: "/signup" },
+  { label: "قدم فكرتك", to: "/signup" }
 ];
 
 const Footer = () => {

@@ -11,7 +11,7 @@ const ActivityCard = ({
     children
   })=> {
   return (
-    <div className="bg-white rounded-lg shadow overflow-hidden mb-4 w-[350px]">
+    <div className="bg-white rounded-lg shadow overflow-hidden mb-4 w-[300px]">
       <img src={image} alt={title} className="w-full h-45 object-cover" />
       <div className="p-4">
         <div className="flex justify-between items-center mb-2">

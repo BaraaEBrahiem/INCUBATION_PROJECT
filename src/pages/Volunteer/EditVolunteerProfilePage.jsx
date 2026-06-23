@@ -55,7 +55,7 @@ const EditVolunteerProfilePage = () => {
         phone: profileData.basic_info?.phone || profileData.user?.phone || profileData.phone || "",
         primary_Skills: profileData.primary_skills || profileData.primary_Skills || "",
         additional_Skills: Array.isArray(profileData.additional_skills) 
-          ? profileData.additional_skills.join(", ") 
+          ? profileData.additional_Skills.join(", ") 
           : (profileData.additional_Skills || "")
       };
 

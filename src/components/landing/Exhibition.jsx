@@ -5,24 +5,24 @@ import project2 from '../../assets/images/project2.png';
 import project3 from '../../assets/images/project3.png';
 const projects = [
   {
-    name: "موقع للتواصل الاجتماعي",
+    title: "موقع للتواصل الاجتماعي",
     category: "تكنولوجي",
-    team: "Green Panda",
-    members: ["نصوح شاهين", "علي احمد"],
+    owner: "Green Panda",
+    team_members: ["نصوح شاهين", "علي احمد"],
     image: project1
   },
   {
-    name: "موقع للتواصل الاجتماعي",
+    title: "موقع للتواصل الاجتماعي",
     category: "تكنولوجي",
-    team: "Green Panda",
-    members: ["نصوح شاهين", "علي احمد"],
+    owner: "Green Panda",
+    team_members: ["نصوح شاهين", "علي احمد"],
     image: project2
   },
   {
-    name: "موقع للتواصل الاجتماعي",
+    title: "موقع للتواصل الاجتماعي",
     category: "تكنولوجي",
-    team: "Green Panda",
-    members: ["نصوح شاهين", "علي احمد"],
+    owner: "Green Panda",
+    team_members: ["نصوح شاهين", "علي احمد"],
     image: project3
   },
 
