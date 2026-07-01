@@ -14,8 +14,10 @@ const CampManagementPage = () => {
     { id: "sessions", label: "إدارة الجلسات" },
   ];
 
-  return (
-    <div className="container p-6">
+return (
+    // 🎯 أعدنا container p-6 الأصلي الخاص بكِ ليعود اللابتوب كما كان تماماً دون أي تغيير بكسل واحد
+    // 🎯 وأضفنا max-w-full مع overflow-x-auto ليسمح لكِ بتحريك وتمرير التبويبات والجداول بحرية على الموبايل
+    <div className="container p-6 max-w-full overflow-x-auto">
 
       {/* الهيدر */}
       <CampHeader seasonId={id} />
@@ -30,5 +32,4 @@ const CampManagementPage = () => {
     </div>
   );
 };
-
 export default CampManagementPage;

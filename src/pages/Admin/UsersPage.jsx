@@ -144,7 +144,8 @@ const UsersPage = () => {
 
   return (
     <div
-      className="bg-white-color min-h-screen"
+      // 🎯 التعديل هنا: أضفنا overflow-x-hidden و max-w-full لمنع الصفحة الكلية من الطيران يميناً ويساراً على الموبايل
+      className="bg-white-color min-h-screen w-full max-w-full overflow-x-hidden"
       dir="rtl"
     >
       <AdminNavbar
@@ -231,7 +232,7 @@ const UsersPage = () => {
           role.code,
         label:
           role.name,
-      })
+    })
     ) || []),
   ]}
   value={
@@ -250,10 +251,11 @@ const UsersPage = () => {
         </form>
       </Modal>
 
-      <div className="container mt-30">
-        <h2 className="text-2xl font-semibold mb-6">
+      {/* 🎯 تعديل حاوية المحتوى: أضفنا px-4 لتوفير مساحة حواف مريحة على الموبايل، و w-full مع overflow-x-hidden لمنع خروج العناصر */}
+      <div className="container mt-30 px-4 sm:px-6 w-full max-w-full overflow-x-hidden">
+        <h2 className="text-xl sm:text-2xl font-semibold mb-6">
           إدارة المستخدمين
-          والأدوار
+          الأدوار
         </h2>
 
         <UserFilters
@@ -265,12 +267,15 @@ const UsersPage = () => {
           }
         />
 
-        <UsersTable
-          roleFilter={
-            roleFilter
-          }
-          users={users}
-        />
+        {/* 🎯 تغليف جدول المستخدمين بـ div معزول لضمان السكرول الداخلي على الموبايل وعدم تخريب الصفحة الكلية */}
+        <div className="w-full overflow-x-auto block whitespace-nowrap mt-4">
+          <UsersTable
+            roleFilter={
+              roleFilter
+            }
+            users={users}
+          />
+        </div>
       </div>
     </div>
   );

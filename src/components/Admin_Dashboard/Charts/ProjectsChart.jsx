@@ -62,7 +62,8 @@ const ProjectsChart = ({
     );
 
   return (
-    <div className="bg-white p-6 rounded-lg shadow w-full">
+    // 🎯 الحل هنا: تمت إزالة max-w-[560px] وإعادة w-full ليتمدد الكارد بالكامل على اللابتوب ويملأ المساحة البيضاء كما كان سابقاً
+    <div className="bg-white p-4 sm:p-6 rounded-lg shadow w-full">
       <h2 className="text-xl font-semibold mb-4">
         المشاريع المنجزة
       </h2>
@@ -78,13 +79,17 @@ const ProjectsChart = ({
             "value",
           ]}
           indexBy="year"
-          margin={{
-            top: 20,
-            right: 20,
-            bottom: 40,
-            left: 45,
-          }}
-          padding={0.3}
+          
+          // 🎯 تقليص الهوامش الجانبية فقط عند تصغير الشاشة (الهاتف) لتفادي اختفاء الأعمدة، وإعادتها لطبيعتها على اللابتوب
+          margin={
+            typeof window !== "undefined" && window.innerWidth < 640
+              ? { top: 20, right: 10, bottom: 40, left: 30 }
+              : { top: 20, right: 20, bottom: 40, left: 45 } // هوامشك الأصلية للابتوب
+          }
+          
+          // 🎯 تقليص الـ padding بين الأعمدة على الموبايل لمنع الاختفاء، ووضعه الافتراضي للابتوب
+          padding={typeof window !== "undefined" && window.innerWidth < 640 ? 0.15 : 0.3}
+          
           colors={{
             datum:
               "data.color",
@@ -154,5 +159,4 @@ const ProjectsChart = ({
     </div>
   );
 };
-
 export default ProjectsChart;

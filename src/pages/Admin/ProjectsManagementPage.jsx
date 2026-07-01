@@ -184,7 +184,7 @@ useScheduleMeetingMutation();
           <Button
             label="تعيين المقيمين"
             onClick={handleAssignEvaluators}
-            className="bg-main-color"
+            className="bg-main-color ml-2"
           />
 
           <Button

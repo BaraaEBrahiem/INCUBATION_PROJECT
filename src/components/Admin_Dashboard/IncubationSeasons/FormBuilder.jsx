@@ -305,12 +305,13 @@ const FormBuilder = ({ season }) => {
     );
   }
 
-  return (
+ return (
+    // 🎯 التعديل هنا: تحويل لـ flex-col للموبايل و md:flex-row للابتوب لضمان ثبات التصميم الأصلي 100%
     <div
-      className="flex gap-6"
+      className="flex flex-col md:flex-row gap-6 w-full"
       dir="rtl"
     >
-      <div className="flex-1 p-5 bg-white rounded-lg shadow-sm border border-gray-100">
+      <div className="flex-1 p-5 bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden">
         <h1 className="text-xl font-bold mb-2 text-gray-800">
           {formConfig?.title ||
             season?.name ||
@@ -324,7 +325,8 @@ const FormBuilder = ({ season }) => {
 
         {steps.length >
           1 && (
-          <div className="flex gap-2 border-b pb-3 mb-6 overflow-x-auto">
+          // 🎯 أضفنا كلاسات إخفاء شريط التمرير الرمادي للموبايل [scrollbar-width:none] [&::-webkit-scrollbar]:hidden لتتحرك خطوات الاستمارة بسلاسة إصبعية
+          <div className="flex gap-2 border-b pb-3 mb-6 overflow-x-auto whitespace-nowrap block [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             {steps.map(
               (
                 step
@@ -339,7 +341,7 @@ const FormBuilder = ({ season }) => {
                       step.id
                     )
                   }
-                  className={`px-4 py-2 rounded-md font-semibold text-sm transition ${
+                  className={`px-4 py-2 rounded-md font-semibold text-sm transition shrink-0 ${
                     step.id ===
                     activeStepId
                       ? "bg-main-color text-white"
@@ -419,7 +421,9 @@ const FormBuilder = ({ season }) => {
         )}
       </div>
 
-      <div className="w-64 h-fit border border-second-color bg-white rounded-lg shadow p-4 flex flex-col gap-3">
+      {/* العمود الأيسر الإحصائي */}
+      {/* 🎯 السر هنا: w-full ليمتد بكامل شاشة الهاتف، و md:w-64 ليثبت تماماً بمقاسه المعتاد على اللابتوب */}
+      <div className="w-full md:w-64 h-fit border border-second-color bg-white rounded-lg shadow p-4 flex flex-col gap-3">
         <p className="text-sm text-gray-700">
           <span className="font-semibold">
             عدد الطلبات:

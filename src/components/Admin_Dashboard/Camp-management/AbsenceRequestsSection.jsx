@@ -100,10 +100,9 @@ const AbsenceRequestsSection = () => {
     { key: "applicant", label: "مقدم الطلب" },
     { key: "idea_title", label: "اسم المشروع" },
   ];
-
-  if (isLoading) {
+if (isLoading) {
     return (
-      <div className="bg-white p-6 rounded-lg shadow">
+      <div className="bg-white p-4 sm:p-6 rounded-lg shadow">
         <h2 className="text-lg font-bold mb-4">قائمة طلبات الغياب</h2>
         <div className="space-y-4">
           {[1, 2, 3].map((i) => (
@@ -116,7 +115,7 @@ const AbsenceRequestsSection = () => {
 
   if (error) {
     return (
-      <div className="bg-white p-6 rounded-lg shadow">
+      <div className="bg-white p-4 sm:p-6 rounded-lg shadow">
         <h2 className="text-lg font-bold mb-4">قائمة طلبات الغياب</h2>
         <div className="text-center py-10">
           <p className="text-red-500 mb-3">حدث خطأ في تحميل الطلبات</p>
@@ -129,13 +128,20 @@ const AbsenceRequestsSection = () => {
   }
 
   return (
-    <div className="bg-white p-6 rounded-lg shadow">
+    // 🎯 الكارد الخارجي آمن تماماً ويتسع لجميع الشاشات بمرونة
+    <div className="bg-white p-4 sm:p-6 rounded-lg shadow w-full">
       <h2 className="text-lg font-bold mb-4">قائمة طلبات الغياب</h2>
+      
+      {/* 🎯 شريط البحث متروك بحرية كاملة ليتمدد 100% ويظهر كاملاً دون أي قص أو تجميد */}
       <SearchBar placeholder="بحث باسم المشروع أو مقدم الطلب" onSearch={setSearchTerm} />
+      
       {filteredRequests.length === 0 ? (
         <div className="text-center py-10 text-gray-500">🧾 لا توجد طلبات غياب حالياً</div>
       ) : (
-        <DataTable columns={columns} data={filteredRequests} />
+        /* 🎯 العزل السحري هنا: الجدول فقط هو المحمي بـ overflow-x-auto لكي تتمكني من تحريكه يميناً ويساراً بإصبعك على الموبايل دون كسر شريط البحث */
+        <div className="w-full overflow-x-auto block mt-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          <DataTable columns={columns} data={filteredRequests} />
+        </div>
       )}
     </div>
   );

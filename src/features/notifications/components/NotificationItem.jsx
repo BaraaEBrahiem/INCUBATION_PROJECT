@@ -56,7 +56,7 @@ const NotificationItem = ({
         <div className="flex-1">
           <p
             className={`
-              text-xl
+              md:text-xl text-md
               leading-7
               text-right
               ${

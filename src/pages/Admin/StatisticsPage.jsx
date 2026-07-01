@@ -336,34 +336,25 @@ const StatisticsPage = () => {
             />
 
             {/* الصف الأول */}
-            <div className="flex justify-between items-start gap-6 my-6">
-              <ProjectLifecycleChart
-                data={
-                  lifecycle
-                }
-              />
-
-              <SectorAnalysisChart
-                data={
-                  sector
-                }
-              />
-            </div>
+           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 my-6 w-full">
+           <div className="w-full overflow-hidden">
+            <ProjectLifecycleChart
+              data={lifecycle} />
+               </div>
+           <div className="w-full overflow-hidden">
+             <SectorAnalysisChart data={sector} />
+       </div>
+         </div>
 
             {/* الصف الثاني */}
-            <div className="flex justify-between items-start gap-6 mb-6">
-              <IncubationSeasonsChart
-                data={
-                  seasons
-                }
-              />
-
-              <ExpertiseFieldsChart
-                data={
-                  expertise
-                }
-              />
-            </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6 w-full">
+          <div className="w-full overflow-hidden">
+             <IncubationSeasonsChart data={seasons} />
+              </div>
+          <div className="w-full overflow-hidden">
+             <ExpertiseFieldsChart data={expertise} />
+      </div>
+</div>
           </>
         )}
       </div>
