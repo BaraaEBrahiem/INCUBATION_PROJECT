@@ -58,39 +58,37 @@ const WorkshopsPage = () => {
   };
 
   return (
-    <div className="bg-white-color min-h-screen bg-gray-50 p-6 w-full flex justify-center items-start">
-      {/* 🚀 قمنا بتغيير max-w-6xl إلى w-full لتكبير المساحة بالكامل */}
-      <div className="w-full px-4"> 
+    <div className="bg-white-color min-h-screen bg-gray-50 p-4 md:p-6 w-full flex justify-center items-start">
+      <div className="w-full max-w-7xl px-0 md:px-4"> 
         <h2 className="text-second-color text-2xl font-bold my-6">ورش العمل</h2>
 
-        <div className="bg-white rounded-lg shadow-lg shadow-gray-400 border border-gray-100 p-6" dir='rtl'>
+        <div className="bg-white rounded-lg shadow-lg shadow-gray-400 border border-gray-100 p-4 md:p-6" dir='rtl'>
           <h2 className="text-right text-xl font-bold mb-6 text-black">ورشاتي</h2>
 
-          {/* 🚀 إزالة السكرول الأفقي تماماً وجعل الجدول مفروداً بالكامل */}
-          <div className="w-full">
-            <table className="w-full border-collapse table-auto">
+          {/* 🚀 إضافة overflow-x-auto هنا ليعمل الجدول بشكل صحيح على الموبايل دون كسر التصميم */}
+          <div className="w-full overflow-x-auto">
+            <table className="w-full border-collapse table-auto min-w-[800px] md:min-w-0">
               <thead>
-                <tr className="border-b-2 border-second-color font-bold pb-4 text-right whitespace-nowrap bg-gray-50/70">
-                  <th className="py-4 px-4 text-right text-sm md:text-base">اسم الورشة</th>
-                  <th className="py-4 px-4 text-right text-sm md:text-base">البدء</th>
-                  <th className="py-4 px-4 text-right text-sm md:text-base">الانتهاء</th>
-                  <th className="py-4 px-4 text-center text-sm md:text-base">عدد الجلسات</th>
-                  <th className="py-4 px-4 text-right text-sm md:text-base">الأيام</th>
-                  <th className="py-4 px-4 text-right text-sm md:text-base">الوقت</th>
-                  <th className="py-4 px-4 text-right text-sm md:text-base">المجال</th>
-                  <th className="py-4 px-4 text-right text-sm md:text-base">الحالة</th>
-                  <th className="py-4 px-4 text-center text-sm md:text-base">الإجراء</th>
+                <tr className="border-b-2 border-second-color font-bold pb-4 text-right bg-gray-50/70">
+                  <th className="py-4 px-4 text-right text-sm">اسم الورشة</th>
+                  <th className="py-4 px-4 text-right text-sm">البدء</th>
+                  <th className="py-4 px-4 text-right text-sm">الانتهاء</th>
+                  <th className="py-4 px-4 text-center text-sm">عدد الجلسات</th>
+                  <th className="py-4 px-4 text-right text-sm">الأيام</th>
+                  <th className="py-4 px-4 text-right text-sm">الوقت</th>
+                  <th className="py-4 px-4 text-right text-sm">المجال</th>
+                  <th className="py-4 px-4 text-right text-sm">الحالة</th>
+                  <th className="py-4 px-4 text-center text-sm">الإجراء</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
                 {workshops.map((item) => (
-                  <tr key={item.id} className="text-md hover:bg-gray-50/50 transition-colors whitespace-nowrap">
-                    {/* 🚀 تركنا اسم الورشة يأخذ المساحة المريحة له دون قص جبري قاسي */}
+                  <tr key={item.id} className="text-sm md:text-md hover:bg-gray-50/50 transition-colors whitespace-nowrap">
                     <td className="py-5 px-4 text-right font-medium text-black">{item.title}</td>
                     <td className="py-5 px-4 text-right text-gray-600">{item.start_date}</td>
                     <td className="py-5 px-4 text-right text-gray-600">{item.end_date}</td>
                     <td className="py-5 px-4 text-center text-gray-600">{item.sessions}</td>
-                    <td className="py-5 px-4 text-right text-gray-600 leading-relaxed">{item.days}</td>
+                    <td className="py-5 px-4 text-right text-gray-600">{item.days}</td>
                     <td className="py-5 px-4 text-right text-gray-600">{item.time_from} - {item.time_to}</td>
                     <td className="py-5 px-4 text-right text-gray-500">{item.category}</td>
                     <td className="py-5 px-4 text-right">
@@ -100,7 +98,7 @@ const WorkshopsPage = () => {
                     </td>
                     <td className="py-4 px-4 text-center">
                       <NavLinkUniversal 
-                        label={<Button label="عرض التفاصيل" className="bg-main-color px-4 py-1.5 text-sm rounded"/>}
+                        label={<Button label="عرض التفاصيل" className="bg-main-color px-3 py-1 text-xs md:text-sm rounded"/>}
                         to={`/workshopinfo/${item.id}`} 
                       />
                     </td>
@@ -110,13 +108,13 @@ const WorkshopsPage = () => {
             </table>
           </div>
 
-          <div className="flex flex-col sm:flex-row items-start sm:items-center mt-8 gap-4">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center mt-8 gap-3">
             <NavLinkUniversal 
-              label={<Button label="إضافة ورشة تدريب" className="bg-main-color text-white px-6 py-2 rounded-md" />}
+              label={<Button label="إضافة ورشة تدريب" className="bg-main-color text-white w-full sm:w-auto px-6 py-2 rounded-md text-sm md:text-base" />}
               to="/AddWorkShopPage"
             />
             <NavLinkUniversal 
-              label={<Button label="ورشات المعسكر" className="bg-main-color text-white px-6 py-2 rounded-md" />}
+              label={<Button label="ورشات المعسكر" className="bg-main-color text-white w-full sm:w-auto px-6 py-2 rounded-md text-sm md:text-base" />}
               to="/CampWorkShopsPage"
             />
           </div>
@@ -124,7 +122,5 @@ const WorkshopsPage = () => {
         </div>
       </div>
     </div>
-  );
-};
-
+  );}
 export default WorkshopsPage;

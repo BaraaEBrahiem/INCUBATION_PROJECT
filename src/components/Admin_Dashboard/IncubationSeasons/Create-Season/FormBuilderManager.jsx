@@ -214,94 +214,97 @@ const FormBuilderManager = ({ onSubmit, isSubmitting: isSaving, seasonId = null,
   const isActionLoading = isSaving || isPublishingSeason;
 
   return (
-    <div className="p-6 bg-gray-100 min-h-screen flex flex-col gap-6" dir="rtl">
-      <div className="mb-2">
-        {isPreviewMode ? (
-          <FormPreview steps={formData.steps} />
-        ) : (
-          <div className="flex gap-6 items-start">
-            <div className="flex-1 flex flex-col gap-4">
-              
-              {/* شريط تبويبات الخطوات والتحكم بإنشائها */}
-              <div className="flex gap-4 bg-white p-3 rounded-lg shadow items-center overflow-x-auto">
-                <span className="text-lg font-bold text-black ml-2">الخطوات:</span>
-                {formData.steps.map((step) => (
-                  <button
-                    key={step.id}
-                    onClick={() => setActiveStepId(step.id)}
-                    className={`px-3 py-2 rounded-md text-sm font-bold transition-all ${
-                      step.id === activeStepId ? "bg-main-color text-white shadow-md" : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-                    }`}
-                  >
-                    {step.title} (الترتيب: {step.order})
-                  </button>
-                ))}
-                <button onClick={addStep} className="px-3 py-1 bg-main-color text-white rounded-md text-lg mr-auto hover:opacity-90">
-                  + إنشاء خطوة
-                </button>
-              </div>
 
-              {/* 🌟 الإضافة الأولى: مدخل نصي لتعديل اسم الخطوة الحالية ديناميكياً */}
-              {currentStep && (
-                <div className="bg-white p-4 rounded-lg shadow border-r-4 border-main-color flex flex-col gap-2">
-                  <label className="font-bold text-sm text-gray-700">عنوان الخطوة الحالية:</label>
-                  <input
-                    type="text"
-                    value={currentStep.title}
-                    onChange={(e) => updateStepTitle(e.target.value)}
-                    className="w-full md:w-1/2 p-2 border border-gray-300 rounded focus:outline-none focus:border-main-color text-sm"
-                    placeholder="مثال: معلومات الفكرة، بيانات الفريق..."
-                  />
-                </div>
-              )}
+    <div className="p-4 md:p-6 bg-gray-100 min-h-screen flex flex-col gap-6" dir="rtl">
+  <div className="mb-2">
+    {isPreviewMode ? (
+      <FormPreview steps={formData.steps} />
+    ) : (
+      // تحويل الـ flex إلى عمودي في الموبايل وأفقي في اللابتوب
+      <div className="flex flex-col lg:flex-row gap-6 items-start">
+        <div className="flex-1 flex flex-col gap-4 w-full">
+          
+          {/* شريط التبويبات مع جعلها قابلة للتمرير في الموبايل */}
+          <div className="flex gap-4 bg-white p-3 rounded-lg shadow items-center overflow-x-auto whitespace-nowrap">
+            <span className="text-lg font-bold text-black ml-2 shrink-0">الخطوات:</span>
+            {formData.steps.map((step) => (
+              <button
+                key={step.id}
+                onClick={() => setActiveStepId(step.id)}
+                className={`px-3 py-2 rounded-md text-sm font-bold transition-all shrink-0 ${
+                  step.id === activeStepId ? "bg-main-color text-white shadow-md" : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                }`}
+              >
+                {step.title} (الترتيب: {step.order})
+              </button>
+            ))}
+            <button onClick={addStep} className="px-3 py-1 bg-main-color text-white rounded-md text-lg mr-auto hover:opacity-90 shrink-0">
+              + إنشاء خطوة
+            </button>
+          </div>
 
-              <FormBuilderCanvas
-                fields={currentStep?.questions || []}
-                updateField={(id, props) => {
-                  setFormData({...formData, steps: formData.steps.map(s => s.id === activeStepId ? {...s, questions: s.questions.map(q => q.id === id ? {...q, ...props} : q)} : s)});
-                  setIsFormSaved(false);
-                }}
-                deleteField={(id) => {
-                  setFormData({...formData, steps: formData.steps.map(s => s.id === activeStepId ? {...s, questions: s.questions.filter(q => q.id !== id)} : s)});
-                  setIsFormSaved(false);
-                }}
+          {currentStep && (
+            <div className="bg-white p-4 rounded-lg shadow border-r-4 border-main-color flex flex-col gap-2">
+              <label className="font-bold text-sm text-gray-700">عنوان الخطوة الحالية:</label>
+              <input
+                type="text"
+                value={currentStep.title}
+                onChange={(e) => updateStepTitle(e.target.value)}
+                className="w-full md:w-1/2 p-2 border border-gray-300 rounded focus:outline-none focus:border-main-color text-sm"
+                placeholder="مثال: معلومات الفكرة، بيانات الفريق..."
               />
             </div>
+          )}
 
+          <FormBuilderCanvas
+            fields={currentStep?.questions || []}
+            updateField={(id, props) => {
+              setFormData({...formData, steps: formData.steps.map(s => s.id === activeStepId ? {...s, questions: s.questions.map(q => q.id === id ? {...q, ...props} : q)} : s)});
+              setIsFormSaved(false);
+            }}
+            deleteField={(id) => {
+              setFormData({...formData, steps: formData.steps.map(s => s.id === activeStepId ? {...s, questions: s.questions.filter(q => q.id !== id)} : s)});
+              setIsFormSaved(false);
+            }}
+          />
+        </div>
+
+        {/* لوحة أنواع الحقول تظهر بشكل جيد في الـ lg */}
+        <div className="w-full lg:w-auto">
             <FieldTypesPanel addField={addFieldToCurrentStep} />
-          </div>
-        )}
+        </div>
       </div>
+    )}
+  </div>
 
-      {/* أزرار التحكم بالمعاينة والحفظ والنشر */}
-      <div className="flex justify-center gap-4 z-50">
-        <button 
-          onClick={() => setIsPreviewMode(!isPreviewMode)} 
-          className="px-4 py-2 bg-main-color text-white rounded-md text-lg font-semibold hover:opacity-90"
-        >
-          {isPreviewMode ? "العودة للتعديل" : "معاينة النموذج"}
-        </button>
+  {/* أزرار التحكم - جعلناها قابلة للالتفاف في حال صغر الشاشة */}
+  <div className="flex flex-wrap justify-center gap-4 z-50 pb-10">
+    <button 
+      onClick={() => setIsPreviewMode(!isPreviewMode)} 
+      className="px-4 py-2 bg-main-color text-white rounded-md text-lg font-semibold hover:opacity-90"
+    >
+      {isPreviewMode ? "العودة للتعديل" : "معاينة النموذج"}
+    </button>
 
-        {!isFormSaved ? (
-          <button 
-            onClick={handleSaveForm} 
-            disabled={isActionLoading}
-            className="px-4 py-2 bg-main-color text-white rounded-md text-lg font-semibold hover:opacity-90 disabled:opacity-50"
-          >
-            {isSaving ? "جاري الحفظ..." : "حفظ النموذج"}
-          </button>
-        ) : (
-          <button 
-            onClick={handlePublishSeason} 
-            disabled={isActionLoading}
-            className="px-4 py-2 bg-main-color text-white rounded-md text-lg font-semibold hover:scale-105 disabled:opacity-50 transition-all"
-          >
-            {isPublishingSeason ? "جاري النشر..." : "نشر النموذج للعامة"}
-          </button>
-        )}
-      </div>
-    </div>
-  );
+    {!isFormSaved ? (
+      <button 
+        onClick={handleSaveForm} 
+        disabled={isActionLoading}
+        className="px-4 py-2 bg-main-color text-white rounded-md text-lg font-semibold hover:opacity-90 disabled:opacity-50"
+      >
+        {isSaving ? "جاري الحفظ..." : "حفظ النموذج"}
+      </button>
+    ) : (
+      <button 
+        onClick={handlePublishSeason} 
+        disabled={isActionLoading}
+        className="px-4 py-2 bg-main-color text-white rounded-md text-lg font-semibold hover:scale-105 disabled:opacity-50 transition-all"
+      >
+        {isPublishingSeason ? "جاري النشر..." : "نشر النموذج للعامة"}
+      </button>
+    )}
+  </div>
+</div> );
 };
 
 export default FormBuilderManager;

@@ -164,14 +164,14 @@ const WorkshopStepTwo = ({
       <div className="flex justify-between items-center mt-4">
         <button
           onClick={onBack}
-          className="bg-main-color text-white font-semibold rounded-xl px-10 py-2 w-50"
+          className="bg-main-color text-white font-semibold rounded-xl px-10 py-2 w-50 ml-2"
         >
         عودة
         </button>
 
         <button 
           onClick={onSubmit}
-          className="bg-main-color text-white font-semibold rounded-xl px-10 py-2 w-50"
+          className="bg-main-color text-white font-semibold rounded-xl px-10 py-2 w-50 "
         >
         التالي
         </button>

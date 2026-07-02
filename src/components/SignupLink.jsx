@@ -6,7 +6,7 @@ const SignupLink = ({label, className}) => {
                 <NavLinkUniversal
                 label={label}
                 to="/signup"
-                className="bg-main-color text-[22px] font-bold px-10 py-4 rounded-xl"
+                className="bg-main-color text-[22px] font-bold md:px-10 md:py-4 px-2 py-1 rounded-xl"
                 />
     </div>
   )

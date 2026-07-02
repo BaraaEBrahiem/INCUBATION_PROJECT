@@ -58,19 +58,23 @@ const SeasonDetailsPage = () => {
     }
   };
 
-  return (
-    <div className="w-full min-h-screen bg-white-color pt-10">
-      <div className="container">
-        <div className="flex justify-end">
+ return (
+    // 🎯 أضفنا overflow-x-hidden لحماية حدود الصفحة كاملة على الموبايل
+    <div className="w-full min-h-screen bg-white-color pt-10 overflow-x-hidden">
+      <div className="container px-4 sm:px-6">
+        
+        {/* زر إدارة المعسكر: مرن على الموبايل ليتموضع بأناقة، وثابت في مكانه على اللابتوب */}
+        <div className="flex justify-end mb-4 sm:mb-0">
           <button
             onClick={() => {
               if (!id) {
                 showError("لا يمكن تحديد الموسم الحالي");
                 return;
               }
-              navigate(`/admin/camp-management/${id}`);
+                navigate(`/admin/camp-management/${id}`);
             }}
-            className="bg-main-color font-bold text-white text-xl rounded px-7 py-3"
+            // 🎯 تم ضبط المقاس ليكون text-base و px-4 على الموبايل ليناسب الشاشات الصغيرة، ويعود text-xl و px-7 على اللابتوب
+            className="bg-main-color font-bold text-white text-base sm:text-xl rounded px-4 py-2 sm:px-7 sm:py-3 w-full sm:w-auto text-center"
           >
            إدارة المعسكر
           </button>
@@ -78,26 +82,30 @@ const SeasonDetailsPage = () => {
 
         <h1 className="text-xl font-bold mb-6">تفاصيل الموسم</h1>
 
-        <div className="flex gap-4 mb-6 border-b pb-2">
+        {/* 🎯 أزرار التبويبات: أضفنا overflow-x-auto و whitespace-nowrap لتصبح قابلة للتمرير الأفقي الناعم بإصبع واحد على الموبايل دون كسر الصفحة، وتظهر طبيعية على اللابتوب */}
+        <div className="flex gap-2 sm:gap-4 mb-6 border-b pb-2 overflow-x-auto whitespace-nowrap block no-scrollbar">
           <button
             onClick={() => setActiveTab("settings")}
-            className={`px-7 py-3 font-bold text-xl rounded ${
+            // 🎯 كلاسات متجاوبة: الخط والبادينغ أصغر على الهاتف ويعود لـ text-xl و px-7 على اللابتوب md:
+            className={`px-4 py-2 sm:px-7 sm:py-3 font-bold text-base sm:text-xl rounded inline-block ${
               activeTab === "settings" ? "bg-main-color text-white" : "bg-white border border-second-color"
             }`}
           >
             الإعدادات
           </button>
+          
           <button
             onClick={() => setActiveTab("form")}
-            className={`px-7 py-3 font-bold text-xl rounded ${
+            className={`px-4 py-2 sm:px-7 sm:py-3 font-bold text-base sm:text-xl rounded inline-block ${
               activeTab === "form" ? "bg-main-color text-white" : "bg-white border border-second-color"
             }`}
           >
             تصميم النموذج
           </button>
+          
           <button
             onClick={() => setActiveTab("review")}
-            className={`px-7 py-3 font-bold text-xl rounded ${
+            className={`px-4 py-2 sm:px-7 sm:py-3 font-bold text-base sm:text-xl rounded inline-block ${
               activeTab === "review" ? "bg-main-color text-white" : "bg-white border border-second-color"
             }`}
           >

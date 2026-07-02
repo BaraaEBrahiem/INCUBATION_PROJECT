@@ -41,22 +41,22 @@ const CreateSeasonPage = () => {
     }
   };
 
-  return (
-    <div className="bg-white-color">
-    <div className=" container p-6 min-h-screen" dir="rtl">
+ return (
+  <div className="bg-white-color min-h-screen">
+    <div className="container mx-auto p-4 md:p-6" dir="rtl">
       {/* رأس الصفحة والعناوين */}
-      <div className=" mb-6">
-        <h1 className="text-2xl font-bold text-gray-800">إنشاء موسم حاضنة جديد</h1>
-        <p className="text-sm text-gray-500 mt-1">
+      <div className="mb-6">
+        <h1 className="text-xl md:text-2xl font-bold text-gray-800">إنشاء موسم حاضنة جديد</h1>
+        <p className="text-xs md:text-sm text-gray-500 mt-1">
           قم بتهيئة إعدادات الموسم وتواريخ التقديم، ثم صمم استمارة قبول الطلبات الخاصة به.
         </p>
       </div>
 
-      {/* شريط تبويبات التنقل (Tabs) للتحكم بالفلو وقفل الخطوة الثانية */}
-      <div className="flex border-b border-gray-200 mb-6 gap-2">
+      {/* شريط تبويبات التنقل (Tabs): جعلناه flex-wrap ليتناسب مع الموبايل */}
+      <div className="flex flex-wrap border-b border-gray-200 mb-6 gap-2">
         <button
           onClick={() => setActiveTab("settings")}
-          className={`py-2 px-4 font-semibold text-xl border-b-2 rounded-sm transition-all ${
+          className={`py-2 px-3 md:px-4 font-semibold text-lg md:text-xl border-b-2 rounded-sm transition-all ${
             activeTab === "settings"
               ? "bg-gray-300 text-main-color"
               : "border-transparent text-gray-500 hover:text-gray-600"
@@ -66,9 +66,9 @@ const CreateSeasonPage = () => {
         </button>
 
         <button
-          disabled={!createdSeasonId} // قفل التبويب حتى يتم إنشاء الموسم أولاً وحفظه بالباك إند
+          disabled={!createdSeasonId} 
           onClick={() => setActiveTab("builder")}
-          className={`py-2 px-4 font-semibold text-xl border-b-2 transition-all ${
+          className={`py-2 px-3 md:px-4 font-semibold text-lg md:text-xl border-b-2 transition-all ${
             !createdSeasonId 
               ? "text-gray-300 cursor-not-allowed border-transparent" 
               : activeTab === "builder"
@@ -96,8 +96,6 @@ const CreateSeasonPage = () => {
         )}
       </div>
     </div>
-    </div>
-  );
-};
-
+  </div>
+);}
 export default CreateSeasonPage;

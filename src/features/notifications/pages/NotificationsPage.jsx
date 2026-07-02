@@ -12,7 +12,7 @@ const NotificationsPage = () => {
 
   return (
     <div className="min-h-screen p-4  flex justify-center items-start" dir="rtl">
-      <div className="container max-w-4xl  rounded-xl  p-6">
+      <div className="container max-w-4xl  rounded-xl  p-6 mt-15 md:mt-2">
         
         {/* الهيدر العلوي لصفحة الإشعارات */}
         <div className="flex items-center justify-between pb-4 mb-4">

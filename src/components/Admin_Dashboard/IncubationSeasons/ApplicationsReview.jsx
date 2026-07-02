@@ -38,17 +38,19 @@ const ApplicationsReview = ({ season, applications }) => {
     { key: "project_name", label: "اسم المشروع" },
   ];
 
-  return (
-    <div className="flex gap-6">
+ return (
+    // 🎯 السر هنا: flex-col للموبايل لترتيب الأعمدة تحت بعضها، و md:flex-row لتستعيد مظهر اللابتوب الأصلي بدقة
+    <div className="flex flex-col md:flex-row gap-6 w-full" dir="rtl">
       {/* العمود الأيمن */}
-      <div className="flex-1 p-5">
+      {/* 🎯 أضفنا p-2 للموبايل ليتنفس داخلياً، ويعود p-5 طبيعياً على اللابتوب عبر md:p-5 */}
+      <div className="flex-1 p-2 md:p-5 overflow-hidden">
         <h1 className="text-lg font-bold mb-6">
           {season.name}
           <span className="text-sm text-gray-500 mr-2">(مراجعة الطلبات)</span>
         </h1>
 
-        {/* Select فقط */}
-        <div className="w-48 mb-4">
+        {/* 🎯 حقل الترتيب: w-full ليتناسب مع الموبايل، و md:w-48 ليعود لحجمه الأصلي القديم على اللابتوب */}
+        <div className="w-full md:w-48 mb-4">
           <Select
             label="ترتيب حسب"
             name="sort"
@@ -64,10 +66,15 @@ const ApplicationsReview = ({ season, applications }) => {
         </div>
 
         {/* جدول الطلبات */}
-        <DataTable columns={columns} data={sortedApps} />
+        {/* 🎯 الـ div الحامي المحيط بالجدول: لمنع تمدد الشاشة أفقياً وتوفير سكرول داخلي ناعم على الهواتف فقط */}
+        <div className="w-full overflow-x-auto block whitespace-nowrap mt-4">
+          <DataTable columns={columns} data={sortedApps} />
+        </div>
       </div>
+      
        {/* العمود الأيسر */}
-      <div className="w-64 h-fit border border-second-color bg-white rounded-lg shadow p-4 flex flex-col gap-2">
+      {/* 🎯 الصندوق الإحصائي: w-full ليتمدد بكامل عرض شاشة الموبايل، و md:w-64 ليعود لعرضه القديم الثابت على اللابتوب */}
+      <div className="w-full md:w-64 h-fit border border-second-color bg-white rounded-lg shadow p-4 flex flex-col gap-2">
      
         <p className="text-sm">
           <span className="font-semibold">عدد الطلبات المستلمة: </span>

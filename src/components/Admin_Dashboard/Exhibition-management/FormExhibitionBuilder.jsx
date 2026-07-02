@@ -106,34 +106,41 @@ const formConfig = {
   };
 
 
-  return (
-    <div>
-      <div className="flex gap-6">
-        <div className="flex-1">
+ return (
+    <div className="w-full overflow-hidden">
+      
+      <div className="grid grid-cols-1 md:grid-cols-[1fr_auto] gap-6 w-full">
+        
+        {/* منطقة بناء النموذج */}
+        <div className="w-full">
           <FormBuilderCanvas
             fields={fields}
             updateField={updateField}
             deleteField={deleteField}
           />
         </div>
-        <FieldTypesPanel addField={addField} />
+
+        {/* لوحة أنواع الحقول */}
+        <div className="w-full md:w-auto">
+          <FieldTypesPanel addField={addField} />
+        </div>
       </div>
-      <div className="flex justify-center items-center gap-8 mt-6">
+
+      <div className="flex flex-col sm:flex-row justify-center items-center gap-4 mt-8 w-full">
         <Button
           label="معاينة النموذج"
           onClick={goToPreview}
-          className="bg-main-color w-50"
+          className="bg-main-color w-full sm:w-50"
           disabled={isSubmitting || isPublishing}
         />
         <Button
           label={isPublishing ? "جاري النشر..." : "نشر"}
           onClick={publishForm}
-          className="bg-main-color w-50"
+          className="bg-main-color w-full sm:w-50"
           disabled={isSubmitting || isPublishing}
         />
       </div>
     </div>
   );
 };
-
 export default FormExhibitionBuilder;
