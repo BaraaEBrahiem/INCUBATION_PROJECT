@@ -11,6 +11,7 @@ import { showSuccess, showError } from "../../Utils/toast";
 import {
   useScheduleMeetingMutation
 } from "../../api/endpoints/incubationApi";
+import { useSelector } from "react-redux";
 
 const ProjectsManagementPage = () => {
   const [open, setOpen] = useState(false);
@@ -18,6 +19,11 @@ const ProjectsManagementPage = () => {
   const [schedule, setSchedule] = useState("");
   const [selectedIdeaId, setSelectedIdeaId] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const userRoles = useSelector((state) => state.auth?.roles || []);
+  
+    const isSecretary = userRoles.some(
+      (role) => String(role).toLowerCase().trim() === "secretary"
+    );
 
   const navigate = useNavigate();
   const [
@@ -180,13 +186,13 @@ useScheduleMeetingMutation();
 
       <div className="container mt-30">
         <div className="flex justify-between items-center mb-6">
-
+          {!isSecretary && (
           <Button
             label="تعيين المقيمين"
             onClick={handleAssignEvaluators}
             className="bg-main-color"
           />
-
+          )}
           <Button
             label="عرض المشاريع المتخرجة"
             onClick={() =>

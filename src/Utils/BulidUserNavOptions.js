@@ -18,7 +18,13 @@ export function buildUserNavOptions(roles) {
     mainRole = "incubator";
   } else if (roles.includes("volunteer")) {
     mainRole = "volunteer";
+  } else if (roles.includes("secretary")) {
+    mainRole = "secretary";
   }
+  else if (roles.includes("admin")) {
+    mainRole = "admin";
+  }
+  
 
   const homeRoutes = {
     visitor: "/visitor-mainpage",
@@ -26,6 +32,8 @@ export function buildUserNavOptions(roles) {
     volunteer: "/volunteer-mainpage",
     evaluator: "/evaluator-mainpage",
     incubator: "/incubator-mainpage",
+    secretary: "/admin-mainpage",
+    admin: "/admin-mainpage",
   };
 
   const homeLink = { label: "الرئيسية", to: homeRoutes[mainRole] || "/visitor-mainpage", scrollId: "" };

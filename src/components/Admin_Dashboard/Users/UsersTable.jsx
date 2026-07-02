@@ -239,7 +239,7 @@ const UsersTable = ({
   }));
   return (
     <div
-      className="bg-white shadow-md rounded-lg p-4 mt-6"
+      className="rounded-lg p-4 mt-6"
       dir="rtl"
     >
       {filteredUsers.length >

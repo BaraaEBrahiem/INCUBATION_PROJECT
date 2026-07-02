@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import { NavLink } from "react-router-dom";
-import {admin} from "../config/RoleOptions";
+import {secretary} from "../config/RoleOptions";
 import girl from "../assets/images/girl.jpg";
 
-const AdminSidebar = ({ adminName, email }) => {
+const SecretarySidebar = ({ adminName, email }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
 
@@ -106,7 +106,7 @@ const AdminSidebar = ({ adminName, email }) => {
 
         {/* الروابط */}
         <nav className="flex flex-col gap-8">
-          {admin.map((opt, idx) => (
+          {secretary.map((opt, idx) => (
             <NavLink
               key={idx}
               to={opt.link}
@@ -121,7 +121,7 @@ const AdminSidebar = ({ adminName, email }) => {
             >
               <span
                 className={`text-3xl ${
-                  !admin.some(item => item.link === opt.link && window.location.pathname === item.link)
+                  !secretary.some(item => item.link === opt.link && window.location.pathname === item.link)
                     ? "text-second-color"
                     : "text-second-color"
                 }`}
@@ -161,4 +161,4 @@ const AdminSidebar = ({ adminName, email }) => {
   );
 };
 
-export default AdminSidebar;
+export default SecretarySidebar;

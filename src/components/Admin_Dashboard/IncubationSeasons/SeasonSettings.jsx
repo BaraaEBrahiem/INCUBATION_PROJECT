@@ -114,7 +114,7 @@ const SeasonSettings = ({ season, onSave }) => {
   const handleCloseSubmission = async () => {
     try {
       await closeSubmissions(season.id).unwrap();
-      showSuccess("تم إغلاق فترة التقديم بنجاح وتحويل الموسم لمرحلة التقييم");
+      showSuccess("تم إغلاق فترة التقديم بنجاح");
       setIsConfirmOpen(false);
     } catch (err) {
       console.error("Close Submission Error:", err);

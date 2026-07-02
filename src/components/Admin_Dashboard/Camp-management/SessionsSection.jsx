@@ -56,7 +56,7 @@ const SessionsSection = ({seasonId}) => {
   // حالة التحميل
   if (isLoading) {
     return (
-      <div className="bg-white p-6 rounded-lg shadow">
+      <div className=" p-6 rounded-lg shadow">
         <h2 className="text-lg font-bold mb-4">قائمة الجلسات</h2>
         <div className="space-y-4">
           {[1, 2, 3].map((i) => (
@@ -70,7 +70,7 @@ const SessionsSection = ({seasonId}) => {
   // حالة الخطأ
   if (error) {
     return (
-      <div className="bg-white p-6 rounded-lg shadow">
+      <div className="p-6 rounded-lg shadow">
         <h2 className="text-lg font-bold mb-4">قائمة الجلسات</h2>
         <div className="text-center py-6">
           <p className="text-red-500 mb-3">حدث خطأ في تحميل الجلسات</p>
@@ -86,7 +86,7 @@ const SessionsSection = ({seasonId}) => {
   }
 
   return (
-    <div className="bg-white p-6 rounded-lg shadow">
+    <div className="p-6 rounded-lg">
       <h2 className="text-lg font-bold mb-4">قائمة الجلسات</h2>
 
       <SearchBar

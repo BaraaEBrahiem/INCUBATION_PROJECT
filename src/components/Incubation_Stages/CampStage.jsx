@@ -50,7 +50,7 @@ const CampStage = ({ data, onComplete }) => {
         <AlertBox message="تأكد من حضور الجلسات بنسبة 75% وعدم تأخير تسليم المهام المطلوبة لتجنب التأثير على استمرارك في الحاضنة." />
       </div>
       {nextSession ? (
-        <div className="bg-white p-5 rounded-lg shadow-lg space-y-3 border border-r-4 border-r-main-color max-w-2xl">
+        <div className="bg-white p-5 rounded-lg shadow-lg space-y-3 border border-r-4 border-main-color max-w-2xl">
           <h3 className="font-bold text-lg text-second-color border-b pb-2">تفاصيل الجلسة القادمة</h3>
           <p><span className="font-bold text-gray-700">العنوان:</span> {nextSession.title}</p>
           <p><span className="font-bold text-gray-700">التاريخ:</span> {nextSession.date || "غير محدد بعد"}</p>

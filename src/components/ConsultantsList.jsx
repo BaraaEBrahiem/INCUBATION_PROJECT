@@ -76,13 +76,14 @@ const ConsultantsList = ({
 ))}
             </div>
 
-            {role === "admin" ? (
+            {role === "admin" || role === "secretary" ? (
               <Button
                 label="عرض التفاصيل"
                 className="bg-main-color text-xl"
                 onClick={(e) => handleDetails(e, c)}
               />
-            ) : (
+            )
+            : (
               <ConsultationRequestBtn consultant={c} />
             )}
           </div>

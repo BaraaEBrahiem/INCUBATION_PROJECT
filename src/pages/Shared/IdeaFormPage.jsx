@@ -20,7 +20,7 @@ const IdeaFormPage = () => {
     return <div className="text-center py-10">جاري التحقق من الموسم النشط...</div>;
   }
 
-  const currentSeasonId = activeSeason?.season?.season_id;
+  const currentSeasonId = activeSeason?.season?.season_id || 1;
 
   return (
     <div className='bg-white-color h-screen py-8 sm:w-full'>
@@ -46,8 +46,8 @@ const IdeaFormPage = () => {
         title="🎉 تم تسجيلك كصاحب فكرة!"
         footer={
           <Button
-            label="اذهب إلى لوحة التحكم"
-            onClick={() => navigate("/profile")}
+            label="اذهب إلى تسجيل الدخول"
+            onClick={() => navigate("/login")}
             className="bg-main-color"
           />
         }

@@ -16,6 +16,7 @@ import {
   useSendEvaluationInvitationMutation,
   useRemoveEvaluatorRoleMutation,
 } from "../../api/endpoints/admin/volunteersOptionsApi.js";
+import {useSelector} from "react-redux";
 
 const VolunteerRequestPage = () => {
   const { id } = useParams();
@@ -43,6 +44,12 @@ const VolunteerRequestPage = () => {
 
   const [removeEvaluatorRole] =
     useRemoveEvaluatorRoleMutation();
+     const userRoles = useSelector((state) => state.auth?.roles || []);
+
+  const isSecretary = userRoles.some(
+    (role) => String(role).toLowerCase().trim() === "secretary"
+  );
+
 
   // =======================
   // States
@@ -309,7 +316,7 @@ const VolunteerRequestPage = () => {
         </div>
 
         {/* الأزرار */}
-        {isPending && (
+        {isPending && !isSecretary && (
           <div className="flex gap-3 mt-6 mr-auto">
             <Button
               onClick={handleApprove}
@@ -327,7 +334,7 @@ const VolunteerRequestPage = () => {
           </div>
         )}
 
-        {isApproved && !isEvaluator && (
+        {isApproved && !isEvaluator && !isSecretary && (
           <Button
             onClick={() =>
               setEvaluateOpen(true)
@@ -337,7 +344,7 @@ const VolunteerRequestPage = () => {
           />
         )}
 
-        {isApproved && isEvaluator && (
+        {isApproved && isEvaluator && !isSecretary && (
           <Button
             onClick={() =>
               setRemoveEvaluatorOpen(true)

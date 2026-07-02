@@ -24,7 +24,7 @@ import {
   useGetDashboardStatsQuery,
   useGetDashboardProjectsChartQuery,
 } from "../../api/endpoints/admin/adminDashboardApi";
-
+import { useSelector } from "react-redux";
 const AdminMainPage =
   () => {
     const [open, setOpen] =
@@ -106,6 +106,11 @@ const AdminMainPage =
         ),
       },
     ];
+    const userRoles = useSelector((state) => state.auth?.roles || []);
+
+  const isSecretary = userRoles.some(
+    (role) => String(role).toLowerCase().trim() === "secretary"
+  );
 
     // =====================================
     // Chart Data
@@ -225,7 +230,11 @@ const AdminMainPage =
           </div>
 
           {/* Quick Access */}
-          <QuickAccess />
+          {!isSecretary && (
+            <div className="mt-6">
+              <QuickAccess />
+            </div>
+          )}
         </div>
       </div>
     );

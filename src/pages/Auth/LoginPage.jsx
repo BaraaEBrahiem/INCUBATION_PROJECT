@@ -98,7 +98,7 @@ const LoginPage = () => {
       showSuccess(`مرحباً ${user.name}`);
       
       // التوجيه التلقائي بناءً على الدور المخزن
-      if (user.roles.includes("admin")) {
+      if (user.roles.includes("admin") || user.roles.includes("secretary")) {
         navigate("/admin-mainpage");
       } else if (user.roles.includes("idea_owner") || user.roles.includes("صاحب فكرة")) {
         navigate("/ideaowner-mainpage");

@@ -55,8 +55,8 @@ const EditVolunteerProfilePage = () => {
         phone: profileData.basic_info?.phone || profileData.user?.phone || profileData.phone || "",
         primary_Skills: profileData.primary_skills || profileData.primary_Skills || "",
         additional_Skills: Array.isArray(profileData.additional_skills) 
-          ? profileData.additional_Skills.join(", ") 
-          : (profileData.additional_Skills || "")
+         ? profileData.additional_skills.join(", ") //  تعديل الحرف ليكون s صغير هنا وهناك
+         : (profileData.additional_skills || profileData.additional_Skills || "")
       };
 
       dispatch({ type: "SET_ALL", payload: formattedPayload });

@@ -11,9 +11,17 @@ import Button from "../../components/Button";
 import {
   useGetAdminProjectDetailsQuery,
 } from "../../api/endpoints/projectInfoApi";
+import { useSelector } from "react-redux";
 
 const AdminProjectDetailsPage =
   () => {
+
+     const userRoles = useSelector((state) => state.auth?.roles || []);
+
+  const isSecretary = userRoles.some(
+    (role) => String(role).toLowerCase().trim() === "secretary"
+  );
+
     const { id } =
       useParams();
 
@@ -113,7 +121,7 @@ const AdminProjectDetailsPage =
 
             {/* الزر يظهر فقط إذا ليس متخرج إيجابي */}
             {projectStatus !==
-              "GRADUATED_POSITIVE" && (
+              "GRADUATED_POSITIVE" && !isSecretary && (
               <Button
                 label="عرض الملاحظات والتخريج"
                 onClick={() =>
