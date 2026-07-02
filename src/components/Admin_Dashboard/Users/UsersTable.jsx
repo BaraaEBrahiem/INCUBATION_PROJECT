@@ -239,7 +239,7 @@ const UsersTable = ({
   }));
  return (
     <div
-      className="bg-white shadow-md rounded-lg p-4 mt-6 w-full overflow-hidden" // 🎯 قمنا بتغييرها لـ overflow-hidden لتمنع الكارد الأبيض نفسه من الخروج عن الشاشة
+      className=" rounded-lg p-4 mt-6 w-full overflow-hidden" // 🎯 قمنا بتغييرها لـ overflow-hidden لتمنع الكارد الأبيض نفسه من الخروج عن الشاشة
       dir="rtl"
     >
       {filteredUsers.length >

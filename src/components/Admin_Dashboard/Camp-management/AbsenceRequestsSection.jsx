@@ -129,7 +129,7 @@ if (isLoading) {
 
   return (
     // 🎯 الكارد الخارجي آمن تماماً ويتسع لجميع الشاشات بمرونة
-    <div className="bg-white p-4 sm:p-6 rounded-lg shadow w-full">
+    <div className="p-4 sm:p-6 rounded-lg w-full">
       <h2 className="text-lg font-bold mb-4">قائمة طلبات الغياب</h2>
       
       {/* 🎯 شريط البحث متروك بحرية كاملة ليتمدد 100% ويظهر كاملاً دون أي قص أو تجميد */}
