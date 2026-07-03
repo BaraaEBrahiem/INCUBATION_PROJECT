@@ -3,6 +3,9 @@ import {
 } from "../../../api/endpoints/notificationApi";
 
 import logo from "../../../assets/images/logo.png";
+import { useNavigate } from "react-router-dom";
+
+import { mapNotificationRoute } from "../utils/notificationRouteMapper";
 
 const NotificationItem = ({
   notification,
@@ -13,21 +16,33 @@ const NotificationItem = ({
   ] =
     useMarkNotificationAsReadMutation();
 
+  const navigate = useNavigate();
+
   const handleAction = async () => {
     try {
       if (!notification.is_read) {
-        await markAsRead(
-          notification.id
-        ).unwrap();
+        await markAsRead(notification.id).unwrap();
       }
 
-      if (
-        notification.has_action &&
-        notification.action_url
-      ) {
-        window.location.href =
-          notification.action_url;
+      if (!notification.has_action) {
+        return;
       }
+
+      const route = mapNotificationRoute(
+        notification.action_url
+      );
+
+      if (!route) {
+        console.warn(
+          "[Notification] No frontend route found for:",
+          notification.action_url
+        );
+
+        return;
+      }
+
+      navigate(route);
+
     } catch (error) {
       console.error(error);
     }
