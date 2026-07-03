@@ -3,12 +3,12 @@ import { useNavigate } from "react-router-dom"
 import IdeaForm from '../../components/Forms/IdeaForm'
 import Modal from '../../components/Modal'
 import Button from '../../components/Button'
-import { useGetActiveSeasonQuery } from '../../api/endpoints/seasonApi' 
+import { useGetCurrentActiveSeasonQuery } from '../../api/endpoints/seasonApi' 
 
 const IdeaFormPage = () => {
   const navigate = useNavigate()
   const [showSuccessModal, setShowSuccessModal] = useState(false)
-  const { data: activeSeason, isLoading: isLoadingSeason } = useGetActiveSeasonQuery();
+  const { data: activeSeason, isLoading: isLoadingSeason } = useGetCurrentActiveSeasonQuery();
 
   const handleSubmit = (response) => {
     if (response?.status === "SUBMITTED") {
@@ -20,7 +20,7 @@ const IdeaFormPage = () => {
     return <div className="text-center py-10">جاري التحقق من الموسم النشط...</div>;
   }
 
-  const currentSeasonId = activeSeason?.season?.season_id || 1;
+  const currentSeasonId = activeSeason?.season?.season_id;
 
   return (
     <div className='bg-white-color h-screen py-8 sm:w-full'>

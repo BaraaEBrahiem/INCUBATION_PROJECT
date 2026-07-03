@@ -89,6 +89,10 @@ const baseQueryWithReauth = async (args, api, extraOptions) => {
 
 export const apiSlice = createApi({
   baseQuery: baseQueryWithReauth,
+  
+  // 🎯 هنا السحر: هذا السطر سيفعّل التحديث التلقائي الشامل لكل المنصة كل 15 ثانية فوراً!
+  pollingInterval: 15000, 
+
   tagTypes: [
     "Auth", "User", "Roles", "Projects", "Workshop", "WorkshopInfo",
     "Contact", "Consultations", "Consultants", "Camp", "Activities",
