@@ -1,58 +1,63 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useNavigate } from "react-router-dom"
 import IdeaForm from '../../components/Forms/IdeaForm'
 import Modal from '../../components/Modal'
 import Button from '../../components/Button'
-
-import { useState } from 'react'
+import { useGetCurrentActiveSeasonQuery } from '../../api/endpoints/seasonApi' 
 
 const IdeaFormPage = () => {
   const navigate = useNavigate()
   const [showSuccessModal, setShowSuccessModal] = useState(false)
+  const { data: activeSeason, isLoading: isLoadingSeason } = useGetCurrentActiveSeasonQuery();
 
   const handleSubmit = (response) => {
-
-    if (
-      response?.status ===
-      "SUBMITTED"
-    ) {
+    if (response?.status === "SUBMITTED") {
       setShowSuccessModal(true);
     }
-
   };
 
-return (
-  <div className='bg-white-color h-screen py-8 sm:w-full'>
-    <div className='text-center mb-8'>
-      <h1 className='text-2xl font-bold'>من الفكرة إلى الأثر</h1>
-      <p className='text-gray-600'>
-        املأ الاستمارة وخلي مشروعك بداية طريقك الريادي
-      </p>
-    </div>
+  if (isLoadingSeason) {
+    return <div className="text-center py-10">جاري التحقق من الموسم النشط...</div>;
+  }
 
-    <IdeaForm
-      seasonId={1}
-      onSubmit={handleSubmit}
-    />
+  const currentSeasonId = activeSeason?.season?.season_id;
 
-    <Modal
-      isOpen={showSuccessModal}
-      onClose={() => setShowSuccessModal(false)}
-      title="🎉 تم تسجيلك كصاحب فكرة!"
-      footer={
-        <Button
-          label="اذهب إلى لوحة التحكم"
-          onClick={() => navigate("/profile")}
-          className="bg-main-color"
+  return (
+    <div className='bg-white-color h-screen py-8 sm:w-full'>
+      <div className='text-center mb-8'>
+        <h1 className='text-2xl font-bold'>من الفكرة إلى الأثر</h1>
+        <p className='text-gray-600'>
+          املأ الاستمارة وخلي مشروعك بداية طريقك الريادي
+        </p>
+      </div>
+
+      {currentSeasonId ? (
+        <IdeaForm
+          seasonId={currentSeasonId}
+          onSubmit={handleSubmit}
         />
-      }
-    >
-      <p className="text-sm">
-        مبروك! أنت الآن صاحب فكرة معتمد ويمكنك البدء فوراً.
-      </p>
-    </Modal>
-  </div>
-)
+      ) : (
+        <div className="text-center text-red-500 py-10">لا يوجد أي موسم نشط ومتاح للتقديم حالياً!</div>
+      )}
+
+      <Modal
+        isOpen={showSuccessModal}
+        onClose={() => setShowSuccessModal(false)}
+        title="🎉 تم تسجيلك كصاحب فكرة!"
+        footer={
+          <Button
+            label="اذهب إلى لوحة التحكم"
+            onClick={() => navigate("/profile")}
+            className="bg-main-color"
+          />
+        }
+      >
+        <p className="text-sm">
+          مبروك! أنت الآن صاحب فكرة معتمد ويمكنك البدء فوراً.
+        </p>
+      </Modal>
+    </div>
+  )
 }
 
-export default IdeaFormPage
+export default IdeaFormPage;

@@ -2,7 +2,20 @@ import React from "react"
 import ApprovalActions from "./ApprovalActions"
 import Button from "./Button"
 
+import useConversationLauncher
+from "../features/messaging/hooks/useConversationLauncher";
+
+import { useNavigate } from "react-router-dom";
+
+import { useStartConversationMutation } from "../api/endpoints/messageApi";
+
 const ConsultationRequestCard = ({ request, onApprove, onReject, mode }) => {
+
+  const {
+    launchConversation,
+    isLoading,
+} = useConversationLauncher();
+
   return (
   <div className="bg-white w-full max-w-md border border-second-color rounded-xl p-4 md:p-6 shadow flex flex-col gap-6 mx-auto">
       <p><span className="font-bold text-xl">الاسم: </span>{request.requester_name}</p>
@@ -20,11 +33,13 @@ const ConsultationRequestCard = ({ request, onApprove, onReject, mode }) => {
       )}
 
       {mode === "followup" && (
-        <Button 
-          label="مراسلة" 
+      <Button
+          label={isLoading ? "جاري الفتح..." : "مراسلة"}
           className="bg-main-color w-full"
-          onClick={""}
-        />
+          onClick={() =>
+              launchConversation(request.requester_id)
+          }
+      />
       )}
 
     </div>

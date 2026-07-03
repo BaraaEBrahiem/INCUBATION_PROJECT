@@ -5,8 +5,9 @@ import { apiSlice } from "../apiSlice";
 export const messageApi = apiSlice.injectEndpoints({
   overrideExisting: false,
   endpoints: (builder) => ({
-    
-    // 1️⃣ جلب قائمة كل المحادثات لليوزر
+
+
+    //  جلب قائمة كل المحادثات لليوزر
     getConversations: builder.query({
       query: () => "messaging/conversations/",
       providesTags: (result) =>
@@ -18,7 +19,22 @@ export const messageApi = apiSlice.injectEndpoints({
           : [{ type: "Messages", id: "LIST" }],
     }),
 
- // 2️⃣ جلب رسائل محادثة معينة
+
+    //انشاء محادثة جديدة او ارجاع الموجودة(get or create)
+    startConversation: builder.mutation({
+      query: (userId) => ({
+        url: "messaging/conversations/start/",
+        method: "POST",
+        body: {
+          user_id: userId,
+        },
+      }),
+
+      invalidatesTags: [{ type: "Messages", id: "LIST" }],
+    }),
+
+
+    //  جلب رسائل محادثة معينة
     getConversationMessages: builder.query({
       query: ({ conversationId, cursor, pageSize = 20 }) => ({
         url: `messaging/conversations/${conversationId}/messages/`,
@@ -28,7 +44,7 @@ export const messageApi = apiSlice.injectEndpoints({
         },
       }),
 
-      // 🎯 التعديل السحري: جعل مفتاح الكاش هو الـ ID مباشرة لضمان مطابقة الـ Optimistic Update
+      //  التعديل السحري: جعل مفتاح الكاش هو الـ ID مباشرة لضمان مطابقة الـ Optimistic Update
       serializeQueryArgs: ({ queryArgs }) => {
         // إذا تم تمرير كائن يحتوي على المعرف أو المعرف مباشرة
         const id = queryArgs?.conversationId || queryArgs;
@@ -66,7 +82,7 @@ export const messageApi = apiSlice.injectEndpoints({
 
     }),
 
-    // 3️⃣ إرسال الرسالة (يدعم الـ Optimistic UI الشفاف والذكي)
+    //  إرسال الرسالة (يدعم الـ Optimistic UI الشفاف والذكي)
     sendMessage: builder.mutation({
       query: ({ conversationId, content }) => ({
         url: `messaging/conversations/${conversationId}/messages/send/`,
@@ -127,7 +143,25 @@ export const messageApi = apiSlice.injectEndpoints({
       },
     }),
 
-    // 4️⃣ تعيين المحادثة كمقروءة فور دخولها
+
+    // خدمة تواصل معنا
+
+    sendContactMessage: builder.mutation({
+      query: ({ type, message }) => ({
+        url: "messaging/contact-us/",
+        method: "POST",
+        body: {
+          type,
+          message,
+        },
+      }),
+
+      invalidatesTags: [
+        { type: "Messages", id: "LIST" },
+      ],
+    }),
+
+    //  تعيين المحادثة كمقروءة فور دخولها
     markConversationAsRead: builder.mutation({
       query: (conversationId) => ({
         url: `messaging/conversations/${conversationId}/read/`,
@@ -140,7 +174,7 @@ export const messageApi = apiSlice.injectEndpoints({
       ],
     }),
 
-    // 5️⃣ جلب الـ Unread Count الخاص بمحادثة معينة
+    //  جلب الـ Unread Count الخاص بمحادثة معينة
     getConversationUnreadCount: builder.query({
       query: (conversationId) => `messaging/conversations/${conversationId}/unread/`,
       providesTags: (result, error, conversationId) => [
@@ -148,7 +182,7 @@ export const messageApi = apiSlice.injectEndpoints({
       ],
     }),
 
-    // 6️⃣ جلب إجمالي الرسائل غير المقروءة لكل التطبيق (للـ Navbar العلوي مثلاً)
+    //  جلب إجمالي الرسائل غير المقروءة لكل التطبيق (للـ Navbar العلوي مثلاً)
     getGlobalUnreadMessagesCount: builder.query({
       query: () => "messaging/messages/unread-count/",
       providesTags: [{ type: "Messages", id: "GLOBAL_UNREAD" }],
@@ -159,9 +193,12 @@ export const messageApi = apiSlice.injectEndpoints({
 // تصدير الـ Hooks النظيفة والجاهزة للاستعمال مباشرة بالصفحة والمكونات
 export const {
   useGetConversationsQuery,
+  useStartConversationMutation,
   useGetConversationMessagesQuery,
   useSendMessageMutation,
+  useSendContactMessageMutation,
   useMarkConversationAsReadMutation,
   useGetConversationUnreadCountQuery,
   useGetGlobalUnreadMessagesCountQuery,
+  
 } = messageApi;

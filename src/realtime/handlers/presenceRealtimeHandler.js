@@ -1,10 +1,20 @@
 import store from "../../Redux/store";
 
+import {
+  updatePresence,
+} from "../../Redux/features/presence/presenceSlice";
+
 class PresenceRealtimeHandler {
+
   handle(payload) {
+
     console.log(
-      "[Presence]",
+      "[Presence Event]",
       payload
+    );
+
+    store.dispatch(
+      updatePresence(payload)
     );
   }
 }

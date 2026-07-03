@@ -1,6 +1,14 @@
 import React from "react";
+import useConversationLauncher
+from "../features/messaging/hooks/useConversationLauncher";
 
 const ProjectDetailsCard = ({ project }) => {
+
+  const {
+    launchConversation,
+    isLoading,
+} = useConversationLauncher();
+
   const {
     title,
     sector,
@@ -8,6 +16,7 @@ const ProjectDetailsCard = ({ project }) => {
     project_goal,
     project_services = [],
     owner_email,
+    owner_id,
     image, // نحتفظ بالصورة لو موجودة
   } = project || {};
 
@@ -83,12 +92,13 @@ const ProjectDetailsCard = ({ project }) => {
 
       <div className="flex gap-3 pt-4">
         {contactEmail ? (
-          <a
-            href={`mailto:${contactEmail}?subject=استفسار بخصوص مشروع ${title}`}
-            className="bg-main-color text-white px-6 py-2.5 rounded-xl font-bold text-xl shadow-sm hover:opacity-95 transition-all text-center"
+          <button
+              onClick={() => launchConversation(owner_id)}
+              disabled={isLoading}
+              className="bg-main-color text-white px-6 py-2.5 rounded-xl font-bold text-xl shadow-sm hover:opacity-95 transition-all text-center disabled:opacity-60"
           >
-            تواصل مع إدارة المشروع
-          </a>
+              {isLoading ? "جاري الفتح..." : "تواصل معنا "}
+          </button>
         ) : (
           <button 
             disabled
