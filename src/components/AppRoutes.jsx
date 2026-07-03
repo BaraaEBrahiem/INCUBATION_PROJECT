@@ -97,6 +97,8 @@ import IncubationProjectInfoPage from "../pages/Incubation/IncubationProjectInfo
 
 import PublicWorkshopDetailsPage from "../pages/Volunteer/PublicWorkshopDetailsPage";
 import AIConsultantChatPage from "../pages/AiConsultantChatPage";
+import EvaluationInvitationPage from "../pages/Volunteer/EvaluationInvitationPage";
+import IdeaRejectionNotes from "../pages/Incubation/IdeaRejectionNotes";
 
 const AppRoutes = () => {
   const { roles } = useRole();
@@ -121,6 +123,9 @@ const AppRoutes = () => {
       path="/messagespage"
       element={<MessagesPage />}
       />
+
+      <Route path="/evaluation-invitation/:id" element={<EvaluationInvitationPage />} />
+      <Route path="/rejection-notes/:id" element={<IdeaRejectionNotes />} />
 
       <Route
       path="/messagespage/:id"

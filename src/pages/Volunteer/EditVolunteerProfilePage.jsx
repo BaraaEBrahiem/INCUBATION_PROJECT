@@ -24,44 +24,83 @@ const EditVolunteerProfilePage = () => {
   ];
 
   const [state, dispatch] = useReducer(
-  profileReducer,
-  {
-    ...initialProfileState,
-    avatar: null,
-  }
-)
+    profileReducer,
+    {
+      ...initialProfileState,
+      avatar: null,
+    }
+  )
   const navigate = useNavigate()
   const userId = useSelector((state) => state.auth.userId)
   
   const { data: profileData, isLoading } = useGetVolunteerProfileQuery(userId, { skip: !userId })
   const [updateProfile, { isLoading: isUpdating }] = useUpdateVolunteerProfileMutation()
   
-  useEffect(() => {
-    if (profileData) {
-      console.log("البيانات القادمة من السيرفر كاملة:", profileData);
+ useEffect(() => {
+  if (profileData) {
+    console.log("البيانات القادمة من السيرفر كاملة:", profileData);
 
-      const serverName = profileData.full_name?.trim() || 
-                         profileData.name?.trim() || 
-                         profileData.basic_info?.name?.trim() || 
-                         profileData.user?.name?.trim() || 
-                         "";
-      
+    const serverName = profileData.full_name?.trim() || 
+                       profileData.name?.trim() || 
+                       profileData.basic_info?.name?.trim() || 
+                       profileData.user?.name?.trim() || 
+                       "";
+    
+   let additionalSkillsText = "";
+if (profileData.additional_skills) {
+  let currentRaw = profileData.additional_skills;
 
-      const formattedPayload = {
-        ...profileData,
-        name: serverName,
-        full_name: serverName,
-        email: profileData.email || "",
-        phone: profileData.basic_info?.phone || profileData.user?.phone || profileData.phone || "",
-        primary_Skills: profileData.primary_skills || profileData.primary_Skills || "",
-        additional_Skills: Array.isArray(profileData.additional_skills) 
-         ? profileData.additional_skills.join(", ") //  تعديل الحرف ليكون s صغير هنا وهناك
-         : (profileData.additional_skills || profileData.additional_Skills || "")
-      };
-
-      dispatch({ type: "SET_ALL", payload: formattedPayload });
+  // 🎯 حلقة تكرار ذكية: طالما أن النص يبدأ بـ [ أو "، نستمر بفك التغليف المحشو من السيرفر
+  while (
+    typeof currentRaw === "string" && 
+    (currentRaw.trim().startsWith("[") || currentRaw.trim().startsWith('"'))
+  ) {
+    try {
+      const parsed = JSON.parse(currentRaw);
+      // إذا تحول إلى مصفوفة، نوقف التكرار وندمج عناصرها
+      if (Array.isArray(parsed)) {
+        currentRaw = parsed;
+        break;
+      }
+      currentRaw = parsed;
+    } catch (e) {
+      console.error("Error parsing server additional skills:", e);
+      // إذا فشل الـ parse في مرحلة ما بسبب سلاشات مشوهة، نكسر الحلقة لئلا يعلق المتصفح
+      break;
     }
-  }, [profileData]);
+  }
+
+  // 🎯 الآن نقوم بصياغة الناتج النهائي بشكل نظيف جداً
+  if (Array.isArray(currentRaw)) {
+    // دمج عناصر المصفوفة وتصفية النصوص الفارغة وتنظيفها من السلاشات
+    additionalSkillsText = currentRaw
+    //eslint-disable-next-line
+      .map(s => String(s).replace(/[\[\]"]/g, "").replace(/\\/g, "").trim())
+      .filter(Boolean)
+      .join(", ");
+  } else if (currentRaw) {
+    // تنظيف نهائي صارم لأي سلاش تائه
+    additionalSkillsText = String(currentRaw)
+    //eslint-disable-next-line
+      .replace(/[\[\]"]/g, "")
+      .replace(/\\/g, "")
+      .trim();
+  }
+}
+
+    const formattedPayload = {
+      ...profileData,
+      name: serverName,
+      full_name: serverName,
+      email: profileData.email || "",
+      phone: profileData.phone || profileData.basic_info?.phone || profileData.user?.phone || state.phone || "",
+      primary_Skills: profileData.primary_skills || profileData.primary_Skills || "",
+      additional_Skills: additionalSkillsText 
+    };
+
+    dispatch({ type: "SET_ALL", payload: formattedPayload });
+  }
+}, [profileData]);
 
   const handleChange = (field) => (e) => {
     const value = e.target.value;
@@ -73,94 +112,43 @@ const EditVolunteerProfilePage = () => {
   };
 
   const handleSubmit = async (e) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  try {
-    const formData =
-      new FormData();
+    try {
+      const formData = new FormData();
 
-    formData.append(
-      "full_name",
-      state.name
-    );
+      formData.append("full_name", state.name || state.full_name || "");
+      formData.append("email", state.email || "");
+      formData.append("phone", state.phone || "");
+      formData.append("residence", state.residence || "");
+      formData.append("years_of_experience", state.years_of_experience || 0);
+      formData.append("primary_skills", state.primary_Skills || "");
+      formData.append("volunteer_type", state.volunteer_type || "");
+      formData.append("availability_type", state.availability_type || "");
+      formData.append("projects_count", state.projects_count || 0);
+      formData.append("bio", state.bio || "");
 
-    formData.append(
-      "email",
-      state.email
-    );
+      // 🎯 التعديل الحاسم: إرسال المهارات كمصفوفة نظيفة لـ FormData بدلاً من استخدام JSON.stringify المشوه للبيانات
+      if (state.additional_Skills) {
+        const skillsArray = state.additional_Skills.split(",").map((s) => s.trim()).filter(Boolean);
+        skillsArray.forEach(skill => {
+          formData.append("additional_skills", skill);
+        });
+      } else {
+        formData.append("additional_skills", "");
+      }
 
-    formData.append(
-      "phone",
-      state.phone
-    );
+      if (state.avatar) {
+        formData.append("avatar", state.avatar);
+      }
 
-    formData.append(
-      "residence",
-      state.residence
-    );
-
-    formData.append(
-      "years_of_experience",
-      state.years_of_experience
-    );
-
-    formData.append(
-      "primary_skills",
-      state.primary_Skills
-    );
-
-    formData.append(
-      "volunteer_type",
-      state.volunteer_type
-    );
-
-    formData.append(
-      "availability_type",
-      state.availability_type
-    );
-
-    formData.append(
-      "projects_count",
-      state.projects_count
-    );
-
-    formData.append(
-      "bio",
-      state.bio
-    );
-
-    formData.append(
-      "additional_skills",
-      JSON.stringify(
-        state.additional_Skills
-          ?.split(",")
-          .map((s) => s.trim())
-      )
-    );
-
-    if (state.avatar) {
-      formData.append(
-        "avatar",
-        state.avatar
-      );
+      await updateProfile(formData).unwrap();
+      showSuccess("تم حفظ التعديلات بنجاح");
+    } catch (error) {
+      console.error(error);
+      showError(error?.data?.detail || "حدث خطأ أثناء الحفظ");
     }
-
-    await updateProfile(
-      formData
-    ).unwrap();
-
-    showSuccess(
-      "تم حفظ التعديلات بنجاح"
-    );
-  } catch (error) {
-    console.error(error);
-
-    showError(
-      error?.data?.detail ||
-        "حدث خطأ أثناء الحفظ"
-    );
-  }
-};
+  };
 
   if (isLoading) {
     return (
@@ -174,42 +162,36 @@ const EditVolunteerProfilePage = () => {
     <div className="container mx-auto bg-gray-100" dir="rtl">
       <div className="bg-white w-full md:w-1/2 flex items-center gap-4 mt-4 mb-2 p-4 rounded-lg">
         <div className="relative">
-  <img
-    src={
-      state.avatar instanceof File
-        ? URL.createObjectURL(
-            state.avatar
-          )
-        : profileData?.avatar
-        ? `http://127.0.0.1:8000${profileData.avatar}`
-        : girl
-    }
-    alt="avatar"
-    className="w-20 h-20 rounded-full object-cover border"
-  />
+          <img
+            src={
+              state.avatar instanceof File
+                ? URL.createObjectURL(state.avatar)
+                : profileData?.avatar
+                ? `http://127.0.0.1:8000${profileData.avatar}`
+                : girl
+            }
+            alt="avatar"
+            className="w-20 h-20 rounded-full object-cover border"
+          />
 
-  <label className="absolute bottom-0 left-0 bg-main-color text-white text-xs px-2 py-1 rounded cursor-pointer">
-    تعديل
-
-    <input
-      type="file"
-      hidden
-      accept="image/*"
-      onChange={(e) => {
-        const file =
-          e.target.files?.[0];
-
-        if (!file) return;
-
-        dispatch({
-          type: "SET_FIELD",
-          field: "avatar",
-          value: file,
-        });
-      }}
-    />
-  </label>
-</div>
+          <label className="absolute bottom-0 left-0 bg-main-color text-white text-xs px-2 py-1 rounded cursor-pointer">
+            تعديل
+            <input
+              type="file"
+              hidden
+              accept="image/*"
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                if (!file) return;
+                dispatch({
+                  type: "SET_FIELD",
+                  field: "avatar",
+                  value: file,
+                });
+              }}
+            />
+          </label>
+        </div>
         <div>
           <p className="font-semibold">{state.name || state.full_name}</p>
           <p className="text-gray-500 text-sm">{state.email}</p>
@@ -220,13 +202,19 @@ const EditVolunteerProfilePage = () => {
         <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-5">
           <Input label="الاسم" value={state.name || state.full_name || ""} onChange={handleChange("name")} />
           <Input
-  label="البريد الإلكتروني"
-  type="email"
-  name="email"
-  value={state.email || ""}
-  onChange={handleChange("email")}
-/>
-          <Input label="الرقم" value={state.phone || ""} onChange={handleChange("phone")} />
+            label="البريد الإلكتروني"
+            type="email"
+            name="email"
+            value={state.email || ""}
+            onChange={handleChange("email")}
+          />
+        <Input 
+            label="الرقم" 
+            name="phone"
+            id="phone"
+            value={state.phone || state.basic_info?.phone || profileData?.phone || profileData?.basic_info?.phone || ""} 
+            onChange={handleChange("phone")} 
+          />
           <Input label="تقيم في" value={state.residence || ""} onChange={handleChange("residence")} />
 
           <Input label="عدد المشاريع" type="number" value={state.projects_count || ""} onChange={handleChange("projects_count")} />
@@ -259,11 +247,10 @@ const EditVolunteerProfilePage = () => {
 
           <div className="col-span-2 flex justify-center gap-6 mt-4">
             <Button 
-            label="عرض كما يظهر للآخرين" 
-            className="bg-main-color" 
-            onClick={() => navigate(`/profileinfo/${userId}`)} 
+              label="عرض كما يظهر للآخرين" 
+              className="bg-main-color" 
+              onClick={() => navigate(`/profileinfo/${userId}`)} 
             />
-            
             <Button
               type="submit"
               label={isUpdating ? "جاري الحفظ..." : "حفظ التعديلات"}
