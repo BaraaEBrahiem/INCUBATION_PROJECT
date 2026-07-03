@@ -167,28 +167,16 @@ const IdeaForm = ({ seasonId, onSubmit }) => {
     );
   };
 
-  // 🎯 الدالة المحدثة: تقوم بحفظ الخطوة الأخيرة أولاً ثم ترسل الإرسال النهائي فوراً
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!validateStep()) return;
 
-    const currentFields = steps[currentStep]?.questions || [];
-    const payload = {};
-    currentFields.forEach((field) => {
-      payload[field.key] = form[field.key];
-    });
-
     try {
-      // 1. حفظ الخطوة الأخيرة أولاً في الخلفية دون تغيير الواجهة
-      await saveFormStep({
-        seasonId,
-        step: currentStep + 1,
-        data: payload,
-      }).unwrap();
-
-      // 2. إرسال الفورم بشكل نهائي
-      const result = await submitFinalIdea(seasonId).unwrap();
+      const result =
+        await submitFinalIdea(
+          seasonId
+        ).unwrap();
 
       if (onSubmit) {
         onSubmit(result);
@@ -226,20 +214,27 @@ const IdeaForm = ({ seasonId, onSubmit }) => {
   const currentStepTitle =
     steps[currentStep]?.title || "";
 
-  // 🎯 التعديل السحري: نعتبر المستخدم جاهزاً للإرسال بمجرد وقوفه على الخطوة الأخيرة رسومياً
-  const isLastStep = currentStep === steps.length - 1;
+  const completedSteps =
+    formData?.completed_steps || [];
+
+  const totalSteps =
+    formData?.total_steps ||
+    steps.length;
+
+  const canSubmit =
+    currentStep === steps.length - 1 &&
+    completedSteps.length === totalSteps;
 
   return (
     <form
       onSubmit={handleSubmit}
       className="container space-y-6"
     >
-      {/* يتلون السيرفر بالكامل فور الوصول للخطوة الأخيرة لمنح انطباع الاكتمال */}
       <Stepper
         steps={steps.map(
           (step) => step.title
         )}
-        current={isLastStep ? currentStep + 1 : currentStep}
+        current={canSubmit ? currentStep + 1 : currentStep}
       />
 
       <DynamicStep
@@ -267,11 +262,10 @@ const IdeaForm = ({ seasonId, onSubmit }) => {
           />
         )}
 
-        {/* 🎯 زر واحد مستقر؛ بمجرد دخول الخطوة الأخيرة يتحول إلى "إرسال" ونوع submit فوراً وبدون رفة عين أو اختفاء */}
         <Button
-          label={isLastStep ? "إرسال" : "التالي"}
-          type={isLastStep ? "submit" : "button"}
-          onClick={isLastStep ? undefined : handleNext}
+          label={canSubmit ? "إرسال" : "التالي"}
+          type={canSubmit ? "submit" : "button"}
+          onClick={canSubmit ? undefined : handleNext}
           className="w-50 bg-main-color text-white px-4 py-2 rounded"
         />
 

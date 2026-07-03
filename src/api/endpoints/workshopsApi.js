@@ -82,6 +82,12 @@ getCampWorkshopProjects: builder.query({
         ]
       : [{ type: 'CampProjects', id: 'LIST' }],
 }),
+// جلب نشاطات الصفحة الرئيسية
+// جلب النشاطات للصفحة الرئيسية
+getPublicWorkshops: builder.query({
+  query: () => "volunteers/public-workshops/",
+  providesTags: ["Workshop"],
+}),
 
 
 // دالة تحديث حالة الحضور والغياب للمشروع
@@ -111,4 +117,5 @@ export const {
   useGetCampWorkshopProjectsQuery,
   useUpdateProjectAttendanceMutation,
   useGetNearestWorkshopQuery,
+  useGetPublicWorkshopsQuery,
 } = workshopsApi;

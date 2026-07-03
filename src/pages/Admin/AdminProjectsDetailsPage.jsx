@@ -190,7 +190,7 @@ const AdminProjectDetailsPage =
             </InfoRow>
 
             <InfoRow label="القطاع المستهدف :">
-              {project.target_audience ||
+              {project.sector ||
                 "غير محدد"}
             </InfoRow>
 

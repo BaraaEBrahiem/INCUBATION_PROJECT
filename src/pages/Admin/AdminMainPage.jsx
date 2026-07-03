@@ -23,6 +23,7 @@ import Input from "../../components/Input";
 import {
   useGetDashboardStatsQuery,
   useGetDashboardProjectsChartQuery,
+  useSendBroadcastNotificationMutation,
 } from "../../api/endpoints/admin/adminDashboardApi";
 import { useSelector } from "react-redux";
 const AdminMainPage =
@@ -33,7 +34,11 @@ const AdminMainPage =
     // =====================================
     // API
     // =====================================
+    const [target, setTarget] = useState("ALL");
+    const [message, setMessage] = useState("");
 
+    const [sendNotification, { isLoading }] =
+  useSendBroadcastNotificationMutation();
     const {
       data:
         statsData,
@@ -137,7 +142,28 @@ const AdminMainPage =
               : "#9FF3C0",
         })
       ) || [];
+    const handleSendNotification = async () => {
+  if (!message.trim()) {
+    alert("الرجاء إدخال محتوى الإشعار");
+    return;
+  }
 
+  try {
+    const res = await sendNotification({
+  target,
+  message,
+}).unwrap();
+
+    alert(res.message);
+
+    setOpen(false);
+    setTarget("ALL");
+    setMessage("");
+  } catch (err) {
+    console.error(err);
+    alert("فشل إرسال الإشعار");
+  }
+};
     return (
       <div className="bg-white-color min-h-screen">
         <AdminNavbar
@@ -156,51 +182,46 @@ const AdminMainPage =
           title=""
           className="h-80 py-10"
           footer={
-            <Button
-              label="إرسال"
-              className="bg-main-color ml-2"
-            />
-          }
+  <Button
+    label={isLoading ? "جاري الإرسال..." : "إرسال"}
+    className="bg-main-color ml-2"
+    onClick={handleSendNotification}
+    disabled={isLoading}
+  />
+}
         >
           <form className="flex flex-col gap-4">
             <Select
-              label="اختيار المستلمين"
-              options={[
-                {
-                  value:
-                    "ALL",
-                  label:
-                    "الكل",
-                },
-
-                {
-                  value:
-                    "VOLUNTEERS",
-                  label:
-                    "المتطوعين",
-                },
-
-                {
-                  value:
-                    "INCUBATORS",
-                  label:
-                    "المحتضنين",
-                },
-
-                {
-                  value:
-                    "EVALUATORS",
-                  label:
-                    "لجنة التقييم",
-                },
-              ]}
-            />
+  label="اختيار المستلمين"
+  value={target}
+  onChange={(e) => setTarget(e.target.value)}
+  options={[
+    {
+      value: "ALL",
+      label: "الكل",
+    },
+    {
+      value: "VOLUNTEERS",
+      label: "المتطوعين",
+    },
+    {
+      value: "INCUBATORS",
+      label: "المحتضنين",
+    },
+    {
+      value: "EVALUATORS",
+      label: "لجنة التقييم",
+    },
+  ]}
+/>
 
             <Input
-              label="محتوى الإشعار"
-              type="text"
-              placeholder="محتوى الإشعار"
-            />
+  label="محتوى الإشعار"
+  type="text"
+  placeholder="محتوى الإشعار"
+  value={message}
+  onChange={(e) => setMessage(e.target.value)}
+/>
           </form>
         </Modal>
 
