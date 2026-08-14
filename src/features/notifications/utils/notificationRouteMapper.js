@@ -1,41 +1,70 @@
 // src/features/notifications/utils/notificationRouteMapper.js
 
 const staticRoutes = {
+ 
   "/notifications": "/notificationspage",
+  "/contact-admin": "/contact",
 
-  "/api/ideas/form/": "/ideaform",
+  // WORKSHOPS
+  "/api/admin/workshops/": "/admin/workshops",
+  "/api/volunteers/public-workshops/": "/activitiespage",
 
-  "/api/volunteers/consultations/":"/volunteer-center",
+  // CONSULTATIONS
+  "/api/volunteers/consultations/": "/requests-page",
 
+  // TEAM JOIN REQUESTS & VOLUNTEERS
+  "/api/volunteers/join-requests/": "/requests-page",
+  "/api/ideas/team/": "/team",
+  "/api/ideas/suggested-volunteers/": "/team",
   "/api/volunteers/me/": "/volunteer-profile",
 
-  "/api/volunteers/join-requests/": "/requests-page",
-
+  // BOOTCAMP & EXHIBITION
   
+  "/api/admin/exhibition/submissions/": "/admin/exhibition",
+  "/api/ideas/exhibition/dashboard/": "/incubation-stages",
 
-  "/contact-admin": "/contact",
+  // TEAM BUILDING
+  "/api/admin/volunteers/team-request-owners/": "/admin/volunteers",
+
+  // ADMIN SEASON EVENTS
+  "/api/ideas/form/": "/ideaform",
+
+  "/api/volunteers/consultants/<str:primary_skill>/":"/Consultants",
 };
 
+
 const dynamicRoutes = [
+  
   {
-    pattern: /^\/api\/volunteers\/workshop-details\/(\d+)\/?$/,
+   
+    pattern: /^\/?api\/volunteers\/workshop-details\/(\d+)\/?$/,
     build: (id) => `/workshopinfo/${id}`,
   },
-
   {
     pattern: /^\/api\/ideas\/public-workshops-details\/(\d+)\/?$/,
-    build: (id) => `/public-workshops/${id}`,
+    build: (workshop_id) => `/public-workshops/${workshop_id}`,
   },
 
+  
   {
-    pattern: /^\/api\/admin\/ideas\/(\d+)\/details\/?$/,
+  
+    pattern: /^\/?api\/admin\/ideas\/(\d+)\/details\/?$/,
     build: (id) => `/admin/projects-details/${id}`,
   },
+  {
+    pattern: /^\/?ideas\/(\d+)\/?$/,
+    build: (id) => `/ideas-details/${id}`,
+  },
 
   {
-    pattern: /^\/chat\/(\d+)\/?$/,
+    pattern: /^\/?chat\/(\d+)\/?$/,
     build: (id) => `/messagespage/${id}`,
   },
+
+  //ملاحظات اللجنة
+  ///rejection-notes/:id
+  //دعوة التقييم
+  ///evaluation-invitation/:id
 ];
 
 export function mapNotificationRoute(actionUrl) {
@@ -43,19 +72,21 @@ export function mapNotificationRoute(actionUrl) {
     return null;
   }
 
-  // Static routes
-  if (staticRoutes[actionUrl]) {
-    return staticRoutes[actionUrl];
+  const cleanUrl = actionUrl.trim();
+
+  if (staticRoutes[cleanUrl]) {
+    return staticRoutes[cleanUrl];
   }
 
-  // Dynamic routes
   for (const route of dynamicRoutes) {
-    const match = actionUrl.match(route.pattern);
+    const match = cleanUrl.match(route.pattern);
 
     if (match) {
+      
       return route.build(match[1]);
     }
   }
+
 
   return null;
 }

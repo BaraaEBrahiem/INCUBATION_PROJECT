@@ -312,7 +312,20 @@ export const evaluationApi = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ['Evaluation'],
     }),
+    getInvitationDetails: builder.query({
+      query: (id) => `evaluations/invitation-details/${id}/`,
+      providesTags: (result, error, id) => [{ type: "Invitation", id }],
+    }),
 
+    // دالة إرسال القرار (موافقة أو رفض) للسيرفر
+    updateInvitationStatus: builder.mutation({
+      query: ({ id, status }) => ({
+        url: `evaluations/invitation-details/${id}/`, 
+        method: "PATCH", 
+        body: { status },
+      }),
+      invalidatesTags: (result, error, { id }) => [{ type: "Invitation", id }],
+    }),
   }),
 });
 
@@ -366,5 +379,8 @@ export const {
     useGetMyAssignmentsQuery,
 
     useGetNextUpcomingSessionQuery,
+    //دالة جلب تفاصيل الدعوة
+    useGetInvitationDetailsQuery,
+    useUpdateInvitationStatusMutation,
      
 } = evaluationApi;

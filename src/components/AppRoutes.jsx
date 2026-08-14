@@ -5,6 +5,7 @@ import { buildUserNavOptions } from "../Utils/BulidUserNavOptions";
 import AssignIncubationEvaluatorsPage from "../pages/Admin/AssignIncubationEvaluatorsPage";
 import DashboardLayout from "./layout/DashboardLayout";
 import AdminLayout from "./Layout/AdminLayout";
+//import SecretaryLayout from "./Layout/SecretaryLayout";
 
 import LandingPage1 from "../pages/LandingPage1";
 import LandingPage2 from "../pages/LandingPage2";
@@ -96,6 +97,8 @@ import IncubationProjectInfoPage from "../pages/Incubation/IncubationProjectInfo
 
 import PublicWorkshopDetailsPage from "../pages/Volunteer/PublicWorkshopDetailsPage";
 import AIConsultantChatPage from "../pages/AiConsultantChatPage";
+import EvaluationInvitationPage from "../pages/Volunteer/EvaluationInvitationPage";
+import IdeaRejectionNotes from "../pages/Incubation/IdeaRejectionNotes";
 
 const AppRoutes = () => {
   const { roles } = useRole();
@@ -120,6 +123,9 @@ const AppRoutes = () => {
       path="/messagespage"
       element={<MessagesPage />}
       />
+
+      <Route path="/evaluation-invitation/:id" element={<EvaluationInvitationPage />} />
+      <Route path="/rejection-notes/:id" element={<IdeaRejectionNotes />} />
 
       <Route
       path="/messagespage/:id"
@@ -330,6 +336,45 @@ const AppRoutes = () => {
           <Route path="/incubation-seasons/:id" element={<SeasonDetailsPage />} />
         </Route>
       )}
+      {/* ---------------- secretary ---------------- */}
+      {roles.includes("secretary") && (
+        <Route element={<SecretaryLayout adminName="" email="" />}>
+          <Route path="/admin-mainpage" element={<AdminMainPage />} />
+           <Route path="/admin/users" element={<UsersPage />} />
+          <Route path="/admin/volunteers" element={<VolunteersPage />} />
+          <Route path="/admin/settings" element={<AdminSettingsPage />} />
+          <Route path="/change-password" element={<ChangePasswordPage />} />
+          <Route path="/admin/seasons" element={<IncubationSeasonsPage />} />
+         
+         <Route path="/admin/add-session/:id" element={<AddSessionPage />} />
+          <Route path="/admin/camp-management/:id" element={<CampManagementPage />} />
+          <Route path="/admin/incubated" element={<IncubatedPage />} />
+          <Route path="/admin/workshops" element={<WorkshopsTablePage />} />
+          <Route path="/workshops/:id" element={<WorkshopDetailsPage />} />
+          <Route path="/admin/evaluation" element={<EvaluationManagementPage />} />
+          <Route path="/admin/assigned-projects" element={<ProjectsManagementPage />} />
+          <Route path="/admin/exhibition" element={<ExhibitionManagementPage />} />
+          <Route path="/requests-details/:submissionId" element={<CardRequestDetailsPage />} />
+          <Route path="/Selectingvolunteer/:teamRequestId" element={<SelectingVolunteerPage />} />
+           </Route>
+      )}
+      {roles.includes("secretary") && (
+        <Route>
+          <Route path="/admin/incubation_seasons/applications/:id" element={<IncubationRequestDetails />} />
+          <Route path="/admin/details/:id" element={<VolunteerRequestPage />} />
+          <Route path="/admin/tasks/:taskId" element={<TaskDetailsPage />} />
+          <Route path="/messagespage" element={<MessagesPage />} />
+          <Route path="/messagespage/:id" element={<MessagesPage />} />
+          <Route path="/notificationspage" element={<NotificationsPage />} />
+          <Route path="/projectspage" element={<ProjectsPage />} />
+           <Route path="/admin/create-season" element={<CreateSeasonPage />} />
+          <Route path="/admin/latest-review/:idea_id" element={<LatestReviewPage />} />
+          <Route path="/admin/projects-details/:id" element={<AdminProjectsDetailsPage />} />
+          <Route path="/admin/graduated-projects" element={<GraduatedProjectsPage />} /> 
+          <Route path="/incubation-seasons/:id" element={<SeasonDetailsPage />} />
+        </Route>
+      )}
+     
     </Routes>
   );
 };
