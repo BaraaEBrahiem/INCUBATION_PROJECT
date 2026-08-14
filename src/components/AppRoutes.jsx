@@ -6,7 +6,6 @@ import AssignIncubationEvaluatorsPage from "../pages/Admin/AssignIncubationEvalu
 import DashboardLayout from "./layout/DashboardLayout";
 import AdminLayout from "./Layout/AdminLayout";
 import SecretaryLayout from "./Layout/SecretaryLayout";
-
 import LandingPage1 from "../pages/LandingPage1";
 import LandingPage2 from "../pages/LandingPage2";
 import SignupPage from "../pages/Auth/SignupPage";
@@ -14,13 +13,10 @@ import LoginPage from "../pages/Auth/LoginPage";
 import ForgotPasswordPage from "../pages/Auth/ForgetPasswordPage";
 import VerificationPage from "../pages/Auth/VerificationPage";
 import NewPasswordPage from "../pages/Auth/NewPasswordPage";
-
 import ProjectDetailsPage from "../pages/Shared/ProjectDetailsPage";
 import WorkshopDetailsPage from "../pages/Shared/WorkshopDetailsPage";
-
 import IdeaFormPage from "../pages/Shared/IdeaFormPage";
 import VolunteerFormPage from "../pages/Shared/VolunteerFormPage";
-
 import MainLayout from "./Layout/MainLayout";
 import UserNavbar from "./UserNavbar";
 
@@ -97,6 +93,8 @@ import IncubationProjectInfoPage from "../pages/Incubation/IncubationProjectInfo
 
 import PublicWorkshopDetailsPage from "../pages/Volunteer/PublicWorkshopDetailsPage";
 import AIConsultantChatPage from "../pages/AiConsultantChatPage";
+import EvaluationInvitationPage from "../pages/Volunteer/EvaluationInvitationPage";
+import IdeaRejectionNotes from "../pages/Incubation/IdeaRejectionNotes";
 
 const AppRoutes = () => {
   const { roles } = useRole();
@@ -121,6 +119,9 @@ const AppRoutes = () => {
       path="/messagespage"
       element={<MessagesPage />}
       />
+
+      <Route path="/evaluation-invitation/:id" element={<EvaluationInvitationPage />} />
+      <Route path="/rejection-notes/:id" element={<IdeaRejectionNotes />} />
 
       <Route
       path="/messagespage/:id"
