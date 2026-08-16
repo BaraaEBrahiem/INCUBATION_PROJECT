@@ -8,6 +8,7 @@ const staticRoutes = {
   // WORKSHOPS
   "/api/admin/workshops/": "/admin/workshops",
   "/api/volunteers/public-workshops/": "/activitiespage",
+  "/api/workshops/": "/admin/workshops",
 
   // CONSULTATIONS
   "/api/volunteers/consultations/": "/requests-page",
@@ -29,11 +30,27 @@ const staticRoutes = {
   // ADMIN SEASON EVENTS
   "/api/ideas/form/": "/ideaform",
 
-  "/api/volunteers/consultants/<str:primary_skill>/":"/Consultants",
+  //"/api/volunteers/consultants/<str:primary_skill>/":"/Consultants",
 };
 
 
 const dynamicRoutes = [
+  {
+  pattern: /^\/?api\/evaluations\/ideas\/(\d+)\/notes\/?$/,
+  build: (ideaId) => `/rejection-notes/${ideaId}`,
+},
+  {
+  pattern: /^\/?api\/evaluations\/invitation-details\/(\d+)\/?$/,
+  build: (invitationId) => `/evaluation-invitation/${invitationId}`,
+},
+  {
+  pattern: /^\/?admin\/camp-management\/(\d+)\/?$/,
+  build: (seasonId) => `/admin/camp-management/${seasonId}`,
+},
+  {
+  pattern: /^\/?api\/volunteers\/consultants\/([^/]+)\/?$/,
+  build: (primarySkill) => `/consultantslist/${primarySkill}`,
+},
   
   {
    
@@ -74,19 +91,33 @@ export function mapNotificationRoute(actionUrl) {
 
   const cleanUrl = actionUrl.trim();
 
+  // 1. Exact match
   if (staticRoutes[cleanUrl]) {
     return staticRoutes[cleanUrl];
   }
 
+  // 2. Normalize trailing slash
+  const normalizedUrl = cleanUrl.endsWith("/")
+    ? cleanUrl
+    : `${cleanUrl}/`;
+
+  if (staticRoutes[normalizedUrl]) {
+    return staticRoutes[normalizedUrl];
+  }
+
+  // 3. Dynamic routes
   for (const route of dynamicRoutes) {
-    const match = cleanUrl.match(route.pattern);
+    const match = normalizedUrl.match(route.pattern);
 
     if (match) {
-      
       return route.build(match[1]);
     }
   }
 
+  console.warn(
+    "[Notification] No frontend route found for:",
+    actionUrl
+  );
 
   return null;
 }
