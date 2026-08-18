@@ -9,16 +9,24 @@ import Select from "../../components/Select";
 import Input from "../../components/Input";
 import Button from "../../components/Button";
 import AdminNavbar from "../../components/AdminNavbar";
+import { useSelector } from "react-redux";
 const EvaluationManagementPage = ({ projects, assignedEvaluators, allAssignments }) => {
-  const [activeTab, setActiveTab] = useState("tasks");
+  const [activeTab, setActiveTab] = useState("schedule");
   const [open, setOpen] = useState(false);
+   const userRoles = useSelector((state) => state.auth?.roles || []);
 
+  const isSecretary = userRoles.some(
+    (role) => String(role).toLowerCase().trim() === "secretary"
+  );
   const tabs = [
+    { id: "schedule", label: "تحديد موعد اللجنة" },
     { id: "tasks", label: "توزيع المهام للجنة التحكيم" },
     { id: "criteria", label: "تعيين معايير التقييم" },
-    { id: "schedule", label: "تحديد موعد اللجنة" },
     { id: "results", label: "متابعة التقييم والنتائج" },
   ];
+  const sectabs = isSecretary
+    ? tabs.filter(cat => cat.id !== "tasks" && cat.id !== "results")
+    : tabs;
 
   return (
     <>
@@ -47,7 +55,7 @@ const EvaluationManagementPage = ({ projects, assignedEvaluators, allAssignments
     <div className="container p-6 mt-20" dir="rtl">
 
       {/* التبويبات */}
-      <PageTabs tabs={tabs} activeTab={activeTab} onChange={setActiveTab} />
+      <PageTabs tabs={sectabs} activeTab={activeTab} onChange={setActiveTab} />
 
       {/* المحتوى حسب التبويب */}
       <div className="mt-6">

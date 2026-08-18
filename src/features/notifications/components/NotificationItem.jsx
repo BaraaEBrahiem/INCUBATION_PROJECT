@@ -3,6 +3,9 @@ import {
 } from "../../../api/endpoints/notificationApi";
 
 import logo from "../../../assets/images/logo.png";
+import { useNavigate } from "react-router-dom";
+
+import { mapNotificationRoute } from "../utils/notificationRouteMapper";
 
 const NotificationItem = ({
   notification,
@@ -13,21 +16,33 @@ const NotificationItem = ({
   ] =
     useMarkNotificationAsReadMutation();
 
+  const navigate = useNavigate();
+
   const handleAction = async () => {
     try {
       if (!notification.is_read) {
-        await markAsRead(
-          notification.id
-        ).unwrap();
+        await markAsRead(notification.id).unwrap();
       }
 
-      if (
-        notification.has_action &&
-        notification.action_url
-      ) {
-        window.location.href =
-          notification.action_url;
+      if (!notification.has_action) {
+        return;
       }
+
+      const route = mapNotificationRoute(
+        notification.action_url
+      );
+
+      if (!route) {
+        console.warn(
+          "[Notification] No frontend route found for:",
+          notification.action_url
+        );
+
+        return;
+      }
+
+      navigate(route);
+
     } catch (error) {
       console.error(error);
     }
@@ -36,27 +51,32 @@ const NotificationItem = ({
   return (
     <div
       className={`
-       mt-3 flex items-start gap-4 p-4 border border-gray-200 rounded-lg relative
+        mt-3 flex items-start gap-4 p-4 border border-gray-200 rounded-lg relative
         ${
           !notification.is_read
-            ?  "bg-white-color shadow-sm": "bg-white"
+            ? "bg-white-color shadow-sm"
+            : "bg-white"
         }
       `}
     >
       {!notification.is_read && (
-         <span className="absolute top-4 left-2 w-3 h-3 bg-second-color rounded-full"></span>
+        <span className="absolute top-4 left-2 w-3 h-3 bg-second-color rounded-full"></span>
       )}
 
       <div className="flex gap-4">
-       {/* صورة الإشعار */}
-      <div className="w-15 h-15 shrink-0">
-        <img src={logo} alt="logo" className="w-full h-full object-contain" />
-      </div>
+        {/* صورة الإشعار */}
+        <div className="w-15 h-15 shrink-0">
+          <img
+            src={logo}
+            alt="logo"
+            className="w-full h-full object-contain"
+          />
+        </div>
 
         <div className="flex-1">
           <p
             className={`
-              text-xl
+              md:text-xl text-md
               leading-7
               text-right
               ${
@@ -79,16 +99,12 @@ const NotificationItem = ({
               text-gray-500
             "
           >
-            <span>
-              {notification.formatted_created_at}
-            </span>
+            <span>{notification.formatted_created_at}</span>
 
-            <span>
-              {notification.time_since}
-            </span>
+            <span>{notification.time_since}</span>
           </div>
 
-          {/*{notification.has_action && ( */}
+          {notification.has_action && (
             <button
               onClick={handleAction}
               disabled={isLoading}
@@ -102,9 +118,13 @@ const NotificationItem = ({
                 text-md
               "
             >
-              عرض التفاصيل
+              {notification.action_type === "START_CHAT"
+                ? "ابدأ محادثة"
+                : notification.action_type === "VIEW_CONSULTANTS"
+                ? "انتقل إلى قائمة المستشارين"
+                : "عرض التفاصيل"}
             </button>
-          {/*)} */ }
+          )}
         </div>
       </div>
     </div>

@@ -29,15 +29,16 @@ const Landing1 = () => {
   }, [location])
 
   return (
-    <>
-      <MainLayout header={<Header navOptions={navLinkOptions}/>}  footer={<Footer />}>
+
+   <div className="w-full overflow-x-hidden md:mt-1 mt-5"> 
+<MainLayout header={<Header navOptions={navLinkOptions}/>}  footer={<Footer />}>
       <Home id="home" />
       <Roles id="roles" />
       <Goals id="goals" />
       <FaQuestions id="faq" />
       <Terms id="terms" />
     </MainLayout>
-    </>
+    </div>
   )
 }
 

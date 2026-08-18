@@ -12,6 +12,7 @@ import {
 } from "../../api/endpoints/volunteerprofileApi"
 import Select from "../../components/Select"
 import {showSuccess, showError} from "../../Utils/toast"
+import { useNavigate } from "react-router-dom"
 
 const EditVolunteerProfilePage = () => {
   const EXPERTISE_OPTIONS = [
@@ -22,12 +23,19 @@ const EditVolunteerProfilePage = () => {
     { value: "Backend", label: "Backend" }
   ];
 
-  const [state, dispatch] = useReducer(profileReducer, initialProfileState)
+  const [state, dispatch] = useReducer(
+  profileReducer,
+  {
+    ...initialProfileState,
+    avatar: null,
+  }
+)
+  const navigate = useNavigate()
   const userId = useSelector((state) => state.auth.userId)
-
+  
   const { data: profileData, isLoading } = useGetVolunteerProfileQuery(userId, { skip: !userId })
   const [updateProfile, { isLoading: isUpdating }] = useUpdateVolunteerProfileMutation()
-
+  
   useEffect(() => {
     if (profileData) {
       console.log("البيانات القادمة من السيرفر كاملة:", profileData);
@@ -37,17 +45,18 @@ const EditVolunteerProfilePage = () => {
                          profileData.basic_info?.name?.trim() || 
                          profileData.user?.name?.trim() || 
                          "";
+      
 
       const formattedPayload = {
         ...profileData,
         name: serverName,
         full_name: serverName,
-        email: profileData.user?.email || profileData.email || "",
+        email: profileData.email || "",
         phone: profileData.basic_info?.phone || profileData.user?.phone || profileData.phone || "",
         primary_Skills: profileData.primary_skills || profileData.primary_Skills || "",
         additional_Skills: Array.isArray(profileData.additional_skills) 
-          ? profileData.additional_skills.join(", ") 
-          : (profileData.additional_Skills || "")
+         ? profileData.additional_skills.join(", ") //  تعديل الحرف ليكون s صغير هنا وهناك
+         : (profileData.additional_skills || profileData.additional_Skills || "")
       };
 
       dispatch({ type: "SET_ALL", payload: formattedPayload });
@@ -64,35 +73,94 @@ const EditVolunteerProfilePage = () => {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
-    try {
-      const currentName = state.name || state.full_name || "";
-      
-      const payload = {
-        ...state,
-        name: currentName,
-        full_name: currentName,
-        primary_skills: state.primary_Skills,
-        additional_skills: state.additional_Skills
-          ? state.additional_Skills
-              .split(",")
-              .map(s => s.trim())
-              .filter(Boolean)
-          : [],
-      }
+  e.preventDefault();
 
-      delete payload.primary_Skills
-      delete payload.additional_Skills
-      delete payload.cv
+  try {
+    const formData =
+      new FormData();
 
-      console.log("FINAL PAYLOAD:", payload)
-      await updateProfile(payload).unwrap()
-      showSuccess("تم حفظ التعديلات بنجاح")
-    } catch (error) {
-      console.error("خطأ في حفظ التعديلات:", error)
-      showError(error?.data?.detail || "حدث خطأ أثناء الحفظ")
+    formData.append(
+      "full_name",
+      state.name
+    );
+
+    formData.append(
+      "email",
+      state.email
+    );
+
+    formData.append(
+      "phone",
+      state.phone
+    );
+
+    formData.append(
+      "residence",
+      state.residence
+    );
+
+    formData.append(
+      "years_of_experience",
+      state.years_of_experience
+    );
+
+    formData.append(
+      "primary_skills",
+      state.primary_Skills
+    );
+
+    formData.append(
+      "volunteer_type",
+      state.volunteer_type
+    );
+
+    formData.append(
+      "availability_type",
+      state.availability_type
+    );
+
+    formData.append(
+      "projects_count",
+      state.projects_count
+    );
+
+    formData.append(
+      "bio",
+      state.bio
+    );
+
+    formData.append(
+      "additional_skills",
+      JSON.stringify(
+        state.additional_Skills
+          ?.split(",")
+          .map((s) => s.trim())
+      )
+    );
+
+    if (state.avatar) {
+      formData.append(
+        "avatar",
+        state.avatar
+      );
     }
+
+    await updateProfile(
+      formData
+    ).unwrap();
+
+    showSuccess(
+      "تم حفظ التعديلات بنجاح"
+    );
+  } catch (error) {
+    console.error(error);
+
+    showError(
+      error?.data?.detail ||
+        "حدث خطأ أثناء الحفظ"
+    );
   }
+};
 
   if (isLoading) {
     return (
@@ -105,18 +173,59 @@ const EditVolunteerProfilePage = () => {
   return (
     <div className="container mx-auto bg-gray-100" dir="rtl">
       <div className="bg-white w-full md:w-1/2 flex items-center gap-4 mt-4 mb-2 p-4 rounded-lg">
-        <img src={girl} alt="avatar" className="w-16 h-16 rounded-full object-cover" />
+        <div className="relative">
+  <img
+    src={
+      state.avatar instanceof File
+        ? URL.createObjectURL(
+            state.avatar
+          )
+        : profileData?.avatar
+        ? `http://127.0.0.1:8000${profileData.avatar}`
+        : girl
+    }
+    alt="avatar"
+    className="w-20 h-20 rounded-full object-cover border"
+  />
+
+  <label className="absolute bottom-0 left-0 bg-main-color text-white text-xs px-2 py-1 rounded cursor-pointer">
+    تعديل
+
+    <input
+      type="file"
+      hidden
+      accept="image/*"
+      onChange={(e) => {
+        const file =
+          e.target.files?.[0];
+
+        if (!file) return;
+
+        dispatch({
+          type: "SET_FIELD",
+          field: "avatar",
+          value: file,
+        });
+      }}
+    />
+  </label>
+</div>
         <div>
           <p className="font-semibold">{state.name || state.full_name}</p>
           <p className="text-gray-500 text-sm">{state.email}</p>
         </div>
       </div>
 
-      <div className="bg-white border border-second-color rounded-xl px-8 py-6 shadow-lg">
+      <div className="bg-white border border-second-color rounded-xl px-8 py-4 shadow-lg">
         <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-5">
           <Input label="الاسم" value={state.name || state.full_name || ""} onChange={handleChange("name")} />
-          <Input label="البريد الإلكتروني" type="email" value={state.email || ""} onChange={handleChange("email")} />
-
+          <Input
+  label="البريد الإلكتروني"
+  type="email"
+  name="email"
+  value={state.email || ""}
+  onChange={handleChange("email")}
+/>
           <Input label="الرقم" value={state.phone || ""} onChange={handleChange("phone")} />
           <Input label="تقيم في" value={state.residence || ""} onChange={handleChange("residence")} />
 
@@ -149,10 +258,12 @@ const EditVolunteerProfilePage = () => {
           </div>
 
           <div className="col-span-2 flex justify-center gap-6 mt-4">
-            <NavLinkUniversal
-              label={<Button label="عرض كما يظهر للآخرين" className="bg-main-color" />}
-              to={`/profileinfo/${userId}`}
+            <Button 
+            label="عرض كما يظهر للآخرين" 
+            className="bg-main-color" 
+            onClick={() => navigate(`/profileinfo/${userId}`)} 
             />
+            
             <Button
               type="submit"
               label={isUpdating ? "جاري الحفظ..." : "حفظ التعديلات"}

@@ -56,7 +56,7 @@ const ExhibitionStage = ({ data, onComplete }) => {
         initialForm[field.key] = "";
       }
     });
-
+//eslint-disable-next-line react-hooks/exhaustive-deps
     setForm(initialForm);
   }, [submittedData, currentStepFields]);
 

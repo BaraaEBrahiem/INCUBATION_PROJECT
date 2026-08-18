@@ -96,18 +96,21 @@ const LoginPage = () => {
       updateRoles(user.roles);
 
       showSuccess(`مرحباً ${user.name}`);
-      
+      if (response.force_password_change) {
+  navigate("/change-password");
+  return;
+}
       // التوجيه التلقائي بناءً على الدور المخزن
-      if (user.roles.includes("admin")) {
+      if (user.roles.includes("admin") || user.roles.includes("secretary")) {
         navigate("/admin-mainpage");
       } else if (user.roles.includes("idea_owner") || user.roles.includes("صاحب فكرة")) {
         navigate("/ideaowner-mainpage");
       } else if (user.roles.includes("volunteer") || user.roles.includes("متطوع")) {
         navigate("/volunteer-mainpage");
       } else if (user.roles.includes("evaluator") || user.roles.includes("مقيم")) {
-        navigate("/volunteer-evaluated-mainpage");
+        navigate("/evaluator-mainpage");
       } else if (user.roles.includes("incubator") || user.roles.includes("مراجع")) {
-        navigate("/volunteer-incubated-mainpage");
+        navigate("/incubator-mainpage");
       } else {
         navigate("/visitor-mainpage");
       }

@@ -11,9 +11,17 @@ import Button from "../../components/Button";
 import {
   useGetAdminProjectDetailsQuery,
 } from "../../api/endpoints/projectInfoApi";
+import { useSelector } from "react-redux";
 
 const AdminProjectDetailsPage =
   () => {
+
+     const userRoles = useSelector((state) => state.auth?.roles || []);
+
+  const isSecretary = userRoles.some(
+    (role) => String(role).toLowerCase().trim() === "secretary"
+  );
+
     const { id } =
       useParams();
 
@@ -51,7 +59,7 @@ const AdminProjectDetailsPage =
           "GRADUATED_POSITIVE"
         ) {
           navigate(
-            `/ProjectDetails/${id}`,
+            `/ProjectDetails/${project.idea_id}`,
             {
               replace:
                 true,
@@ -113,7 +121,7 @@ const AdminProjectDetailsPage =
 
             {/* الزر يظهر فقط إذا ليس متخرج إيجابي */}
             {projectStatus !==
-              "GRADUATED_POSITIVE" && (
+              "GRADUATED_POSITIVE" && !isSecretary && (
               <Button
                 label="عرض الملاحظات والتخريج"
                 onClick={() =>
@@ -136,11 +144,6 @@ const AdminProjectDetailsPage =
             <InfoRow label="مسؤول التعديل :">
               {project.editor_name ||
                 "غير محدد"}
-            </InfoRow>
-
-            <InfoRow label="نوع المنتج :">
-              {project.product_type ||
-                "لا يوجد منتج محدد حالياً"}
             </InfoRow>
           </div>
 
@@ -187,7 +190,7 @@ const AdminProjectDetailsPage =
             </InfoRow>
 
             <InfoRow label="القطاع المستهدف :">
-              {project.target_audience ||
+              {project.sector ||
                 "غير محدد"}
             </InfoRow>
 

@@ -5,32 +5,31 @@ export const adminDashboardApi = apiSlice.injectEndpoints({
 
     // 1) إحصائيات لوحة التحكم
     getDashboardStats: builder.query({
-      query: () => "admin/dashboard/stats/",
+      query: () => "admin/dashboard/statistics/current-season/",
       providesTags: ["Dashboard"],
     }),
 
     // 2) بيانات الرسم البياني للمشاريع
     getDashboardProjectsChart: builder.query({
-      query: () => "admin/dashboard/projects-chart/",
+      query: () => "admin/dashboard/statistics/graduated-projects-chart/",
       providesTags: ["Dashboard"],
     }),
 
     // 3) النشاط الأخير
     getDashboardRecentActivity: builder.query({
-      query: () => "admin/dashboard/recent-activity/",
+      query: () => "admin/dashboard/",
       providesTags: ["Dashboard"],
     }),
 
     // 4) إرسال إشعار
-    sendNotification: builder.mutation({
-      query: (data) => ({
-        url: "admin/notifications/send/",
-        method: "POST",
-        body: data,
-      }),
-      invalidatesTags: ["Dashboard"],
-    }),
-
+    sendBroadcastNotification: builder.mutation({
+  query: (data) => ({
+    url: "admin/dashboard/notifications/broadcast/",
+    method: "POST",
+    body: data,
+  }),
+  invalidatesTags: ["Dashboard"],
+}),
   }),
 });
 
@@ -38,5 +37,5 @@ export const {
   useGetDashboardStatsQuery,
   useGetDashboardProjectsChartQuery,
   useGetDashboardRecentActivityQuery,
-  useSendNotificationMutation,
+  useSendBroadcastNotificationMutation,
 } = adminDashboardApi;

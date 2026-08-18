@@ -15,6 +15,7 @@ const TeamRequestForm = () => {
   const [errors, setErrors] = useState({});
   const [apiError, setApiError] = useState("");
   const [showSuccess, setShowSuccess] = useState(false);
+  
 
   const [sendTeamRequest, { isLoading: isSubmitting }] = useSendTeamRequestMutation();
 
@@ -25,7 +26,6 @@ const TeamRequestForm = () => {
   ];
 
   const handleSkillChange = (e) => {
-
     const value = e.target.value;
     if (!value) return;
 
@@ -52,14 +52,12 @@ const TeamRequestForm = () => {
     e.preventDefault();
     setApiError("");
 
-    // التحقق من الحقول قبل الإرسال
     const newErrors = {};
     if (!title.trim()) newErrors.title = "هذا الحقل مطلوب";
     if (selectedSkills.length === 0) newErrors.skill = "الرجاء اختيار مهارة واحدة على الأقل";
     if (!count) newErrors.count = "هذا الحقل مطلوب";
     if (!description.trim()) newErrors.description = "هذا الحقل مطلوب";
 
-    // التحقق من عدد المتطوعين
     const numCount = Number(count);
     if (count && (isNaN(numCount) || numCount < 1 || numCount > 3)) {
       newErrors.count = "عدد المتطوعين يجب أن يكون بين 1 و 3 فقط";
@@ -72,30 +70,25 @@ const TeamRequestForm = () => {
     }
 
     try {
-     
+      
       await sendTeamRequest({
         title: title.trim(),
-        skill_required: selectedSkills.join(", "),         
+        skill_required: selectedSkills.join(", "),        
         members_needed: numCount, 
         description: description.trim(),
       }).unwrap();
 
-      // 3. في حال النجاح
       setShowSuccess(true);
       
-      // تفريغ النموذج تماماً
+  
       setTitle("");
       setSelectedSkills([]);
       setCount("");
       setDescription("");
     } catch (error) {
       console.error("Error sending team request:", error);
-
-      setApiError(
-        error?.data?.message || 
-        error?.data?.detail || 
-        "حدث خطأ في إرسال الطلب، يرجى المحاولة لاحقاً"
-      );
+      const msg = error?.data?.message || error?.data?.detail || "حدث خطأ في إرسال الطلب، يرجى المحاولة لاحقاً";
+      setApiError(msg);
     }
   };
 
@@ -105,12 +98,11 @@ const TeamRequestForm = () => {
 
   return (
     <>
-      <form onSubmit={handleSubmit} className="flex flex-col gap-6 p-6 w-full md:w-1/2 bg-white rounded-xl shadow-sm">
+      <form onSubmit={handleSubmit} className="flex flex-col gap-10 p-6 w-full md:w-[800px] text-right animate-fadeIn" dir="rtl">
         
-       
         {apiError && (
           <div className="bg-red-50 border border-red-200 text-red-700 p-3 rounded-lg text-center font-semibold text-sm">
-            {apiError}
+            ⚠️ {apiError}
           </div>
         )}
 
@@ -133,7 +125,7 @@ const TeamRequestForm = () => {
             options={[
               { label: "اختر المهارة لإضافتها...", value: "" },
               ...skillOptions.map(opt => ({
-                label: selectedSkills.includes(opt.value) ? ` ${opt.label}` : opt.label,
+                label: selectedSkills.includes(opt.value) ? `✅ ${opt.label}` : opt.label,
                 value: opt.value
               }))
             ]}
@@ -162,7 +154,6 @@ const TeamRequestForm = () => {
             </div>
           )}
         </div>
-
 
         <Input
           label="عدد المتطوعين المطلوبين"
@@ -195,13 +186,13 @@ const TeamRequestForm = () => {
 
         <Button
           label={isSubmitting ? "جاري إرسال الطلب..." : "إرسال طلب بناء الفريق"}
-          className="bg-main-color w-full py-3 text-white font-bold rounded-xl transition-all disabled:opacity-70"
+          className="bg-main-color w-full py-3 text-white font-bold rounded-xl transition-all disabled:opacity-70 cursor-pointer"
           type="submit"
           disabled={isSubmitting}
         />
       </form>
 
-      {/* مودال النجاح المستقر */}
+      {/* مودال النجاح المستقر والمطوّر */}
       <Modal
         isOpen={showSuccess}
         onClose={handleCloseModal}
@@ -215,9 +206,7 @@ const TeamRequestForm = () => {
         }
       >
         <p className="text-gray-600 text-sm leading-relaxed text-center py-2">
-         تم إرسال طلب الفريق بنجاح.
-         طلبك الآن قيد المراجعة من قبل الإدارة.
-         سيتم إشعارك عند الموافقة على الطلب.
+          طلبك حالياً قيد المعالجة والمراجعة من قبل الإدارة. سيتم إعلامك فوراً عند موافقة أي متطوع على الانضمام لفريقك الاستراتيجي.
         </p>
       </Modal>
     </>

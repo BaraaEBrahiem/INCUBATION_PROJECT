@@ -64,87 +64,75 @@ const PublicWorkshopDetailsPage = () => {
   }
 
   return (
-    <div className="container mx-auto py-8">
+  // إضافة px-4 لضمان عدم التصاق المحتوى بحواف الموبايل
+  <div className="container mx-auto py-10 md:py-20 px-4"> 
+    <h1 className="text-4xl font-bold text-second-color mb-6 text-right">
+      {workshop.title}
+    </h1>
+    
+    {/* إضافة flex-col للموبايل و flex-row للابتوب مع ضمان التباعد */}
+    <div className="flex flex-col-reverse lg:flex-row justify-center items-start gap-8 p-0 md:p-8">
+      
+      <div
+        className="space-y-6 text-right w-full"
+        dir="rtl"
+      >
+        <div>
+          <span className="font-bold pb-5">📌 الوصف:</span>
+          <p className="mt-2 text-gray-700 leading-relaxed">
+            {workshop.description}
+          </p>
+        </div>
 
-      <div className="bg-white rounded-lg shadow-lg p-8">
+        <div>
+          <span className="font-bold">📅 تاريخ البدء:</span>{" "}
+          {workshop.start_date}
+        </div>
 
-        <h1 className="text-3xl font-bold text-second-color mb-6 text-right">
-          {workshop.title}
-        </h1>
+        <div>
+          <span className="font-bold">📆 أيام الورشة:</span>{" "}
+          {workshop.days}
+        </div>
 
-        {workshop.image && (
+        <div>
+          <span className="font-bold">🕒 الوقت:</span>{" "}
+          {formatTime(workshop.time_from)}
+          {" - "}
+          {formatTime(workshop.time_to)}
+        </div>
+
+        <div>
+          <span className="font-bold">🎯 الدورة مناسبة لـ:</span>{" "}
+          {workshop.target_audience}
+        </div>
+      </div>
+
+      {workshop.image && (
+        // تعديل أبعاد الصورة لتكون مناسبة للموبايل واللابتوب
+        <div className="w-full lg:w-1/2">
           <img
             src={workshop.image}
             alt={workshop.title}
-            className="w-full h-96 object-cover rounded-lg mb-6"
+            className="w-full h-64 md:h-96 object-cover rounded-lg"
           />
-        )}
-
-        <div
-          className="space-y-4 text-right"
-          dir="rtl"
-        >
-
-          <div>
-            <span className="font-bold">
-              الوصف:
-            </span>
-            <p className="mt-2">
-              {workshop.description}
-            </p>
-          </div>
-
-          <div>
-            <span className="font-bold">
-              تاريخ البدء:
-            </span>{" "}
-            {workshop.start_date}
-          </div>
-
-          <div>
-            <span className="font-bold">
-              أيام الورشة:
-            </span>{" "}
-            {workshop.days}
-          </div>
-
-          <div>
-            <span className="font-bold">
-              الوقت:
-            </span>{" "}
-            {formatTime(workshop.time_from)}
-            {" - "}
-            {formatTime(workshop.time_to)}
-          </div>
-
-          <div>
-            <span className="font-bold">
-              الدورة مناسبة لـ:
-            </span>{" "}
-            {workshop.target_audience}
-          </div>
-
         </div>
-
-        <div className="mt-8 flex justify-end">
-
-          <Button
-            label={
-              isRegistering
-                ? "جاري التسجيل..."
-                : "سجل الآن"
-            }
-            onClick={handleRegister}
-            disabled={isRegistering}
-            className="bg-main-color"
-          />
-
-        </div>
-
-      </div>
-
+      )}
     </div>
-  );
+
+    <div className="mt-8 flex justify-center">
+      <Button
+        label={
+          isRegistering
+            ? "جاري التسجيل..."
+            : "سجل الآن"
+        }
+        onClick={handleRegister}
+        disabled={isRegistering}
+        className="bg-main-color w-full md:w-auto px-8"
+      />
+    </div>
+  </div>
+);
 };
 
 function formatTime(timeString) {

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { NavLink } from "react-router-dom";
-import admin from "../config/RoleOptions";
+import {admin} from "../config/RoleOptions";
 import girl from "../assets/images/girl.jpg";
 
 const AdminSidebar = ({ adminName, email }) => {

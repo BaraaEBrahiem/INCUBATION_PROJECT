@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 
 import Textarea from "../../components/Textarea";
 import Button from "../../components/Button";
-
+import {showInfo} from "../../Utils/toast";
 import {
   useGetIncubationReviewsQuery,
   useCreateIncubationReviewMutation,
@@ -27,7 +27,7 @@ const IncubationReviewPage = () => {
 
   const handleSubmit = async () => {
     if (!notes.trim()) {
-      alert("الرجاء إدخال الملاحظات");
+      showInfo("الرجاء إدخال الملاحظات");
       return;
     }
 
@@ -36,7 +36,7 @@ const IncubationReviewPage = () => {
       Number(progressScore) < 0 ||
       Number(progressScore) > 100
     ) {
-      alert("نسبة الإنجاز يجب أن تكون بين 0 و 100");
+      showInfo("نسبة الإنجاز يجب أن تكون بين 0 و 100");
       return;
     }
 
@@ -86,7 +86,7 @@ const IncubationReviewPage = () => {
     <div className="min-h-screen bg-white-color p-4 md:p-15 flex flex-col">
       <div className="container mx-auto">
 
-        <h2 className="text-second-color text-2xl font-bold my-10 text-right">
+        <h2 className="text-second-color text-2xl font-bold  text-right">
           مراجعة الاحتضان
         </h2>
 
@@ -118,7 +118,7 @@ const IncubationReviewPage = () => {
             className="border border-second-color rounded-md p-2 w-32 text-center"
           />
 
-          <div className="mt-6 flex justify-end">
+          <div className="mt-6 flex justify-start">
             <Button
               label={isSending ? "جاري الإرسال..." : "إرسال"}
               onClick={handleSubmit}

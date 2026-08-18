@@ -14,6 +14,7 @@ import {
   useSaveFormStepMutation,
   useSubmitFinalIdeaMutation,
 } from "../../api/endpoints/ideaSubmissionApi";
+import { showInfo } from "../../Utils/toast";
 
 const IdeaForm = ({ seasonId, onSubmit }) => {
   const {
@@ -49,7 +50,7 @@ const IdeaForm = ({ seasonId, onSubmit }) => {
       type: "SET_DRAFT",
       payload: formData.draft_data || {},
     });
-
+    //eslint-disable-next-line react-hooks/exhaustive-deps
     setCurrentStep(
       (formData.current_step || 1) - 1
     );
@@ -141,14 +142,22 @@ const IdeaForm = ({ seasonId, onSubmit }) => {
         step: currentStep + 1,
         data: payload,
       }).unwrap();
+      console.log("FORM DATA:", payload);
 
       setCurrentStep(
         (prev) => prev + 1
       );
     } catch (error) {
-      if (error?.data) {
-        setErrors(error.data);
-      }
+      console.log("FULL ERROR", error);
+      console.log("ERROR DATA", error?.data);
+
+      showInfo(
+        JSON.stringify(
+          error?.data,
+          null,
+          2
+        )
+      );
     }
   };
 
@@ -225,7 +234,7 @@ const IdeaForm = ({ seasonId, onSubmit }) => {
         steps={steps.map(
           (step) => step.title
         )}
-        current={currentStep}
+        current={canSubmit ? currentStep + 1 : currentStep}
       />
 
       <DynamicStep
@@ -253,22 +262,12 @@ const IdeaForm = ({ seasonId, onSubmit }) => {
           />
         )}
 
-        {!canSubmit ? (
-          <Button
-            label="التالي"
-            type="button"
-            onClick={
-              handleNext
-            }
-            className="w-50 bg-main-color text-white px-4 py-2 rounded"
-          />
-        ) : (
-          <Button
-            label="إرسال النهائي"
-            type="submit"
-            className="w-50 bg-main-color text-white px-4 py-2 rounded"
-          />
-        )}
+        <Button
+          label={canSubmit ? "إرسال" : "التالي"}
+          type={canSubmit ? "submit" : "button"}
+          onClick={canSubmit ? undefined : handleNext}
+          className="w-50 bg-main-color text-white px-4 py-2 rounded"
+        />
 
       </div>
     </form>

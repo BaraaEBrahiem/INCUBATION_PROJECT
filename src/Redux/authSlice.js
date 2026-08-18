@@ -24,17 +24,25 @@ const authSlice = createSlice({
     setCredentials: (state, action) => {
       const { user, token, refreshToken, roles, userId } = action.payload;
       
-      state.user = user;
+      // 1️⃣ تحديد الأدوار النهائية (سواء قادمة منفصلة، أو من داخل كائن المستخدم، أو فارغة)
+      const finalRoles = roles || user?.roles || [];
+
+      // 2️⃣ حماية هندسية: ندمج الأدوار النهائية داخل كائن الـ user نفسه لتوحيد البيانات
+      const updatedUser = user ? { ...user, roles: finalRoles } : null;
+
+      // 3️⃣ تحديث الـ Redux State
+      state.user = updatedUser;
       state.token = token;
       state.userId = userId;
-      state.roles = roles || [];
+      state.roles = finalRoles;
       state.isAuthenticated = true;
       if (refreshToken) state.refreshToken = refreshToken;
 
+      // 4️⃣ تخزين البيانات النظيفة والموحدة في الـ LocalStorage
       localStorage.setItem("token", token);
-      localStorage.setItem("user", JSON.stringify(user));
+      localStorage.setItem("user", JSON.stringify(updatedUser)); // تخزين الكائن المحدث بالأدوار
       localStorage.setItem("userId", userId);
-      localStorage.setItem("roles", JSON.stringify(roles || []));
+      localStorage.setItem("roles", JSON.stringify(finalRoles));
       if (refreshToken) localStorage.setItem("refreshToken", refreshToken);
     },
     updateAccessToken: (state, action) => {
@@ -46,6 +54,7 @@ const authSlice = createSlice({
       state.token = null;
       state.refreshToken = null;
       state.userId = null;
+      state.roles = []; // تصفير الأدوار في الـ State عند تسجيل الخروج
       state.isAuthenticated = false;
 
       localStorage.removeItem("token");

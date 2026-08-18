@@ -1,11 +1,11 @@
 const WorkshopCard = ({ workshop, status }) => {
 
   const statusStyles = {
-    pending: "text-yellow-600",
-    rejected: "text-red-color",
-    accepted: "text-green-color"
+    PENDING: "text-yellow-600",
+    REJECTED: "text-red-color",
+    ACCEPTED: "text-green-color"
   }
-
+const objectivesList = Array.isArray(workshop.objectives) ? workshop.objectives : [];
 return (
      <div className="bg-white p-4 md:p-6 rounded-lg shadow-lg text-right" dir="rtl">
     
@@ -45,9 +45,18 @@ return (
       </div>
       <div className="mt-10">
         <h3 className="font-bold mb-2">هدف الورشة:</h3>
-        <p className="text-gray-700 leading-relaxed">{workshop.objectives}</p>
+        {objectivesList.length === 0 ? (
+          <p className="text-gray-500">لا توجد أهداف محددة.</p>
+        ) : (
+          <ul className="list-disc list-inside text-gray-700 leading-relaxed pr-4 space-y-2">
+            {objectivesList.map((obj, i) => (
+              <li key={i}>
+                {obj}
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
-
       {status === "REJECTED" && (
         <div className="bg-main-color text-white p-4 mt-4 rounded-md">
           <h3 className="font-bold mb-2">سبب الرفض:</h3>

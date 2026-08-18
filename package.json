@@ -12,7 +12,6 @@
   "dependencies": {
     "@nivo/bar": "^0.99.0",
     "@nivo/core": "^0.99.0",
-    "@nivo/funnel": "^0.99.0",
     "@nivo/legends": "^0.99.0",
     "@nivo/pie": "^0.99.0",
     "@nivo/tooltip": "^0.99.0",

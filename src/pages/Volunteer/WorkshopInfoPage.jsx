@@ -9,7 +9,7 @@ const WorkshopInfoPage = () => {
   const { id } = useParams();
 
   // TODO: بعد الربط استخدمي هذا السطر بدل البيانات الثابتة
-  const { data: workshop, isLoading, error, refetch } = useGetWorkshopInfoByIdQuery(id);
+  const { data: workshop, isLoading, error} = useGetWorkshopInfoByIdQuery(id);
 
   // بيانات ثابتة حالياً (نفس ما هي)
 

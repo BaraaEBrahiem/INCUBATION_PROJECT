@@ -4,7 +4,8 @@ import {
   useNavigate,
 } from "react-router-dom";
 
-import FormPreview from "../../components/Admin_Dashboard/IncubationSeasons/Create-Season/FormPreview";
+import FormPreview from "../../components/Admin_Dashboard/Exhibition-management/FormPreview";
+
 import Button from "../../components/Button";
 
 const PreviewFormPage = () => {
@@ -42,7 +43,7 @@ const PreviewFormPage = () => {
     };
 
   return (
-    <div className="container p-6">
+    <div className="container">
       <h1 className="text-xl font-bold mb-6">
         معاينة النموذج
       </h1>
@@ -51,7 +52,7 @@ const PreviewFormPage = () => {
         fields={fields}
       />
 
-      <div className="flex justify-center items-center gap-8 mt-6">
+      <div className="flex justify-center items-center">
         <Button
           label="العودة للتعديل"
           onClick={

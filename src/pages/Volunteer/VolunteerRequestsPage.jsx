@@ -44,7 +44,7 @@ const VolunteerRequestsPage = () => {
   const volunteerRequests = requestsData?.join_requests || [];
 
   // دوال الموافقة والرفض
-  const handleApprove = async (id, status) => {
+  const handleApprove = async (id) => {
     // TODO: بعد الربط هذا الكود
     try {
 
@@ -63,7 +63,7 @@ const VolunteerRequestsPage = () => {
     }
   };
 
-  const handleReject = async (id, status) => {
+  const handleReject = async (id) => {
     // TODO: بعد الربط هذا الكود
     // const reasonText = prompt("الرجاء إدخال سبب الرفض:");
     // if (!reasonText) return;

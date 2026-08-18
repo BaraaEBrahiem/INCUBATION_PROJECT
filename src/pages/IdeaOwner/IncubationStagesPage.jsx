@@ -10,7 +10,7 @@ const STAGE_INDEX_MAP = {
   "BOOTCAMP": 0,
   "EVALUATION": 1,
   "INCUBATION": 2,
-  "EXHIBITION": 3,
+  "GRADUATED_POSITIVE": 3,
   "GRADUATED_NEGATIVE": 3 // يوجه للمرحلة الأخيرة لرؤية رسالة عدم التأهل
 };
 
@@ -47,7 +47,7 @@ const IncubationStagesPage = () => {
         return <CommitteeStage data={stageData} onComplete={refetch} />;
       case "INCUBATION":
         return <FollowupStage data={stageData} onComplete={refetch} />;
-      case "EXHIBITION":
+      case "GRADUATED_POSITIVE":
         return <ExhibitionStage data={stageData} onComplete={refetch} />;
       case "GRADUATED_NEGATIVE":
         return (
@@ -56,7 +56,7 @@ const IncubationStagesPage = () => {
           </div>
         );
       default:
-        return <div className="text-center mt-10">مرحلة غير معروفة</div>;
+        return <div className="text-center mt-10">مرحلة لم تبدأ بعد</div>;
     }
   };
 

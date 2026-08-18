@@ -131,9 +131,10 @@ const AssignEvaluatorsPage = () => {
   render: (row) => (
     <div className="flex justify-center items-center w-full">
       <Checkbox
-        name={`ev-${row.id}`}
-        checked={sel.includes(row.id)}
-        onChange={() => toggle(row.id)}
+        name={`ev-${row.user_id}`}
+        checked={sel.includes(row.user_id)}
+        onChange={() => toggle(row.user_id)}
+
       />
     </div>
   ),

@@ -191,7 +191,7 @@ const EvaluationFormPage = () => {
                   </button>
                 </div>
                 <div className="text-right text-xs md:text-xl text-black" dir="rtl">
-                  {item.id}. {item.title}
+                  . {item.title}
                 </div>
               </div>
             ))}

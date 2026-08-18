@@ -66,6 +66,7 @@ useEffect(() => {
 
     const formattedAppointments = scheduleData.map((apt) => ({
       id: apt.id,
+      // eslint-disable-next-line
       text: `${reverseDayMap[apt.day]} : من ${formatBackendTime(apt.from)} إلى ${formatBackendTime(apt.to)}`,
       day: apt.day,
       from: apt.from,
@@ -274,27 +275,27 @@ const handleDeleteHoliday = async () => {
   //   );
   // }
 
-  return (
-    <div className="bg-white-color min-h-screen flex flex-col font-sans">
-      <div className="container"> 
-        <h1 className="text-4xl font-bold text-second-color my-6">إدارة الجدولة</h1>
+ return (
+    <div className="bg-white-color min-h-screen flex flex-col font-sans px-4 md:px-0">
+      <div className="container mx-auto"> 
+        <h1 className="text-3xl md:text-4xl font-bold text-second-color my-6 text-right">إدارة الجدولة</h1>
         
         {/* قسم التوفر الاسبوعي */}
         <div>
-          <div className="bg-white p-6 rounded-xl shadow-sm mb-6 border border-gray-200">
-            <h3 className="font-bold text-third-color mb-2 text-[20px]">حدد توفرك الاسبوعي</h3>
-            <p className="text-m text-black mb-5">اختر الايام والاوقات التي تكون متاحا فيها عادة كل أسبوع</p>
+          <div className="bg-white p-4 md:p-6 rounded-xl shadow-sm mb-6 border border-gray-200">
+            <h3 className="font-bold text-third-color mb-2 text-lg md:text-[20px]">حدد توفرك الاسبوعي</h3>
+            <p className="text-sm md:text-base text-black mb-5">اختر الايام والاوقات التي تكون متاحا فيها عادة كل أسبوع</p>
           </div>
           
           {/* أيام الأسبوع */}
-          <div className="flex flex-row-reverse gap-2 justify-between mb-8" dir='ltr'>
+          <div className="grid grid-cols-4 sm:grid-cols-7 gap-2 mb-8" dir='rtl'>
             {daysOfWeek.map((day) => (
               <button
                 key={day}
                 onClick={() => setSelectedDays(prev => 
                   prev.includes(day) ? prev.filter(d => d !== day) : [...prev, day]
                 )}
-                className={`flex-1 py-2 rounded-lg border text-sm font-medium transition-all ${
+                className={`py-2 px-1 rounded-lg border text-xs sm:text-sm font-medium transition-all ${
                   selectedDays.includes(day)
                     ? 'bg-main-color text-white'
                     : 'bg-white text-third-color border-second-color'
@@ -306,35 +307,35 @@ const handleDeleteHoliday = async () => {
           </div>
 
           {/* وقت البداية والنهاية */}
-          <div className="flex flex-wrap md:flex-nowrap items-center justify-start gap-x-10 mb-8">
-            <div className="flex items-center gap-2 mb-3">
-              <span className="text-third-color font-medium ">من</span>
-              <div className="relative flex-1 group ">
+          <div className="flex flex-col sm:flex-row items-center justify-start gap-4 mb-8">
+            <div className="flex items-center gap-2 w-full sm:w-auto">
+              <span className="text-third-color font-medium">من</span>
+              <div className="relative flex-1 sm:flex-none">
                 <LuCirclePlus
                   onClick={() => incrementTime(setStartTime)}
-                  className="absolute right-78 top-1/2 -translate-y-1/2 w-6 h-6 text-second-color cursor-pointer hover:scale-110" 
+                  className="absolute left-3 top-1/2 -translate-y-1/2 w-6 h-6 text-second-color cursor-pointer hover:scale-110" 
                 />
                 <Input 
                   type="text" 
                   readOnly
                   value={formatTime(startTime)} 
-                  className="w-[300px] p-2.5 px-10"
+                  className="w-full sm:w-[250px] p-2.5 px-10"
                 />
               </div>
             </div>
 
-            <div className="flex items-center gap-2 md:mr-2">
+            <div className="flex items-center gap-2 w-full sm:w-auto">
               <span className="text-third-color font-medium">إلى</span>
-              <div className="relative flex-1 group">
+              <div className="relative flex-1 sm:flex-none">
                 <LuCirclePlus
                   onClick={() => incrementTime(setEndTime)}
-                  className="absolute right-78 top-1/2 -translate-y-1/2 w-6 h-6 text-second-color cursor-pointer hover:scale-110" 
+                  className="absolute left-3 top-1/2 -translate-y-1/2 w-6 h-6 text-second-color cursor-pointer hover:scale-110" 
                 />
                 <Input
                   type="text" 
                   readOnly
                   value={formatTime(endTime)} 
-                  className="w-[300px] p-2.5 px-10"
+                  className="w-full sm:w-[250px] p-2.5 px-10"
                 />
               </div>
             </div>
@@ -343,7 +344,7 @@ const handleDeleteHoliday = async () => {
           <Button
             label="اضافة" 
             onClick={handleAddAppointment}
-            className="w-[300px] bg-main-color hover:bg-[#1e3450] transition shadow-md"
+            className="w-full sm:w-[300px] bg-main-color hover:bg-[#1e3450] transition shadow-md"
           />
         </div>
 
@@ -357,14 +358,12 @@ const handleDeleteHoliday = async () => {
               <p className="text-gray-500 text-center py-8">لا توجد مواعيد محددة</p>
             ) : (
               appointments.map((apt) => (
-                <div key={apt.id} className="bg-white p-4 rounded-lg shadow-sm flex justify-between items-center border border-gray-100">
-                  <div className="text-gray-700 font-medium order-1">
-                    {apt.text}
-                  </div>
+                <div key={apt.id} className="bg-white p-4 rounded-lg shadow-sm flex flex-col sm:flex-row justify-between items-center gap-3 border border-gray-100">
+                  <div className="text-gray-700 font-medium">{apt.text}</div>
                   <Button
                     label="حذف"
                     onClick={() => handleDeleteAppointment(apt.id)}
-                    className="bg-main-color px-4 py-1.5 hover:bg-red-700 transition order-2"
+                    className="bg-main-color px-6 py-1.5 hover:bg-red-700 transition w-full sm:w-auto"
                   />
                 </div>
               ))
@@ -375,37 +374,35 @@ const handleDeleteHoliday = async () => {
         {/* قسم الأجازات */}
         <div className="pb-10">
           <h2 className="text-second-color font-bold mb-4">حدد أيام الأجازة :</h2>
-          <div className="flex flex-wrap md:flex-nowrap items-center justify-start gap-x-10 mb-8" dir='rtl'>
-            <div className="flex items-center gap-2 mb-3">
+          <div className="flex flex-col sm:flex-row items-center justify-start gap-4 mb-8" dir='rtl'>
+            <div className="flex items-center gap-2 w-full sm:w-auto">
               <span className="text-third-color font-medium">من</span>
-              <div className="relative flex-1 group">
+              <div className="relative flex-1 sm:flex-none">
                 <LuCirclePlus
                   onClick={() => incrementDay(holidayFrom, setHolidayFrom)}
-                  className="absolute right-78 top-1/2 -translate-y-1/2 w-6 h-6 text-second-color cursor-pointer hover:scale-110 transition-transform" 
+                  className="absolute left-3 top-1/2 -translate-y-1/2 w-6 h-6 text-second-color cursor-pointer hover:scale-110" 
                 />
                 <Input
-                  placeholder="الأحد, الاثنين,..."
                   type="text" 
                   readOnly
                   value={holidayFrom || ''} 
-                  className="w-[300px] p-2.5 px-10"
+                  className="w-full sm:w-[250px] p-2.5 px-10"
                 />
               </div>
             </div>
 
-            <div className="flex items-center gap-2 md:mr-2">
+            <div className="flex items-center gap-2 w-full sm:w-auto">
               <span className="text-third-color font-medium">إلى</span>
-              <div className="relative flex-1 group">
+              <div className="relative flex-1 sm:flex-none">
                 <LuCirclePlus 
                   onClick={() => incrementDay(holidayTo, setHolidayTo)}
-                  className="absolute right-78 top-1/2 -translate-y-1/2 w-6 h-6 text-second-color cursor-pointer hover:scale-110 transition-transform" 
+                  className="absolute left-3 top-1/2 -translate-y-1/2 w-6 h-6 text-second-color cursor-pointer hover:scale-110" 
                 />
                 <Input
-                  placeholder="الأحد, الاثنين,..."
                   type="text" 
                   readOnly
                   value={holidayTo || ''} 
-                  className="w-[300px] p-2.5 px-10"
+                  className="w-full sm:w-[250px] p-2.5 px-10"
                 />
               </div>
             </div>
@@ -414,25 +411,23 @@ const handleDeleteHoliday = async () => {
           <Button 
             label="اضافة إجازة" 
             onClick={handleAddHoliday}
-            className="w-[300px] bg-main-color py-2.5 hover:bg-[#1e3450]" 
+            className="w-full sm:w-[300px] bg-main-color py-2.5 hover:bg-[#1e3450]" 
           />
 
           {holiday && (
-            <div className="bg-white p-3 rounded-lg shadow-2xl flex justify-between items-center border border-gray-200 mt-3">
-              <div className="text-third-color text-[15px] font-medium">
+            <div className="bg-white p-4 rounded-lg shadow-lg flex flex-col sm:flex-row justify-between items-center gap-3 border border-gray-200 mt-6">
+              <div className="text-third-color text-[15px] font-medium text-center sm:text-right">
                 تم تحديد ايام الاجازة من {holiday.from} الى {holiday.to}
               </div> 
               <Button 
                 label="حذف" 
                 onClick={handleDeleteHoliday} 
-                className="bg-main-color px-5 py-1.5 hover:bg-red-500 transition" 
+                className="bg-main-color px-8 py-1.5 hover:bg-red-500 transition w-full sm:w-auto" 
               />
             </div>
           )}
         </div>
       </div>
     </div>
-  );
-};
-
-export default ScheduleManagementPage;
+  );}
+  export default ScheduleManagementPage;

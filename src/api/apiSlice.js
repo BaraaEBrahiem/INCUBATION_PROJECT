@@ -12,6 +12,8 @@ const acquireMutex = () => {
 
 const baseQuery = fetchBaseQuery({
   baseUrl: "http://127.0.0.1:8000/api/",
+  refetchOnFocus: true, 
+  refetchOnReconnect: true,
   prepareHeaders: (headers, { getState, endpoint }) => {
     if (endpoint === "login") {
       return headers;
@@ -99,7 +101,8 @@ export const apiSlice = createApi({
     "Exhibition", "ExhibitionProjects", "ExhibitionCardRequests",
     "ExhibitionsList", "ExhibitionForm", "IncubationSeasons",
     "IncubationRequests", 'GraduatedProjects', 'CampProjects',
-    'AdminUser', 'Ideas', 'FormStructure', 'IdeaFormConfig',"Conversations"
+    'AdminUser', 'Ideas', 'FormStructure', 'IdeaFormConfig', 'ChatSessions', 'ChatDetails',
+    "Conversations", 'Messages', 'Invitation'
   ],
   endpoints: () => ({}),
 });

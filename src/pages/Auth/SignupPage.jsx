@@ -1,21 +1,18 @@
 import React, { useState } from "react";
-import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { jwtDecode } from "jwt-decode";
 import Input from "../../components/Input";
 import Button from "../../components/Button";
 import signUp from "../../assets/images/signUp.png";
 import NavLinkUniversal from "../../components/NavLinkUniversal";
 import { useRegisterMutation } from "../../api/endpoints/authApi";
-import { setCredentials } from "../../redux/authSlice";
-import { getMainPageByRole } from "../../Utils/getMainPageByRole";
 import { showSuccess, showError } from "../../Utils/toast";
+import { useDispatch } from "react-redux";
+import { setCredentials } from "../../redux/authSlice";
 
 const SignupPage = () => {
-  const dispatch = useDispatch();
   const navigate = useNavigate();
   const [register, { isLoading }] = useRegisterMutation();
-
+  const dispatch = useDispatch();
   const [form, setForm] = useState({
     full_name: "",
     email: "",
@@ -49,53 +46,64 @@ const SignupPage = () => {
     if (!validate()) return;
 
     try {
+      // إرسال طلب إنشاء الحساب للباك اند
       const response = await register({
         full_name: form.full_name,
         email: form.email,
         password: form.password,
       }).unwrap();
 
-      // استخراج التوكن (مثل تسجيل الدخول)
-      const accessToken = response.access;
-      if (!accessToken) throw new Error("لم يتم استلام التوكن من الخادم");
+      console.log("Response from server:", response);
 
-      // فك تشفير التوكن للحصول على بيانات المستخدم
-      const decoded = jwtDecode(accessToken);
-      const user = {
-        id: decoded.user_id,
-        email: decoded.email,
-        name: decoded.full_name || decoded.email,
-        roles: decoded.roles || (decoded.role ? [decoded.role] : ["visitor"]),
+      // تأكدي من مسمى حقل التوكن القادم من السيرفر (مثلاً access أو token)
+      const serverToken = response.access || response.token;
+
+      // فحص مصفوفة الأدوار القادمة من الباك اند (إذا كانت فارغة نقوم بحقن "visitor" افتراضياً بالفرونت)
+      const hasRoles = response.user?.roles && response.user.roles.length > 0;
+      const assignedRoles = hasRoles ? response.user.roles : ["visitor"];
+
+      // بناء كائن المستخدم الموجه للـ Redux Store
+      const localUser = {
+        id: response.user?.id || response.id,
+        email: response.user?.email || response.email,
+        name: response.user?.full_name || response.full_name || form.full_name,
+        roles: assignedRoles, // 👈 هنا تقع الحماية: أصبح يمتلك دور زائر بالفرونت اند فقط
       };
 
-      // تخزين بيانات المستخدم والتوكن في Redux
-      dispatch(setCredentials({
-        user: user,
-        token: accessToken,
-        userId: user.id,
-      }));
+      // شحن الـ Redux بالتوكن الحقيقي والمستخدم المحدث بالدور الافتراضي
+      dispatch(
+        setCredentials({
+          user: localUser,
+          token: serverToken, // التوكن الفعلي لتشغيل الـ WebSocket وباقي الـ APIs فوراً
+          userId: localUser.id,
+        })
+      );
 
-      showSuccess(`مرحباً ${user.name}، تم إنشاء حسابك بنجاح`);
-      const mainPage = getMainPageByRole(user.roles);
-      navigate(mainPage);
+      showSuccess(`مرحباً ${localUser.name}، تم إنشاء حسابك بنجاح!`);
+      
+      // التوجيه المباشر لواجهات الزائر التي انفتحت صلاحيتها الآن
+      navigate("/visitor-mainpage");
+
     } catch (error) {
       console.error("Signup error:", error);
       let errorMsg = "فشل إنشاء الحساب. حاول مرة أخرى";
+      
       if (error?.data?.message) errorMsg = error.data.message;
       else if (error?.data?.detail) errorMsg = error.data.detail;
       else if (error?.data?.email) errorMsg = error.data.email[0];
       else if (error?.data?.full_name) errorMsg = error.data.full_name[0];
+      
       showError(errorMsg);
       setErrors({ general: errorMsg });
     }
   };
 
   return (
-    <div className="flex h-screen w-full overflow-hidden font-sans">
+    <div className="flex h-screen w-full overflow-hidden font-sans" dir="rtl">
       <div className="w-full md:w-1/2 bg-white flex items-center justify-center p-12">
         <div className="w-full max-w-md">
           <h1 className="text-3xl font-bold text-second-color mb-10 text-center">
-            انشاء حساب
+            إنشاء حساب
           </h1>
 
           {errors.general && (
@@ -107,7 +115,7 @@ const SignupPage = () => {
           <form className="space-y-5" onSubmit={handleSubmit}>
             <Input
               label="الاسم"
-              placeholder="ادخل اسمك الكامل"
+              placeholder="أدخل اسمك الكامل"
               name="full_name"
               type="text"
               value={form.full_name}
@@ -115,8 +123,8 @@ const SignupPage = () => {
               error={errors.full_name}
             />
             <Input
-              label="البريد الالكتروني"
-              placeholder="ادخل بريدك الالكتروني"
+              label="البريد الإلكتروني"
+              placeholder="أدخل بريدك الإلكتروني"
               name="email"
               type="email"
               value={form.email}
@@ -126,7 +134,7 @@ const SignupPage = () => {
             <div className="relative">
               <Input
                 label="كلمة المرور"
-                placeholder="ادخل كلمة المرور"
+                placeholder="أدخل كلمة المرور"
                 name="password"
                 type="password"
                 value={form.password}
@@ -138,7 +146,7 @@ const SignupPage = () => {
               label={isLoading ? "جاري إنشاء الحساب..." : "التالي"}
               type="submit"
               disabled={isLoading}
-              className="flex justify-center max-w-[300px] bg-main-color mt-10 mx-auto w-full"
+              className="flex justify-center max-w-[300px] bg-main-color mt-10 mx-auto w-full text-white rounded-xl py-3 font-bold block"
             />
           </form>
 
@@ -147,7 +155,7 @@ const SignupPage = () => {
             <NavLinkUniversal
               label="تسجيل الدخول"
               to="/login"
-              className="text-main-color hover:underline"
+              className="text-main-color hover:underline font-bold"
             />
           </p>
         </div>
@@ -155,7 +163,7 @@ const SignupPage = () => {
 
       <div className="hidden md:flex md:w-1/2 bg-main-color relative items-end justify-center">
         <div className="absolute right-0 bottom-0 w-0 h-0 border-t-[100vh] border-t-transparent border-r-[15vw] border-r-black/10"></div>
-        <img src={signUp} alt="Character" className="h-full w-full" />
+        <img src={signUp} alt="Character" className=" h-full object-cover" />
       </div>
     </div>
   );

@@ -106,7 +106,13 @@
   text-align: center;
   line-height: 90px;
 }
-
+.ai{
+    position: relative;
+    width: fit-content;
+    height: fit-content;
+    animation: up-down 1.9s linear infinite;
+    
+}
 
 }
 html {
@@ -137,4 +143,12 @@ body {
   .container{
     max-width: 1200px;
   }
+}
+@keyframes up-down{
+   0%, 100%{
+    top: 0;
+   }
+   50%{
+    transform: translateY(-20px);
+   }
 }

@@ -1,29 +1,40 @@
 import { useState } from "react";
 import CategoryFilterBar from "../../components/CategoryFilterBar";
 import ConsultantsList from "../../components/ConsultantsList";
+import { useSelector } from "react-redux";
 
 import {
   useGetVolunteersQuery,
   useGetVolunteerRequestsQuery,
   useGetEvaluatorsQuery,
-  useGetTeamRequestsQuery,
+  useGetadminTeamRequestsQuery,
 } from "../../api/endpoints/admin/volunteersOptionsApi";
 
 import avatarDefault from "../../assets/images/avatar.jpg";
 
 const VolunteersPage = () => {
-  const categories = [
+ 
+  const userRoles = useSelector((state) => state.auth?.roles || []);
+
+  const isSecretary = userRoles.some(
+    (role) => String(role).toLowerCase().trim() === "secretary"
+  );
+
+  const allCategories = [
     { id: "volunteers", label: "المتطوعين" },
     { id: "requests", label: "طلبات التطوع" },
     { id: "evaluators", label: "المقيمين" },
     { id: "user_requests", label: "طلبات المستخدمين" },
   ];
 
-  const [selected, setSelected] =
-    useState("volunteers");
+  const categories = isSecretary
+    ? allCategories.filter(cat => cat.id !== "requests" && cat.id !== "user_requests")
+    : allCategories;
+
+  const [selected, setSelected] = useState("volunteers");
 
   // ==========================
-  // API Queries
+  // API Queries (بدون أي تغيير)
   // ==========================
 
   const {
@@ -34,8 +45,7 @@ const VolunteersPage = () => {
   const {
     data: requestsResponse,
     isLoading: isLoadingRequests,
-  } =
-    useGetVolunteerRequestsQuery();
+  } = useGetVolunteerRequestsQuery();
 
   const {
     data: evaluatorsResponse,
@@ -45,7 +55,7 @@ const VolunteersPage = () => {
   const {
     data: teamRequestsResponse,
     isLoading: isLoadingTeamRequests,
-  } = useGetTeamRequestsQuery();
+  } = useGetadminTeamRequestsQuery();
 
   // ==========================
   // Days translation
@@ -65,50 +75,30 @@ const VolunteersPage = () => {
   // Format availability from API
   // ==========================
 
-  const formatAvailability = (
-    availability = []
-  ) => {
-    return availability.map(
-      (slot) => {
-        if (
-          typeof slot !== "string"
-        ) {
-          return slot;
-        }
+  const formatAvailability = (availability = []) => {
+    return availability.map((slot) => {
+      if (typeof slot !== "string") {
+        return slot;
+      }
 
-        const [
-          dayPart,
-          timePart,
-        ] = slot.split(": ");
+      const [dayPart, timePart] = slot.split(": ");
 
-        if (!timePart) {
-          return {
-            day:
-              daysMap[
-                dayPart
-              ] || dayPart,
-            start_time: "",
-            end_time: "",
-          };
-        }
-
-        const [
-          start_time,
-          end_time,
-        ] = timePart.split(
-          " - "
-        );
-
+      if (!timePart) {
         return {
-          day:
-            daysMap[
-              dayPart
-            ] || dayPart,
-          start_time,
-          end_time,
+          day: daysMap[dayPart] || dayPart,
+          start_time: "",
+          end_time: "",
         };
       }
-    );
+
+      const [start_time, end_time] = timePart.split(" - ");
+
+      return {
+        day: daysMap[dayPart] || dayPart,
+        start_time,
+        end_time,
+      };
+    });
   };
 
   // ==========================
@@ -118,20 +108,15 @@ const VolunteersPage = () => {
   const volunteersMockData = [
     {
       id: 1,
-      full_name:
-        "رانيا الأحمد",
-      specialization:
-        "UI/UX",
-      avatar:
-        avatarDefault,
+      full_name: "رانيا الأحمد",
+      specialization: "UI/UX",
+      avatar: avatarDefault,
       type: "volunteer",
       availability: [
         {
           day: "كل الأيام",
-          start_time:
-            "2:00pm",
-          end_time:
-            "4:00pm",
+          start_time: "2:00pm",
+          end_time: "4:00pm",
         },
       ],
     },
@@ -142,103 +127,42 @@ const VolunteersPage = () => {
   // ==========================
 
   const volunteersData =
-    volunteersResponse?.map(
-      (item) => ({
-        id: item.id,
-
-        full_name:
-          item.name ||
-          item.full_name,
-
-        specialization:
-          item.specialization ||
-          item.primary_skills,
-
-        avatar:
-          item.avatar ||
-          avatarDefault,
-
-        availability:
-          formatAvailability(
-            item.availability
-          ),
-
-        type:
-          "volunteer",
-      })
-    ) ||
-    volunteersMockData;
+    volunteersResponse?.map((item) => ({
+      id: item.id,
+      full_name: item.name || item.full_name,
+      primary_skills: item.specialization || item.primary_skills,
+      avatar: item.avatar || avatarDefault,
+      availability: formatAvailability(item.availability),
+      type: "volunteer",
+    })) || volunteersMockData;
 
   const requestsData =
-    requestsResponse?.map(
-      (item) => ({
-        id: item.id,
-
-        full_name:
-          item.name ||
-          item.full_name,
-
-        specialization:
-          item.specialization ||
-          "متقدم بطلب تطوع",
-
-        avatar:
-          item.avatar ||
-          avatarDefault,
-
-        availability:
-          formatAvailability(
-            item.availability
-          ),
-
-        type: "request",
-      })
-    ) || [];
+    requestsResponse?.map((item) => ({
+      id: item.id,
+      full_name: item.name || item.full_name,
+      primary_skills: item.primary_skills || "متقدم بطلب تطوع",
+      avatar: item.avatar || avatarDefault,
+      availability: formatAvailability(item.availability),
+      type: "request",
+    })) || [];
 
   const evaluatorsData =
-    evaluatorsResponse?.map(
-      (item) => ({
-        id: item.id,
-
-        full_name:
-          item.name ||
-          item.full_name,
-
-        specialization:
-          item.specialization ||
-          "مقيم",
-
-        avatar:
-          item.avatar ||
-          avatarDefault,
-
-        availability:
-          formatAvailability(
-            item.availability
-          ),
-
-        type:
-          "evaluator",
-      })
-    ) || [];
+    evaluatorsResponse?.map((item) => ({
+      id: item.id,
+      full_name: item.name || item.full_name,
+      primary_skills: item.primary_skills || "مقيم",
+      avatar: item.avatar || avatarDefault,
+      availability: formatAvailability(item.availability),
+      type: "evaluator",
+    })) || [];
 
   const userRequestsData =
-    teamRequestsResponse?.map(
-      (item) => ({
-        id: item.id,
-
-        full_name:
-          item.name ||
-          item.full_name,
-
-        avatar:
-          item.avatar ||
-          avatarDefault,
-
-        type:
-          "user_request",
-      })
-    ) || [];
+    teamRequestsResponse?.map((item) => ({
+      id: item.id,
+      full_name: item.name || item.full_name,
+      avatar: item.avatar || avatarDefault,
+      type: "user_request",
+    })) || [];
 
   // ==========================
   // Current Data Selector
@@ -248,23 +172,19 @@ const VolunteersPage = () => {
 
   switch (selected) {
     case "volunteers":
-      currentData =
-        volunteersData;
+      currentData = volunteersData;
       break;
 
     case "requests":
-      currentData =
-        requestsData;
+      currentData = requestsData;
       break;
 
     case "evaluators":
-      currentData =
-        evaluatorsData;
+      currentData = evaluatorsData;
       break;
 
     case "user_requests":
-      currentData =
-        userRequestsData;
+      currentData = userRequestsData;
       break;
 
     default:
@@ -282,36 +202,20 @@ const VolunteersPage = () => {
     isLoadingTeamRequests
   ) {
     return (
-      <div
-        className="container p-6"
-        dir="rtl"
-      >
-        <h2 className="text-3xl font-bold mb-6">
-          إدارة المتطوعين
-        </h2>
-
+      <div className="container p-6" dir="rtl">
+        <h2 className="text-3xl font-bold mb-6">إدارة المتطوعين</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {[1, 2, 3].map(
-            (i) => (
-              <div
-                key={i}
-                className="h-48 bg-gray-100 rounded-lg animate-pulse"
-              />
-            )
-          )}
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="h-48 bg-gray-100 rounded-lg animate-pulse" />
+          ))}
         </div>
       </div>
     );
   }
 
   return (
-    <div
-      className="container p-6"
-      dir="rtl"
-    >
-      <h2 className="text-3xl font-bold mb-6">
-        إدارة المتطوعين
-      </h2>
+    <div className="container p-6" dir="rtl">
+      <h2 className="text-3xl font-bold mb-6">إدارة المتطوعين</h2>
 
       <CategoryFilterBar
         categories={categories}
@@ -320,26 +224,22 @@ const VolunteersPage = () => {
         className="bg-white-color"
       />
 
-      {currentData?.length ===
-      0 ? (
+      {currentData?.length === 0 ? (
         <div className="text-center py-10 text-gray-500">
           لا يوجد{" "}
-          {selected ===
-          "volunteers"
+          {selected === "volunteers"
             ? "متطوعين"
-            : selected ===
-              "requests"
+            : selected === "requests"
             ? "طلبات تطوع"
-            : selected ===
-              "evaluators"
+            : selected === "evaluators"
             ? "مقيمين"
             : "طلبات مستخدمين"}{" "}
           حالياً.
         </div>
       ) : (
-        <ConsultantsList
-          consultants={currentData}
-          role="admin"
+        <ConsultantsList 
+          consultants={currentData} 
+          role={isSecretary ? "secretary" : "admin"} 
         />
       )}
     </div>

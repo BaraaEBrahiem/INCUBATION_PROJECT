@@ -1,118 +1,450 @@
+
 import React, { useState, useEffect } from "react";
 import Input from "../../Input";
 import Textarea from "../../Textarea";
 import Select from "../../Select";
-import { useGetSeasonFormDesignQuery } from "../../../api/endpoints/formConfigApi";
+import { useGetFormStructureQuery } from "../../../api/endpoints/admin/dynamicFormApi";
 
 const FormBuilder = ({ season }) => {
-  const isOpen = season?.phase === "SUBMISSION";
+  const isOpen =
+    season?.phase === "SUBMISSION";
 
-  const seasonId = season?.id || season?.pk;
-  const { data: formConfig, isLoading } = useGetSeasonFormDesignQuery(seasonId, {
-    skip: !seasonId,
-  });
+  const seasonId =
+    season?.id || season?.pk;
 
-  // بيانات ثابتة (fallback) – تتحذف بعد الربط
-  const fallbackFields = [
-    { name: "name", label: "الاسم", type: "text", required: true, placeholder: "اكتب اسمك الكامل" },
-    { name: "phone", label: "رقم الهاتف", type: "text", required: true, placeholder: "09xxxxxxxx" },
-    { name: "governorate", label: "المحافظة", type: "text", required: true, placeholder: "اختر المحافظة" },
-    { name: "ideaTitle", label: "عنوان الفكرة", type: "text", required: true, placeholder: "اكتب عنوان الفكرة" },
-    { name: "sector", label: "القطاع المستهدف", type: "select", required: true, placeholder: "اختر القطاع المستهدف", 
-      options: [
-        { label: "تعليمي", value: "educational" },
-        { label: "طبي", value: "medical" },
-        { label: "تجاري", value: "commercial" }
-      ] 
-    },
-    { name: "ideaDescription", label: "وصف الفكرة", type: "textarea", required: true, rows: 4, placeholder: "اكتب وصفاً مختصراً عن فكرتك" },
-  ];
+  const {
+    data: formConfig,
+    isLoading,
+  } = useGetFormStructureQuery(
+    seasonId,
+    {
+      skip: !seasonId,
+    }
+  );
 
-  let formFields = fallbackFields;
-  if (formConfig?.fields) {
-    formFields = formConfig.fields;
-  } else if (formConfig?.idea_form?.fields) {
-    formFields = formConfig.idea_form.fields;
-  }
+  const steps =
+    formConfig?.steps || [
+      {
+        id: 1,
+        title:
+          "المعلومات الأساسية",
+        questions: [],
+      },
+    ];
 
-  const [formValues, setFormValues] = useState({});
+  const [activeStepId, setActiveStepId] =
+    useState(
+      steps[0]?.id || 1
+    );
+
+  const [formValues, setFormValues] =
+    useState({});
 
   useEffect(() => {
-    const initialValues = {};
-    formFields.forEach(field => {
-      initialValues[field.name] = "";
-    });
-    //eslint-disable-next-line
-    setFormValues(initialValues);
-  }, [formFields]);
+    if (
+      formConfig?.steps &&
+      formConfig.steps.length > 0
+    ) {
+      setActiveStepId(
+        formConfig.steps[0].id
+      );
 
-  const handleChange = (name, value) => {
-    setFormValues(prev => ({ ...prev, [name]: value }));
+      const initialValues = {};
+
+      formConfig.steps.forEach(
+        (step) => {
+          (
+            step.questions || []
+          ).forEach((q) => {
+            const fieldKey =
+              q.is_static
+                ? q.static_field
+                : q.key;
+
+            initialValues[
+              fieldKey
+            ] = "";
+          });
+        }
+      );
+
+      setFormValues(
+        initialValues
+      );
+    }
+  }, [formConfig]);
+
+  const handleChange = (
+    key,
+    value
+  ) => {
+    setFormValues((prev) => ({
+      ...prev,
+      [key]: value,
+    }));
   };
 
-  const renderField = (field) => {
+  const renderQuestion = (
+    q,
+    index
+  ) => {
+    const fieldKey =
+      q.is_static
+        ? q.static_field
+        : q.key;
+
     const commonProps = {
-      key: field.name,
-      label: field.label,
-      name: field.name,
-      value: formValues[field.name] || "",
-      onChange: (e) => handleChange(field.name, e.target.value),
-      placeholder: field.placeholder,
-      required: field.required,
-      disabled: !isOpen,
+      key:
+        q.id ||
+        `${fieldKey}_${index}`,
+      label: q.label,
+      name: fieldKey,
+      value:
+        formValues[
+          fieldKey
+        ] || "",
+      onChange: (e) =>
+        handleChange(
+          fieldKey,
+          e.target.value
+        ),
+      placeholder:
+        q.placeholder ||
+        `أدخل ${q.label}`,
+      required:
+        q.required,
     };
 
-    switch (field.type) {
-      case "select":
-        return <Select {...commonProps} options={field.options || []} />;
+    switch (q.type) {
+      // ====================
+      // SELECT
+      // ====================
+      case "select": {
+        const formattedOptions =
+          (
+            q.choices || []
+          ).map(
+            (choice) => ({
+              label:
+                choice.label,
+              value:
+                choice.value,
+            })
+          );
+
+        return (
+          <Select
+            {...commonProps}
+            disabled={
+              false
+            }
+            options={
+              formattedOptions
+            }
+            placeholder="اختر خياراً"
+          />
+        );
+      }
+
+      // ====================
+      // MULTI SELECT
+      // ====================
+      case "select_multiple":
+        return (
+          <div
+            key={q.id}
+            className="flex flex-col gap-3 bg-white border border-gray-100 rounded-lg p-4"
+          >
+            <label className="font-bold text-sm text-gray-700">
+              {q.label}
+
+              {q.required && (
+                <span className="text-red-500 mr-1">
+                  *
+                </span>
+              )}
+            </label>
+
+            {(
+              q.choices ||
+              []
+            ).map(
+              (
+                choice
+              ) => (
+                <label
+                  key={
+                    choice.id
+                  }
+                  className="flex items-center gap-2 text-sm"
+                >
+                  <input
+                    type="checkbox"
+                    disabled={
+                      !isOpen
+                    }
+                    className="w-4 h-4"
+                  />
+
+                  {
+                    choice.label
+                  }
+                </label>
+              )
+            )}
+          </div>
+        );
+
+      // ====================
+      // BOOLEAN YES / NO
+      // ====================
+      case "boolean":
+        return (
+          <div
+            key={q.id}
+            className="flex flex-col gap-3 bg-white border border-gray-100 rounded-lg p-4"
+          >
+            <label className="font-bold text-sm text-gray-700">
+              {q.label}
+
+              {q.required && (
+                <span className="text-red-500 mr-1">
+                  *
+                </span>
+              )}
+            </label>
+
+            <div className="flex gap-6">
+              <label className="flex items-center gap-2 text-sm">
+                <input
+                  type="radio"
+                  name={
+                    fieldKey
+                  }
+                  disabled={
+                    !isOpen
+                  }
+                />
+                نعم
+              </label>
+
+              <label className="flex items-center gap-2 text-sm">
+                <input
+                  type="radio"
+                  name={
+                    fieldKey
+                  }
+                  disabled={
+                    !isOpen
+                  }
+                />
+                لا
+              </label>
+            </div>
+          </div>
+        );
+
+      // ====================
+      // TEXTAREA
+      // ====================
       case "textarea":
-        return <Textarea {...commonProps} rows={field.rows || 4} />;
+      case "longText":
+        return (
+          <Textarea
+            {...commonProps}
+            rows={4}
+            disabled={
+              !isOpen
+            }
+          />
+        );
+
+      // ====================
+      // DEFAULT INPUT
+      // ====================
       default:
-        return <Input {...commonProps} type={field.type || "text"} />;
+        return (
+          <Input
+            {...commonProps}
+            type={
+              q.type ||
+              "text"
+            }
+            disabled={
+              !isOpen
+            }
+          />
+        );
     }
   };
 
+  const currentStep =
+    steps.find(
+      (s) =>
+        s.id ===
+        activeStepId
+    ) || steps[0];
+
+  const currentQuestions =
+    currentStep?.questions ||
+    [];
+
   if (isLoading) {
     return (
-      <div className="flex gap-6">
-        <div className="flex-1 p-5">
-          <div className="text-center py-10">
-            <p className="text-gray-500">جاري تحميل تصميم النموذج...</p>
-          </div>
+      <div
+        className="flex gap-6"
+        dir="rtl"
+      >
+        <div className="flex-1 p-5 text-center py-10">
+          <p className="text-gray-500 font-bold">
+            جاري تحميل
+            هيكل النموذج...
+          </p>
         </div>
       </div>
     );
   }
 
-  return (
-    <div className="flex gap-6">
-      <div className="flex-1 p-5">
-        <h1 className="text-lg font-bold mb-6">
-          {season?.title || season?.name}
-          <span className="text-sm text-gray-500 mr-2">(تصميم النموذج)</span>
+ return (
+    // 🎯 التعديل هنا: تحويل لـ flex-col للموبايل و md:flex-row للابتوب لضمان ثبات التصميم الأصلي 100%
+    <div
+      className="flex flex-col md:flex-row gap-6 w-full"
+      dir="rtl"
+    >
+      <div className="flex-1 p-5 bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden">
+        <h1 className="text-xl font-bold mb-2 text-gray-800">
+          {formConfig?.title ||
+            season?.name ||
+            "استمارة التقديم"}
         </h1>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-          {formFields.filter(f => f.type !== "textarea" && f.type !== "select").map(renderField)}
-        </div>
+        <p className="text-gray-400 text-xs mb-6">
+          هذا الشكل النهائي
+          للمستخدم.
+        </p>
 
-        <div className="space-y-4">
-          {formFields.filter(f => f.type === "select").map(renderField)}
-          {formFields.filter(f => f.type === "textarea").map(renderField)}
-        </div>
+        {steps.length >
+          1 && (
+          // 🎯 أضفنا كلاسات إخفاء شريط التمرير الرمادي للموبايل [scrollbar-width:none] [&::-webkit-scrollbar]:hidden لتتحرك خطوات الاستمارة بسلاسة إصبعية
+          <div className="flex gap-2 border-b pb-3 mb-6 overflow-x-auto whitespace-nowrap block [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+            {steps.map(
+              (
+                step
+              ) => (
+                <button
+                  key={
+                    step.id
+                  }
+                  type="button"
+                  onClick={() =>
+                    setActiveStepId(
+                      step.id
+                    )
+                  }
+                  className={`px-4 py-2 rounded-md font-semibold text-sm transition shrink-0 ${
+                    step.id ===
+                    activeStepId
+                      ? "bg-main-color text-white"
+                      : "bg-gray-100 text-gray-600"
+                  }`}
+                >
+                  {
+                    step.title
+                  }
+                </button>
+              )
+            )}
+          </div>
+        )}
+
+        {currentQuestions.length ===
+        0 ? (
+          <div className="text-center py-10 border border-dashed rounded-lg text-gray-400">
+            لا توجد أسئلة.
+          </div>
+        ) : (
+          <div className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {currentQuestions
+                .filter(
+                  (
+                    q
+                  ) =>
+                    ![
+                      "textarea",
+                      "select",
+                      "select_multiple",
+                      "boolean",
+                    ].includes(
+                      q.type
+                    )
+                )
+                .map(
+                  (
+                    q,
+                    idx
+                  ) =>
+                    renderQuestion(
+                      q,
+                      idx
+                    )
+                )}
+            </div>
+
+            <div className="space-y-4 border-t pt-4 border-gray-50">
+              {currentQuestions
+                .filter(
+                  (
+                    q
+                  ) =>
+                    [
+                      "textarea",
+                      "select",
+                      "select_multiple",
+                      "boolean",
+                    ].includes(
+                      q.type
+                    )
+                )
+                .map(
+                  (
+                    q,
+                    idx
+                  ) =>
+                    renderQuestion(
+                      q,
+                      idx
+                    )
+                )}
+            </div>
+          </div>
+        )}
       </div>
 
-      <div className="w-64 h-fit border border-second-color bg-white rounded-lg shadow p-4 flex flex-col gap-2">
-        <p className="text-sm">
-          <span className="font-semibold">عدد الطلبات المستلمة: </span>
-          {season?.ideas_count || 0}
+      {/* العمود الأيسر الإحصائي */}
+      {/* 🎯 السر هنا: w-full ليمتد بكامل شاشة الهاتف، و md:w-64 ليثبت تماماً بمقاسه المعتاد على اللابتوب */}
+      <div className="w-full md:w-64 h-fit border border-second-color bg-white rounded-lg shadow p-4 flex flex-col gap-3">
+        <p className="text-sm text-gray-700">
+          <span className="font-semibold">
+            عدد الطلبات:
+          </span>{" "}
+          {season?.ideas_count ||
+            0}
         </p>
-        {isOpen && (
-          <p className="text-sm">
-            <span className="font-semibold">المتبقي لإغلاق التقديم: </span>
-            {season?.remaining_days || 0} أيام
-          </p>
-        )}
+
+        <div className="mt-2 pt-2 border-t text-center">
+          <span
+            className={`inline-block px-3 py-1 rounded-full text-xs font-bold ${
+              isOpen
+                ? "bg-green-100 text-green-700"
+                : "bg-red-100 text-red-700"
+            }`}
+          >
+            {isOpen
+              ? "التقديم متاح"
+              : "التقديم مغلق"}
+          </span>
+        </div>
       </div>
     </div>
   );

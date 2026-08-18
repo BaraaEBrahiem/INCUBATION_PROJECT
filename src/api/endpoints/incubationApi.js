@@ -107,6 +107,13 @@ export const incubationApi = apiSlice.injectEndpoints({
       query: () => '/admin/incubated/',
       providesTags: ['Incubated'],
     }),
+// -----------------------------
+    // جلب ملاحظات اللجنة لفكرة محددة 
+    // -----------------------------
+    getIdeaNotes: builder.query({
+      query: (ideaId) => `evaluations/ideas/${ideaId}/notes/`,
+      providesTags:['Incubated'],
+    }),
  // -----------------------------
     // جلب تفاصيل طلب احتضان محدد (ملغي حذفه - تم الحفاظ عليه)
     // -----------------------------
@@ -114,6 +121,24 @@ export const incubationApi = apiSlice.injectEndpoints({
       query: (id) => `/ideas/project-details/${id}/`,
       providesTags: (result, error, id) => [{ type: 'IncubationRequests', id }],
     }),
+
+    scheduleMeeting:
+builder.mutation({
+  query: ({
+    ideaId,
+    date,
+    time
+  }) => ({
+    url:
+      `/admin/incubations/ideas/${ideaId}/meetings/schedule/`,
+    method:
+      "POST",
+    body: {
+      date,
+      time
+    }
+  })
+})
 
 
 
@@ -126,6 +151,8 @@ export const {
   useUpdateIncubationStageMutation,
   useGetIncubatedQuery,
   useGetIncubationRequestQuery,
+  useScheduleMeetingMutation,
+  useGetIdeaNotesQuery,
 
   // الـ Hooks المطلوبة للمراحل الأربعة بالأسماء الصحيحة
   useGetDashboardQuery,           
@@ -136,6 +163,7 @@ export const {
   useGetLatestNotesQuery,          
   useGetExhibitionDashboardQuery,  
   useSaveExhibitionDataMutation,   
+
 
 
 } = incubationApi;

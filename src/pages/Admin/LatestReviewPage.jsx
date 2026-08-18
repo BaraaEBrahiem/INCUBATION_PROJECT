@@ -3,15 +3,15 @@ import React from 'react';
 import { useNavigate, useParams } from "react-router-dom";
 import { IoMdArrowBack } from "react-icons/io";
 import { showSuccess, showError } from "../../Utils/toast";
-
-import { useGetEvaluationNotesQuery, useSubmitGraduationDecisionMutation } from '../../api/endpoints/admin/graduationApi';
+import { useGetIncubationNotesQuery, useSubmitGraduationDecisionMutation } from '../../api/endpoints/admin/graduationApi';
 
 const LatestReviewPage = () => {
   const navigate = useNavigate();
   const { idea_id } = useParams();
 
 
-  const { data, isLoading: isNotesLoading, error: isError } = useGetEvaluationNotesQuery(idea_id);
+
+  const { data, isLoading: isNotesLoading, error: isError } = useGetIncubationNotesQuery(idea_id);
   
 
   const [submitGraduation, { isLoading: isSubmitting }] = useSubmitGraduationDecisionMutation();
@@ -23,6 +23,13 @@ const LatestReviewPage = () => {
   const currentStatus = data?.status?.toString().trim().toLowerCase(); 
   console.log("STATUS =", currentStatus);
 
+
+  const isActionLoading = isSubmitting;
+
+
+  const hideActions =
+    currentStatus ==
+    "GRADUATED_NEGATIVE";
 
   const handleGraduation = async (
     action
@@ -53,7 +60,7 @@ const LatestReviewPage = () => {
   }
 
 
-  const shouldShowButtons = !currentStatus || currentStatus === "pending" || currentStatus === "null"|| currentStatus === "incubation";;
+  const shouldShowButtons = !currentStatus || currentStatus === "pending" || currentStatus === "null"|| currentStatus === "incubation";
 
 
   return (
@@ -108,8 +115,8 @@ const LatestReviewPage = () => {
 
                 {/* قسم الملاحظات */}
                 <div className="w-full text-right bg-gray-50/50 p-3 rounded-lg">
-                  <h4 className="text-sm font-bold text-gray-700 mb-2">الملاحظات :</h4>
-                  <p className="text-sm text-gray-600 leading-relaxed whitespace-pre-line">
+                  <h4 className="text-md font-bold text-gray-700 mb-2">الملاحظات :</h4>
+                  <p className="text-md text-gray-600 leading-relaxed whitespace-pre-line">
                     {reviews.notes || <span className="text-gray-400 italic">لا توجد ملاحظات مكتوبة</span>}
                   </p>
                 </div>

@@ -10,11 +10,11 @@ const IdeaOwnerMainPage = () => {
   
 
   const hideVolunteerOption =
-    roles.includes("ideaOwner") && roles.includes("volunteer");
+    roles.includes("idea_owner") && roles.includes("volunteer");
 
   return (
     <div className='bg-white-color min-h-screen py-8'>
-      <div className="container mt-17">
+      <div className="container mt-10">
 
         {/* صندوق تطوع */}
         {!hideVolunteerOption && (

@@ -35,9 +35,8 @@ const ParticipantsSection = () => {
         decision,
       }).unwrap();
 
-      const successMsg = actionType === "approve"
-        ? "تم قبول المشارك بنجاح. سيتم إرسال الإشعار."
-        : "تم رفض المشارك. سيتم إرسال الإشعار.";
+      const successMsg = actionType === "accept"
+        ? "تم قبول المشارك بنجاح. سيتم إرسال الإشعار.": "تم رفض المشارك. سيتم إرسال الإشعار.";
       showSuccess(successMsg);
       setIsModalOpen(false);
       refetch(); // تحديث القائمة (سيختفي المشارك بعد القرار)
@@ -119,7 +118,7 @@ const ParticipantsSection = () => {
   }
 
   return (
-    <div className="bg-white p-6 rounded-lg shadow">
+    <div className="p-6 rounded-lg ">
       <h2 className="text-lg font-bold mb-4">قائمة المشاركين</h2>
       <SearchBar placeholder="بحث باسم المشروع" onSearch={setSearchTerm} />
       <DataTable columns={columns} data={filtered} />

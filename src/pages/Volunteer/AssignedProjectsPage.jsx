@@ -6,8 +6,6 @@ import CategoryFilterBar from "../../components/CategoryFilterBar"
 import ConsultationRequestCard from "../../components/ConsultationRequestCard";
 import AssignedProjectsCard from '../../components/AssignedProjectsCard';
 import NavLinkUniversal from '../../components/NavLinkUniversal';
-import {showError, showSuccess} from '../../Utils/toast';
-
 import { 
   useGetVolunteerAssignedDataQuery 
 } from '../../api/endpoints/assignedProjectsApi';
@@ -27,18 +25,15 @@ const AssignedProjectsPage = () => {
     switch (helpType) {
       case "ONE_TIME":
         return "استشارة لمرة واحدة";
-
       case "ONGOING":
         return "متابعة دورية";
-
       default:
         return helpType;
     }
   };
 
   // API
-  const { data, isLoading, error } =
-    useGetVolunteerAssignedDataQuery();
+  const { data, isLoading, error } = useGetVolunteerAssignedDataQuery();
 
   if (isLoading) {
     return (
@@ -129,10 +124,11 @@ const AssignedProjectsPage = () => {
                   ))}
                 </div>
 
+                {/* 🌟 تعديل هنا: نأخذ الـ idea_id الخاص بأول مشروع متاح في المصفوفة لتلافي الـ undefined */}
                 <div className="flex justify-center md:justify-start">
                   <NavLinkUniversal 
                     label="انتقل لمراحل الاحتضان" 
-                    to="/incubationinfo" 
+                    to={`/incubation-projectinfo/${projects[0]?.idea_id}`} 
                     className='bg-main-color w-fit text-white rounded-xl px-6 py-3 font-bold mt-6 block'
                   />
                 </div>

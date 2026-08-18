@@ -4,7 +4,7 @@ import WorkshopStepOne from "../../components/Workshop/WorkshopStepOne";
 import WorkshopStepTwo from "../../components/Workshop/WorkshopStepTwo";
 import { useAddWorkshopMutation } from "../../api/endpoints/workshopsApi";
 
-import {showError} from "../../Utils/toast"
+import {showError, showSuccess} from "../../Utils/toast"
 
 
 const AddWorkshopPage = () => {
@@ -67,14 +67,32 @@ const AddWorkshopPage = () => {
       .map(obj => obj.trim())
       .filter(Boolean);
 
-    const finalPayload = {
-      ...formData,
-      objectives: cleanedObjectives
-    };
+    const form = new FormData();
 
-    try {
-      await addWorkshop(finalPayload).unwrap();
-      alert("تم حفظ الورشة بنجاح");
+// الحقول العادية
+form.append("title", formData.title);
+form.append("category", formData.category);
+form.append("target_audience", formData.target_audience);
+form.append("description", formData.description);
+form.append("capacity", formData.capacity);
+form.append("sessions", formData.sessions);
+form.append("start_date", formData.start_date);
+form.append("end_date", formData.end_date);
+form.append("time_from", formData.time_from);
+form.append("time_to", formData.time_to);
+
+// arrays لازم تنرسل JSON string
+form.append("days", JSON.stringify(formData.days));
+form.append("objectives", JSON.stringify(cleanedObjectives));
+
+// الصورة
+if (formData.image instanceof File) {
+  form.append("image", formData.image);
+}
+
+try {
+  await addWorkshop(form).unwrap();
+      showSuccess("تم اضافة الورشة بنجاح");
       setFormData({
         time_from: "",
         time_to: "",
@@ -105,7 +123,8 @@ const AddWorkshopPage = () => {
       </h1>
 
       <div className="container mt-10 md:mt-40 flex flex-col-reverse md:flex-row justify-between items-center gap-10 md:gap-0" dir="rtl">
-        <div className="w-full md:w-[500px]">
+         <WorkshopImage image={formData.image} />
+         <div className="w-full md:w-[500px]">
           {step === 1 && (
             <WorkshopStepOne
               formData={formData}
@@ -125,7 +144,7 @@ const AddWorkshopPage = () => {
             />
           )}
         </div>
-        <WorkshopImage image={formData.image} />
+       
       </div>
     </div>
   );

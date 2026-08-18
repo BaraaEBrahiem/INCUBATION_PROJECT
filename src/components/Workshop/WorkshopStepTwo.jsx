@@ -39,22 +39,26 @@ const WorkshopStepTwo = ({
   };
 
   return (
+    <>
     <div className="flex flex-col gap-6 w-full text-right" dir="rtl">
       {/* صورة الدورة */}
       <div>
         <Input
-          label="صورة للورشة (اختياري)"
-          type="file"
-          accept="image/*"
-          onChange={(e) => {
-            const file = e.target.files[0];
-            if (file) {
-              const imageURL = URL.createObjectURL(file);
-              setFormData(prev => ({ ...prev, image: imageURL }));
-            }
-          }}
-          className="w-full"
-        />
+  label="صورة للورشة (اختياري)"
+  type="file"
+  accept="image/*"
+  onChange={(e) => {
+  const file = e.target.files[0];
+
+  if (file) {
+    setFormData(prev => ({
+      ...prev,
+      image: file
+    }));
+  }
+}}
+  className="w-full"
+/>
       </div>
 
       {/* وقت الدورة */}
@@ -155,23 +159,25 @@ const WorkshopStepTwo = ({
           <p className="text-red-500 text-xs mt-1">{error.objectives}</p>
         )}
       </div>
-
-      {/* أزرار التحكم السفلى */}
-      <div className="flex gap-6 mt-4">
-        <Button
-          label="عودة" 
-          onClick={onBack}
-          className="bg-main-color px-10 py-2"
-        />
-
-        <Button 
-          label="التالي"
-          onClick={onSubmit}
-          className="bg-main-color px-10 py-2"
-        />
-      </div>
-
     </div>
+    {/* أزرار التحكم السفلى */}
+      <div className="flex justify-between items-center mt-4">
+        <button
+          onClick={onBack}
+          className="bg-main-color text-white font-semibold rounded-xl px-10 py-2 w-50 ml-2"
+        >
+        عودة
+        </button>
+
+        <button 
+          onClick={onSubmit}
+          className="bg-main-color text-white font-semibold rounded-xl px-10 py-2 w-50 "
+        >
+        التالي
+        </button>
+
+      </div>
+      </>
   )
 }
 

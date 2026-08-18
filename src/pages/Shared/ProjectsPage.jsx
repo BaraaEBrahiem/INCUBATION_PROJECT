@@ -1,19 +1,19 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useLocation } from "react-router-dom";
 
 import SearchBar from "../../components/SearchBar";
 import Projects from "../../components/Projects";
 import CategoryFilterBar from "../../components/CategoryFilterBar";
-import LoadingOverlay from "../../components/LoadingOverlay";
-import { showError } from "../../utils/toast";
 
 import { LuFileStack } from "react-icons/lu";
 import { GrTechnology } from "react-icons/gr";
 import { SlBookOpen } from "react-icons/sl";
 import { GiStethoscope } from "react-icons/gi";
-import { useGetUserPublicProjectsQuery } from "../../api/endpoints/publicProjectsApi";
-import { useGetPublicProjectsQuery } from "../../api/endpoints/publicProjectsApi";
+
+
+import { useGetGraduatedpublicProjectsQuery } from "../../api/endpoints/publicProjectsApi";
 import { useGetExhibitionProjectsQuery } from "../../api/endpoints/admin/exhibitionApi";
+
 
 const ProjectsPage = () => {
   const location = useLocation();
@@ -23,74 +23,82 @@ const ProjectsPage = () => {
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
 
-  const { 
-    data: publicProjects, 
-    isLoading: isLoadingPublic,
-    error: errorPublic 
-  } = useGetPublicProjectsQuery(undefined, {
+  const { data: publicProjects, isLoading: isLoadingPublic } = useGetGraduatedpublicProjectsQuery(undefined, {
     skip: !!exhibitionId,
-  });
-  const { data: userPublicProjects } = useGetUserPublicProjectsQuery(undefined, {
-    skip: !!exhibitionId,
+    
   });
 
-  const { 
-    data: exhibitionProjects, 
-    isLoading: isLoadingExhibition,
-    error: errorExhibition 
-  } = useGetExhibitionProjectsQuery(exhibitionId, {
+  const { data: exhibitionProjects, isLoading: isLoadingExhibition } = useGetExhibitionProjectsQuery(exhibitionId, {
     skip: !exhibitionId,
   });
-  
-
-
-  useEffect(() => {
-    if (errorPublic || errorExhibition) {
-      showError("حدث خطأ أثناء تحميل قائمة المشاريع، يرجى إعادة المحاولة لاحقاً.");
-    }
-  }, [errorPublic, errorExhibition]);
-
-  const isLoading = exhibitionId ? isLoadingExhibition : isLoadingPublic;
-
-  if (isLoading) {
-    return <LoadingOverlay>جاري تحميل قائمة المشاريع وتنسيق العرض...</LoadingOverlay>;
-  }
 
   const fallbackProjects = [
     {
       id: 1,
-      title: "موقع للتواصل الاجتماعي",
-      sector: "تكنولوجي",
-      owner: "أحمد العلي",
-      team_members: ["نصوح شاهين", "علي احمد"],
-      year: 2026
+
+      name: "موقع للتواصل الاجتماعي",
+      category: "تكنولوجي",
+      team: "Green Panda",
+      members: ["نصوح شاهين", "علي احمد"],
+      year: 2024
     },
     {
       id: 2,
-      title: "منصة تعليمية ذكية",
-      sector: "تعليمي",
-      owner: "سارة خالد",
-      team_members: ["رنا محمود"],
-      year: 2026
+      name: "منصة تعليمية",
+      category: "تعليمي",
+      team: "Green Panda",
+      members: ["نصوح شاهين", "علي احمد"],
+      year: 2024
+    },
+    {
+      id: 3,
+      name: "نظام إدارة طلاب",
+      category: "تعليمي",
+      team: "Green Panda",
+      members: ["نصوح شاهين", "علي احمد"],
+      year: 2023
+    },
+    {
+      id: 4,
+      name: "تطبيق طبي",
+      category: "طبي",
+      team: "Green Panda",
+      members: ["نصوح شاهين", "علي احمد"],
+      year: 2024
     },
   ];
 
-const serverProjects = exhibitionId ? exhibitionProjects : (publicProjects || userPublicProjects);
+  const projects = exhibitionId 
+    ? (exhibitionProjects || []) 
+    : (publicProjects || fallbackProjects);
 
-const rawProjects = (serverProjects && serverProjects.length > 0) 
-  ? serverProjects 
-  : fallbackProjects;
-
-  // تحديث العنوان بناءً على السنة القادمة
   const getPageTitle = () => {
-    if (exhibitionYear) return `مشاريع معرض التخرج ${exhibitionYear}`;
-    return "معرض المشاريع المتخرجة والريادية";
+    if (exhibitionYear) return `مشاريع معرض ${exhibitionYear}`;
+    return "جميع المشاريع";
   };
-  
-const filteredProjects = rawProjects.filter((project) =>
-  !searchQuery.trim() ||
-  project.title?.toLowerCase().includes(searchQuery.toLowerCase())
-);
+
+  const getFilteredByContext = () => {
+    if (exhibitionId) {
+      return projects;
+    }
+    if (exhibitionYear) {
+      return projects.filter((p) => p.year === exhibitionYear);
+    }
+    return projects;
+  };
+
+  const filteredByContext = getFilteredByContext();
+
+  // الفلترة حسب الفئة والبحث
+  const filteredProjects = filteredByContext.filter((project) => {
+    const matchCategory =
+      selectedCategory === "all" || project.category === selectedCategory;
+
+    const matchSearch =
+      project.title?.toLowerCase().includes(searchQuery.toLowerCase());
+
+    return matchCategory && matchSearch;
+  });
 
   const categories = [
     { id: "all", label: "الكل", icon: <LuFileStack /> },
@@ -99,42 +107,45 @@ const filteredProjects = rawProjects.filter((project) =>
     { id: "طبي", label: "طبي", icon: <GiStethoscope /> },
   ];
 
+  // دمج حالتي التحميل لضمان عدم حدوث مشاكل واجهة المستخدم
+  const isLoading = exhibitionId ? isLoadingExhibition : isLoadingPublic;
+
+  if (isLoading) return <p className="text-center mt-10">جاري التحميل...</p>;
+
+
   return (
-    <div className="container py-8 max-w-7xl mx-auto px-4 md:px-8 space-y-6 text-right" dir="rtl">
-      
-      {/* هيدر الصفحة */}
-      <div className="border-b border-gray-100 pb-4">
-        <h2 className="text-3xl font-bold text-main-color">
-          {getPageTitle()}
-        </h2>
-      
-      </div>
 
-     
-      <div className="space-y-4">
+    <div className='container mt-20 dir-rtl text-right'>
+      <h2 className="text-xl font-bold mt-6 mb-4 text-main-color">
+        {getPageTitle()}
+      </h2>
+
+      <div className="mt-4">
         <CategoryFilterBar
-          categories={categories}
-          selected={selectedCategory}
-          onSelect={setSelectedCategory}
+          categories={
+            categories
+          }
+          selected={
+            selectedCategory
+          }
+          onSelect={
+            setSelectedCategory
+          }
         />
-        
-        <div className="max-w-md">
-          <SearchBar onSearch={setSearchQuery} />
-        </div>
       </div>
 
-      {/* عرض المشاريع أو معالجة الغياب */}
-      {filteredProjects.length > 0 ? (
-        <div className="pt-4">
-          <Projects projects={filteredProjects} details="exhibition" />
-        </div>
-      ) : (
-        <div className="flex flex-col items-center justify-center bg-gray-50 border border-dashed border-gray-200 rounded-2xl py-16 text-center">
-          <span className="text-3xl mb-2">📁</span>
-          <p className="text-gray-500 font-bold text-lg">لا توجد مشاريع مطابقة للبحث حالياً</p>
-          <p className="text-gray-400 text-xs mt-1">جرب اختيار قطاع آخر أو تعديل العبارة المكتوبة.</p>
-        </div>
-      )}
+      <SearchBar
+        onSearch={
+          setSearchQuery
+        }
+      />
+
+      <Projects
+        projects={
+          filteredProjects
+        }
+        details="exhibition"
+      />
     </div>
   );
 };

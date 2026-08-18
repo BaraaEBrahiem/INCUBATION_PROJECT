@@ -1,4 +1,3 @@
-// src/api/endpoints/workshopsApi.js
 import { apiSlice } from "../apiSlice";
 
 export const workshopsApi = apiSlice.injectEndpoints({
@@ -12,9 +11,10 @@ export const workshopsApi = apiSlice.injectEndpoints({
 
     // جلب ورشة محددة بواسطة ID
     getWorkshopById: builder.query({
-      query: (id) => `/volunteers/public-workshopsdetails/${id}/`,
+      query: (id) => `/admin/workshops/${id}/`,
       providesTags: (result, error, id) => [{ type: 'Workshop', id }],
     }),
+    
 
     // جلب جميع الورشات (لصفحة WorkshopsPage)
     getAllWorkshops: builder.query({
@@ -71,7 +71,7 @@ getCampWorkshopProjects: builder.query({
 
   transformResponse: (response) => response.results,
 
-  providesTags: (result, error, id) =>
+  providesTags: (result) =>
     result
       ? [
           ...result.map(({ id }) => ({
@@ -81,6 +81,12 @@ getCampWorkshopProjects: builder.query({
           { type: 'CampProjects', id: 'LIST' },
         ]
       : [{ type: 'CampProjects', id: 'LIST' }],
+}),
+// جلب نشاطات الصفحة الرئيسية
+// جلب النشاطات للصفحة الرئيسية
+getPublicWorkshops: builder.query({
+  query: () => "volunteers/public-workshops/",
+  providesTags: ["Workshop"],
 }),
 
 
@@ -111,4 +117,5 @@ export const {
   useGetCampWorkshopProjectsQuery,
   useUpdateProjectAttendanceMutation,
   useGetNearestWorkshopQuery,
+  useGetPublicWorkshopsQuery,
 } = workshopsApi;

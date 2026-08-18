@@ -7,13 +7,49 @@ import { FaCheckCircle } from "react-icons/fa";
 import { TbNumbers } from "react-icons/tb";
 const FieldTypesPanel = ({ addField }) => {
   const fieldTypes = [
-    { type: "shortText", label: "نص قصير", icon: <MdTextFields /> },
-    { type: "longText", label: "نص طويل", icon: <LuText /> },
-    { type: "checkbox", label: "اختيار متعدد", icon: <FaCheckSquare /> },
-    { type: "select", label: "قائمة منسدلة", icon: <RiFileList3Fill /> },
-    { type: "radio", label: "سؤال نعم / لا", icon: <FaCheckCircle /> },
-    { type: "number", label: "ادخال رقم", icon: <TbNumbers /> },
-  ];
+  {
+    type: "short_text",
+    label: "نص قصير",
+    icon: <MdTextFields />
+  },
+
+  {
+    type: "long_text",
+    label: "نص طويل",
+    icon: <LuText />
+  },
+
+  {
+    type: "multiple_choice",
+    label: "اختيار متعدد",
+    icon: <FaCheckSquare />
+  },
+
+  {
+    type: "single_choice",
+    label: "قائمة منسدلة",
+    icon: <RiFileList3Fill />
+  },
+
+  {
+    type: "yes_no",
+    label: "سؤال نعم / لا",
+    icon: <FaCheckCircle />
+  },
+
+  {
+    type: "number",
+    label: "ادخال رقم",
+    icon: <TbNumbers />
+  },
+
+  // الجديد
+  {
+    type: "image",
+    label: "رفع صورة",
+    icon: "🖼️"
+  }
+];
 
   return (
     <div className="w-64 bg-white rounded-lg shadow p-4 flex flex-col gap-3">

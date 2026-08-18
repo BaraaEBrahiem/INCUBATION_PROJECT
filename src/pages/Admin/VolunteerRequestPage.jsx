@@ -16,6 +16,7 @@ import {
   useSendEvaluationInvitationMutation,
   useRemoveEvaluatorRoleMutation,
 } from "../../api/endpoints/admin/volunteersOptionsApi.js";
+import {useSelector} from "react-redux";
 
 const VolunteerRequestPage = () => {
   const { id } = useParams();
@@ -43,6 +44,12 @@ const VolunteerRequestPage = () => {
 
   const [removeEvaluatorRole] =
     useRemoveEvaluatorRoleMutation();
+     const userRoles = useSelector((state) => state.auth?.roles || []);
+
+  const isSecretary = userRoles.some(
+    (role) => String(role).toLowerCase().trim() === "secretary"
+  );
+
 
   // =======================
   // States
@@ -191,6 +198,16 @@ const VolunteerRequestPage = () => {
   const isEvaluator =
     request.is_evaluator;
 
+  const daysInArabic = {
+  SATURDAY: "السبت",
+  SUNDAY: "الأحد",
+  MONDAY: "الإثنين",
+  TUESDAY: "الثلاثاء",
+  WEDNESDAY: "الأربعاء",
+  THURSDAY: "الخميس",
+  FRIDAY: "الجمعة",
+};
+
   return (
     <div
       className="p-6 bg-white-color min-h-screen"
@@ -236,20 +253,20 @@ const VolunteerRequestPage = () => {
         {/* معلومات التطوع */}
         <div className="bg-white p-4 rounded-lg shadow-lg mb-6">
           <InfoRow label="أوقات الإتاحة الأسبوعية">
-            {request.availability?.length >
-            0 ? (
-              request.availability.map(
-                (item, index) => (
-                  <div key={index}>
-                    {item.day}: {item.from} -{" "}
-                    {item.to}
-                  </div>
-                )
-              )
-            ) : (
-              <p>لا يوجد</p>
-            )}
-          </InfoRow>
+  {request.availability?.length > 0 ? (
+    request.availability.map(
+      (item, index) => (
+        <div key={index}>
+          {daysInArabic[item.day] || item.day}
+          {" : "}
+          {item.from} - {item.to}
+        </div>
+      )
+    )
+  ) : (
+    <p>لا يوجد</p>
+  )}
+</InfoRow>
 
           <InfoRow label="الدافع للتطوع">
             {request.motivation}
@@ -267,27 +284,26 @@ const VolunteerRequestPage = () => {
         {/* الهدف والخبرات */}
         <div className="bg-white p-4 rounded-lg shadow-lg mb-6">
           <InfoRow label="تفضيلات الاستشارة">
-  <div className="flex flex-col gap-1">
-    {request.volunteer_type?.map((item, index) => (
-      <div key={index}>
-        {typeof item === "object"
-          ? Object.values(item).join(" - ")
-          : item}
-      </div>
-    ))}
-  </div>
+  {request.volunteer_type || "لا يوجد"}
 </InfoRow>
 
 
-          <InfoRow label="مجالات الخبرة الإضافية">
+   <InfoRow label="مجالات الخبرة الإضافية">
   <div className="flex flex-col gap-1">
-    {request.additional_skills?.map((skill, index) => (
-      <div key={index}>
-        {typeof skill === "object"
-          ? Object.values(skill).join(" - ")
-          : skill}
-      </div>
-    ))}
+    {Array.isArray(request.additional_skills) ? (
+      request.additional_skills.map((skill, index) => (
+        <div key={index}>
+          {typeof skill === "object"
+            ? Object.values(skill).join(" - ")
+            : skill}
+        </div>
+      ))
+    ) : typeof request.additional_skills === "string" && request.additional_skills.trim() !== "" ? (
+
+      <div>{request.additional_skills}</div>
+    ) : (
+      <div className="text-gray-400">لا يوجد مهارات إضافية</div>
+    )}
   </div>
 </InfoRow>
               
@@ -300,7 +316,7 @@ const VolunteerRequestPage = () => {
         </div>
 
         {/* الأزرار */}
-        {isPending && (
+        {isPending && !isSecretary && (
           <div className="flex gap-3 mt-6 mr-auto">
             <Button
               onClick={handleApprove}
@@ -318,7 +334,7 @@ const VolunteerRequestPage = () => {
           </div>
         )}
 
-        {isApproved && !isEvaluator && (
+        {isApproved && !isEvaluator && !isSecretary && (
           <Button
             onClick={() =>
               setEvaluateOpen(true)
@@ -328,7 +344,7 @@ const VolunteerRequestPage = () => {
           />
         )}
 
-        {isApproved && isEvaluator && (
+        {isApproved && isEvaluator && !isSecretary && (
           <Button
             onClick={() =>
               setRemoveEvaluatorOpen(true)

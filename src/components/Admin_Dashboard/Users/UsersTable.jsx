@@ -125,6 +125,7 @@ const UsersTable = ({
     {
       key: "actions",
       label: "الإجراءات",
+
       render: (row) => (
         <div className="flex flex-col gap-2">
           <Button
@@ -236,21 +237,24 @@ const UsersTable = ({
       idea.name ||
       `مشروع رقم ${idea.id}`,
   }));
-  return (
+ return (
     <div
-      className="bg-white shadow-md rounded-lg p-4 mt-6"
+      className=" rounded-lg p-4 mt-6 w-full overflow-hidden" // 🎯 قمنا بتغييرها لـ overflow-hidden لتمنع الكارد الأبيض نفسه من الخروج عن الشاشة
       dir="rtl"
     >
       {filteredUsers.length >
       0 ? (
-        <DataTable
-          columns={
-            columns
-          }
-          data={
-            filteredUsers
-          }
-        />
+        // 🎯 الـ div السحري المحيط بالجدول: يعطيه سكرول داخلي ناعم (overflow-x-auto) على الموبايل فقط دون التأثير على اللابتوب
+        <div className="w-full overflow-x-auto block whitespace-nowrap">
+          <DataTable
+            columns={
+              columns
+            }
+            data={
+              filteredUsers
+            }
+          />
+        </div>
       ) : (
         <p className="text-center text-gray-500 py-6">
           لا يوجد مستخدمين
@@ -269,56 +273,57 @@ const UsersTable = ({
           )
         }
       >
-        <h2 className="text-lg font-bold mb-4 text-center">
-          اضافة لفريق
-        </h2>
+        <div className="w-full max-w-sm sm:max-w-md mx-auto p-1">
+          <h2 className="text-lg font-bold mb-4 text-center">
+            اضافة لفريق
+          </h2>
 
-        <form
-          onSubmit={
-            handleAddToTeam
-          }
-          className="flex flex-col gap-4"
-        >
-          <Select
-            label="اختر فكرة/مشروع:"
-            value={ideaId}
-            onChange={(
-              e
-            ) =>
-              setIdeaId(
-                e.target.value
-              )
+          <form
+            onSubmit={
+              handleAddToTeam
             }
-            placeholder={
-              isLoadingIdeas
-                ? "جاري تحميل المشاريع..."
-                : "المشاريع المحتضنة"
-            }
-            options={
-              ideaOptions
-            }
-            disabled={
-              isLoadingIdeas
-            }
-          />
+            className="flex flex-col gap-4"
+          >
+            <Select
+              label="اختر فكرة/مشروع:"
+              value={ideaId}
+              onChange={(
+                e
+              ) =>
+                setIdeaId(
+                  e.target.value
+                )
+              }
+              placeholder={
+                isLoadingIdeas
+                  ? "جاري تحميل المشاريع..."
+                  : "المشاريع المحتضنة"
+              }
+              options={
+                ideaOptions
+              }
+              disabled={
+                isLoadingIdeas
+              }
+            />
 
-          <Button
-            type="submit"
-            label={
-              isAdding
-                ? "جاري الإضافة..."
-                : "اضافة"
-            }
-            className="bg-main-color"
-            disabled={
-              isAdding ||
-              isLoadingIdeas
-            }
-          />
-        </form>
+            <Button
+              type="submit"
+              label={
+                isAdding
+                  ? "جاري الإضافة..."
+                  : "اضافة"
+              }
+              className="bg-main-color"
+              disabled={
+                isAdding ||
+                isLoadingIdeas
+              }
+            />
+          </form>
+        </div>
       </Modal>
     </div>
   );
 };
-
 export default UsersTable;

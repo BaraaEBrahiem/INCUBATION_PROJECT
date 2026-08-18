@@ -11,21 +11,29 @@ export function buildUserNavOptions(roles) {
   let mainRole = "visitor";
 
   if (roles.includes("idea_owner")) {
-    mainRole = "ideaOwner";
+    mainRole = "idea_owner";
   } else if (roles.includes("evaluator")) {
     mainRole = "evaluator";
   } else if (roles.includes("incubator")) {
     mainRole = "incubator";
   } else if (roles.includes("volunteer")) {
     mainRole = "volunteer";
+  } else if (roles.includes("secretary")) {
+    mainRole = "secretary";
   }
+  else if (roles.includes("admin")) {
+    mainRole = "admin";
+  }
+  
 
   const homeRoutes = {
     visitor: "/visitor-mainpage",
     idea_owner: "/ideaowner-mainpage",
     volunteer: "/volunteer-mainpage",
-    evaluator: "/volunteer-evaluated-mainpage",
-    incubator: "/volunteer-incubated-mainpage",
+    evaluator: "/evaluator-mainpage",
+    incubator: "/incubator-mainpage",
+    secretary: "/admin-mainpage",
+    admin: "/admin-mainpage",
   };
 
   const homeLink = { label: "الرئيسية", to: homeRoutes[mainRole] || "/visitor-mainpage", scrollId: "" };

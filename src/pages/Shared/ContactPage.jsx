@@ -3,14 +3,42 @@ import { CiLocationOn } from "react-icons/ci";
 import Textarea from '../../components/Textarea';
 import Button from '../../components/Button';
 import Select from '../../components/Select';
+import { useSendContactMessageMutation } from "../../api/endpoints/messageApi";
+
+
 
 const ContactPage = () => {
+
+  const [sendContactMessage, { isLoading }] =
+    useSendContactMessageMutation();
+    
   const inquiries = [
-    { value: "General", label: "عام" },
-    { value: "AboutIncubator", label: "حول خدمات الحاضنة" },
-    { value: "Volunteering", label: "التطوع/الارشاد" },
-    { value: "Investment", label: "الاستثمار/الشراكة" },
-    { value: "TechnicalIssue", label: "مشكلة تقنية" },
+
+      {
+          value: "GENERAL",
+          label: "عام",
+      },
+
+      {
+          value: "INCUBATOR",
+          label: "حول خدمات الحاضنة",
+      },
+
+      {
+          value: "VOLUNTEERING",
+          label: "التطوع / الإرشاد",
+      },
+
+      {
+          value: "INVESTMENT",
+          label: "الاستثمار / الشراكة",
+      },
+
+      {
+          value: "TECHNICAL",
+          label: "مشكلة تقنية",
+      },
+
   ];
 
   //  لاحقًا: رح نرسل البيانات للباك عبر API
@@ -21,14 +49,40 @@ const ContactPage = () => {
   const [message, setMessage] = useState("");
 
   const handleSubmit = async () => {
-    console.log("Inquiry:", inquiryType);
-    console.log("Message:", message);
 
-    // لاحقًا: استدعاء API إرسال الرسالة
-    // await sendContactMessage({
-    //   type: inquiryType,
-    //   message: message,
-    // });
+    if (!inquiryType) {
+      alert("اختر نوع الاستفسار");
+      return;
+    }
+
+    if (!message.trim()) {
+      alert("اكتب رسالتك");
+      return;
+    }
+
+    try {
+
+      await sendContactMessage({
+        type: inquiryType,
+        message,
+      }).unwrap();
+
+      alert("تم إرسال رسالتك بنجاح.");
+
+      setInquiryType("");
+      setMessage("");
+
+    } catch (error) {
+
+      console.error(error);
+
+      alert(
+        error?.data?.detail ??
+        "حدث خطأ أثناء الإرسال."
+      );
+
+    }
+
   };
 
   return (
@@ -55,9 +109,14 @@ const ContactPage = () => {
         />
 
         <Button
-          label="إرسال"
-          className='bg-main-color px-20 py-2'
-          onClick={handleSubmit}
+            label={
+                isLoading
+                    ? "جارٍ الإرسال..."
+                    : "إرسال"
+            }
+            disabled={isLoading}
+            className="bg-main-color px-20 py-2"
+            onClick={handleSubmit}
         />
 
         <div className='w-fit border border-second-color bg-white p-6 rounded my-15'>

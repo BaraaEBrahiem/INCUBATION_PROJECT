@@ -38,7 +38,7 @@ const ForgotPasswordPage = () => {
       const response = await forgotPassword({ email }).unwrap();
       
       // تم الإرسال بنجاح
-      setSuccessMessage(response?.message || "تم إرسال رمز التحقق إلى بريدك الإلكتروني");
+      setSuccessMessage(response?.detail || "تم إرسال رمز التحقق إلى بريدك الإلكتروني");
       setApiError("");
       
       //التوجيه إلى صفحة إدخال الرمز بعد ثانية
@@ -48,7 +48,7 @@ const ForgotPasswordPage = () => {
       
     } catch (error) {
       console.error("Forgot password error:", error);
-      setApiError(error?.data?.message || "فشل إرسال رمز التحقق. تأكد من البريد الإلكتروني");
+      setApiError(error?.data?.detail || "فشل إرسال رمز التحقق. تأكد من البريد الإلكتروني");
       setSuccessMessage("");
     }
   };

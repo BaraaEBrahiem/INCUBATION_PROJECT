@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import ConsultantsList from "../../components/ConsultantsList";
 import LoadingOverlay from "../../components/LoadingOverlay";
 import { showError } from "../../Utils/toast";
-
+import AIConsultantCard from "../../components/AIConsultantCard";
 import { useGetConsultantsBySpecialtyQuery } from "../../api/endpoints/consultantsApi";
 
 const ConsultantsListPage = () => {
@@ -43,7 +43,8 @@ const ConsultantsListPage = () => {
     <div className="container py-6 px-4 md:px-8 max-w-7xl mx-auto space-y-6">
       
       {/* هيدر الصفحة والـ Category */}
-      <div className="border-b border-gray-100 pb-4">
+      <div className="flex justify-between h-20">
+      <div className="border-b border-gray-100">
         <h2 className="text-2xl font-bold text-second-color uppercase">
           المستشارون المتاحون: <span className="text-main-color font-medium">{categoryId}</span>
         </h2>
@@ -51,13 +52,17 @@ const ConsultantsListPage = () => {
           يمكنك حجز جلسة استشارية مع الخبراء المعتمدين لتطوير مشروعك.
         </p>
       </div>
+       <AIConsultantCard categoryId={categoryId} />
+      </div>
 
-      {/* عرض قائمة المستشارين أو معالجة حالة المصفوفة الفارغة */}
-      {consultants.length > 0 ? (
-        <div className="bg-white rounded-2xl border border-gray-100 p-4 md:p-6">
-          <ConsultantsList consultants={consultants} />
-        </div>
-      ) : (
+ 
+
+{consultants.length > 0 ? (
+  <div className="rounded-2xl border border-gray-100 p-4">
+    <ConsultantsList consultants={consultants} />
+  </div>
+) : (
+  
         <div className="flex flex-col items-center justify-center bg-gray-50/50 border border-dashed border-gray-200 rounded-2xl py-16 text-center">
           <span className="text-4xl mb-3">ℹ️</span>
           <p className="text-gray-500 font-bold text-lg">
@@ -75,7 +80,8 @@ const ConsultantsListPage = () => {
             </button>
           )}
         </div>
-      )}
+      )} 
+     
     </div>
   );
 };

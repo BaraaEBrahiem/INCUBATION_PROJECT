@@ -231,13 +231,13 @@ export const evaluationApi = apiSlice.injectEndpoints({
     deleteCriterion: builder.mutation({
       query: (id) => ({
         url: `/admin/evaluations/criteria/${id}/delete/`,
-        method: 'POST',
+        method: 'DELETE',
       }),
       invalidatesTags: ['Criteria'],
     }),
 
     // نشر المعايير (بدون body)
-    saveCriteria: builder.mutation({
+    publishCriteria: builder.mutation({
       query: () => ({
         url: `/admin/evaluations/criteria/publish/`,
         method: 'POST',
@@ -312,7 +312,19 @@ export const evaluationApi = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ['Evaluation'],
     }),
+    getInvitationDetails: builder.query({
+      query: (id) => `evaluations/invitation-details/${id}/`,
+      providesTags: (result, error, id) => [{ type: "Invitation", id }],
+    }),
 
+    // دالة إرسال القرار (موافقة أو رفض) للسيرفر
+    updateInvitationStatus: builder.mutation({
+      query: ({ id, action }) => ({
+        url: `evaluations/respond-to-invitation/${id}/`, 
+        method: "POST", 
+        body: { action: action, },
+      }),
+    }),
   }),
 });
 
@@ -334,7 +346,7 @@ export const {
   useCreateCriterionMutation,
   useUpdateCriterionMutation,
   useDeleteCriterionMutation,
-  useSaveCriteriaMutation,
+  usePublishCriteriaMutation,
 
   // الملاحظات
   useGetNotesQuery,
@@ -366,5 +378,8 @@ export const {
     useGetMyAssignmentsQuery,
 
     useGetNextUpcomingSessionQuery,
+    //دالة جلب تفاصيل الدعوة
+    useGetInvitationDetailsQuery,
+    useUpdateInvitationStatusMutation,
      
 } = evaluationApi;

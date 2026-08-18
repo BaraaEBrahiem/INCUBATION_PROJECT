@@ -2,9 +2,10 @@ const homeRoutes = {
   visitor: "/visitor-mainpage",
   idea_owner: "/ideaowner-mainpage",
   volunteer: "/volunteer-mainpage",
-  evaluator: "/volunteer-evaluated-mainpage",
-  incubator: "/volunteer-incubated-mainpage",
+  evaluator: "/evaluator-mainpage",
+  incubator: "/incubator-mainpage",
   admin: "/admin-mainpage",
+  secretary: "/admin-mainpage",
 };
 
 export const getMainPageByRole = (roles) => {
@@ -14,6 +15,9 @@ export const getMainPageByRole = (roles) => {
 
   if (roles.includes("admin")) {
     return homeRoutes.admin;
+  }
+  if (roles.includes("secretary")) {
+    return homeRoutes.secretary;
   }
   if (roles.includes("idea_owner")) {
     return homeRoutes.idea_owner;
