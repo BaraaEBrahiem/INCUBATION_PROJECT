@@ -38,5 +38,4 @@ const ConversationItem = ({ conversation, isSelected }) => {
     </Link>
   );
 };
-
 export default ConversationItem;

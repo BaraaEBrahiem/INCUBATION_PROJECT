@@ -18,14 +18,14 @@ export default function MessagesPage() {
   const { id } = useParams(); // جلب الـ conversationId من رابط المتصفح الحالي
   const conversationId = id ? Number(id) : null;
 
-  // 1️⃣ جلب قائمة كل المحادثات
+  // جلب قائمة كل المحادثات
   const { 
     data: conversations = [], 
     isLoading: isConversationsLoading,
     error: conversationsError 
   } = useGetConversationsQuery();
 
-  // 2️⃣ جلب رسائل المحادثة النشطة (ويتم تخطيه تلقائياً بـ skip إذا لم يتم تحديد محادثة)
+  // جلب رسائل المحادثة النشطة (ويتم تخطيه تلقائياً بـ skip إذا لم يتم تحديد محادثة)
   const { 
     data: messages, 
     isLoading: isMessagesLoading 
@@ -34,7 +34,7 @@ export default function MessagesPage() {
     { skip: !conversationId }
   );
 
-  // 3️⃣ Mutation لتعليم المحادثة كمقروءة فور الدخول إليها
+  // Mutation لتعليم المحادثة كمقروءة فور الدخول إليها
   const [markAsRead] = useMarkConversationAsReadMutation();
 
   // العثور على بيانات المحادثة الحالية من القائمة لعرض الهيدر الخاص بها
