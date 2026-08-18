@@ -25,7 +25,7 @@ export default function MessageComposer({ conversationId }) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="border-t p-4 flex gap-2 bg-white">
+    <form onSubmit={handleSubmit} className="border-t border-second-color p-4 flex gap-2 bg-white">
       <input
         value={content}
         onChange={(e) => setContent(e.target.value)}

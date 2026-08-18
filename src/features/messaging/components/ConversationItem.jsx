@@ -14,7 +14,7 @@ const ConversationItem = ({ conversation, isSelected }) => {
   return (
     <Link
       to={`/messagespage/${conversation.id}`}
-      className={`flex items-center gap-3 p-4 border-b hover:bg-gray-50 transition-colors ${
+      className={`flex items-center gap-3 p-4 border border-second-color my-1 hover:bg-gray-50 transition-colors ${
         isSelected ? "bg-white-color" : ""
       }`}
     >
@@ -38,5 +38,4 @@ const ConversationItem = ({ conversation, isSelected }) => {
     </Link>
   );
 };
-
 export default ConversationItem;
