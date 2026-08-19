@@ -47,7 +47,7 @@ const FaQuestions = ({id}) => {
       <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
         {
         FAQS.map((faq, index) => (
-              <div key={index} className='w-full block text-[10px] md:text-[10px]'>
+              <div key={index} className='w-full  text-[5px] md:text-[10px]'>
                 <FaqItem question={faq.question} answer={faq.answer}/>
               </div>
         )

@@ -76,7 +76,7 @@ const ProjectCard = ({ project, ShowImage = false, details = "general" }) => {
             {/* حالة وجود صورة */}
             {ShowImage && (
               <div className="mt-4">
-                <SignupLink label={"عرض التفاصيل"} className={"bg-main-color text-white px-6 py-2 rounded-lg inline-block"} />
+                <SignupLink label={"عرض التفاصيل"} className={"bg-main-color text-white px-1/2 py-1/2 rounded-lg inline-block"} />
               </div>
             )}
 
@@ -85,7 +85,7 @@ const ProjectCard = ({ project, ShowImage = false, details = "general" }) => {
               <div className="mt-4">
                 <NavLinkUniversal
                   to={getDetailsPath()}
-                  label={<Button label={"عرض التفاصيل"} className="bg-main-color text-white px-6 py-2 rounded-lg" />}
+                  label={<Button label={"عرض التفاصيل"} className="bg-main-color text-white px-6z py-2 rounded-lg" />}
                 />
               </div>
             )}

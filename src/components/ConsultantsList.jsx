@@ -31,7 +31,7 @@ const ConsultantsList = ({
     }
   };
 
-  return (
+   return (
     <div className="grid grid-cols-1 gap-4 mt-6">
       {consultants.map((c) => {
         const isSelected = selectedVolunteers.includes(c.id);
@@ -41,7 +41,7 @@ const ConsultantsList = ({
           <div 
             key={c.id} 
             onClick={() => isSelectable && onToggleSelect(c.id)}
-            className={`flex items-center gap-4 p-1 md:p-4 border shadow rounded-xl transition-all ${
+            className={`flex flex-col sm:flex-row items-center gap-4 p-3 md:p-4 border shadow rounded-xl transition-all ${
               isSelectable ? "cursor-pointer" : ""
             } ${
               isSelected 
@@ -50,41 +50,50 @@ const ConsultantsList = ({
             }`}
           >
             {isSelectable && (
-              <div className="ps-2">
+              <div className="w-full sm:w-auto flex justify-start sm:block">
                 <input
                   type="checkbox"
                   checked={isSelected}
                   readOnly
-                  className="w-4 h-4 accent-emerald-600 cursor-pointer"
+                  className="w-5 h-5 accent-emerald-600 cursor-pointer"
                 />
               </div>
             )}
 
-            <img src={c.avatar || avatarDefault} className="w-20 h-20 rounded-full object-cover" alt={c.full_name || c.name} />
+            <img 
+              src={c.avatar || avatarDefault} 
+              className="w-20 h-20 sm:w-24 sm:h-24 rounded-full object-cover" 
+              alt={c.full_name || c.name} 
+            />
 
-            <div className="flex-1">
-              <p className="font-bold text-xl">{c.full_name || c.name}</p>
-              {c.primary_skills && <p className="text-xl font-semibold text-gray-600">{c.primary_skills}</p>}
+            <div className="flex-1 text-center sm:text-right w-full">
+              <p className="font-bold text-lg md:text-xl">{c.full_name || c.name}</p>
+              {c.primary_skills && <p className="text-base md:text-xl font-semibold text-gray-600">{c.primary_skills}</p>}
               
-              {c.availability?.map((slot, index) => (
-  <div key={index} className="text-lg text-gray-500">
-    {DAY_TRANSLATIONS[slot.day] || slot.day}
-    : من {slot.start_time || slot.from}
-    {" "}إلى{" "}
-    {slot.end_time || slot.to}
-  </div>
-))}
+              <div className="mt-2 text-sm md:text-lg text-gray-500">
+                {c.availability?.map((slot, index) => (
+                  <div key={index}>
+                    {DAY_TRANSLATIONS[slot.day] || slot.day}
+                    {" : "}
+                    {slot.start_time || slot.from} - {slot.end_time || slot.to}
+                  </div>
+                ))}
+              </div>
             </div>
 
-            {role === "admin" ? (
-              <Button
-                label="عرض التفاصيل"
-                className="bg-main-color text-xl"
-                onClick={(e) => handleDetails(e, c)}
-              />
-            ) : (
-              <ConsultationRequestBtn consultant={c} />
-            )}
+            <div className="w-full sm:w-auto mt-2 sm:mt-0">
+              {role === "admin" || role === "secretary" ? (
+                <Button
+                  label="عرض التفاصيل"
+                  className="bg-main-color text-base md:text-xl w-full sm:w-auto"
+                  onClick={(e) => handleDetails(e, c)}
+                />
+              ) : (
+                <div className="w-full sm:w-auto">
+                  <ConsultationRequestBtn consultant={c} />
+                </div>
+              )}
+            </div>
           </div>
         );
       })}
@@ -95,7 +104,5 @@ const ConsultantsList = ({
         onClose={() => setModalConfig({ isOpen: false, data: null })} 
       />
     </div>
-  );
-};
-
+  );}
 export default ConsultantsList;

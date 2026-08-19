@@ -114,7 +114,7 @@ const SeasonSettings = ({ season, onSave }) => {
   const handleCloseSubmission = async () => {
     try {
       await closeSubmissions(season.id).unwrap();
-      showSuccess("تم إغلاق فترة التقديم بنجاح وتحويل الموسم لمرحلة التقييم");
+      showSuccess("تم إغلاق فترة التقديم بنجاح");
       setIsConfirmOpen(false);
     } catch (err) {
       console.error("Close Submission Error:", err);
@@ -122,10 +122,13 @@ const SeasonSettings = ({ season, onSave }) => {
     }
   };
 
-  return (
-    <div className="flex gap-6" dir="rtl">
+ return (
+    // 🎯 السر هنا: flex-col للموبايل لتترتب الأعمدة عمودياً، وتتحول إلى md:flex-row لتستعيد مظهر اللابتوب الأصلي 100%
+    <div className="flex flex-col md:flex-row gap-6 w-full" dir="rtl">
+      
       {/* العمود الأيمن لإدخال البيانات والتعديل */}
-      <div className="flex-1 p-5">
+      {/* 🎯 أضفنا p-2 للموبايل ليتنفس الكارد داخلياً، ويعود p-5 طبيعياً على اللابتوب عبر md:p-5 */}
+      <div className="flex-1 p-2 md:p-5">
         <div className="mb-6">
           <h1 className="text-lg font-bold mb-1">
             {name || season?.name || "تعديل الموسم"}
@@ -176,13 +179,13 @@ const SeasonSettings = ({ season, onSave }) => {
           />
         </div>
 
-        <div className="flex flex-wrap gap-3 justify-between items-center">
-          <div className="flex gap-3">
+          <div className="flex flex-col sm:flex-row gap-3 justify-between items-stretch sm:items-center">
+          <div className="flex flex-col sm:flex-row gap-3">
             {isOpen && season?.id && (
             <Button
               label={isUpdating ? "جاري الحفظ..." : "حفظ التغييرات"}
               onClick={handleSave}
-              className="bg-main-color"
+              className="bg-main-color w-full sm:w-auto"
               disabled={isSaving}
             />
             )}
@@ -191,7 +194,7 @@ const SeasonSettings = ({ season, onSave }) => {
             <Button
               label={isClosing ? "جاري الإغلاق..." : "إغلاق التقديم"}
               onClick={() => setIsConfirmOpen(true)}
-              className="bg-main-color hover:bg-red-600 text-white font-semibold"
+              className="bg-main-color hover:bg-red-600 text-white font-semibold w-full sm:w-auto"
               disabled={isSaving}
             />
           )}
@@ -225,9 +228,7 @@ const SeasonSettings = ({ season, onSave }) => {
           سيتم إرسال إشعار لجميع المستخدمين بأن التقديم أغلق، ولن يتمكن أحد من تقديم أفكار جديدة وسيتحول الموسم تلقائياً إلى (قيد التقييم).
         </p>
       </Modal>
-
-      {/* العمود الأيسر الإحصائي */}
-      <div className="w-64 h-fit border border-second-color bg-white rounded-lg shadow p-4 flex flex-col gap-2">
+    <div className="w-full md:w-64 h-fit border border-second-color bg-white rounded-lg shadow p-4 flex flex-col gap-2">
         <p className="text-sm">
           <span className="font-semibold">عدد الطلبات المستلمة: </span>
           {ideas_count}
@@ -239,6 +240,7 @@ const SeasonSettings = ({ season, onSave }) => {
           </p>
         )}
       </div>
+
     </div>
   );
 };

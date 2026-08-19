@@ -32,18 +32,19 @@ const SectorAnalysisChart = ({
       })
     );
 
-  return (
-    <div className="bg-white p-10 w-140 rounded-lg shadow">
+ return (
+    <div className="bg-white p-6 sm:p-10 w-full max-w-[560px] rounded-lg shadow mx-auto">
       <h2 className="text-xl font-semibold mb-4 text-center">
         تحليل القطاعات
       </h2>
 
-      <div className="flex items-center justify-between">
+      {/* التعديل هنا: flex-col للموبايل و sm:flex-row للابتوب */}
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-6 sm:gap-4">
         {/* الرسم */}
         <div
+          className="w-full sm:w-[70%]" // تعديل التجاوب هنا
           style={{
             height: 250,
-            width: "70%",
           }}
         >
           {chartData.length >
@@ -107,23 +108,24 @@ const SectorAnalysisChart = ({
         </div>
 
         {/* legend مخصص */}
-        <div className="flex flex-col gap-4 min-w-[120px]">
+        {/* التعديل هنا: ترتيب مرن للموبايل حتى لا تنضغط العناصر عمودياً */}
+        <div className="flex flex-row flex-wrap sm:flex-col justify-center gap-x-5 gap-y-2 w-full sm:w-auto min-w-[120px] border-t sm:border-t-0 pt-4 sm:pt-0 border-gray-500/10">
           {chartData.map(
             (item) => (
               <div
                 key={
                   item.id
                 }
-                className="flex items-center justify-between gap-3"
+                className="flex items-center justify-between gap-3 min-w-[100px] sm:w-full"
               >
-                <span className="text-base text-gray-700 font-medium">
+                <span className="text-sm sm:text-base text-gray-700 font-medium">
                   {
                     item.label
                   }
                 </span>
 
                 <span
-                  className="w-4 h-4 rounded-full"
+                  className="w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-full"
                   style={{
                     backgroundColor:
                       item.color,
@@ -137,5 +139,4 @@ const SectorAnalysisChart = ({
     </div>
   );
 };
-
 export default SectorAnalysisChart;

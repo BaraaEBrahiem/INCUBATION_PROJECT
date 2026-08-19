@@ -24,6 +24,10 @@ const baseNav = {
      { label: "الرئيسية", to: "/admin-mainpage", scrollId: "" },
     
   ],
+  secretary: [
+     { label: "الرئيسية", to: "/admin-mainpage", scrollId: "" },
+    
+  ],
  
 };
 
@@ -62,6 +66,7 @@ export const getNavOptionsByRole = (roles) => {
   if (rolesArray.includes("incubator")) return navOptions.incubator;
   if (rolesArray.includes("evaluator")) return navOptions.evaluator;
   if (rolesArray.includes("volunteer")) return navOptions.volunteer;
+  if (rolesArray.includes("secretary")) return navOptions.secretary;
 
   return navOptions.visitor;
 };

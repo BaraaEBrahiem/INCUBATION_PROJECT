@@ -50,7 +50,7 @@ export const RoleOptions = {
     { label: "مركز التقييم", link: "/evaluation-center", icon: <ImStatsDots /> },
   ],
 };
- const admin = [
+ export const admin = [
   { label: "الرئيسية", link: "/admin-mainpage", icon: <MdDashboard/> },
   { label: "الإحصائيات", link: "/admin/statistics", icon: <MdBarChart/> },
   { label: "إدارة المستخدمين", link: "/admin/users", icon: <MdPeople/> },
@@ -61,4 +61,14 @@ export const RoleOptions = {
   { label: "المشاريع المحتضنة", link: "/admin/assigned-projects", icon: <MdWork /> },
   { label: "المعرض", link: "/admin/exhibition", icon: <MdPhotoLibrary /> },
 ]
-export default admin
+
+export const secretary = [
+  { label: "الرئيسية", link: "/admin-mainpage", icon: <MdDashboard/> },
+  { label: "إدارة المتطوعين", link: "/admin/volunteers", icon: <FaHandHoldingHeart/> },
+  { label: "مواسم الاحتضان", link: "/admin/seasons", icon: <MdAssignment /> },
+   { label: "التقييم", link: "/admin/evaluation", icon: <MdChecklist /> },
+  { label: "المشاريع المحتضنة", link: "/admin/assigned-projects", icon: <MdWork /> },
+  { label: "المعرض", link: "/admin/exhibition", icon: <MdPhotoLibrary /> },
+]
+
+

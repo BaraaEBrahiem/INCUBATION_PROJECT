@@ -71,7 +71,7 @@ const NotificationItem = ({
         <div className="flex-1">
           <p
             className={`
-              text-xl
+              md:text-xl text-md
               leading-7
               text-right
               ${
@@ -103,7 +103,7 @@ const NotificationItem = ({
             </span>
           </div>
 
-          {/* {notification.has_action && ( */}
+          {notification.has_action && ( 
             <button
               onClick={handleAction}
               disabled={isLoading}
@@ -117,9 +117,13 @@ const NotificationItem = ({
                 text-md
               "
             >
-              عرض التفاصيل
+             {notification.action_type === "START_CHAT"
+      ? "ابدأ محادثة"
+      : notification.action_type === "VIEW_CONSULTANTS"
+      ? "انتقل إلى قائمة المستشارين"
+      : "عرض التفاصيل"}
             </button>
-          {/* )} */}
+          )} 
         </div>
       </div>
     </div>

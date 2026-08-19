@@ -3,12 +3,12 @@ import React from 'react';
 import { useNavigate, useParams } from "react-router-dom";
 import { IoMdArrowBack } from "react-icons/io";
 import { showSuccess, showError } from "../../Utils/toast";
-
 import { useGetIncubationNotesQuery, useSubmitGraduationDecisionMutation } from '../../api/endpoints/admin/graduationApi';
 
 const LatestReviewPage = () => {
   const navigate = useNavigate();
   const { idea_id } = useParams();
+
 
 
   const { data, isLoading: isNotesLoading, error: isError } = useGetIncubationNotesQuery(idea_id);
@@ -60,7 +60,7 @@ const LatestReviewPage = () => {
   }
 
 
-  const shouldShowButtons = !currentStatus || currentStatus === "pending" || currentStatus === "null"|| currentStatus === "incubation";;
+  const shouldShowButtons = !currentStatus || currentStatus === "pending" || currentStatus === "null"|| currentStatus === "incubation";
 
 
   return (

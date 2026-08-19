@@ -319,12 +319,11 @@ export const evaluationApi = apiSlice.injectEndpoints({
 
     // دالة إرسال القرار (موافقة أو رفض) للسيرفر
     updateInvitationStatus: builder.mutation({
-      query: ({ id, status }) => ({
-        url: `evaluations/invitation-details/${id}/`, 
-        method: "PATCH", 
-        body: { status },
+      query: ({ id, action }) => ({
+        url: `evaluations/respond-to-invitation/${id}/`, 
+        method: "POST", 
+        body: { action: action, },
       }),
-      invalidatesTags: (result, error, { id }) => [{ type: "Invitation", id }],
     }),
   }),
 });

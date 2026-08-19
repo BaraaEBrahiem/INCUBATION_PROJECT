@@ -5,7 +5,7 @@ const WorkshopImage = ({ image }) => {
   const preview = image ? URL.createObjectURL(image) : null;
 
   return (
-    <div className="w-[375px] h-[375px] rounded-full border border-second-color overflow-hidden bg-white flex items-center justify-center">
+    <div className="w-[250px] h-[250px] md:w-[350px] md:h-[350px] rounded-full border border-second-color overflow-hidden bg-white flex items-center justify-center">
       {preview ? (
         <img
           src={preview}

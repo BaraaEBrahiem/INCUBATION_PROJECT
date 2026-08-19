@@ -14,7 +14,7 @@ const ProjectLifecycleChart = ({ data }) => {
         id: "تقديم",
         label: "تقديم",
         value: data.submitted || 0,
-        color: "#62bb86", // درجات متناسقة من لون الـ تيل الخاص بمشروعك
+        color: "#62bb86", 
       },
       {
         id: "حضور المعسكر",
@@ -38,12 +38,12 @@ const ProjectLifecycleChart = ({ data }) => {
   }, [data]);
 
   // ============================
-  // حالة عدم وجود بيانات
+  // حالة عدم وجود بيانات (معدلة لتصبح ريسبونسف)
   // ============================
   if (!data || chartData.length === 0) {
     return (
-      <div className="bg-white w-[600px] h-[300px] flex items-center justify-center rounded-lg shadow border border-gray-100">
-        <p className="text-gray-400 font-medium">
+      <div className="bg-white w-full max-w-[600px] h-[300px] flex items-center justify-center rounded-lg shadow border border-gray-100 p-4">
+        <p className="text-gray-400 font-medium text-center">
           لا توجد بيانات متاحة لهذا الموسم
         </p>
       </div>
@@ -52,25 +52,31 @@ const ProjectLifecycleChart = ({ data }) => {
 
   return (
     <div
-      className="bg-white w-[600px] p-6 rounded-lg shadow border border-gray-100"
+      className="bg-white w-full max-w-[600px] p-4 sm:p-6 rounded-lg shadow border border-gray-100 mx-auto"
       dir="rtl"
     >
       {/* العنوان */}
-      <div className="flex justify-between items-center">
+      <div className="flex justify-between items-center mb-4">
         <div>
-          <h2 className="text-xl font-semibold text-gray-800">
+          <h2 className="text-lg sm:text-xl font-semibold text-gray-800">
             دورة حياة المشاريع
           </h2>
         </div>
       </div>
 
       {/* المخطط الدائري */}
-      <div style={{ height: 300 }} dir="ltr">
+      {/* تم تقليل الـ height قليلاً على الشاشات الصغيرة جداً لتفادي ضغط المخطط، ويمكنك إعادتها لـ 300 ثابتة إذا رغبت */}
+      <div className="h-[260px] sm:h-[300px]" dir="ltr">
         <ResponsivePie
           data={chartData}
-          margin={{ top: 40, right: 80, bottom: 40, left: 80 }}
+          // تم تقليل الهوامش (margin) على الشاشات الصغيرة كي لا تختفي مسميات الـ arcs الخارجية
+          margin={
+            typeof window !== "undefined" && window.innerWidth < 640
+              ? { top: 20, right: 40, bottom: 20, left: 40 }
+              : { top: 40, right: 80, bottom: 40, left: 80 }
+          }
           
-          // 🎯 السر هنا: جعل النصف القطري الداخلي 0 يحولها من دونات إلى دائرة عادية ممتلئة
+          // جعل النصف القطري الداخلي 0 يحولها من دونات إلى دائرة عادية ممتلئة
           innerRadius={0}
           
           // تحديد الألوان بناءً على الكائن الممرر في البيانات فوق
@@ -100,7 +106,7 @@ const ProjectLifecycleChart = ({ data }) => {
           
           theme={{
             text: {
-              fontSize: 12,
+              fontSize: 11, // تصغير الخط قليلاً ليناسب الهواتف واللابتوب معاً
               fontFamily: "inherit",
             },
           }}

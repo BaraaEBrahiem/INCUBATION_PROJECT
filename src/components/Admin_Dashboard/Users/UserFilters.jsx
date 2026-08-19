@@ -4,8 +4,9 @@ const UserFilters = ({
   roleFilter,
   setRoleFilter,
 }) => {
-  return (
-    <div className="flex items-center gap-4">
+return (
+    // 🎯 الأب ممتد (w-full) ويسمح بالالتواء (flex-wrap) على الموبايل لحماية الحواف
+    <div className="flex items-center gap-4 w-full flex-wrap">
       <Select
         label="الدور"
         name="role"
@@ -21,10 +22,10 @@ const UserFilters = ({
           { value: "IDEA_OWNER", label: "صاحب فكرة" },
           { value: "EVALUATOR", label: "مقيم" }
         ]}
-        className="w-100 mb-6"
+        // 🎯 السر هنا: w-full للموبايل، وعندما تكبر الشاشة (sm:) يطبق كلاسك الأصلي w-100 تماماً
+        className="w-full sm:w-100 mb-6"
       />
     </div>
   );
 };
-
 export default UserFilters;

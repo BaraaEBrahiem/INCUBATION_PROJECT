@@ -118,7 +118,7 @@ const ParticipantsSection = () => {
   }
 
   return (
-    <div className="bg-white p-6 rounded-lg shadow">
+    <div className="p-6 rounded-lg ">
       <h2 className="text-lg font-bold mb-4">قائمة المشاركين</h2>
       <SearchBar placeholder="بحث باسم المشروع" onSearch={setSearchTerm} />
       <DataTable columns={columns} data={filtered} />

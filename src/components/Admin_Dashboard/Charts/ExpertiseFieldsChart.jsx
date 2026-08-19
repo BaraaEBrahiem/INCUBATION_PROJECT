@@ -87,7 +87,7 @@ const ExpertiseFieldsChart = ({
     );
 
   return (
-    <div className="bg-white w-140 p-6 rounded-lg shadow">
+    <div className="bg-white w-full max-w-[560px] p-4 sm:p-6 rounded-lg shadow mx-auto">
       <h2 className="text-xl font-semibold mb-4">
         مجالات الخبرة
       </h2>
@@ -101,14 +101,17 @@ const ExpertiseFieldsChart = ({
           data={chartData}
           keys={["value"]}
           indexBy="name"
-          layout="vertical"
-          margin={{
-            top: 20,
-            right: 20,
-            bottom: 80,
-            left: 55,
-          }}
-          padding={0.35}
+          layout="vertical" // ثابت عمودي على كل الشاشات كما طلبته تماماً
+          
+          // 🎯 تم تقليص الهوامش الجانبية (Right و Left) لأقصى درجة على الموبايل لإعطاء مساحة للأعمدة كي تظهر
+          margin={
+            typeof window !== "undefined" && window.innerWidth < 640
+              ? { top: 20, right: 5, bottom: 65, left: 25 } // هوامش ضيقة للموبايل لتوسيع المخطط
+              : { top: 20, right: 20, bottom: 80, left: 55 } // هوامشك الأصلية للابتوب
+          }
+          
+          // 🎯 تقليل الفراغات بين الأعمدة على الموبايل (padding) لتأخذ الأعمدة مساحة عرضية وتظهر بوضوح
+          padding={typeof window !== "undefined" && window.innerWidth < 640 ? 0.15 : 0.35}
 
           // محور منطقي
           minValue={0}
@@ -119,7 +122,7 @@ const ExpertiseFieldsChart = ({
               "data.color",
           }}
 
-          borderRadius={8}
+          borderRadius={typeof window !== "undefined" && window.innerWidth < 640 ? 4 : 8} // تقليل الحواف على الموبايل لتناسب الأعمدة النحيفة
 
           enableLabel
           label={(d) =>
@@ -130,17 +133,27 @@ const ExpertiseFieldsChart = ({
 
           labelTextColor="#fff"
 
-          // محور X
+          // محور X 
           axisBottom={{
             tickSize: 5,
-            tickPadding: 10,
-            tickRotation: 0,
+            tickPadding: 5,
+            
+            // 🎯 جعل النصوص مائلة بزاوية -30 درجة على الموبايل فقط ومستقيمة على اللابتوب لمنع تداخلها كما بالصورة
+            tickRotation: typeof window !== "undefined" && window.innerWidth < 640 ? -30 : 0,
+            
+            // قمنا بزيادة عدد الأحرف المسموحة إلى 10 قبل القص لتظهر الاختصارات بشكل مفهوم
+            format: (value) => {
+              if (typeof window !== "undefined" && window.innerWidth < 640) {
+                return value.length > 10 ? `${value.substring(0, 10)}...` : value;
+              }
+              return value; // على اللابتوب يعود النص كاملاً دون أي تعديل
+            }
           }}
 
           // محور Y
           axisLeft={{
             tickSize: 5,
-            tickPadding: 8,
+            tickPadding: 5,
             tickValues: [
               0, 2, 4, 6, 8,
               10,
@@ -165,7 +178,7 @@ const ExpertiseFieldsChart = ({
                 },
 
                 text: {
-                  fontSize: 9,
+                  fontSize: typeof window !== "undefined" && window.innerWidth < 640 ? 8 : 9, // تصغير الخط درجة واحدة على الموبايل
                   fontWeight:
                     500,
                   fill:
@@ -219,5 +232,4 @@ const ExpertiseFieldsChart = ({
     </div>
   );
 };
-
 export default ExpertiseFieldsChart;

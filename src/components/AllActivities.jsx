@@ -5,7 +5,7 @@ import NavLinkUniversal from './NavLinkUniversal';
 const AllActivities = ({ activities }) => {
   return (
     <div>
-      <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6'>
+      <div className='grid grid-cols-1 lg:grid-cols-4 md:grid-cols-2 gap-10'>
 
         {activities.map((activity) => (
           <div key={activity.id}>
@@ -21,7 +21,7 @@ const AllActivities = ({ activities }) => {
               <NavLinkUniversal
                 label="عرض التفاصيل"
                 to={`/public-workshops/${activity.id}`}
-                className="mt-4 bg-main-color text-white rounded hover:bg-second-color transition"
+                className="mt-4 w-[200px] text-center py-2 bg-main-color text-white rounded hover:bg-second-color transition"
               />
             </ActivityCard>
 

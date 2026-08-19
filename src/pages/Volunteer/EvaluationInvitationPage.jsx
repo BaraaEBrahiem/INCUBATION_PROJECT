@@ -17,9 +17,9 @@ const EvaluationInvitationPage = () => {
   const handleDecision = async (decision) => {
     try {
      
-      await updateStatus({ id: id, status: decision }).unwrap();
+      await updateStatus({ id: id, action: decision }).unwrap();
       
-      showSuccess(decision === "APPROVED" ? "تم قبول الدعوة بنجاح" : "تم رفض الدعوة");
+      showSuccess(decision === "accept" ? "تم قبول الدعوة بنجاح" : "تم رفض الدعوة");
     } catch (err) {
       console.error(err);
       showError(err?.data?.detail || "حدث خطأ أثناء معالجة طلبك");
@@ -84,7 +84,7 @@ const EvaluationInvitationPage = () => {
 
         <div className="mt-12 flex flex-col sm:flex-row justify-center items-center gap-4 sm:gap-8 pt-6 border-t border-gray-100">
           <button
-            onClick={() => handleDecision("APPROVED")}
+            onClick={() => handleDecision("accept")}
             disabled={isUpdating || invitationData?.status !== "PENDING"}
             className="w-full sm:w-44 font-bold text-white py-3 px-6 rounded-xl text-lg shadow-md transition-all duration-200 bg-green-color hover:bg-emerald-700 active:scale-98 disabled:bg-gray-300 disabled:cursor-not-allowed"
           >
@@ -92,7 +92,7 @@ const EvaluationInvitationPage = () => {
           </button>
 
           <button
-            onClick={() => handleDecision("REJECTED")}
+            onClick={() => handleDecision("reject")}
             disabled={isUpdating || invitationData?.status !== "PENDING"}
             className="w-full sm:w-44 font-bold text-white py-3 px-6 rounded-xl text-lg shadow-md transition-all duration-200 bg-red-color hover:bg-red-700 active:scale-98 disabled:bg-gray-300 disabled:cursor-not-allowed"
           >

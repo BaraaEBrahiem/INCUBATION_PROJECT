@@ -42,8 +42,8 @@ const IncubationSeasonsChart = ({
     );
 
   return (
-    <div className="bg-white w-150 p-5 rounded-lg shadow">
-      <h2 className="text-xl font-semibold mb-3">
+    <div className="bg-white w-full max-w-[600px] p-4 sm:p-5 rounded-lg shadow mx-auto">
+      <h2 className="text-lg sm:text-xl font-semibold mb-3">
         مقارنة أداء مواسم الاحتضان
       </h2>
 
@@ -62,12 +62,12 @@ const IncubationSeasonsChart = ({
           groupMode="grouped"
           padding={0.3}
 
-          margin={{
-            top: 30,
-            right: 30,
-            bottom: 70,
-            left: 55,
-          }}
+          // تعديل الهوامش لتناسب الهواتف ولا تضيع مساحة المحاور
+          margin={
+            typeof window !== "undefined" && window.innerWidth < 640
+              ? { top: 20, right: 15, bottom: 65, left: 35 }
+              : { top: 30, right: 30, bottom: 70, left: 55 }
+          }
 
           minValue={0}
           maxValue={
@@ -137,7 +137,7 @@ const IncubationSeasonsChart = ({
                 },
 
                 text: {
-                  fontSize: 11,
+                  fontSize: 10, // تصغير بسيط ليناسب الموبايل
                   fill:
                     "#555",
                 },
@@ -146,7 +146,7 @@ const IncubationSeasonsChart = ({
 
             legends: {
               text: {
-                fontSize: 12,
+                fontSize: 11, // متناسق مع الشاشات الصغيرة والكبيرة
                 fill:
                   "#555",
               },
@@ -205,17 +205,28 @@ const IncubationSeasonsChart = ({
               anchor:
                 "bottom",
 
+              // تعديل التوزيع: إذا كانت الشاشة هاتفاً، تترتب عمودياً، وإذا كانت لابتوب تظل أفقياً كمظهرها الأصلي
               direction:
-                "row",
+                typeof window !== "undefined" && window.innerWidth < 640
+                  ? "column"
+                  : "row",
 
+              // تعديل الإزاحة العمودية بناءً على الترتيب لضمان عدم تداخل المفاتيح مع المحور السفلي
               translateY:
-                55,
+                typeof window !== "undefined" && window.innerWidth < 640
+                  ? 55
+                  : 55,
 
+              // تعديل المساحات برمجياً لمنع خروج النصوص في الشاشات الضيقة
               itemWidth:
-                170,
+                typeof window !== "undefined" && window.innerWidth < 640
+                  ? 140
+                  : 170,
 
               itemHeight:
-                20,
+                typeof window !== "undefined" && window.innerWidth < 640
+                  ? 18
+                  : 20,
 
               symbolSize:
                 14,

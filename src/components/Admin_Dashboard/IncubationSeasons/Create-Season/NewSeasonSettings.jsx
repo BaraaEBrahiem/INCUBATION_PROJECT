@@ -64,83 +64,85 @@ const NewSeasonSettings = ({ onSubmit }) => {
   };
 
   return (
-    <div className="bg-white p-6 rounded-lg shadow-md" dir="rtl">
-      <form onSubmit={handleSubmit} className="space-y-6">
+    <div className="w-full px-4 md:px-0">
+  <div className="bg-white p-6 rounded-lg shadow-md" dir="rtl">
+    <form onSubmit={handleSubmit} className="space-y-6">
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="flex flex-col gap-4">
-            <Input
-              label="اسم الموسم"
-              type="text"
-              name="name"
-              value={name}
-              onChange={(e) => {
-                setName(e.target.value);
-                if (errors.name) setErrors({ ...errors, name: "" });
-              }}
-              placeholder="اكتب اسم الموسم"
-              error={errors.name}
-              disabled={isCreating} // تعطيل الحقل أثناء الإرسال
-              required
-            />
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="flex flex-col gap-4">
+          <Input
+            label="اسم الموسم"
+            type="text"
+            name="name"
+            value={name}
+            onChange={(e) => {
+              setName(e.target.value);
+              if (errors.name) setErrors({ ...errors, name: "" });
+            }}
+            placeholder="اكتب اسم الموسم"
+            error={errors.name}
+            disabled={isCreating} // تعطيل الحقل أثناء الإرسال
+            required
+          />
 
-            <Textarea
-              label="وصف الموسم"
-              name="description"
-              value={description}
-              onChange={(e) => {
-                setDescription(e.target.value);
-                if (errors.description) setErrors({ ...errors, description: "" });
-              }}
-              rows={4}
-              placeholder="وصفاً مختصراً عن الموسم"
-              error={errors.description}
-              disabled={isCreating} // تعطيل الحقل أثناء الإرسال
-              required
-            />
-          </div>
-
-          <div className="flex flex-col gap-4">
-            <Input
-              label="تاريخ بدء التقديم"
-              type="date"
-              name="start_date"
-              value={start_date}
-              onChange={(e) => {
-                setStart_date(e.target.value);
-                if (errors.start_date) setErrors({ ...errors, start_date: "" });
-              }}
-              error={errors.start_date}
-              disabled={isCreating} // تعطيل الحقل أثناء الإرسال
-              required
-            />
-
-            <Input
-              label="تاريخ انتهاء التقديم"
-              type="date"
-              name="end_date"
-              value={end_date}
-              onChange={(e) => {
-                setEnd_date(e.target.value);
-                if (errors.end_date) setErrors({ ...errors, end_date: "" });
-              }}
-              error={errors.end_date}
-              disabled={isCreating} // تعطيل الحقل أثناء الإرسال
-              required
-            />
-          </div>
-        </div>
-
-        <div className="flex justify-end gap-3">
-          <Button
-            type="submit"
-            label={isCreating ? "جاري الحفظ والإنشاء..." : "حفظ الإعدادات"}
-            className="bg-main-color"
-            disabled={isCreating} // تعطيل الزر أثناء التخاطب مع السيرفر
+          <Textarea
+            label="وصف الموسم"
+            name="description"
+            value={description}
+            onChange={(e) => {
+              setDescription(e.target.value);
+              if (errors.description) setErrors({ ...errors, description: "" });
+            }}
+            rows={4}
+            placeholder="وصفاً مختصراً عن الموسم"
+            error={errors.description}
+            disabled={isCreating} // تعطيل الحقل أثناء الإرسال
+            required
           />
         </div>
-      </form>
-    </div>
+
+        <div className="flex flex-col gap-4">
+          <Input
+            label="تاريخ بدء التقديم"
+            type="date"
+            name="start_date"
+            value={start_date}
+            onChange={(e) => {
+              setStart_date(e.target.value);
+              if (errors.start_date) setErrors({ ...errors, start_date: "" });
+            }}
+            error={errors.start_date}
+            disabled={isCreating} // تعطيل الحقل أثناء الإرسال
+            required
+          />
+
+          <Input
+            label="تاريخ انتهاء التقديم"
+            type="date"
+            name="end_date"
+            value={end_date}
+            onChange={(e) => {
+              setEnd_date(e.target.value);
+              if (errors.end_date) setErrors({ ...errors, end_date: "" });
+            }}
+            error={errors.end_date}
+            disabled={isCreating} // تعطيل الحقل أثناء الإرسال
+            required
+          />
+        </div>
+      </div>
+
+      <div className="flex justify-end gap-3">
+        <Button
+          type="submit"
+          label={isCreating ? "جاري الحفظ والإنشاء..." : "حفظ الإعدادات"}
+          className="bg-main-color w-full md:w-auto"
+          disabled={isCreating} // تعطيل الزر أثناء التخاطب مع السيرفر
+        />
+      </div>
+    </form>
+  </div>
+</div>
   );
 };
 

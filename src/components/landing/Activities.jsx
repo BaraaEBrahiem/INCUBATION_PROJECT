@@ -1,55 +1,39 @@
-import React from 'react'
-import AllActivities from '../AllActivities';
-import SignupLink from '../SignupLink';
-import activity1 from '../../assets/images/activity-1.jpg';
-import activity2 from '../../assets/images/activity-2.jpg';
-import activity3 from '../../assets/images/activity-3.png';
+import React from "react";
+import AllActivities from "../AllActivities";
+import { useGetPublicWorkshopsQuery } from "../../api/endpoints/workshopsApi";
 
-const activities = [
-  {
-    image: activity1,
-    title: "هل ترغب بأن تكون جزءاً من المستقبل التكنولوجي",
-    description: "دورة تدريب مدربين روبوت سبارك",
-    status: "منتهية",
-    trainer: "محمد احمد",
-    count: 25,
-  },
-  {
-    image: activity2,
-    title: "هل ترغب بأن تكون جزءاً من المستقبل التكنولوجي؟",
-    description: "دورة تدريب مدربين روبوت سبارك",
-    status: "لم تبدأ بعد",
-    trainer: "محمد احمد",
-    count: 25,
-  },
-  {
-    image: activity3,
-    title: "هل ترغب بأن تكون جزءاً من المستقبل التكنولوجي؟",
-    description: "دورة تدريب مدربين روبوت سبارك",
-    status: "بدأت حديثاً",
-    trainer: "محمد احمد",
-    count: 25,
-  },
-  {
-    image: activity1,
-    title: "هل ترغب بأن تكون جزءاً من المستقبل التكنولوجي؟",
-    description: "دورة تدريب مدربين روبوت سبارك",
-    status: "منتهية",
-    trainer: "محمد احمد",
-    count: 25,
-  },
-  
-]
-const Activities = ({id}) => {
+const Activities = ({ id }) => {
+  const {
+    data: activities = [],
+    isLoading,
+    error,
+  } = useGetPublicWorkshopsQuery();
+
+  if (isLoading) {
+    return <div>جاري تحميل النشاطات...</div>;
+  }
+
   return (
-    <div className='bg-white-color p-4 mb-40' id={id}>
-         <div className="container">
-        <h1 className='text-second-color font-semibold text-[40px] mb-10'>النشاطات</h1>
-        <AllActivities activities={activities}/>
-          
-    </div>
-    </div>
-  )
-}
+    <div className="bg-white-color p-4 mb-40" id={id}>
+      <div className="container">
+        <h1 className="text-second-color font-semibold text-[40px] mb-10">
+          النشاطات
+        </h1>
 
-export default Activities
+        {error ? (
+          <div className="text-center text-red-500">
+            تعذر تحميل النشاطات.
+          </div>
+        ) : activities.length === 0 ? (
+          <div className="text-center text-gray-500 py-10">
+            لا توجد نشاطات حالياً.
+          </div>
+        ) : (
+          <AllActivities activities={activities} />
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default Activities;
