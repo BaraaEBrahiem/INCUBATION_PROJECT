@@ -9,7 +9,6 @@ const IdeaFormPage = () => {
   const navigate = useNavigate()
   const [showSuccessModal, setShowSuccessModal] = useState(false)
   
-  // 1. استخراج حالة الخطأ error بجانب isLoading
   const { 
     data: activeSeason, 
     isLoading: isLoadingSeason,

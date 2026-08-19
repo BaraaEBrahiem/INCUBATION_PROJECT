@@ -57,7 +57,7 @@ const IncubationStagesPage = () => {
   const currentStageIndex = STAGE_INDEX_MAP[serverStage] ?? 0;
 
   const renderStageComponent = () => {
-    // إذا لم تتوفر بيانات المرحلة أو كانت فارغة (مثلاً لم يحدد الموعد بعد)
+    // إذا لم تتوفر بيانات المرحلة أو كانت فارغة
     if (!stageData && serverStage !== "GRADUATED_NEGATIVE") {
       return (
         <div className="p-8 bg-blue-50 border border-blue-200 rounded-xl text-center max-w-2xl mx-auto my-8 shadow-sm">
