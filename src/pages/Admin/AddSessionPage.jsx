@@ -40,25 +40,116 @@ const AddSessionPage = () => {
     setSession({ ...session, [field]: value });
     if (errors[field]) setErrors({ ...errors, [field]: "" });
   };
-
+  
   const validate = () => {
-    const newErrors = {};
-    if (!session.title) newErrors.title = "عنوان الجلسة مطلوب";
-    if (!session.trainer) newErrors.trainer = "يرجى اختيار المدرب";
-    if (!session.location) newErrors.location = "موقع المعسكر مطلوب";
-    if (!session.start_time) newErrors.start_time = "وقت بدء الجلسة مطلوب";
-    if (!session.end_time) newErrors.end_time = "وقت انتهاء الجلسة مطلوب";
-    if (!session.date) newErrors.date = "تاريخ الجلسة مطلوب";
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
+  const newErrors = {};
+
+  if (!session.title.trim()) {
+    newErrors.title = "عنوان الجلسة مطلوب";
+  }
+
+  if (!session.trainer) {
+    newErrors.trainer = "يرجى اختيار المدرب";
+  }
+
+  if (!session.location.trim()) {
+    newErrors.location = "موقع المعسكر مطلوب";
+  }
+
+  if (!session.start_time) {
+    newErrors.start_time = "وقت بدء الجلسة مطلوب";
+  }
+
+  if (!session.end_time) {
+    newErrors.end_time = "وقت انتهاء الجلسة مطلوب";
+  }
+
+  if (!session.date) {
+    newErrors.date = "تاريخ الجلسة مطلوب";
+  }
+
+  // التحقق من أن النهاية بعد البداية
+  if (
+    session.start_time &&
+    session.end_time &&
+    session.end_time <= session.start_time
+  ) {
+    newErrors.end_time =
+      "يجب أن يكون وقت انتهاء الجلسة بعد وقت البدء";
+  }
+
+  setErrors(newErrors);
+
+  return Object.keys(newErrors).length === 0;
+};
 
   const handleSubmit = async () => {
-    if (!validate()) return;
-    if (!seasonId) {
-      showError("لا يمكن تحديد الموسم الحالي");
-      return;
+  if (!validate()) return;
+
+  if (!seasonId) {
+    showError("لا يمكن تحديد الموسم الحالي");
+    return;
+  }
+
+  try {
+    await addSession({
+      sessionData: session,
+      season_id: seasonId,
+    }).unwrap();
+
+    showSuccess(
+      "تم إضافة الجلسة بنجاح. سيتم إرسال الإشعارات للمشاركين."
+    );
+
+    navigate(-1);
+
+  } catch (err) {
+    console.error("Create session error:", err);
+
+    const backendErrors = err?.data || {};
+
+    // أخطاء الحقول القادمة من Backend
+    const newErrors = {};
+
+    Object.keys(backendErrors).forEach((field) => {
+      const value = backendErrors[field];
+
+      if (Array.isArray(value)) {
+        newErrors[field] = value[0];
+      } else if (typeof value === "string") {
+        newErrors[field] = value;
+      }
+    });
+
+    // وضع أخطاء الحقول داخل الـ state
+    setErrors((prev) => ({
+      ...prev,
+      ...newErrors,
+    }));
+
+    // استخراج رسالة واضحة للـ Toast
+    let errorMessage = "حدث خطأ في إضافة الجلسة";
+
+    if (backendErrors.detail) {
+      errorMessage = backendErrors.detail;
+    } 
+    else if (backendErrors.non_field_errors?.length) {
+      errorMessage = backendErrors.non_field_errors[0];
     }
+    else {
+      const firstError = Object.values(backendErrors)[0];
+
+      if (Array.isArray(firstError)) {
+        errorMessage = firstError[0];
+      } 
+      else if (typeof firstError === "string") {
+        errorMessage = firstError;
+      }
+    }
+
+    showError(errorMessage);
+  }
+
 
     try {
       await addSession({ sessionData: session, season_id: seasonId }).unwrap();

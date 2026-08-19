@@ -6,7 +6,10 @@ import Modal from "../../components/Modal";
 import Select from "../../components/Select";
 import Button from "../../components/Button";
 import Input from "../../components/Input";
-
+import {
+  showSuccess,
+  showError,
+} from "../../Utils/toast";
 import {
   useGetAdminUsersQuery,
   useCreateAdminUserMutation,
@@ -88,9 +91,7 @@ const UsersPage = () => {
           formData.selectedRole || null,
       }).unwrap();
 
-      alert(
-        "تم إضافة المستخدم بنجاح!"
-      );
+      showSuccess("تم إضافة المستخدم بنجاح");
 
       setOpen(false);
 
@@ -102,24 +103,11 @@ const UsersPage = () => {
       });
 
     } catch (err) {
-      console.error(
-        "ERROR:",
-        err
-      );
+  console.error("ERROR:", err);
+  console.log("Backend error:", err?.data);
 
-      console.log(
-        err?.data
-      );
-
-      alert(
-        err?.data
-          ?.message ||
-          JSON.stringify(
-            err?.data
-          ) ||
-          "حدث خطأ أثناء إضافة المستخدم"
-      );
-    }
+  showError(err);
+}
   };
 
   if (isLoading) {

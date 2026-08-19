@@ -86,10 +86,16 @@ const TeamRequestForm = () => {
       setCount("");
       setDescription("");
     } catch (error) {
-      console.error("Error sending team request:", error);
-      const msg = error?.data?.message || error?.data?.detail || "حدث خطأ في إرسال الطلب، يرجى المحاولة لاحقاً";
-      setApiError(msg);
-    }
+  console.error("Error sending team request:", error);
+
+  const msg =
+    error?.data?.error ||
+    error?.data?.message ||
+    error?.data?.detail ||
+    "حدث خطأ في إرسال الطلب، يرجى المحاولة لاحقاً";
+
+  setApiError(msg);
+}
   };
 
   const handleCloseModal = () => {

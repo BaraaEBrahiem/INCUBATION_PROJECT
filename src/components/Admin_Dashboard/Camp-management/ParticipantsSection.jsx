@@ -41,10 +41,15 @@ const ParticipantsSection = () => {
       setIsModalOpen(false);
       refetch(); // تحديث القائمة (سيختفي المشارك بعد القرار)
     } catch (err) {
-      console.error("Full error:", err);
-      const errorMsg = err?.data?.message || err?.data?.detail || "حدث خطأ في العملية";
-      showError(`${errorMsg}`);
-    }
+  console.error("Full error:", err);
+
+  const errorMsg =
+    err?.data?.detail ||
+    err?.data?.message ||
+    "حدث خطأ أثناء تنفيذ العملية.";
+
+  showError(errorMsg);
+}
   };
 
   // فلترة حسب البحث

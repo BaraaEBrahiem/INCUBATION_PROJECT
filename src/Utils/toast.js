@@ -53,7 +53,17 @@ export const showError = (error, options = {}) => {
 
     if (data.detail) {
       message = data.detail;
-    } else if (data.non_field_errors?.length) {
+    
+    }
+    else if (data.error) {
+      message = data.error;
+    }else if (data.message) {
+      message = data.message;
+    }
+    else if (data.status) {
+  message = data.status;
+}
+    else if (data.non_field_errors?.length) {
       message = data.non_field_errors[0];
     } else {
       const firstKey = Object.keys(data)[0];

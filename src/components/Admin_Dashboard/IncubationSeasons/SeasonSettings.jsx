@@ -106,9 +106,9 @@ const SeasonSettings = ({ season, onSave }) => {
         });
       }
     } catch (err) {
-      console.error("Update Season Error:", err);
-      showError(err?.data?.detail || err?.data?.message || "حدث خطأ أثناء تحديث بيانات الموسم");
-    }
+  console.error("Update Season Error:", err);
+  showError(err);
+}
   };
 
   const handleCloseSubmission = async () => {
@@ -117,9 +117,9 @@ const SeasonSettings = ({ season, onSave }) => {
       showSuccess("تم إغلاق فترة التقديم بنجاح");
       setIsConfirmOpen(false);
     } catch (err) {
-      console.error("Close Submission Error:", err);
-      showError(err?.data?.detail || err?.data?.message || "حدث خطأ أثناء محاولة إغلاق التقديم");
-    }
+    console.error("Close Submission Error:", err);
+    showError(err);
+  }
   };
 
  return (

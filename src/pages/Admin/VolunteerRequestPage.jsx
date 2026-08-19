@@ -17,7 +17,60 @@ import {
   useRemoveEvaluatorRoleMutation,
 } from "../../api/endpoints/admin/volunteersOptionsApi.js";
 import {useSelector} from "react-redux";
+const getApiErrorMessage = (err, fallback = "حدث خطأ غير متوقع") => {
+  const data = err?.data;
 
+  if (!data) {
+    return fallback;
+  }
+
+  // إذا الباك رجع string مباشرة
+  if (typeof data === "string") {
+    return data;
+  }
+
+  // الباك عندك يرجع {"error": "..."}
+  if (typeof data.error === "string") {
+    return data.error;
+  }
+
+  // في حال API آخر يرجع {"message": "..."}
+  if (typeof data.message === "string") {
+    return data.message;
+  }
+
+  // في حال DRF يرجع {"detail": "..."}
+  if (typeof data.detail === "string") {
+    return data.detail;
+  }
+
+  // أخطاء الحقول
+  if (data && typeof data === "object") {
+    for (const value of Object.values(data)) {
+      if (Array.isArray(value) && value.length > 0) {
+        const firstError = value[0];
+
+        if (typeof firstError === "string") {
+          return firstError;
+        }
+
+        if (firstError?.message) {
+          return firstError.message;
+        }
+
+        if (firstError?.string) {
+          return firstError.string;
+        }
+      }
+
+      if (typeof value === "string") {
+        return value;
+      }
+    }
+  }
+
+  return fallback;
+};
 const VolunteerRequestPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -80,14 +133,12 @@ const VolunteerRequestPage = () => {
 
       navigate("/admin/volunteers");
     } catch (err) {
-      showError(
-        err?.data?.message ||
-          "حدث خطأ في قبول الطلب"
-      );
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
+    console.error("Approve volunteer error:", err);
+    showError(err);
+  } finally {
+    setIsSubmitting(false);
+  }
+};
 
   const handleReject = async () => {
     setIsSubmitting(true);
@@ -99,50 +150,69 @@ const VolunteerRequestPage = () => {
 
       navigate("/admin/volunteers");
     } catch (err) {
-      showError(
-        err?.data?.message ||
-          "حدث خطأ في رفض الطلب"
-      );
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
+    console.error("Reject volunteer error:", err);
+    showError(err);
+  } finally {
+    setIsSubmitting(false);
+  }
+};
 
   const handleSendInvitation = async () => {
-    setIsSubmitting(true);
+  // =========================
+  // التحقق من الحقول
+  // =========================
 
-    try {
-      await sendEvaluationInvitation({
-        evaluator_id: request?.user_id,
-        invitationData: {
-          volunteer_id: request?.id,
-          expected_duration:
-            evaluationData.expected_duration,
-          task: evaluationData.required_task,
-        },
-      }).unwrap();
+  if (!evaluationData.description.trim()) {
+    showError("الرجاء إدخال وصف طلب التقييم");
+    return;
+  }
 
-      showSuccess(
-        "تم إرسال دعوة التقييم بنجاح"
-      );
+  if (!evaluationData.expected_duration.trim()) {
+    showError("الرجاء إدخال المدة الزمنية المتوقعة");
+    return;
+  }
 
-      setEvaluateOpen(false);
+  if (!evaluationData.required_task.trim()) {
+    showError("الرجاء إدخال المهمة المطلوبة");
+    return;
+  }
 
-      setEvaluationData({
-        description: "",
-        committee_date: "",
-        expected_duration: "",
-        required_task: "",
-      });
-    } catch (err) {
-      showError(
-        err?.data?.message ||
-          "حدث خطأ في إرسال الدعوة"
-      );
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
+  setIsSubmitting(true);
+
+  try {
+    await sendEvaluationInvitation({
+      evaluator_id: request?.user_id,
+      invitationData: {
+        volunteer_id: request?.id,
+        description: evaluationData.description.trim(),
+        expected_duration: evaluationData.expected_duration.trim(),
+        task: evaluationData.required_task.trim(),
+      },
+    }).unwrap();
+
+    showSuccess("تم إرسال دعوة التقييم بنجاح");
+
+    setEvaluateOpen(false);
+
+    setEvaluationData({
+      description: "",
+      committee_date: "",
+      expected_duration: "",
+      required_task: "",
+    });
+  } catch (err) {
+    console.error("Evaluation invitation error:", err);
+
+    const errorMessage = getApiErrorMessage(
+      err,
+      "حدث خطأ في إرسال دعوة التقييم"
+    );
+
+    showError(errorMessage);
+  } finally {
+    setIsSubmitting(false);
+  }
+};
 
   const handleRemoveEvaluator = async () => {
     setIsSubmitting(true);

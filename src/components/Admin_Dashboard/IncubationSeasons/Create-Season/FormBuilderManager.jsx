@@ -202,9 +202,17 @@ const FormBuilderManager = ({ onSubmit, isSubmitting: isSaving, seasonId = null,
       await publishNewSeason(seasonId).unwrap();
       showSuccess("تم نشر وتفعيل الموسم وفتح باب التقديم بنجاح! 🎉");
     } catch (err) {
-      console.error("Publish Season Error:", err);
-      showError(err?.data?.detail || err?.data?.message || "حدث خطأ أثناء نشر وتفعيل الموسم");
-    }
+    console.error("========== PUBLISH SEASON ERROR ==========");
+    console.log("ERR:", err);
+    console.log("ERR DATA:", err?.data);
+    console.log("ERR STATUS:", err?.status);
+    console.log("ERR DATA STATUS:", err?.data?.status);
+    console.log("ERR DATA DETAIL:", err?.data?.detail);
+    console.log("ERR DATA MESSAGE:", err?.data?.message);
+    console.log("==========================================");
+
+    showError(err);
+  }
   };
 
   if (isFetching && seasonId && !isNewSeason) {
