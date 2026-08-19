@@ -40,10 +40,8 @@ const PublicWorkshopDetailsPage = () => {
 
     } catch (err) {
 
-      showError(
-        err?.data?.detail ||
-        "حدث خطأ أثناء التسجيل"
-      );
+      console.error(err);
+      showError(err);
     }
   };
 

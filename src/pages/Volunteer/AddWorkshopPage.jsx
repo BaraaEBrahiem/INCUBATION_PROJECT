@@ -111,7 +111,7 @@ try {
 
       setStep(1);
     } catch (err) {
-      showError ('error', err)
+      showError(err)
 
     }
   };

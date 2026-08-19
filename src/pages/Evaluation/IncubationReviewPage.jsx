@@ -3,7 +3,11 @@ import { useParams } from "react-router-dom";
 
 import Textarea from "../../components/Textarea";
 import Button from "../../components/Button";
-import {showInfo} from "../../Utils/toast";
+import {
+  showInfo,
+  showSuccess,
+  showError,
+} from "../../Utils/toast";
 import {
   useGetIncubationReviewsQuery,
   useCreateIncubationReviewMutation,
@@ -47,11 +51,13 @@ const IncubationReviewPage = () => {
         notes,
       }).unwrap();
 
+      showSuccess("تم إرسال المراجعة بنجاح");
+
       setNotes("");
       setProgressScore("");
     } catch (err) {
       console.error(err);
-      alert("حدث خطأ أثناء إرسال المراجعة");
+      showError(err);
     }
   };
 

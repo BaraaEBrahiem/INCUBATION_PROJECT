@@ -63,9 +63,13 @@ const EvaluationFormPage = () => {
   const [scores, setScores] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+
   // بعد الربط، سيتم تحديدها بناءً على وجود criteriaFromApi
   const isFormPublished =
   formData?.is_published ?? false; 
+
+  const isEvaluationLocked =
+  formData?.is_submitted ?? false;
 
   const updateScore = (id, delta) => {
     setScores((prevScores) =>
@@ -84,9 +88,9 @@ const EvaluationFormPage = () => {
   const totalScore = scores.reduce((sum, item) => sum + item.value, 0);
 
   const handleSubmit = async () => {
+    setIsSubmitting(true);
 
     try {
-
       await saveEvaluation({
         idea_id,
         scores: scores.map((item) => ({
@@ -95,22 +99,15 @@ const EvaluationFormPage = () => {
         })),
       }).unwrap();
 
-      await submitEvaluationFinal(
-        idea_id
-      ).unwrap();
+      await submitEvaluationFinal(idea_id).unwrap();
 
-      showSuccess(
-        "تم إرسال التقييم بنجاح"
-      );
+      showSuccess("تم إرسال التقييم بنجاح");
 
     } catch (err) {
-
       console.error(err);
-
-      showError(
-        err?.data?.detail ||
-        "حدث خطأ أثناء إرسال التقييم"
-      );
+      showError(err);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -176,7 +173,12 @@ const EvaluationFormPage = () => {
                 <div className="flex items-center justify-between bg-gray-100 rounded-md px-3 py-1.5 w-50">
                   <button
                     onClick={() => updateScore(item.id, -1)}
-                    className="text-black border-2 border-black rounded-full transition-colors hover:bg-gray-200 p-1"
+                    disabled={isEvaluationLocked}
+                    className={`text-black border-2 border-black rounded-full transition-colors p-1 ${
+                      isEvaluationLocked
+                        ? "opacity-50 cursor-not-allowed"
+                        : "hover:bg-gray-200"
+                    }`}
                     aria-label="إنقاص الدرجة"
                   >
                     <BiMinus size={18} />
@@ -184,7 +186,12 @@ const EvaluationFormPage = () => {
                   <span className="text-main-color font-bold text-lg">{item.value}</span>
                   <button
                     onClick={() => updateScore(item.id, 1)}
-                    className="text-black border-2 border-black rounded-full transition-colors hover:bg-gray-200 p-1"
+                    disabled={isEvaluationLocked}
+                    className={`text-black border-2 border-black rounded-full transition-colors p-1 ${
+                      isEvaluationLocked
+                        ? "opacity-50 cursor-not-allowed"
+                        : "hover:bg-gray-200"
+                    }`}
                     aria-label="زيادة الدرجة"
                   >
                     <BiPlus size={18} />
@@ -207,12 +214,24 @@ const EvaluationFormPage = () => {
           </div>
         </div>
 
+        {isEvaluationLocked && (
+          <div className="mt-6 mb-4 rounded-md bg-yellow-100 border border-yellow-300 text-yellow-800 p-3 text-center">
+            تم إرسال هذا التقييم مسبقاً ولا يمكن تعديله.
+          </div>
+        )}
+
         <div className="flex items-start gap-3 mt-6 text-xl">
           <Button
-            label={isSubmitting ? 'جاري الإرسال...' : 'إرسال للإدارة'}
+            label={
+              isEvaluationLocked
+                ? 'تم إرسال التقييم'
+                : isSubmitting
+                ? 'جاري الإرسال...'
+                : 'إرسال للإدارة'
+            }
             className="bg-main-color mt-1"
             onClick={handleSubmit}
-            disabled={isSubmitting}
+            disabled={isSubmitting || isEvaluationLocked}
           />
           <NavLinkUniversal
             label={<Button label="كتابة ملاحظات" className="bg-main-color text-xl" />}

@@ -4,15 +4,25 @@ import Button from "./Button";
 const ApprovalActions = ({ onApprove, onReject }) => {
   const [status, setStatus] = useState("pending");
 
-  const handleApprove = async () => {
-    if (onApprove) await onApprove();
-    setStatus("approved");
-  };
+const handleApprove = async () => {
+  if (!onApprove) return;
 
-  const handleReject = async () => {
-    if (onReject) await onReject();
+  const success = await onApprove();
+
+  if (success) {
+    setStatus("approved");
+  }
+};
+
+const handleReject = async () => {
+  if (!onReject) return;
+
+  const success = await onReject();
+
+  if (success) {
     setStatus("rejected");
-  };
+  }
+};
 
   return (
     <div className="mt-4">

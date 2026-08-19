@@ -43,46 +43,68 @@ const VolunteerRequestsPage = () => {
   const consultationRequests = requestsData?.consultations || [];
   const volunteerRequests = requestsData?.join_requests || [];
 
+  const getErrorMessage = (error, fallbackMessage) => {
+  return (
+    error?.data?.detail ||
+    error?.data?.message ||
+    error?.data?.error ||
+    fallbackMessage
+  );
+};
+
   // دوال الموافقة والرفض
-  const handleApprove = async (id) => {
-    // TODO: بعد الربط هذا الكود
-    try {
+const handleApprove = async (id) => {
+  try {
+    await handleDecision({
+      id,
+      action: "accept",
+    }).unwrap();
 
-      await handleDecision({
-        id,
-        action: "accept",
-      }).unwrap();
+    alert("تم قبول طلب الاستشارة بنجاح");
 
-      alert("تم قبول طلب الاستشارة بنجاح");
+    refetch();
 
-      refetch();
+    return true;
+  } catch (error) {
+    console.error(error);
 
-    } catch (error) {
-      console.error(error);
-      alert("حدث خطأ في قبول الطلب");
-    }
-  };
+    alert(
+      getErrorMessage(
+        error,
+        "حدث خطأ أثناء قبول طلب الاستشارة."
+      )
+    );
 
-  const handleReject = async (id) => {
-    // TODO: بعد الربط هذا الكود
-    // const reasonText = prompt("الرجاء إدخال سبب الرفض:");
-    // if (!reasonText) return;
-    try {
+    return false;
+  }
+};
 
-      await handleDecision({
-        id,
-        action: "reject",
-      }).unwrap();
 
-      alert("تم رفض طلب الاستشارة");
+const handleReject = async (id) => {
+  try {
+    await handleDecision({
+      id,
+      action: "reject",
+    }).unwrap();
 
-      refetch();
+    alert("تم رفض طلب الاستشارة.");
 
-    } catch (error) {
-      console.error(error);
-      alert("حدث خطأ في رفض الطلب");
-    }
-  };
+    refetch();
+
+    return true;
+  } catch (error) {
+    console.error(error);
+
+    alert(
+      getErrorMessage(
+        error,
+        "حدث خطأ أثناء رفض طلب الاستشارة."
+      )
+    );
+
+    return false;
+  }
+};
 
   // TODO: بعد الربط شغلي حالة التحميل والخطأ
    if (isLoading) {

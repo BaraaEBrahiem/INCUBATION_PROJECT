@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { LuCirclePlus } from "react-icons/lu";
 import Input from "../../components/Input";
 import Button from '../../components/Button';
+import { showError } from "../../Utils/toast";
  import { 
    useGetScheduleQuery, 
    useAddAppointmentMutation, 
@@ -171,7 +172,7 @@ useEffect(() => {
   // -----------------------------
 const handleAddAppointment = async () => {
   if (selectedDays.length === 0) {
-    alert("يرجى اختيار يوم واحد على الأقل");
+    showError("يرجى اختيار يوم واحد على الأقل");
     return;
   }
 
@@ -193,7 +194,7 @@ const handleAddAppointment = async () => {
 
   } catch (error) {
     console.error(error);
-    alert("خطأ في إضافة الموعد");
+    showError(error);
   }
 };
 
@@ -207,7 +208,7 @@ const handleDeleteAppointment = async (id) => {
     setAppointments((prev) => prev.filter((a) => a.id !== id));
   } catch (error) {
     console.error(error);
-    alert("حدث خطأ في حذف الموعد");
+    showError(error);
   }
 };
 
@@ -216,7 +217,7 @@ const handleDeleteAppointment = async (id) => {
   // -----------------------------
 const handleAddHoliday = async () => {
   if (!holidayFrom || !holidayTo) {
-    alert("يرجى اختيار فترة الأجازة");
+    showError("يرجى اختيار فترة الإجازة");
     return;
   }
 
@@ -234,7 +235,7 @@ const handleAddHoliday = async () => {
 
   } catch (error) {
     console.error(error);
-    alert("خطأ في إضافة الإجازة");
+    showError(error);
   }
 };
 
