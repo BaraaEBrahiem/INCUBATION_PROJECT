@@ -14,7 +14,7 @@ const NearestWorkshopCard = () => {
     error,
   } = useGetNearestWorkshopQuery();
 
-  // تحميل
+  // 1. حالة التحميل
   if (isLoading) {
     return (
       <div className="bg-white p-6 rounded-lg shadow-lg mb-8 text-center">
@@ -25,18 +25,28 @@ const NearestWorkshopCard = () => {
     );
   }
 
-  // خطأ
+  // 2. معالجة الأخطاء بصورة واضحة حسب نوع الخطأ
   if (error) {
+    let errorMessage = "حدث خطأ أثناء جلب بيانات الورشة";
+
+    if (error?.status === 403) {
+      errorMessage = "ليس لديك صلاحية لعرض ورشات العمل القادمة.";
+    } else if (error?.status === 401) {
+      errorMessage = "يرجى تسجيل الدخول لعرض أقرب ورشة عمل.";
+    } else if (error?.data?.detail) {
+      errorMessage = error.data.detail;
+    }
+
     return (
       <div className="bg-white p-6 rounded-lg shadow-lg mb-8 text-center">
         <p className="font-bold text-red-500">
-          حدث خطأ أثناء جلب بيانات الورشة
+          {errorMessage}
         </p>
       </div>
     );
   }
 
-  // لا يوجد ورشات
+  // 3. حالة عدم وجود ورشات
   if (!workshop || workshop.detail) {
     return (
       <div className="bg-white p-6 rounded-lg shadow-lg mb-8 text-center">
@@ -48,14 +58,14 @@ const NearestWorkshopCard = () => {
   }
 
   const arabicDays = {
-  Monday: "الاثنين",
-  Tuesday: "الثلاثاء",
-  Wednesday: "الأربعاء",
-  Thursday: "الخميس",
-  Friday: "الجمعة",
-  Saturday: "السبت",
-  Sunday: "الأحد",
-};
+    Monday: "الاثنين",
+    Tuesday: "الثلاثاء",
+    Wednesday: "الأربعاء",
+    Thursday: "الخميس",
+    Friday: "الجمعة",
+    Saturday: "السبت",
+    Sunday: "الأحد",
+  };
 
   const formattedDate = workshop?.date
     ?.split(" ")

@@ -10,7 +10,7 @@ import NavLinkUniversal from "../../components/NavLinkUniversal";
 import { useLoginMutation } from "../../api/endpoints/authApi";
 import { setCredentials } from "../../redux/authSlice";
 import { RoleContext } from "../../Context/RoleContext";
-import { showSuccess, showError } from "../../Utils/toast";
+import { showSuccess} from "../../Utils/toast";
 
 const LoginPage = () => {
   const dispatch = useDispatch();
@@ -96,28 +96,24 @@ const LoginPage = () => {
       updateRoles(user.roles);
 
       showSuccess(`مرحباً ${user.name}`);
-      if (response.force_password_change) {
-  navigate("/change-password");
-  return;
-}
+      
       // التوجيه التلقائي بناءً على الدور المخزن
       if (user.roles.includes("admin") || user.roles.includes("secretary")) {
         navigate("/admin-mainpage");
       } else if (user.roles.includes("idea_owner") || user.roles.includes("صاحب فكرة")) {
         navigate("/ideaowner-mainpage");
-      } else if (user.roles.includes("volunteer") || user.roles.includes("متطوع")) {
-        navigate("/volunteer-mainpage");
       } else if (user.roles.includes("evaluator") || user.roles.includes("مقيم")) {
         navigate("/evaluator-mainpage");
-      } else if (user.roles.includes("incubator") || user.roles.includes("مراجع")) {
+      } else if (user.roles.includes("incubator") || user.roles.includes("محتضن")) {
         navigate("/incubator-mainpage");
+      } else if (user.roles.includes("volunteer") || user.roles.includes("متطوع")) {
+        navigate("/volunteer-mainpage");
       } else {
         navigate("/visitor-mainpage");
       }
     } catch (error) {
       console.error("Login error:", error);
-      const errorMsg = error?.data?.message || error?.data?.detail || "فشل تسجيل الدخول";
-      showError(errorMsg);
+      const errorMsg = "البريد الإلكتروني أو كلمة المرور غير صحيحة";
       setErrors({ general: errorMsg });
     }
   };

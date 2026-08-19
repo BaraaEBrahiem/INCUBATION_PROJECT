@@ -4,12 +4,11 @@ import LastWorkshops from '../../components/LastWorkshops';
 import LastExhibition from '../../components/LastExhibition';
 import Button from '../../components/Button';
 import NavLinkUniversal from '../../components/NavLinkUniversal';
+import NextUpcomingSessionCard
+from "../Evaluation/NextUpcomingSessionCard";
+
 
 const EvaluatedMainPage = () => {
-    const sessionInfo = {
-        date: '2023-05-01',
-        time: '10:00 AM',
-    }
   return (
     <div className='bg-white-color min-h-screen p-4'>
         <div className="container mt-10">
@@ -19,13 +18,8 @@ const EvaluatedMainPage = () => {
             <NavLinkUniversal to="/ideaform" label={<Button className="mt-4 text-xl bg-main-color hover:scale-105 transition" label="قدم فكرتك الآن"/>} />
          </div> 
          <NearestWorkshopCard />
-         <div className='bg-white p-6 rounded-lg flex justify-between items-center shadow-lg mb-8'>
-          <div>
-            <h3 className='font-bold text-2xl mb-2'>لديك جلسة تقييم :</h3>
-            <p><span className='font-bold text-xl'>بتاريخ :</span>{sessionInfo.date}</p>
-            <p><span className='font-bold text-xl'>الوقت :</span>{sessionInfo.time}</p>
-            </div>
-            <NavLinkUniversal to="/evaluation-center" label={<Button className="bg-main-color" label="الاطلاع على المشاريع"/>} />
+         <div className='bg-white p-6 shadow-lg rounded-lg mb-8'>
+                <NextUpcomingSessionCard />
             </div>
          <LastWorkshops />
          <LastExhibition />

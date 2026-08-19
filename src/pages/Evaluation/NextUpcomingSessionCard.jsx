@@ -16,7 +16,7 @@ const NextUpcomingSessionCard = () => {
 
   if (isLoading) {
     return (
-      <div className="bg-white p-6 rounded-lg shadow-lg mb-8 text-center">
+      <div>
         <p className="font-bold text-gray-500">
           جاري تحميل أقرب جلسة...
         </p>
@@ -26,7 +26,7 @@ const NextUpcomingSessionCard = () => {
 
   if (error) {
     return (
-      <div className="bg-white p-6 rounded-lg shadow-lg mb-8 text-center">
+      <div>
         <p className="font-bold text-red-500">
           حدث خطأ أثناء جلب الجلسة
         </p>
@@ -36,8 +36,8 @@ const NextUpcomingSessionCard = () => {
 
   if (!session || session.message) {
     return (
-      <div className="bg-white p-6 rounded-lg shadow-lg mb-8 text-center">
-        <p className="font-bold text-gray-500">
+      <div>
+        <p className="font-bold text-gray-500 text-center">
           لا توجد جلسات قادمة حالياً
         </p>
       </div>
@@ -81,7 +81,7 @@ const NextUpcomingSessionCard = () => {
 
   return (
     <div
-      className="bg-white p-6 rounded-lg flex justify-between items-center shadow-lg mb-8"
+      className=" p-6 flex justify-between items-center"
       dir="rtl"
     >
       <div className="text-right">

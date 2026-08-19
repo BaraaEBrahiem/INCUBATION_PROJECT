@@ -1,9 +1,5 @@
 import React from "react";
-
-import {
-  useNavigate,
-} from "react-router-dom";
-
+import { useNavigate } from "react-router-dom";
 import DataTable from "./DataTable";
 import EvaluatorsModal from "./Evaluation-management/EvaluatorsModal";
 
@@ -17,375 +13,180 @@ export default function ProjectsTable({
   selectedProjectId,
   onSelectProject,
 }) {
-  const navigate =
-    useNavigate();
+  const navigate = useNavigate();
 
-  // ======================
   // State
-  // ======================
-
-  const [
-    modals,
-    setModals,
-  ] = React.useState({
+  const [modals, setModals] = React.useState({
     evals: false,
   });
 
-  // ======================
   // API
-  // ======================
-
   const {
-    data:
-      projectsFromApi,
+    data: projectsFromApi,
     isLoading,
     error,
     refetch,
-  } =
-    useGetIncubatedProjectsQuery();
+  } = useGetIncubatedProjectsQuery();
 
-  // ✅ تم التعديل هون فقط
   const {
-    data:
-      evaluatorsFromApi,
-    isLoading:
-      evaluatorsLoading,
-  } =
-    useGetIncubationEvaluatorsQuery(
-      selectedProjectId,
-      {
-        skip:
-          !selectedProjectId,
-      }
-    );
+    data: evaluatorsFromApi,
+    isLoading: evaluatorsLoading,
+  } = useGetIncubationEvaluatorsQuery(selectedProjectId, {
+    skip: !selectedProjectId,
+  });
 
-  // ======================
-  // Projects Data
-  // ======================
-
-  let projectsList =
-    [];
-
-  if (
-    Array.isArray(
-      projectsFromApi
-    )
-  ) {
-    projectsList =
-      projectsFromApi;
+  // Extract Projects List
+  let projectsList = [];
+  if (Array.isArray(projectsFromApi)) {
+    projectsList = projectsFromApi;
+  } else if (projectsFromApi?.results && Array.isArray(projectsFromApi.results)) {
+    projectsList = projectsFromApi.results;
+  } else if (projectsFromApi?.data && Array.isArray(projectsFromApi.data)) {
+    projectsList = projectsFromApi.data;
   }
 
-  if (
-    projectsFromApi
-      ?.results &&
-    Array.isArray(
-      projectsFromApi.results
-    )
-  ) {
-    projectsList =
-      projectsFromApi.results;
+  // Extract Evaluators Data
+  let evaluators = [];
+  if (Array.isArray(evaluatorsFromApi)) {
+    evaluators = evaluatorsFromApi;
+  } else if (evaluatorsFromApi?.results && Array.isArray(evaluatorsFromApi.results)) {
+    evaluators = evaluatorsFromApi.results;
+  } else if (evaluatorsFromApi?.data && Array.isArray(evaluatorsFromApi.data)) {
+    evaluators = evaluatorsFromApi.data;
   }
 
-  if (
-    projectsFromApi
-      ?.data &&
-    Array.isArray(
-      projectsFromApi.data
-    )
-  ) {
-    projectsList =
-      projectsFromApi.data;
-  }
-
-  // ======================
-  // Evaluators Data
-  // ======================
-
-  let evaluators =
-    [];
-
-  if (
-    Array.isArray(
-      evaluatorsFromApi
-    )
-  ) {
-    evaluators =
-      evaluatorsFromApi;
-  }
-
-  if (
-    evaluatorsFromApi
-      ?.results &&
-    Array.isArray(
-      evaluatorsFromApi.results
-    )
-  ) {
-    evaluators =
-      evaluatorsFromApi.results;
-  }
-
-  if (
-    evaluatorsFromApi
-      ?.data &&
-    Array.isArray(
-      evaluatorsFromApi.data
-    )
-  ) {
-    evaluators =
-      evaluatorsFromApi.data;
-  }
-
-  // ======================
   // Actions
-  // ======================
+  const openEvaluators = (projectId) => {
+    onSelectProject?.(projectId);
+    setModals({ evals: true });
+  };
 
-  const openEvaluators =
-    (
-      projectId
-    ) => {
-      onSelectProject?.(
-        projectId
-      );
+  const closeEvaluators = () => {
+    setModals({ evals: false });
+  };
 
-      setModals({
-        evals: true,
-      });
-    };
+  const openProjectDetails = (projectId) => {
+    navigate(`/admin/projects-details/${projectId}`);
+  };
 
-  const closeEvaluators =
-    () => {
-      setModals({
-        evals: false,
-      });
-    };
-
-  const openProjectDetails =
-    (
-      projectId
-    ) => {
-      navigate(
-        `/admin/projects-details/${projectId}`
-      );
-    };
-
-  // ======================
-  // Loading
-  // ======================
-
-  if (
-    isLoading
-  ) {
+  if (isLoading) {
     return (
       <div className="p-4 text-center">
-        <p className="text-gray-500">
-          جاري تحميل
-          المشاريع...
-        </p>
+        <p className="text-gray-500">جاري تحميل المشاريع...</p>
       </div>
     );
   }
 
-  // ======================
-  // Error
-  // ======================
-
-  if (
-    error
-  ) {
+  if (error) {
     return (
       <div className="p-4 text-center">
-        <p className="text-red-500 mb-3">
-          حدث خطأ
-          في تحميل
-          المشاريع
-        </p>
-
+        <p className="text-red-500 mb-3">حدث خطأ في تحميل المشاريع</p>
         <button
-          onClick={
-            refetch
-          }
+          onClick={refetch}
           className="bg-main-color text-white px-4 py-2 rounded"
         >
-          إعادة
-          المحاولة
+          إعادة المحاولة
         </button>
       </div>
     );
   }
 
-  // ======================
   // Table Columns
-  // ======================
-
-  const columns =
-    [
-      {
-        key: "actions",
-        label:
-          "الإجراءات",
-
-        render: (
-          row
-        ) => (
+  const columns = [
+    {
+      key: "actions",
+      label: "الإجراءات",
+      render: (row) => {
+        const id = row.idea_id || row.id;
+        return (
           <div className="flex flex-col gap-2">
             <button
-              onClick={(
-                e
-              ) => {
+              onClick={(e) => {
                 e.stopPropagation();
-
-                openProjectDetails(
-                  row.idea_id 
-                );
+                onSelectProject?.(id);
+                openProjectDetails(id);
               }}
-              className="bg-main-color text-white px-4 py-2 rounded-lg text-sm hover:bg-[#1e3356]"
+              className="bg-main-color text-white px-4 py-2 rounded-lg text-sm hover:bg-[#1e3356] transition-colors"
             >
-              عرض
-              التفاصيل
+              عرض التفاصيل
             </button>
 
             <button
-              onClick={(
-                e
-              ) => {
+              onClick={(e) => {
                 e.stopPropagation();
-
-                onOpenScheduleModal?.(
-                  row.idea_id 
-                    
-                );
+                onSelectProject?.(id);
+                onOpenScheduleModal?.(id);
               }}
-              className="bg-main-color text-white px-4 py-2 rounded-lg text-sm hover:bg-[#1e3356]"
+              className="bg-main-color text-white px-4 py-2 rounded-lg text-sm hover:bg-[#1e3356] transition-colors"
             >
-              جدولة
-              جلسة
-              متابعة
+              جدولة جلسة متابعة
             </button>
           </div>
-        ),
+        );
       },
-
-      {
-        key:
-          "progress_status",
-
-        label:
-          "الوضع الحالي للمشروع",
-
-        render: (
-          row
-        ) => (
-          <span className="font-bold text-green-700">
-            {row.progress_status ||
-              "غير محدد"}
-          </span>
-        ),
-      },
-
-      {
-        key:
-          "evaluators",
-
-        label:
-          "المقيمون الحاليون",
-
-        render: (
-          row
-        ) => (
+    },
+    {
+      key: "progress_status",
+      label: "الوضع الحالي للمشروع",
+      render: (row) => (
+        <span className="font-bold text-green-700">
+          {row.progress_status || "غير محدد"}
+        </span>
+      ),
+    },
+    {
+      key: "evaluators",
+      label: "المقيمون الحاليون",
+      render: (row) => {
+        const id = row.idea_id || row.id;
+        return (
           <span
             className="text-blue-600 underline cursor-pointer hover:text-blue-800"
-            onClick={(
-              e
-            ) => {
+            onClick={(e) => {
               e.stopPropagation();
-
-              openEvaluators(
-                row.idea_id 
-                  
-              );
+              openEvaluators(id);
             }}
           >
             عرض
           </span>
-        ),
+        );
       },
-
-      {
-        key:
-          "next_meeting",
-
-        label:
-          "تاريخ التقييم القادم",
-
-        render: (
-          row
-        ) =>
-          row.next_meeting ||
-          "لا يوجد",
-      },
-
-      {
-        key:
-          "title",
-
-        label:
-          "اسم المشروع",
-
-        render: (
-          row
-        ) =>
-          row.title ||
-          row.idea_title ||
-          "بدون اسم",
-      },
-    ];
+    },
+    {
+      key: "next_meeting",
+      label: "تاريخ التقييم القادم",
+      render: (row) => row.next_meeting || "لا يوجد",
+    },
+    {
+      key: "title",
+      label: "اسم المشروع",
+      render: (row) => row.title || row.idea_title || "بدون اسم",
+    },
+  ];
 
   return (
-    <div
-      className="p-4"
-      dir="rtl"
-    >
-      {projectsList.length ===
-      0 ? (
+    <div className="p-4" dir="rtl">
+      {projectsList.length === 0 ? (
         <div className="text-center py-10 text-gray-500">
-          لا توجد
-          مشاريع
-          محتضنة
-          حالياً
+          لا توجد مشاريع محتضنة حالياً
         </div>
       ) : (
-        <DataTable
-          columns={
-            columns
-          }
-          data={
-            projectsList
-          }
-          onRowClick={
-            onSelectProject
-          }
-          selectedRowId={
-            selectedProjectId
-          }
-        />
+       <DataTable
+          columns={columns}
+          data={projectsList}
+          onRowClick={(id) => onSelectProject?.(id)} 
+          selectedRowId={selectedProjectId}
+          rowKey={(row) => row.idea_id || row.id}
+/>
       )}
 
       {/* مودال المقيمين */}
       <EvaluatorsModal
-        isOpen={
-          modals.evals
-        }
-        onClose={
-          closeEvaluators
-        }
-        evaluators={
-          evaluators
-        }
-        isLoading={
-          evaluatorsLoading
-        }
+        isOpen={modals.evals}
+        onClose={closeEvaluators}
+        evaluators={evaluators}
+        isLoading={evaluatorsLoading}
       />
     </div>
   );
 }
-

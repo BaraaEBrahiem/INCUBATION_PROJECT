@@ -72,7 +72,7 @@ const VerificationPage = () => {
       
     } catch (error) {
       console.error("OTP verification error:", error);
-      setApiError(error?.data?.message || "الرمز غير صحيح أو منتهي الصلاحية. حاول مرة أخرى");
+      setApiError("الرمز غير صحيح أو منتهي الصلاحية. حاول مرة أخرى");
     }
   };
 

@@ -8,7 +8,12 @@ import { useGetCurrentActiveSeasonQuery } from '../../api/endpoints/seasonApi'
 const IdeaFormPage = () => {
   const navigate = useNavigate()
   const [showSuccessModal, setShowSuccessModal] = useState(false)
-  const { data: activeSeason, isLoading: isLoadingSeason } = useGetCurrentActiveSeasonQuery();
+  
+  const { 
+    data: activeSeason, 
+    isLoading: isLoadingSeason,
+    error: seasonError 
+  } = useGetCurrentActiveSeasonQuery();
 
   const handleSubmit = (response) => {
     if (response?.status === "SUBMITTED") {
@@ -16,11 +21,18 @@ const IdeaFormPage = () => {
     }
   };
 
+  // حالة التحميل
   if (isLoadingSeason) {
-    return <div className="text-center py-10">جاري التحقق من الموسم النشط...</div>;
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <p className="text-gray-500 text-lg">جاري التحقق من الموسم النشط...</p>
+      </div>
+    );
   }
 
-  const currentSeasonId = activeSeason?.season?.season_id;
+  // 2. التحقق الدقيق من نشاط الموسم بناءً على الاستجابة
+  const seasonData = activeSeason?.season;
+  const isSeasonActive = seasonData?.season_id && seasonData?.season_status === true;
 
   return (
     <div className='bg-white-color h-screen py-8 sm:w-full'>
@@ -31,13 +43,20 @@ const IdeaFormPage = () => {
         </p>
       </div>
 
-      {currentSeasonId ? (
+      {/* 3. معالجة حالات عدم توفر الموسم النشط أو وجود خطأ في API */}
+      {seasonError || !isSeasonActive ? (
+        <div className="flex flex-col items-center justify-center p-8 mt-10 max-w-md mx-auto bg-red-50 border border-red-200 rounded-xl text-center">
+          <svg className="w-12 h-12 text-red-400 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <h3 className="text-lg font-bold text-red-700 mb-1">انتهت فترة التقديم للموسم حاليا</h3>
+         
+        </div>
+      ) : (
         <IdeaForm
-          seasonId={currentSeasonId}
+          seasonId={seasonData.season_id}
           onSubmit={handleSubmit}
         />
-      ) : (
-        <div className="text-center text-red-500 py-10">لا يوجد أي موسم نشط ومتاح للتقديم حالياً!</div>
       )}
 
       <Modal
@@ -46,8 +65,8 @@ const IdeaFormPage = () => {
         title="🎉 تم تسجيلك كصاحب فكرة!"
         footer={
           <Button
-            label="اذهب إلى لوحة التحكم"
-            onClick={() => navigate("/profile")}
+            label="اذهب إلى تسجيل الدخول"
+            onClick={() => navigate("/login")}
             className="bg-main-color"
           />
         }

@@ -24,9 +24,9 @@ const IncubatedMainPage = () => {
             />
           </div>
       )}
-     
+     {isVolunteer && (
             <NearestWorkshopCard />
-         
+     )}
             <div className='bg-white p-6 rounded-lg flex justify-between items-center shadow-lg mb-8'>
          <div>
             <h3 className='font-bold text-2xl mb-2'>الخطوات القادمة</h3>
