@@ -64,8 +64,17 @@ const SelectingVolunteerPage = () => {
       showSuccess("تم إرسال اقتراح المتطوعين بنجاح");
       setSelectedVolunteers([]);
     } catch (err) {
-      showError("حدث خطأ أثناء إرسال الاقتراح", err);
-    }
+  console.error("Suggest volunteers error:", err);
+
+  const errorMessage =
+    err?.data?.error ||
+    err?.data?.detail ||
+    err?.data?.message ||
+    "حدث خطأ أثناء إرسال الاقتراح";
+
+  showError(errorMessage);
+
+}
   };
 
   if (isLoading) {

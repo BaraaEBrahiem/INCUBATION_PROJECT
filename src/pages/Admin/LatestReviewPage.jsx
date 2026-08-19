@@ -46,9 +46,16 @@ const LatestReviewPage = () => {
     
       navigate("/admin/graduated-projects");
     } catch (err) {
-      showError(err?.data?.message || "حدث خطأ أثناء حفظ القرار، يرجى المحاولة لاحقاً");
-    }
-  };
+
+    console.error(
+      "Graduation error:",
+      err
+    );
+
+    showError(err);
+
+  }
+};
 
 
   if (isNotesLoading) {

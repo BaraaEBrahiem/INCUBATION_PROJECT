@@ -50,17 +50,14 @@ export default function ExhibitionSchedule() {
         setDate("");
         setTime("");
       } catch (error) {
-        console.error(
-          "Error setting exhibition date:",
-          error
-        );
+  console.error(
+    "Error setting exhibition date:",
+    error
+  );
 
-        showError(
-          error?.data
-            ?.message ||
-            "حدث خطأ في تحديد موعد المعرض"
-        );
-      }
+  showError(error);
+
+}
     };
 
   return (

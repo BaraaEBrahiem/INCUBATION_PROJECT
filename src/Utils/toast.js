@@ -43,8 +43,46 @@ export const showSuccess = (message, options = {}) => {
 };
 
 // دالة خطأ
-export const showError = (message, options = {}) => {
-  toast.error(message, { ...defaultOptions, ...defaultOptions.error, ...options });
+export const showError = (error, options = {}) => {
+  let message = "حدث خطأ غير متوقع.";
+
+  if (typeof error === "string") {
+    message = error;
+  } else if (error?.data) {
+    const data = error.data;
+
+    if (data.detail) {
+      message = data.detail;
+    
+    }
+    else if (data.error) {
+      message = data.error;
+    }else if (data.message) {
+      message = data.message;
+    }
+    else if (data.status) {
+  message = data.status;
+}
+    else if (data.non_field_errors?.length) {
+      message = data.non_field_errors[0];
+    } else {
+      const firstKey = Object.keys(data)[0];
+
+      if (firstKey && Array.isArray(data[firstKey])) {
+        message = data[firstKey][0];
+      } else if (firstKey && typeof data[firstKey] === "string") {
+        message = data[firstKey];
+      }
+    }
+  } else if (error?.message) {
+    message = error.message;
+  }
+
+  toast.error(message, {
+    ...defaultOptions,
+    ...defaultOptions.error,
+    ...options,
+  });
 };
 
 // دالة تحذير / معلومات

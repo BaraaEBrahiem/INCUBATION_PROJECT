@@ -98,19 +98,12 @@ useScheduleMeetingMutation();
 
       setSchedule("");
 
-    } catch (
-      error
-    ) {
+    } catch (error) {
 
-      console.error(
-        error
-      );
+  console.error("Schedule meeting error:", error);
 
-      showError(
-        error?.data
-          ?.detail ||
-        "حدث خطأ في تعيين الموعد"
-      );
+  showError(error);
+
 
     } finally {
 

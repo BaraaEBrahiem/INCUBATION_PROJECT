@@ -104,48 +104,52 @@ export default function EvalStatusTable() {
   };
 
   const handleSetMeeting = async () => {
-    if (!schedule) {
-      showError("الرجاء تحديد تاريخ ووقت اللجنة");
-      return;
-    }
+  if (!schedule) {
+    showError("الرجاء تحديد تاريخ ووقت اللجنة");
+    return;
+  }
 
-    setIsSubmitting(true);
+  setIsSubmitting(true);
 
-    try {
-      await setMeetingDate({
-        idea_id: selectedProject.id,
-        meetingDate: schedule,
-      }).unwrap();
+  try {
+    const [date, time] = schedule.split("T");
 
-      showSuccess(
-        `تم تعيين موعد التقييم للمشروع "${selectedProject.title}" بنجاح`
-      );
+    await setMeetingDate({
+      idea_id: selectedProject.id,
+      date,
+      time,
+    }).unwrap();
 
-      setModals((prev) => ({
-        ...prev,
-        schedule: false,
-      }));
+    showSuccess(
+      `تم تعيين موعد التقييم للمشروع "${selectedProject.title}" بنجاح`
+    );
 
-      setSelectedProject(null);
-      setSchedule(null);
-    } catch (error) {
-        console.log("FULL ERROR:", error);
-        console.log("ERROR DATA:", error?.data);
-        console.log(
-          "MEETING DATE SENT:",
-        schedule
-        );
+    setModals((prev) => ({
+      ...prev,
+      schedule: false,
+    }));
 
-      showError(
-        JSON.stringify(error?.data) ||
-          "حدث خطأ في تعيين الموعد"
-        );
-      
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
+    setSelectedProject(null);
+    setSchedule(null);
 
+  } catch (error) {
+  console.log("================================");
+  console.log("FULL ERROR:", error);
+  console.log("DATA:", error?.data);
+  console.log("DATA ERROR:", error?.data?.error);
+  console.log("STATUS:", error?.status);
+  console.log("================================");
+
+  showError(
+    error?.data?.error ||
+    "حدث خطأ في تعيين الموعد"
+  );
+
+
+  } finally {
+    setIsSubmitting(false);
+  }
+};
   const columns = [
     {
       key: "actions",

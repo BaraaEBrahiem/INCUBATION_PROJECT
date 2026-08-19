@@ -59,14 +59,35 @@ const ConsultationRequestBtn = ({ consultant }) => {
       showSuccess("تم إرسال طلب الاستشارة بنجاح! وهو قيد المراجعة حالياً من قبل المستشار.");
       close();
     } catch (err) {
-      console.error("Error sending consultation request:", err);
+  console.error("Error sending consultation request:", err);
+
+  let errorMsg = "حدث خطأ في إرسال طلب الاستشارة";
+
+  if (err?.data) {
+    if (typeof err.data === "string") {
+      errorMsg = err.data;
+    } 
+    else if (err.data.detail) {
+      errorMsg = err.data.detail;
+    } 
+    else if (err.data.non_field_errors?.length) {
+      errorMsg = err.data.non_field_errors[0];
+    } 
+    else {
+      const firstError = Object.values(err.data)[0];
+
+      if (Array.isArray(firstError)) {
+        errorMsg = firstError[0];
+      } else if (typeof firstError === "string") {
+        errorMsg = firstError;
+      }
+    }
+  }
+
+  setValidationError(errorMsg);
+  showError(errorMsg);
+
     
-      const errorMsg =
-        err?.data?.detail ||
-        err?.data?.non_field_errors?.[0] ||
-        Object.values(err?.data || {})?.[0]?.[0] ||
-        "حدث خطأ في إرسال طلب الاستشارة";
-      showError(errorMsg);
     }
   };
 
@@ -148,10 +169,20 @@ const ConsultationRequestBtn = ({ consultant }) => {
 
           {/* خطأ التحقق المحلي الخفيف */}
           {validationError && (
-            <p className="text-red-500 text-xs font-semibold bg-red-50 border border-red-100 p-2 rounded-lg text-center animate-shake">
-              ⚠️ {validationError}
-            </p>
-          )}
+  <div className="flex items-start gap-2 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl">
+    <span className="text-lg">⚠️</span>
+
+    <div>
+      <p className="font-bold text-sm">
+        تعذر إرسال طلب الاستشارة
+      </p>
+
+      <p className="text-sm mt-1">
+        {validationError}
+      </p>
+    </div>
+  </div>
+)}
         </form>
       </Modal>
     </>

@@ -111,15 +111,9 @@ export default function CardRequestDetailsPage() {
           `/requests-details/${submissionId}`
         );
       } catch (err) {
-        console.error(
-          err
-        );
-
-        showError(
-          err?.data
-            ?.detail ||
-            "حدث خطأ أثناء إرسال قرار الرفض."
-        );
+    console.error(err);
+    showError(err);
+  
       }
     };
 
@@ -161,15 +155,9 @@ export default function CardRequestDetailsPage() {
           `/requests-details/${submissionId}`
         );
       } catch (err) {
-        console.error(
-          err
-        );
-
-        showError(
-          err?.data
-            ?.detail ||
-            "حدث خطأ أثناء إرسال قرار القبول."
-        );
+    console.error(err);
+    showError(err);
+  
       }
     };
 

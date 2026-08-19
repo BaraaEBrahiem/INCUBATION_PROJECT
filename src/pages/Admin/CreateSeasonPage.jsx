@@ -36,9 +36,11 @@ const CreateSeasonPage = () => {
       
       showSuccess("تم إنشاء الموسم الجديد وتصميم الاستمارة بالكامل بنجاح! 🎉");
     } catch (err) {
-      console.error("Form Publish Error:", err);
-      showError(err?.data?.detail || err?.data?.message || "حدث خطأ أثناء نشر استمارة النموذج");
-    }
+    console.error("Form Publish Error:", err);
+    console.log("Backend error:", err?.data);
+
+    showError(err);
+  }
   };
 
  return (

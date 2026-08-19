@@ -8,7 +8,46 @@ import {
   useGetAvailableEvaluatorsQuery,
   useAssignEvaluatorsMutation,
 } from "../../api/endpoints/evaluationApi";
+const getApiErrorMessage = (
+  err,
+  fallback = "حدث خطأ غير متوقع"
+) => {
+  const data = err?.data;
 
+  if (!data) {
+    return fallback;
+  }
+
+  if (typeof data === "string") {
+    return data;
+  }
+
+  if (typeof data.error === "string") {
+    return data.error;
+  }
+
+  if (typeof data.message === "string") {
+    return data.message;
+  }
+
+  if (typeof data.detail === "string") {
+    return data.detail;
+  }
+
+  if (Array.isArray(data.detail)) {
+    const first = data.detail[0];
+
+    if (typeof first === "string") {
+      return first;
+    }
+
+    if (first?.message) {
+      return first.message;
+    }
+  }
+
+  return fallback;
+};
 const AssignEvaluatorsPage = () => {
   const { id: projectId } = useParams();
   const navigate = useNavigate();
@@ -63,40 +102,61 @@ const AssignEvaluatorsPage = () => {
   };
 
   const handleAssign = async () => {
-    if (!sel.length) {
+  if (!sel.length) {
+    showError("الرجاء اختيار مقيم واحد على الأقل");
+    return;
+  }
+
+  setIsSubmitting(true);
+
+  try {
+    const response = await assignEvaluators({
+      idea_id: projectId,
+      evaluators_ids: sel,
+    }).unwrap();
+
+    // في حال تم تعيين البعض وتخطي البعض
+    if (
+      response?.skipped &&
+      response.skipped.length > 0
+    ) {
+      const skippedMessages = response.skipped
+        .map((item) => `• ${item.reason}`)
+        .join("\n");
+
       showError(
-        "الرجاء اختيار مقيمين على الأقل"
+        `تم تعيين ${response.assigned_count} مقيم بنجاح.\n\n` +
+        `لكن لم يتم تعيين بعض المقيمين:\n${skippedMessages}`
       );
+
       return;
     }
 
-    setIsSubmitting(true);
+    showSuccess(
+      `تم تعيين ${response?.assigned_count || sel.length} مقيم بنجاح`
+    );
 
-    try {
-      await assignEvaluators({
-        idea_id: projectId,
-        evaluators_ids: sel,
-      }).unwrap();
+    setTimeout(() => {
+      navigate(-1);
+    }, 1000);
 
-      showSuccess(
-        "تم تعيين المقيمين بنجاح"
-      );
+  } catch (err) {
+    console.error(
+      "Assign evaluators error:",
+      err
+    );
 
-      setTimeout(() => {
-        navigate(-1);
-      }, 1000);
-    } catch (err) {
-      console.error(err);
+    const errorMessage = getApiErrorMessage(
+      err,
+      "حدث خطأ في تعيين المقيمين"
+    );
 
-      showError(
-        err?.data?.message ||
-          "حدث خطأ في تعيين المقيمين"
-      );
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
+    showError(errorMessage);
 
+  } finally {
+    setIsSubmitting(false);
+  }
+};
   // Loading
   if (isLoading) {
     return (

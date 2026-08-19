@@ -108,16 +108,16 @@ const ResultsTable = () => {
       refetch();
 
     } catch (error) {
-      console.error(
-        "Error accepting project:",
-        error
-      );
+  console.error("Error accepting project:", error);
 
-      showError(
-        error?.data?.message ||
-        error?.data?.detail ||
-      "حدث خطأ في قبول المشروع"
-      );
+  const errorMessage =
+    error?.data?.error ||
+    error?.data?.message ||
+    error?.data?.detail ||
+    "حدث خطأ في قبول المشروع";
+
+  showError(errorMessage);
+
     } finally {
       setIsSubmitting(false);
     }
@@ -144,16 +144,16 @@ const ResultsTable = () => {
       refetch();
 
     } catch (error) {
-      console.error(
-        "Error rejecting project:",
-        error
-      );
+  console.error("Error rejecting project:", error);
 
-      showError(
-        error?.data?.message ||
-        error?.data?.detail ||
-        "حدث خطأ في رفض المشروع"
-      );
+  const errorMessage =
+    error?.data?.error ||
+    error?.data?.message ||
+    error?.data?.detail ||
+    "حدث خطأ في رفض المشروع";
+
+  showError(errorMessage);
+
     } finally {
       setIsSubmitting(false);
     }

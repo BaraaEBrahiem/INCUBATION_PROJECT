@@ -63,8 +63,15 @@ const AssignIncubationEvaluatorsPage = () => {
         navigate(-1);
       }, 1000);
     } catch (err) {
-      console.error(err);
-      showError(err?.data?.message || "حدث خطأ في التعيين");
+  console.error("Assign evaluators error:", err);
+
+  showError(
+    err?.data?.error ||
+    err?.data?.detail ||
+    err?.data?.message ||
+    "حدث خطأ في التعيين"
+  );
+
     } finally {
       setIsSubmitting(false);
     }
