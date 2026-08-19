@@ -12,45 +12,59 @@ const VolunteerFormPage = () => {
   const [showPendingModal, setShowPendingModal] = useState(false);
 
   const DAY_MAPPING = {
-  "الأحد": "SUNDAY",
-  "الاثنين": "MONDAY",
-  "الثلاثاء": "TUESDAY",
-  "الأربعاء": "WEDNESDAY",
-  "الخميس": "THURSDAY",
-  "الجمعة": "FRIDAY",
-  "السبت": "SATURDAY",
-};
+    "الأحد": "SUNDAY",
+    "الاثنين": "MONDAY",
+    "الثلاثاء": "TUESDAY",
+    "الأربعاء": "WEDNESDAY",
+    "الخميس": "THURSDAY",
+    "الجمعة": "FRIDAY",
+    "السبت": "SATURDAY",
+  };
 
-const SKILL_MAPPING = {
-  "Backend": "backend",
-  "Frontend": "frontend",
-  "UI/UX": "ui_ux",
-  "Business": "business",
-  "Marketing": "marketing",
-  "Legal": "legal",
-};
+  const SKILL_MAPPING = {
+    "Backend": "backend",
+    "Frontend": "frontend",
+    "UI/UX": "ui_ux",
+    "Business": "business",
+    "Marketing": "marketing",
+    "Legal": "legal",
+  };
 
   const handleSubmit = async (rawFormData) => {
     try {
-     
       const { availability, ...restOfData } = rawFormData;
 
-      const formattedAvailabilityArray = Object.entries(availability || {})
-      //eslint-disable-next-line
-        .filter(([_, dayConfig]) => dayConfig.active === true) 
-        .map(([dayName, dayConfig]) => ({
-          day: DAY_MAPPING[dayName],                      
-          start_time: dayConfig.from || "00:00", 
-          end_time: dayConfig.to || "00:00"
-        }));
+      // ----------------------------------------------------
+      const activeDays = Object.entries(availability || {}).filter(
+        //eslint-disable-next-line
+        ([_, dayConfig]) => dayConfig.active === true
+      );
+
+      for (const [dayName, dayConfig] of activeDays) {
+        const startTime = dayConfig.from || "00:00";
+        const endTime = dayConfig.to || "00:00";
+
+        if (endTime <= startTime) {
+          showError(`وقت النهاية يجب أن يكون بعد وقت البداية في يوم (${dayName}).`);
+          return; // إيقاف العملية وعدم إرسال الطلب للـ API
+        }
+      }
+
+     
+      // ----------------------------------------------------
+      const formattedAvailabilityArray = activeDays.map(([dayName, dayConfig]) => ({
+        day: DAY_MAPPING[dayName],
+        start_time: dayConfig.from || "00:00",
+        end_time: dayConfig.to || "00:00"
+      }));
 
       const apiPayload = {
         ...restOfData,
         primary_skills: SKILL_MAPPING[restOfData.primary_skills],
-        availability: formattedAvailabilityArray 
+        availability: formattedAvailabilityArray
       };
 
-      console.log("===  الـ Payload النهائي (مصفوفة أيام) ===", apiPayload);
+      console.log("=== الـ Payload النهائي (مصفوفة أيام) ===", apiPayload);
 
       const res = await upgradeToVolunteer(apiPayload).unwrap();
 
@@ -60,7 +74,7 @@ const SKILL_MAPPING = {
       }
     } catch (error) {
       console.error("Error submitting volunteer form:", error);
-      const errorMsg = error?.data?.message || error?.data?.detail || "حدث خطأ أثناء إرسال طلب التطوع";
+      const errorMsg = error?.data?.message || error?.data?.detail || "حدث خطأ أثناء إرسال طلب التطوع، يرجى المحاولة لاحقاً.";
       showError(errorMsg);
     }
   };
@@ -73,10 +87,8 @@ const SKILL_MAPPING = {
           أكمل بياناتك للمراجعة من قبل الإدارة.
         </p>
 
-        {/* تمرير الدالة للمكون */}
         <VolunteerForm onSubmit={handleSubmit} onCancel={() => navigate(-1)} isSubmitting={isLoading} />
 
-        {/* مودال تأكيد الإرسال */}
         <Modal
           isOpen={showPendingModal}
           onClose={() => {

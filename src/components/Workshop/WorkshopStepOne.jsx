@@ -44,16 +44,7 @@ const WorkshopStepOne = ({
         />
       </div>
 
-     <div>
-        <label className="font-bold">أيام الدورة</label>
-        <Input
-          type="text"
-          value={formData.days}
-          error={error.days}  
-          onChange={(e) => setFormData({ ...formData, days: e.target.value })}
-          className="w-full"
-        />
-      </div>
+    
 
       <div>
         <label className="font-bold">تاريخ انتهاء الدورة</label>
@@ -62,6 +53,16 @@ const WorkshopStepOne = ({
           value={formData.end_date}
           error={error.endDate}
           onChange={(e) => setFormData({ ...formData, end_date: e.target.value })}
+          className="w-full"
+        />
+      </div> 
+      <div>
+        <label className="font-bold">أيام الدورة</label>
+        <Input
+          type="text"
+          value={formData.days}
+          error={error.days}  
+          onChange={(e) => setFormData({ ...formData, days: e.target.value })}
           className="w-full"
         />
       </div>

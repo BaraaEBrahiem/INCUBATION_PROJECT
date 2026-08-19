@@ -3,9 +3,7 @@ import WorkshopImage from "../../components/Workshop/WorkshopImage";
 import WorkshopStepOne from "../../components/Workshop/WorkshopStepOne";
 import WorkshopStepTwo from "../../components/Workshop/WorkshopStepTwo";
 import { useAddWorkshopMutation } from "../../api/endpoints/workshopsApi";
-
-import {showError, showSuccess} from "../../Utils/toast"
-
+import { showError, showSuccess } from "../../Utils/toast";
 
 const AddWorkshopPage = () => {
   const [step, setStep] = useState(1);
@@ -25,9 +23,51 @@ const AddWorkshopPage = () => {
     start_date: "",
     end_date: "",
     days: "",
-    image: "",
+    image: null,
   });
 
+  // 1. التحقق الخاص بالخطوة الأولى قبل الانتقال للخطوة الثانية
+  const handleNextStepOne = () => {
+    const stepOneErrors = {};
+    const requiredStepOneFields = [
+      "title",
+      "category",
+      "start_date",
+      "end_date",
+      "days",
+      "sessions",
+      "capacity",
+    ];
+
+    // فحص تعبئة الحقول
+    requiredStepOneFields.forEach((field) => {
+      if (!formData[field] || formData[field].toString().trim() === "") {
+        stepOneErrors[field] = "هذا الحقل مطلوب";
+      }
+    });
+
+    // فحص منطقية التواريخ (تاريخ الانتهاء يجب أن يكون بعد تاريخ البدء)
+    if (formData.start_date && formData.end_date) {
+      const startDate = new Date(formData.start_date);
+      const endDate = new Date(formData.end_date);
+
+      if (startDate > endDate) {
+        stepOneErrors.end_date = "تاريخ انتهاء الورشة يجب أن يكون بعد تاريخ البدء";
+      }
+    }
+
+    // إذا وجدت أخطاء في الخطوة الأولى نوقف التنقل ونعرض الأخطاء
+    if (Object.keys(stepOneErrors).length > 0) {
+      setError(stepOneErrors);
+      return;
+    }
+
+    // مسح الأخطاء والإنتقال للخطوة التالية
+    setError({});
+    setStep(2);
+  };
+
+  // 2. معالجة الإرسال النهائي للنموذج (الخطوة الثانية)
   const handleSubmit = async () => {
     const newError = {};
     const requiredFields = [
@@ -42,57 +82,66 @@ const AddWorkshopPage = () => {
       "days",
       "sessions",
       "capacity",
-      "objectives", 
-
     ];
 
+    // فحص تعبئة جميع الحقول المطلوبة
     requiredFields.forEach((field) => {
-      if (!formData[field]) newError[field] = "هذا الحقل مطلوب";
+      if (!formData[field] || formData[field].toString().trim() === "") {
+        newError[field] = "هذا الحقل مطلوب";
+      }
     });
 
-    const hasValidObjectives = formData.objectives.some(obj => obj && obj.trim() !== "");
-    if (!hasValidObjectives) {
-      newError["objectives"] = "يجب إضافة هدف واحد على الأقل للورشة";
+    // فحص الأوقات (وقت الانتهاء يجب أن يكون بعد وقت البدء)
+    if (formData.time_from && formData.time_to) {
+      if (formData.time_from >= formData.time_to) {
+        newError.time_to = "وقت الانتهاء يجب أن يكون بعد وقت البدء";
+      }
     }
 
+    // فحص الأهداف
+    const cleanedObjectives = (formData.objectives || [])
+      .map((obj) => obj.trim())
+      .filter(Boolean);
+
+    if (cleanedObjectives.length === 0) {
+      newError.objectives = "يجب إضافة هدف واحد على الأقل للورشة";
+    }
+
+    // إذا وُجدت أخطاء نمنع الإرسال
     if (Object.keys(newError).length > 0) {
       setError(newError);
       return;
     }
 
-
     setError({});
 
-    const cleanedObjectives = formData.objectives
-      .map(obj => obj.trim())
-      .filter(Boolean);
-
+    // إعداد الـ FormData للإرسال
     const form = new FormData();
+    form.append("title", formData.title);
+    form.append("category", formData.category);
+    form.append("target_audience", formData.target_audience);
+    form.append("description", formData.description);
+    form.append("capacity", formData.capacity);
+    form.append("sessions", formData.sessions);
+    form.append("start_date", formData.start_date);
+    form.append("end_date", formData.end_date);
+    form.append("time_from", formData.time_from);
+    form.append("time_to", formData.time_to);
 
-// الحقول العادية
-form.append("title", formData.title);
-form.append("category", formData.category);
-form.append("target_audience", formData.target_audience);
-form.append("description", formData.description);
-form.append("capacity", formData.capacity);
-form.append("sessions", formData.sessions);
-form.append("start_date", formData.start_date);
-form.append("end_date", formData.end_date);
-form.append("time_from", formData.time_from);
-form.append("time_to", formData.time_to);
+    // تحويل المصفوفات لسلسلة نصية JSON
+    form.append("days", JSON.stringify(formData.days));
+    form.append("objectives", JSON.stringify(cleanedObjectives));
 
-// arrays لازم تنرسل JSON string
-form.append("days", JSON.stringify(formData.days));
-form.append("objectives", JSON.stringify(cleanedObjectives));
+    // إضافة صورة الورشة إن وُجدت
+    if (formData.image instanceof File) {
+      form.append("image", formData.image);
+    }
 
-// الصورة
-if (formData.image instanceof File) {
-  form.append("image", formData.image);
-}
+    try {
+      await addWorkshop(form).unwrap();
+      showSuccess("تم إضافة الورشة بنجاح");
 
-try {
-  await addWorkshop(form).unwrap();
-      showSuccess("تم اضافة الورشة بنجاح");
+      // إعادة تعيين النموذج
       setFormData({
         time_from: "",
         time_to: "",
@@ -111,28 +160,37 @@ try {
 
       setStep(1);
     } catch (err) {
-      showError ('error', err)
-
+      // استخراج أخطاء الباك إند إن وُجدت وتغذيتها لكائن error
+      if (err?.data && typeof err.data === "object") {
+        setError(err.data);
+      }
+      showError("حدث خطأ أثناء إضافة الورشة، يرجى المراجعة والتكرار");
     }
   };
 
   return (
     <div className="bg-white-color min-h-screen p-6 md:p-10" dir="ltr">
       <h1 className="text-2xl md:text-3xl font-bold text-second-color text-center md:text-right">
-        اضافة ورشة تدريبية
+        إضافة ورشة تدريبية
       </h1>
 
-      <div className="container mt-10 md:mt-40 flex flex-col-reverse md:flex-row justify-between items-center gap-10 md:gap-0" dir="rtl">
-         <WorkshopImage image={formData.image} />
-         <div className="w-full md:w-[500px]">
+      <div
+        className="container md:mt-10 flex flex-col-reverse md:flex-row justify-between items-center gap-10 md:gap-0"
+        dir="rtl"
+      >
+        <WorkshopImage image={formData.image} />
+
+        <div className="w-full md:w-[500px]">
           {step === 1 && (
             <WorkshopStepOne
               formData={formData}
               setFormData={setFormData}
-              onNext={() => setStep(2)}
+              onNext={handleNextStepOne}
               error={error}
+              setError={setError}
             />
           )}
+
           {step === 2 && (
             <WorkshopStepTwo
               formData={formData}
@@ -140,11 +198,11 @@ try {
               onBack={() => setStep(1)}
               onSubmit={handleSubmit}
               error={error}
+              setError={setError}
               isLoading={isLoading}
             />
           )}
         </div>
-       
       </div>
     </div>
   );
