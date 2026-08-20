@@ -13,7 +13,42 @@ import {
 import Select from "../../components/Select"
 import {showSuccess, showError} from "../../Utils/toast"
 import { useNavigate } from "react-router-dom"
+const formatAdditionalSkills = (skills) => {
+  if (!skills) return "";
 
+  let value = skills;
+
+  // فك JSON عدة مرات إذا كانت البيانات مخزنة بشكل متكرر
+  for (let i = 0; i < 5; i++) {
+    if (typeof value !== "string") break;
+
+    try {
+      value = JSON.parse(value);
+    } catch {
+      break;
+    }
+  }
+
+  if (Array.isArray(value)) {
+    // إذا بقيت عناصر عبارة عن JSON strings
+    value = value.flatMap((item) => {
+      if (typeof item === "string") {
+        try {
+          const parsed = JSON.parse(item);
+          return Array.isArray(parsed) ? parsed : [item];
+        } catch {
+          return [item];
+        }
+      }
+
+      return [item];
+    });
+
+    return value.join(", ");
+  }
+
+  return String(value);
+};
 const EditVolunteerProfilePage = () => {
   const EXPERTISE_OPTIONS = [
     { value: "UI/UX", label: "UI/UX" },
@@ -52,12 +87,17 @@ const EditVolunteerProfilePage = () => {
         name: serverName,
         full_name: serverName,
         email: profileData.email || "",
-        phone: profileData.basic_info?.phone || profileData.user?.phone || profileData.phone || "",
+        phone:
+  profileData.phone ||
+  profileData.user?.phone ||
+  profileData.basic_info?.phone ||
+  profileData.user?.basic_info?.phone ||
+  "",
         primary_Skills: profileData.primary_skills || profileData.primary_Skills || "",
-        additional_Skills: Array.isArray(profileData.additional_skills) 
-         ? profileData.additional_skills.join(", ") //  تعديل الحرف ليكون s صغير هنا وهناك
-         : (profileData.additional_skills || profileData.additional_Skills || "")
-      };
+        additional_Skills: formatAdditionalSkills(
+  profileData.additional_skills
+),
+    };
 
       dispatch({ type: "SET_ALL", payload: formattedPayload });
     }
