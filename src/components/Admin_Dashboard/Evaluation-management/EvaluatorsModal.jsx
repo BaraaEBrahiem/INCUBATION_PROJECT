@@ -1,5 +1,5 @@
 import React from 'react';
-import avatar from "../../../assets/images/avatar.jpg" ;
+import person1 from "../../../assets/images/person1.jpg"; ;
 
 const EvaluatorsModal = ({ isOpen, onClose, evaluators = [] }) => {
   if (!isOpen) return null;
@@ -21,7 +21,7 @@ const EvaluatorsModal = ({ isOpen, onClose, evaluators = [] }) => {
                 <div key={i} className="">
 
                   <div className="flex items-center gap-5">
-                    <img src={ev.image || avatar} alt="" className="w-15 h-15 rounded-full object-cover" />
+                    <img src={ person1 || ev.image } alt="" className="w-15 h-15 rounded-full object-cover" />
                     <div className="overflow-hidden">
                       <p className="font-bold text-sm truncate">{ev.name}</p>
                       <p className="text-sm text-black truncate">{ev.specialization}</p>

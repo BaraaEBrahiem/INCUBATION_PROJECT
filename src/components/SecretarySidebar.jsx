@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { NavLink } from "react-router-dom";
 import {secretary} from "../config/RoleOptions";
-import girl from "../assets/images/girl.jpg";
+import person1 from "../assets/images/person1.jpg";
 
 const SecretarySidebar = ({ adminName, email }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -94,7 +94,7 @@ const SecretarySidebar = ({ adminName, email }) => {
         {/* معلومات المستخدم */}
         <div className="flex items-center gap-4 mb-8 border-b pb-6">
           <img
-            src={girl}
+            src={person1}
             alt="avatar"
             className="w-14 h-14 rounded-full object-cover border-4 border-main-color"
           />

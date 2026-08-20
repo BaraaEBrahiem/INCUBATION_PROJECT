@@ -84,20 +84,74 @@ const SignupPage = () => {
       // التوجيه المباشر لواجهات الزائر التي انفتحت صلاحيتها الآن
       navigate("/visitor-mainpage");
 
-    } catch (error) {
+    }  catch (error) {
       console.error("Signup error:", error);
-      let errorMsg = "فشل إنشاء الحساب. حاول مرة أخرى";
       
-      if (error?.data?.message) errorMsg = error.data.message;
-      else if (error?.data?.detail) errorMsg = error.data.detail;
-      else if (error?.data?.email) errorMsg = error.data.email[0];
-      else if (error?.data?.full_name) errorMsg = error.data.full_name[0];
-      
-      showError(errorMsg);
-      setErrors({ general: errorMsg });
-    }
-  };
+      const serverErrors = {};
+      const errorData = error?.data;
 
+      // دالة مساعدة لترجمة رسائل الأخطاء القادمة من الباك إند
+      const translateError = (msg) => {
+        if (!msg) return "";
+        const lowerMsg = String(msg).toLowerCase();
+
+        // أخطاء البريد الإلكتروني
+        if (lowerMsg.includes("already exists") || lowerMsg.includes("registered")) {
+          return "البريد الإلكتروني مستخدم بالفعل";
+        }
+        if (lowerMsg.includes("enter a valid email")) {
+          return "يرجى إدخال بريد إلكتروني صالح";
+        }
+
+        // أخطاء كلمة المرور
+        if (lowerMsg.includes("too common")) {
+          return "كلمة المرور هذه شائعة جداً ومستخدمة مسبقاً، يرجى اختيار كلمة أعمق";
+        }
+        if (lowerMsg.includes("entirely numeric")) {
+          return "كلمة المرور لا يمكن أن تكون أرقاماً فقط";
+        }
+        if (lowerMsg.includes("too short")) {
+          return "كلمة المرور قصيرة جداً";
+        }
+
+        // إرجاع النص الأصلي في حال لم يطابق القواعد السابقة
+        return Array.isArray(msg) ? msg[0] : msg;
+      };
+
+      // 🎯 استخراج الأخطاء وترجمتها لكل حقل
+      if (errorData && typeof errorData === "object") {
+        if (errorData.email) {
+          const rawEmailError = Array.isArray(errorData.email) ? errorData.email[0] : errorData.email;
+          serverErrors.email = translateError(rawEmailError);
+        }
+        
+        if (errorData.password) {
+          const rawPasswordError = Array.isArray(errorData.password) ? errorData.password[0] : errorData.password;
+          serverErrors.password = translateError(rawPasswordError);
+        }
+
+        if (errorData.full_name) {
+          const rawNameError = Array.isArray(errorData.full_name) ? errorData.full_name[0] : errorData.full_name;
+          serverErrors.full_name = translateError(rawNameError);
+        }
+      }
+
+      // معالجة الرسائل العامة
+      const generalMessage = 
+        errorData?.detail || 
+        errorData?.message || 
+        (Object.keys(serverErrors).length === 0 ? "فشل إنشاء الحساب، يرجى المحاولة لاحقاً" : null);
+
+      if (generalMessage) {
+        const translatedGeneral = translateError(generalMessage);
+        serverErrors.general = translatedGeneral;
+        showError(translatedGeneral);
+      } else {
+        showError("يرجى تصحيح الأخطاء الموضحة أدناه");
+      }
+
+      setErrors(serverErrors);
+    }}
   return (
     <div className="flex h-screen w-full overflow-hidden font-sans" dir="rtl">
       <div className="w-full md:w-1/2 bg-white flex items-center justify-center p-12">
@@ -168,5 +222,4 @@ const SignupPage = () => {
     </div>
   );
 };
-
 export default SignupPage;

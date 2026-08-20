@@ -1,12 +1,12 @@
 import React from 'react';
-import avatar from '../assets/images/avatar.jpg';
+import person1 from '../assets/images/person1.jpg';
 const ProfileHeader = ({ profile }) => {
   if (!profile) return null;
 
   return (
     <div className=" text-white md:px-25 flex flex-col md:flex-row items-center gap-6" dir="rtl">
       <img 
-        src={profile.avatar || avatar}
+        src={profile.avatar || person1}
         alt={profile.name}
         className="w-32 h-32 rounded-full object-cover"
       />

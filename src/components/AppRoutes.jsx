@@ -119,18 +119,10 @@ const AppRoutes = () => {
 
       <Route path="/ProjectDetails/:id" element={<ProjectDetailsPage />} />
       <Route path="/workshops/:id" element={<WorkshopDetailsPage />} />
-      <Route
-      path="/messagespage"
-      element={<MessagesPage />}
-      />
+     
 
       <Route path="/evaluation-invitation/:id" element={<EvaluationInvitationPage />} />
       <Route path="/rejection-notes/:id" element={<IdeaRejectionNotes />} />
-
-      <Route
-      path="/messagespage/:id"
-      element={<MessagesPage />}
-      />
 
       <Route path="/ideaform" element={<IdeaFormPage />} />
       <Route path="/volunteerform" element={<VolunteerFormPage />} />
@@ -151,7 +143,7 @@ const AppRoutes = () => {
         <Route path="/activitiespage" element={<ActivitiesPage />} />
         <Route path="/favoritespage" element={<FavoritesPage />} />
         <Route path="/notificationspage" element={<NotificationsPage />} />
-        <Route path="/messagespage" element={<MessagesPage />} />
+        {/* <Route path="/messagespage" element={<MessagesPage />} /> */}
         <Route path="/messagespage/:id" element={<MessagesPage />} />
       </Route>
 
@@ -169,7 +161,7 @@ const AppRoutes = () => {
           <Route path="/projectspage" element={<ProjectsPage />} />
           <Route path="/activitiespage" element={<ActivitiesPage />} />
           <Route path="/notificationspage" element={<NotificationsPage />} />
-          <Route path="/messagespage" element={<MessagesPage />} />
+          {/* <Route path="/messagespage" element={<MessagesPage />} /> */}
           <Route path="/messagespage/:id" element={<MessagesPage />} />
           <Route path="/incubation-stages" element={<IncubationStagesPage />} />
         </Route>
@@ -213,7 +205,7 @@ const AppRoutes = () => {
           <Route path="/projectspage" element={<ProjectsPage />} />
           <Route path="/activitiespage" element={<ActivitiesPage />} />
           <Route path="/notificationspage" element={<NotificationsPage />} />
-          <Route path="/messagespage" element={<MessagesPage />} />
+          {/* <Route path="/messagespage" element={<MessagesPage />} /> */}
           <Route path="/messagespage/:id" element={<MessagesPage />} />
         </Route>
       )}
@@ -226,7 +218,7 @@ const AppRoutes = () => {
           <Route path="/projectspage" element={<ProjectsPage />} />
           <Route path="/activitiespage" element={<ActivitiesPage />} />
           <Route path="/notificationspage" element={<NotificationsPage />} />
-          <Route path="/messagespage" element={<MessagesPage />} />
+          {/* <Route path="/messagespage" element={<MessagesPage />} /> */}
           <Route path="/messagespage/:id" element={<MessagesPage />} />
         </Route>
       )}
@@ -258,7 +250,7 @@ const AppRoutes = () => {
           <Route path="/projectspage" element={<ProjectsPage />} />
           <Route path="/activitiespage" element={<ActivitiesPage />} />
           <Route path="/notificationspage" element={<NotificationsPage />} />
-          <Route path="/messagespage" element={<MessagesPage />} />
+          {/* <Route path="/messagespage" element={<MessagesPage />} /> */}
           <Route path="/messagespage/:id" element={<MessagesPage />} />
           <Route path="/incubation-stages" element={<IncubationStagesPage />} />
         </Route>
@@ -323,7 +315,7 @@ const AppRoutes = () => {
           <Route path="/admin/incubation_seasons/applications/:id" element={<IncubationRequestDetails />} />
           <Route path="/admin/tasks/:taskId" element={<TaskDetailsPage />} />
           <Route path="/admin/details/:id" element={<VolunteerRequestPage />} />
-          <Route path="/messagespage" element={<MessagesPage />} />
+          {/* <Route path="/messagespage" element={<MessagesPage />} /> */}
           <Route path="/messagespage/:id" element={<MessagesPage />} />
           <Route path="/notificationspage" element={<NotificationsPage />} />
           <Route path="/projectspage" element={<ProjectsPage />} />
@@ -363,7 +355,7 @@ const AppRoutes = () => {
           <Route path="/admin/incubation_seasons/applications/:id" element={<IncubationRequestDetails />} />
           <Route path="/admin/details/:id" element={<VolunteerRequestPage />} />
           <Route path="/admin/tasks/:taskId" element={<TaskDetailsPage />} />
-          <Route path="/messagespage" element={<MessagesPage />} />
+          {/* <Route path="/messagespage" element={<MessagesPage />} /> */}
           <Route path="/messagespage/:id" element={<MessagesPage />} />
           <Route path="/notificationspage" element={<NotificationsPage />} />
           <Route path="/projectspage" element={<ProjectsPage />} />

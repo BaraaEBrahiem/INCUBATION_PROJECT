@@ -10,7 +10,7 @@ export default function ChatHeader({ conversation }) {
   return (
     <div className="border-b border-second-color p-4 flex items-center justify-between bg-white">
       <div>
-        <h2 className="font-semibold text-gray-800">
+        <h2 className="font-semibold text-xl text-gray-800">
           {otherUser?.full_name || "مستخدم"}
         </h2>
         <p className="text-md text-gray-500">

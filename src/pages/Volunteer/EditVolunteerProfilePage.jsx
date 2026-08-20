@@ -3,7 +3,7 @@ import { profileReducer, initialProfileState } from "../../hooks/ProfileReducer"
 import Input from "../../components/Input"
 import Textarea from "../../components/Textarea"
 import Button from "../../components/Button"
-import girl from "../../assets/images/girl.jpg"
+import person1 from "../../assets/images/person1.jpg"
 import { useSelector } from "react-redux"
 import NavLinkUniversal from "../../components/NavLinkUniversal"
 import {
@@ -168,7 +168,7 @@ if (profileData.additional_skills) {
                 ? URL.createObjectURL(state.avatar)
                 : profileData?.avatar
                 ? `http://127.0.0.1:8000${profileData.avatar}`
-                : girl
+                : person1
             }
             alt="avatar"
             className="w-20 h-20 rounded-full object-cover border"

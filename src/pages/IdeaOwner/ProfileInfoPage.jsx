@@ -9,7 +9,7 @@ import Modal from '../../components/Modal';
 import Input from '../../components/Input'; 
 import LoadingOverlay from '../../components/LoadingOverlay'; 
 import ConsultationRequestBtn from '../../components/ConsultationRequestBtn';
-import { showSuccess, showError } from '../../utils/toast'; 
+import { showSuccess, showError } from '../../Utils/toast'; 
 
 import { useGetProfileByIdQuery } from '../../api/endpoints/profileInfoApi';
 

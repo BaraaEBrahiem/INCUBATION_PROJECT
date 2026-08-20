@@ -14,17 +14,17 @@ const ConversationItem = ({ conversation, isSelected }) => {
   return (
     <Link
       to={`/messagespage/${conversation.id}`}
-      className={`flex items-center gap-3 p-4 border border-second-color my-1 hover:bg-gray-50 transition-colors ${
-        isSelected ? "bg-white-color" : ""
+      className={`flex items-center gap-3 p-4  mx-2 my-2 hover:bg-gray-50 transition-colors ${
+        isSelected ? "bg-white-color border border-second-color rounded-2xl" : ""
       }`}
     >
-      <div className="w-12 h-12 rounded-full border-2 border-second-color flex items-center justify-center font-bold">
+      <div className="w-12 h-12 rounded-full bg-white border-2 border-second-color flex items-center justify-center font-bold">
         {user?.full_name ? user.full_name[0].toUpperCase() : "؟"}
       </div>
 
       <div className="flex-1 min-w-0">
         <div className="flex justify-between items-center mb-1">
-          <h3 className="font-medium text-gray-900 truncate">
+          <h3 className="font-bold text-lg text-gray-900 truncate">
             {user?.full_name || "مستخدم غير معروف"}
           </h3>
 

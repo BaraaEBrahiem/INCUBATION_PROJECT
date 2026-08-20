@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { NavLink, useLocation } from "react-router-dom";
-import girl from "../assets/images/girl.jpg";
+import person1 from "../assets/images/person1.jpg";
 import { BuildDashboardOptions } from "../Utils/BuildDashboardOptions";
 
 const Sidebar = ({ roles = [], userName, email }) => {
@@ -49,7 +49,7 @@ const Sidebar = ({ roles = [], userName, email }) => {
       {/* معلومات المستخدم */}
       <div className="flex items-center gap-4 mb-8 pb-4 border-b">
         <img 
-          src={girl} 
+          src={person1} 
           alt="avatar" 
           className="w-14 h-14 rounded-full object-cover border-2"
         />
