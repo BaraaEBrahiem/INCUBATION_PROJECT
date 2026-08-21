@@ -45,14 +45,18 @@ const RoleChecker = () => {
     // نحولها إلى:
     // ["volunteer", "evaluator"]
 
-    const newRoles = data.roles
-      .map((role) =>
-        typeof role === "string"
-          ? role.toLowerCase().trim()
-          : role
-      )
-      .filter(Boolean);
+    let newRoles = (data.roles || [])
+  .map((role) =>
+    typeof role === "string"
+      ? role.toLowerCase().trim()
+      : role
+  )
+  .filter(Boolean);
 
+// المستخدم الذي ليس لديه أي Role يعتبر Visitor
+if (newRoles.length === 0) {
+  newRoles = ["visitor"];
+}
 
     // Roles الموجودة حالياً في Redux
     const oldRoles = currentRoles
