@@ -99,15 +99,9 @@ const ProfileInfoPage = () => {
       showSuccess("تم إرسال طلب الانضمام بنجاح! طلبك قيد المراجعة من قبل المتطوع.");
       handleCloseJoinModal();
     } catch (err) {
-      console.error("Join request failed:", err);
-   
-      const errorMsg =
-        err?.data?.detail ||
-        err?.data?.non_field_errors?.[0] ||
-        Object.values(err?.data || {})?.[0]?.[0] ||
-        "حدث خطأ أثناء إرسال طلب الانضمام";
-      showError(errorMsg);
-    }
+  console.error("Join request failed:", err);
+  showError(err);
+}
   };
 
   return (
