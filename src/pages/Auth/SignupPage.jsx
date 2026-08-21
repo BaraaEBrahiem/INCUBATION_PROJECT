@@ -1,41 +1,25 @@
 import React, { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+
 import Input from "../../components/Input";
 import Button from "../../components/Button";
 import signUp from "../../assets/images/signUp.png";
 import NavLinkUniversal from "../../components/NavLinkUniversal";
+
 import { RoleContext } from "../../Context/RoleContext";
-import {
-  useRegisterMutation,
-  useLoginMutation,
-} from "../../api/endpoints/authApi";
+import { useRegisterMutation } from "../../api/endpoints/authApi";
 
 import { showSuccess, showError } from "../../Utils/toast";
-import { useDispatch } from "react-redux";
 import { setCredentials } from "../../redux/authSlice";
-
 
 const SignupPage = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
   const { updateRoles } = useContext(RoleContext);
 
-  // =========================
-  // API
-  // =========================
-
-  const [register, { isLoading: isRegistering }] =
-    useRegisterMutation();
-
-  const [login, { isLoading: isLoggingIn }] =
-    useLoginMutation();
-
-  const isLoading = isRegistering || isLoggingIn;
-
-
-  // =========================
-  // Form
-  // =========================
+  const [register, { isLoading }] = useRegisterMutation();
 
   const [form, setForm] = useState({
     full_name: "",
@@ -45,10 +29,9 @@ const SignupPage = () => {
 
   const [errors, setErrors] = useState({});
 
-
-  // =========================
+  // =====================================================
   // Handle Change
-  // =========================
+  // =====================================================
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -58,7 +41,6 @@ const SignupPage = () => {
       [name]: value,
     }));
 
-    // إزالة خطأ الحقل عند بدء التعديل
     setErrors((prev) => ({
       ...prev,
       [name]: "",
@@ -66,10 +48,9 @@ const SignupPage = () => {
     }));
   };
 
-
-  // =========================
+  // =====================================================
   // Validation
-  // =========================
+  // =====================================================
 
   const validate = () => {
     const newErrors = {};
@@ -78,10 +59,9 @@ const SignupPage = () => {
     const email = form.email.trim();
     const password = form.password;
 
-
-    // ---------------------------------
-    // الاسم
-    // ---------------------------------
+    // ===================================================
+    // Full Name
+    // ===================================================
 
     if (!fullName) {
       newErrors.full_name = "الاسم مطلوب";
@@ -91,25 +71,25 @@ const SignupPage = () => {
       newErrors.full_name = "الاسم طويل جداً";
     }
 
-
-    // ---------------------------------
+    // ===================================================
     // Email
-    // ---------------------------------
+    // ===================================================
 
     if (!email) {
       newErrors.email = "البريد الإلكتروني مطلوب";
     } else if (/\s/.test(email)) {
       newErrors.email =
         "البريد الإلكتروني لا يجب أن يحتوي على مسافات";
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) {
+    } else if (
+      !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)
+    ) {
       newErrors.email =
         "يرجى إدخال بريد إلكتروني صحيح";
     }
 
-
-    // ---------------------------------
+    // ===================================================
     // Password
-    // ---------------------------------
+    // ===================================================
 
     if (!password) {
       newErrors.password = "كلمة المرور مطلوبة";
@@ -131,51 +111,55 @@ const SignupPage = () => {
     } else if (!/[0-9]/.test(password)) {
       newErrors.password =
         "يجب أن تحتوي كلمة المرور على رقم واحد على الأقل";
-    } 
-
+    }
 
     setErrors(newErrors);
 
     return Object.keys(newErrors).length === 0;
   };
 
-
-  // =========================
-  // Extract API Error
-  // =========================
+  // =====================================================
+  // Extract Error Message
+  // =====================================================
 
   const getErrorMessage = (error) => {
-
     if (!error) {
       return "حدث خطأ غير متوقع";
     }
 
-
-    // ---------------------------------
-    // RTK Query / Django
-    // ---------------------------------
-
     const data = error?.data;
 
+    // -----------------------------------------------
+    // String
+    // -----------------------------------------------
 
     if (typeof data === "string") {
       return data;
     }
 
+    // -----------------------------------------------
+    // Message
+    // -----------------------------------------------
 
     if (data?.message) {
-      return data.message;
+      return Array.isArray(data.message)
+        ? data.message[0]
+        : data.message;
     }
 
+    // -----------------------------------------------
+    // Detail
+    // -----------------------------------------------
 
     if (data?.detail) {
-      return data.detail;
+      return Array.isArray(data.detail)
+        ? data.detail[0]
+        : data.detail;
     }
 
-
-    // ---------------------------------
+    // -----------------------------------------------
     // Email
-    // ---------------------------------
+    // -----------------------------------------------
 
     if (data?.email) {
       return Array.isArray(data.email)
@@ -183,10 +167,9 @@ const SignupPage = () => {
         : data.email;
     }
 
-
-    // ---------------------------------
+    // -----------------------------------------------
     // Full Name
-    // ---------------------------------
+    // -----------------------------------------------
 
     if (data?.full_name) {
       return Array.isArray(data.full_name)
@@ -194,10 +177,9 @@ const SignupPage = () => {
         : data.full_name;
     }
 
-
-    // ---------------------------------
+    // -----------------------------------------------
     // Password
-    // ---------------------------------
+    // -----------------------------------------------
 
     if (data?.password) {
       return Array.isArray(data.password)
@@ -205,10 +187,9 @@ const SignupPage = () => {
         : data.password;
     }
 
-
-    // ---------------------------------
+    // -----------------------------------------------
     // Non Field Errors
-    // ---------------------------------
+    // -----------------------------------------------
 
     if (data?.non_field_errors) {
       return Array.isArray(data.non_field_errors)
@@ -216,17 +197,14 @@ const SignupPage = () => {
         : data.non_field_errors;
     }
 
-
-    // ---------------------------------
-    // أي خطأ Django آخر
-    // ---------------------------------
+    // -----------------------------------------------
+    // Any Django Error
+    // -----------------------------------------------
 
     if (data && typeof data === "object") {
-
       const firstKey = Object.keys(data)[0];
 
       if (firstKey) {
-
         const firstError = data[firstKey];
 
         if (Array.isArray(firstError)) {
@@ -239,327 +217,250 @@ const SignupPage = () => {
       }
     }
 
-
-    // ---------------------------------
-    // JavaScript Error
-    // ---------------------------------
+    // -----------------------------------------------
+    // JS Error
+    // -----------------------------------------------
 
     if (error?.message) {
       return error.message;
     }
 
-
     return "فشل إنشاء الحساب. حاول مرة أخرى";
   };
 
+  // =====================================================
+  // Normalize Roles
+  // =====================================================
 
-  // =========================
-  // Handle Submit
-  // =========================
+  const normalizeRoles = (roles) => {
+    if (!Array.isArray(roles)) {
+      roles = roles ? [roles] : [];
+    }
+
+    return roles
+      .filter(Boolean)
+      .map((role) => {
+        if (typeof role === "string") {
+          return role.toLowerCase().trim();
+        }
+
+        return role;
+      })
+      .filter(Boolean);
+  };
+
+  // =====================================================
+  // Submit
+  // =====================================================
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-
-    // منع الضغط أثناء الطلب
+    // منع الضغط المتكرر
     if (isLoading) {
       return;
     }
 
-
     // Validation
-    if (!validate()) {
+    const isValid = validate();
+
+    if (!isValid) {
       return;
     }
-
 
     const fullName = form.full_name.trim();
     const email = form.email.trim().toLowerCase();
     const password = form.password;
 
-
     try {
+      // =================================================
+      // 1. Register
+      // =================================================
 
-      // ==========================================
-      // 1. إنشاء الحساب
-      // ==========================================
-
-      const registerResponse = await register({
+      const response = await register({
         full_name: fullName,
-        email: email,
-        password: password,
+        email,
+        password,
       }).unwrap();
 
+      console.log("=================================");
+      console.log("REGISTER SUCCESS");
+      console.log("REGISTER RESPONSE:", response);
+      console.log("=================================");
 
-      console.log(
-        "REGISTER RESPONSE:",
-        registerResponse
+      // =================================================
+      // 2. Tokens
+      // =================================================
+
+      const accessToken = response?.access;
+      const refreshToken = response?.refresh;
+
+      if (!accessToken) {
+        throw new Error(
+          "تم إنشاء الحساب ولكن لم يتم استلام Access Token"
+        );
+      }
+
+      // =================================================
+      // 3. User
+      // =================================================
+
+      const serverUser = response?.user || {};
+
+      const userId =
+        serverUser?.id ??
+        response?.id ??
+        null;
+
+      const userEmail =
+        serverUser?.email ||
+        response?.email ||
+        email;
+
+      const userName =
+        serverUser?.full_name ||
+        response?.full_name ||
+        fullName;
+
+      // =================================================
+      // 4. Roles
+      // =================================================
+
+      const backendRoles = normalizeRoles(
+        response?.roles ?? serverUser?.roles
       );
 
+      /*
+       * مهم جداً:
+       *
+       * الـ backend عند إنشاء المستخدم الجديد ممكن يرجع:
+       *
+       * roles: []
+       *
+       * لذلك نستخدم visitor للواجهة فقط.
+       *
+       * هذا لا يعني أننا غيّرنا Role في Django.
+       */
 
-      // ==========================================
-      // 2. محاولة استخراج Token
-      // ==========================================
+      const frontendRoles =
+        backendRoles.length > 0
+          ? backendRoles
+          : ["visitor"];
 
-      let accessToken =
-        registerResponse?.access ||
-        registerResponse?.token ||
-        registerResponse?.accessToken ||
-        null;
+      console.log("BACKEND ROLES:", backendRoles);
+      console.log("FRONTEND ROLES:", frontendRoles);
 
+      // =================================================
+      // 5. Build User
+      // =================================================
 
-      let refreshToken =
-        registerResponse?.refresh ||
-        registerResponse?.refreshToken ||
-        null;
-
-
-      let userData =
-        registerResponse?.user ||
-        registerResponse;
-
-
-      // ==========================================
-      // 3. إذا Register لم يرجع Token
-      //    نعمل Login تلقائياً
-      // ==========================================
-
-      if (!accessToken) {
-
-        console.log(
-          "Register succeeded without token."
-        );
-
-        console.log(
-          "Attempting automatic login..."
-        );
-
-
-        const loginResponse = await login({
-          email,
-          password,
-        }).unwrap();
-
-
-        console.log(
-          "AUTO LOGIN RESPONSE:",
-          loginResponse
-        );
-
-
-        accessToken =
-          loginResponse?.access ||
-          loginResponse?.token ||
-          loginResponse?.accessToken ||
-          null;
-
-
-        refreshToken =
-          loginResponse?.refresh ||
-          loginResponse?.refreshToken ||
-          null;
-
-
-        userData =
-          loginResponse?.user ||
-          loginResponse;
-      }
-
-
-      // ==========================================
-      // 4. حماية من عدم وجود Token
-      // ==========================================
-
-      if (!accessToken) {
-
-        throw new Error(
-          "تم إنشاء الحساب بنجاح، لكن تعذر تسجيل الدخول تلقائياً."
-        );
-      }
-
-
-      // ==========================================
-      // 5. استخراج Roles
-      // ==========================================
-
-      let assignedRoles =
-        userData?.roles ||
-        registerResponse?.roles ||
-        [];
-
-
-      // إذا رجع Role واحد كسلسلة
-      if (!Array.isArray(assignedRoles)) {
-        assignedRoles = [assignedRoles];
-      }
-
-
-      assignedRoles = assignedRoles
-        .map((role) =>
-          typeof role === "string"
-            ? role.toLowerCase().trim()
-            : role
-        )
-        .filter(Boolean);
-
-
-      // المستخدم الجديد بدون Role = Visitor
-      if (assignedRoles.length === 0) {
-        assignedRoles = ["visitor"];
-      }
-
-
-      // ==========================================
-      // 6. بناء User
-      // ==========================================
-
-      const localUser = {
-
-        id:
-          userData?.id ||
-          registerResponse?.id ||
-          null,
-
-        email:
-          userData?.email ||
-          registerResponse?.email ||
-          email,
-
-        name:
-          userData?.full_name ||
-          registerResponse?.full_name ||
-          fullName,
-
-        roles: assignedRoles,
+      const user = {
+        id: userId,
+        email: userEmail,
+        name: userName,
+        roles: frontendRoles,
       };
 
+      console.log("FINAL USER:", user);
 
-      // ==========================================
-      // 7. التأكد من وجود User ID
-      // ==========================================
-
-      if (!localUser.id) {
-
-        console.warn(
-          "User ID was not returned by server."
-        );
-      }
-
-
-      // ==========================================
-      // 8. حفظ Authentication في Redux
-      // ==========================================
+      // =================================================
+      // 6. Save Authentication
+      // =================================================
 
       dispatch(
         setCredentials({
-
-          user: localUser,
-
+          user,
           token: accessToken,
-
-          refreshToken: refreshToken,
-
-          userId: localUser.id,
-
-          roles: assignedRoles,
+          refreshToken: refreshToken || null,
+          userId,
+          roles: frontendRoles,
         })
       );
-      updateRoles(assignedRoles);
-      
 
+      // =================================================
+      // 7. Update Context
+      // =================================================
+
+      updateRoles(frontendRoles);
+
+      // =================================================
+      // 8. Verify LocalStorage
+      // =================================================
 
       console.log(
-        "FINAL USER:",
-        localUser
+        "TOKEN SAVED:",
+        localStorage.getItem("token")
       );
 
       console.log(
-        "FINAL ROLES:",
-        assignedRoles
+        "ROLES SAVED:",
+        localStorage.getItem("roles")
       );
 
+      console.log(
+        "USER SAVED:",
+        localStorage.getItem("user")
+      );
 
-      // ==========================================
+      // =================================================
       // 9. Success
-      // ==========================================
+      // =================================================
 
       showSuccess(
-        `مرحباً ${localUser.name}، تم إنشاء حسابك بنجاح!`
+        `مرحباً ${user.name}، تم إنشاء حسابك بنجاح!`
       );
 
+      // =================================================
+      // 10. Navigate
+      // =================================================
 
-      // ==========================================
-      // 10. الانتقال إلى Visitor
-      // ==========================================
-
-      navigate(
-        "/visitor-mainpage",
-        {
-          replace: true,
-        }
-      );
-
+      navigate("/visitor-mainpage", {
+        replace: true,
+      });
 
     } catch (error) {
+      console.error("=================================");
+      console.error("REGISTER ERROR");
+      console.error(error);
+      console.error("=================================");
 
-      console.error(
-        "Signup error:",
-        error
-      );
+      const errorMessage = getErrorMessage(error);
 
+      showError(errorMessage);
 
-      const errorMsg =
-        getErrorMessage(error);
-
-
-      // Toast
-      showError(errorMsg);
-
-
-      // Error داخل الصفحة
       setErrors({
-        general: errorMsg,
+        general: errorMessage,
       });
     }
   };
 
-
-  // =========================
-  // JSX
-  // =========================
+  // =====================================================
+  // UI
+  // =====================================================
 
   return (
-
     <div
       className="flex h-screen w-full overflow-hidden font-sans"
       dir="rtl"
     >
-
-      {/* =========================
-          Form Side
-      ========================= */}
+      {/* =================================================
+          FORM
+      ================================================= */}
 
       <div className="w-full md:w-1/2 bg-white flex items-center justify-center p-12">
-
         <div className="w-full max-w-md">
 
           <h1 className="text-3xl font-bold text-second-color mb-10 text-center">
             إنشاء حساب
           </h1>
 
-
           {/* General Error */}
 
           {errors.general && (
-
             <div className="bg-red-100 text-red-700 p-3 rounded mb-4 text-center">
-
               {errors.general}
-
             </div>
-
           )}
-
 
           <form
             className="space-y-5"
@@ -567,9 +468,9 @@ const SignupPage = () => {
             noValidate
           >
 
-            {/* =========================
-                Full Name
-            ========================= */}
+            {/* =================================================
+                NAME
+            ================================================= */}
 
             <Input
               label="الاسم"
@@ -581,10 +482,9 @@ const SignupPage = () => {
               error={errors.full_name}
             />
 
-
-            {/* =========================
-                Email
-            ========================= */}
+            {/* =================================================
+                EMAIL
+            ================================================= */}
 
             <Input
               label="البريد الإلكتروني"
@@ -596,49 +496,40 @@ const SignupPage = () => {
               error={errors.email}
             />
 
+            {/* =================================================
+                PASSWORD
+            ================================================= */}
 
-            {/* =========================
-                Password
-            ========================= */}
+            <Input
+              label="كلمة المرور"
+              placeholder="أدخل كلمة المرور"
+              name="password"
+              type="password"
+              value={form.password}
+              onChange={handleChange}
+              error={errors.password}
+            />
 
-            <div className="relative">
-
-              <Input
-                label="كلمة المرور"
-                placeholder="أدخل كلمة المرور"
-                name="password"
-                type="password"
-                value={form.password}
-                onChange={handleChange}
-                error={errors.password}
-              />
-
-            </div>
-
-
-            {/* =========================
-                Submit
-            ========================= */}
+            {/* =================================================
+                SUBMIT
+            ================================================= */}
 
             <Button
               label={
-                isRegistering
+                isLoading
                   ? "جاري إنشاء الحساب..."
-                  : isLoggingIn
-                    ? "جاري تسجيل الدخول..."
-                    : "التالي"
+                  : "إنشاء الحساب"
               }
               type="submit"
               disabled={isLoading}
-              className="flex justify-center max-w-[300px] bg-main-color mt-10 mx-auto w-full text-white rounded-xl py-3 font-bold block"
+              className="flex justify-center max-w-[300px] bg-main-color mt-10 mx-auto w-full text-white rounded-xl py-3 font-bold"
             />
 
           </form>
 
-
-          {/* =========================
-              Login Link
-          ========================= */}
+          {/* =================================================
+              LOGIN LINK
+          ================================================= */}
 
           <p className="mt-8 text-center text-sm">
 
@@ -655,17 +546,27 @@ const SignupPage = () => {
           </p>
 
         </div>
-
       </div>
 
-
-      {/* =========================
-          Image Side
-      ========================= */}
+      {/* =================================================
+          IMAGE
+      ================================================= */}
 
       <div className="hidden md:flex md:w-1/2 bg-main-color relative items-end justify-center">
 
-        <div className="absolute right-0 bottom-0 w-0 h-0 border-t-[100vh] border-t-transparent border-r-[15vw] border-r-black/10"></div>
+        <div
+          className="
+            absolute
+            right-0
+            bottom-0
+            w-0
+            h-0
+            border-t-[100vh]
+            border-t-transparent
+            border-r-[15vw]
+            border-r-black/10
+          "
+        />
 
         <img
           src={signUp}
@@ -674,10 +575,8 @@ const SignupPage = () => {
         />
 
       </div>
-
     </div>
   );
 };
-
 
 export default SignupPage;

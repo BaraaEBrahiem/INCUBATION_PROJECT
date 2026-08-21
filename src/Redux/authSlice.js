@@ -1,87 +1,314 @@
 import { createSlice } from "@reduxjs/toolkit";
 
+// ==============================
+// Helpers
+// ==============================
+
+const getSavedJson = (key, fallback) => {
+  try {
+    const value = localStorage.getItem(key);
+
+    if (!value) {
+      return fallback;
+    }
+
+    return JSON.parse(value);
+  } catch (error) {
+    console.error(`Failed to parse localStorage "${key}"`, error);
+    return fallback;
+  }
+};
+
 const savedToken = localStorage.getItem("token");
 const savedRefreshToken = localStorage.getItem("refreshToken");
-const savedUser = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")) : null;
+const savedUser = getSavedJson("user", null);
 const savedUserId = localStorage.getItem("userId");
-const savedRoles = localStorage.getItem("roles")
-  ? JSON.parse(localStorage.getItem("roles"))
-  : [];
+const savedRoles = getSavedJson("roles", []);
+
+
+// ==============================
+// Normalize Roles
+// ==============================
+
+const normalizeRoles = (roles) => {
+  if (!Array.isArray(roles)) {
+    return [];
+  }
+
+  return roles
+    .map((role) =>
+      typeof role === "string"
+        ? role.toLowerCase().trim()
+        : role
+    )
+    .filter(Boolean);
+};
+
+
+// ==============================
+// Initial State
+// ==============================
 
 const initialState = {
   user: savedUser,
   token: savedToken,
   refreshToken: savedRefreshToken,
   userId: savedUserId,
-  roles: savedRoles,
-  isAuthenticated: !!savedToken,
+  roles: normalizeRoles(savedRoles),
+
+  // وجود Access Token = المستخدم مسجل دخول
+  isAuthenticated: Boolean(savedToken),
 };
+
+
+// ==============================
+// Slice
+// ==============================
 
 const authSlice = createSlice({
   name: "auth",
+
   initialState,
+
   reducers: {
+
+    // ========================================
+    // LOGIN / REGISTER
+    // ========================================
+
     setCredentials: (state, action) => {
-      const { user, token, refreshToken, roles, userId } = action.payload;
-      
-      // 1️⃣ تحديد الأدوار النهائية (سواء قادمة منفصلة، أو من داخل كائن المستخدم، أو فارغة)
-      const finalRoles = roles || user?.roles || [];
 
-      // 2️⃣ حماية هندسية: ندمج الأدوار النهائية داخل كائن الـ user نفسه لتوحيد البيانات
-      const updatedUser = user ? { ...user, roles: finalRoles } : null;
+      const {
+        user,
+        token,
+        refreshToken,
+        roles,
+        userId,
+      } = action.payload;
 
-      // 3️⃣ تحديث الـ Redux State
+
+      // ------------------------------
+      // Token
+      // ------------------------------
+
+      if (!token) {
+        console.error(
+          "setCredentials called without access token"
+        );
+
+        return;
+      }
+
+
+      // ------------------------------
+      // Roles
+      // ------------------------------
+
+      let finalRoles = normalizeRoles(
+        roles ?? user?.roles
+      );
+
+
+      // المستخدم بدون Role = Visitor
+      if (finalRoles.length === 0) {
+        finalRoles = ["visitor"];
+      }
+
+
+      // ------------------------------
+      // User
+      // ------------------------------
+
+      const updatedUser = user
+        ? {
+            ...user,
+            roles: finalRoles,
+          }
+        : null;
+
+
+      // ------------------------------
+      // Redux
+      // ------------------------------
+
       state.user = updatedUser;
+
       state.token = token;
-      state.userId = userId;
+
+      state.userId =
+        userId ??
+        updatedUser?.id ??
+        null;
+
       state.roles = finalRoles;
+
       state.isAuthenticated = true;
-      if (refreshToken) state.refreshToken = refreshToken;
 
-      // 4️⃣ تخزين البيانات النظيفة والموحدة في الـ LocalStorage
-      localStorage.setItem("token", token);
-      localStorage.setItem("user", JSON.stringify(updatedUser)); // تخزين الكائن المحدث بالأدوار
-      localStorage.setItem("userId", userId);
-      localStorage.setItem("roles", JSON.stringify(finalRoles));
-      if (refreshToken) localStorage.setItem("refreshToken", refreshToken);
+
+      if (refreshToken) {
+        state.refreshToken = refreshToken;
+      }
+
+
+      // ------------------------------
+      // LocalStorage
+      // ------------------------------
+
+      localStorage.setItem(
+        "token",
+        token
+      );
+
+
+      localStorage.setItem(
+        "roles",
+        JSON.stringify(finalRoles)
+      );
+
+
+      localStorage.setItem(
+        "user",
+        JSON.stringify(updatedUser)
+      );
+
+
+      if (state.userId !== null) {
+        localStorage.setItem(
+          "userId",
+          String(state.userId)
+        );
+      }
+
+
+      if (refreshToken) {
+        localStorage.setItem(
+          "refreshToken",
+          refreshToken
+        );
+      }
+
+
+      console.log(
+        "✅ Authentication saved:",
+        {
+          user: updatedUser,
+          roles: finalRoles,
+          userId: state.userId,
+        }
+      );
     },
+
+
+    // ========================================
+    // UPDATE ACCESS TOKEN
+    // ========================================
+
     updateAccessToken: (state, action) => {
-      state.token = action.payload.token;
-      localStorage.setItem("token", action.payload.token);
+
+      const newToken =
+        action.payload?.token;
+
+      if (!newToken) {
+        return;
+      }
+
+      state.token = newToken;
+
+      state.isAuthenticated = true;
+
+      localStorage.setItem(
+        "token",
+        newToken
+      );
     },
-///////////////////////////
+
+
+    // ========================================
+    // UPDATE ROLES
+    // ========================================
+
     updateRoles: (state, action) => {
-  const roles = action.payload;
 
-  state.roles = roles;
+      let roles = normalizeRoles(
+        action.payload
+      );
 
-  if (state.user) {
-    state.user.roles = roles;
-  }
 
-  localStorage.setItem("roles", JSON.stringify(roles));
+      // لا يوجد Role = Visitor
+      if (roles.length === 0) {
+        roles = ["visitor"];
+      }
 
-  if (state.user) {
-    localStorage.setItem("user", JSON.stringify(state.user));
-  }
-  /////////////////
-},
+
+      state.roles = roles;
+
+
+      if (state.user) {
+
+        state.user = {
+          ...state.user,
+          roles,
+        };
+
+      }
+
+
+      localStorage.setItem(
+        "roles",
+        JSON.stringify(roles)
+      );
+
+
+      if (state.user) {
+
+        localStorage.setItem(
+          "user",
+          JSON.stringify(state.user)
+        );
+
+      }
+    },
+
+
+    // ========================================
+    // LOGOUT
+    // ========================================
+
     logOut: (state) => {
+
       state.user = null;
+
       state.token = null;
+
       state.refreshToken = null;
+
       state.userId = null;
-      state.roles = []; // تصفير الأدوار في الـ State عند تسجيل الخروج
+
+      state.roles = [];
+
       state.isAuthenticated = false;
 
+
       localStorage.removeItem("token");
+
       localStorage.removeItem("refreshToken");
+
       localStorage.removeItem("user");
+
       localStorage.removeItem("userId");
+
       localStorage.removeItem("roles");
     },
   },
 });
 
-export const { setCredentials, updateAccessToken,updateRoles, logOut } = authSlice.actions;
+
+export const {
+  setCredentials,
+  updateAccessToken,
+  updateRoles,
+  logOut,
+} = authSlice.actions;
+
+
 export default authSlice.reducer;

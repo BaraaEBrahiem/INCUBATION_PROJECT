@@ -7,105 +7,167 @@ import { updateRoles as updateReduxRoles } from "../redux/authSlice";
 import { RoleContext } from "../Context/RoleContext";
 
 
-const RoleChecker = () => {
+// =====================================================
+// Normalize Roles
+// =====================================================
 
+const normalizeRoles = (roles) => {
+  // إذا لم تكن Array نحولها إلى Array
+  if (!Array.isArray(roles)) {
+    roles = roles ? [roles] : [];
+  }
+
+  const normalizedRoles = roles
+    .filter(Boolean)
+    .map((role) =>
+      typeof role === "string"
+        ? role.toLowerCase().trim()
+        : role
+    )
+    .filter(Boolean);
+
+  // المستخدم بدون Role يعتبر Visitor
+  return normalizedRoles.length > 0
+    ? normalizedRoles
+    : ["visitor"];
+};
+
+
+// =====================================================
+// Compare Roles
+// =====================================================
+
+const rolesAreEqual = (rolesA = [], rolesB = []) => {
+  const normalizedA = normalizeRoles(rolesA).sort();
+  const normalizedB = normalizeRoles(rolesB).sort();
+
+  return (
+    JSON.stringify(normalizedA) ===
+    JSON.stringify(normalizedB)
+  );
+};
+
+
+// =====================================================
+// RoleChecker
+// =====================================================
+
+const RoleChecker = () => {
   const dispatch = useDispatch();
+
+  // ===================================================
+  // Role Context
+  // ===================================================
 
   const { updateRoles: updateContextRoles } =
     useContext(RoleContext);
 
 
-  // الأدوار الحالية الموجودة في Redux
+  // ===================================================
+  // Redux
+  // ===================================================
+
+  const token = useSelector(
+    (state) => state.auth.token
+  );
+
   const currentRoles = useSelector(
     (state) => state.auth.roles || []
   );
 
 
-  // التوكن
-  const token = useSelector(
-    (state) => state.auth.token
-  );
+  // ===================================================
+  // Get Current User
+  // ===================================================
 
-
-  // جلب المستخدم + Polling
-  const { data } = useGetMeQuery(undefined, {
+  const {
+    data,
+    isSuccess,
+  } = useGetMeQuery(undefined, {
     skip: !token,
+
+    // فحص التغييرات كل 30 ثانية
     pollingInterval: 30000,
+
+    // إعادة الجلب عند الحاجة
+    refetchOnMountOrArgChange: true,
   });
 
 
+  // ===================================================
+  // Check Roles
+  // ===================================================
+
   useEffect(() => {
+    // لا يوجد Token
+    if (!token) {
+      return;
+    }
 
-    if (!data?.roles) return;
-
-
-    // Roles القادمة من Django
-    // ["VOLUNTEER", "EVALUATOR"]
-    //
-    // نحولها إلى:
-    // ["volunteer", "evaluator"]
-
-    let newRoles = (data.roles || [])
-  .map((role) =>
-    typeof role === "string"
-      ? role.toLowerCase().trim()
-      : role
-  )
-  .filter(Boolean);
-
-// المستخدم الذي ليس لديه أي Role يعتبر Visitor
-if (newRoles.length === 0) {
-  newRoles = ["visitor"];
-}
-
-    // Roles الموجودة حالياً في Redux
-    const oldRoles = currentRoles
-      .map((role) =>
-        typeof role === "string"
-          ? role.toLowerCase().trim()
-          : role
-      )
-      .filter(Boolean);
-
-
-    // ترتيب العناصر حتى لا نعتبر:
-    //
-    // ["admin", "evaluator"]
-    //
-    // مختلفة عن:
-    //
-    // ["evaluator", "admin"]
-
-    const sortedNewRoles = [...newRoles].sort();
-    const sortedOldRoles = [...oldRoles].sort();
-
-
-    const rolesChanged =
-      JSON.stringify(sortedNewRoles) !==
-      JSON.stringify(sortedOldRoles);
-
-
-    // لا يوجد تغيير
-    if (!rolesChanged) {
+    // لم تصل البيانات بعد
+    if (!isSuccess || !data) {
       return;
     }
 
 
+    // =================================================
+    // استخراج Roles من أكثر من احتمال
+    // =================================================
+
+    const serverRoles =
+      data?.roles ??
+      data?.user?.roles ??
+      data?.user?.role ??
+      data?.role ??
+      [];
+
+
+    // =================================================
+    // Normalize
+    // =================================================
+
+    const newRoles = normalizeRoles(serverRoles);
+
+
+    // =================================================
+    // إذا لم يتغير الدور لا تعمل أي شيء
+    // =================================================
+
+    if (rolesAreEqual(currentRoles, newRoles)) {
+      return;
+    }
+
+
+    // =================================================
+    // Roles Changed
+    // =================================================
+
+    console.log("====================================");
     console.log("🔄 ROLES CHANGED");
-    console.log("Old roles:", oldRoles);
+    console.log("Old roles:", currentRoles);
     console.log("New roles:", newRoles);
+    console.log("====================================");
 
 
-    // 1️⃣ تحديث Redux
-    dispatch(updateReduxRoles(newRoles));
+    // =================================================
+    // 1. تحديث Redux
+    // =================================================
+
+    dispatch(
+      updateReduxRoles(newRoles)
+    );
 
 
-    // 2️⃣ تحديث RoleContext
+    // =================================================
+    // 2. تحديث RoleContext
+    // =================================================
+
     updateContextRoles(newRoles);
 
-
   }, [
+    token,
     data,
+    isSuccess,
     currentRoles,
     dispatch,
     updateContextRoles,
