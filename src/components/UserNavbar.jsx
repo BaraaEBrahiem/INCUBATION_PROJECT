@@ -1,6 +1,6 @@
 import React from "react"
 import logo from "../assets/images/logo.png"
-import girl from "../assets/images/girl.jpg"
+import person1 from "../assets/images/person1.jpg"
 import NavLinksGroup from "./NavLinksGroup"
 import NavLinkUniversal from "./NavLinkUniversal"
 import NotificationBell from "../features/notifications/components/NotificationBell"
@@ -33,7 +33,7 @@ const UserNavbar = ({ navOptions }) => {
           <div className="relative">
             <NavLinkUniversal
               label={<FaRegMessage size={22} />}
-              to="/messagespage"
+              to={`/messagespage/:id`}
               className="font-bold hover:scale-105 transition"
             />
 
@@ -45,9 +45,9 @@ const UserNavbar = ({ navOptions }) => {
           <NavLinkUniversal
             label={
               <img
-                src={girl}
+                src={person1}
                 alt="avatar"
-                className="h-12 w-12 rounded-full object-cover border"
+                className="h-10 w-10 rounded-full object-cover border"
               />
             }
             to="/contact"

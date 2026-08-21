@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import avatar from "../../../assets/images/avatar.jpg";
+import person1 from "../../../assets/images/person1.jpg";
 import Modal from "../../Modal";
 import Button from "../../Button";
 
@@ -139,7 +139,7 @@ const EvaluationDetails = ({
                   <img
                     src={
                       ev.evaluator_image ||
-                      avatar
+                      person1
                     }
                     alt="avatar"
                     className="w-full h-full object-cover"

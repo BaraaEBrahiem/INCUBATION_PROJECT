@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import Modal from "../../Modal";
 import Button from "../../Button";
-import girl from "../../../assets/images/girl.jpg";
+import person1 from "../../../assets/images/person1.jpg";
 import Checkbox from "../../CheckBox";
 import Input from "../../Input";
 import NavLinkUniversal from "../../NavLinkUniversal";
@@ -77,7 +77,7 @@ const UserHeaderActions = ({
     <>
       <div className="mb-8" dir="rtl">
         <div className="flex items-center gap-4 mb-2 py-4">
-          <img src={girl} alt="avatar" className="w-20 h-20 rounded-full object-cover" />
+          <img src={person1} alt="avatar" className="w-20 h-20 rounded-full object-cover" />
           <div>
             <h2 className="text-xl font-semibold">{user.name}</h2>
             <p className="text-sm font-medium text-gray-500 mt-1">

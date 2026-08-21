@@ -52,7 +52,7 @@ const NotificationsPage = () => {
               {notifications.map((notification) => (
                 <div 
                   key={notification.id} 
-                  className="p-1 hover:scale-95 transition-colors"
+                  className="p-1 hover:scale-95 transition-all duration-200"
                 >
                   <NotificationItem notification={notification} />
                 </div>

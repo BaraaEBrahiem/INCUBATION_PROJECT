@@ -5,6 +5,8 @@ import { IoMdArrowBack } from "react-icons/io";
 import { showSuccess, showError } from "../../Utils/toast";
 import { useGetIncubationNotesQuery, useSubmitGraduationDecisionMutation } from '../../api/endpoints/admin/graduationApi';
 
+import person1 from "../../assets/images/person1.jpg"
+
 const LatestReviewPage = () => {
   const navigate = useNavigate();
   const { idea_id } = useParams();
@@ -107,8 +109,8 @@ const LatestReviewPage = () => {
                 <div className="flex items-center justify-start w-full gap-4 mb-4"> 
                   {reviews.avatar && (
                     <img 
-                      src={reviews.avatar} 
-                      alt={reviews.mentor_name} 
+                      src= {person1 || reviews.avatar} 
+                      alt= {reviews.mentor_name}
                       className="w-16 h-16 rounded-full object-cover border-2 border-gray-100"
                     />
                   )}

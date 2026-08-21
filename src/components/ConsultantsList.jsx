@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import ConsultationRequestBtn from "./ConsultationRequestBtn";
 import Button from "./Button";
 import RequestDetailsModal from "./RequestDetailsModal"; 
-import avatarDefault from "../assets/images/avatar.jpg"; 
+import person1 from "../assets/images/person1.jpg"; 
 const DAY_TRANSLATIONS = {
   MONDAY: "الاثنين",
   TUESDAY: "الثلاثاء",
@@ -61,7 +61,7 @@ const ConsultantsList = ({
             )}
 
             <img 
-              src={c.avatar || avatarDefault} 
+              src={person1 || c.avatar} 
               className="w-20 h-20 sm:w-24 sm:h-24 rounded-full object-cover" 
               alt={c.full_name || c.name} 
             />
