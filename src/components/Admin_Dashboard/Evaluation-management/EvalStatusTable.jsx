@@ -112,12 +112,9 @@ export default function EvalStatusTable() {
   setIsSubmitting(true);
 
   try {
-    const [date, time] = schedule.split("T");
-
     await setMeetingDate({
       idea_id: selectedProject.id,
-      date,
-      time,
+      meetingDate: schedule,
     }).unwrap();
 
     showSuccess(
@@ -132,20 +129,19 @@ export default function EvalStatusTable() {
     setSelectedProject(null);
     setSchedule(null);
 
+    refetch();
   } catch (error) {
-  console.log("================================");
-  console.log("FULL ERROR:", error);
-  console.log("DATA:", error?.data);
-  console.log("DATA ERROR:", error?.data?.error);
-  console.log("STATUS:", error?.status);
-  console.log("================================");
+    console.log("================================");
+    console.log("FULL ERROR:", error);
+    console.log("DATA:", error?.data);
+    console.log("DATA ERROR:", error?.data?.error);
+    console.log("STATUS:", error?.status);
+    console.log("================================");
 
-  showError(
-    error?.data?.error ||
-    "حدث خطأ في تعيين الموعد"
-  );
-
-
+    showError(
+      error?.data?.error ||
+      "حدث خطأ في تعيين الموعد"
+    );
   } finally {
     setIsSubmitting(false);
   }
