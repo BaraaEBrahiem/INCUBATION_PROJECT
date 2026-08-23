@@ -1,7 +1,6 @@
 // src/features/messaging/pages/MessagesPage.jsx
 import React, { useEffect } from "react";
 import { useParams} from "react-router-dom";
-import logo from "../../../assets/images/logo.png";
 
 // استيراد المكونات التي جهزناها ونظفناها معاً
 import ConversationList from "../components/ConversationList";
@@ -53,8 +52,7 @@ export default function MessagesPage() {
         
         {/* ─── الشق الأيمن: قائمة جميع المحادثات ─── */}
         <div className="md:col-span-1 border-l border-gray-100 flex flex-col h-full">
-           <div className="flex items-center p-3 mb-2 border-b border-second-color bg-gray-50/50">
-            <img src={logo} alt="Logo" className="w-16 h-auto" />
+          <div className="p-4 border-b bg-gray-50/50">
             <h1 className="text-xl font-bold text-gray-800">الرسائل</h1>
           </div>
           

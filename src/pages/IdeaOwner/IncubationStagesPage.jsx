@@ -33,13 +33,14 @@ const IncubationStagesPage = () => {
     );
   }
 
-  // 2. حالة الخطأ الحقيقي فقط (مثلاً عدم وجود فكرة إطلاقاً أو خطأ شبكة 500)
+  const errorMessage = error?.data?.[0] || error?.data?.message || "";
+  const isNoCommitteeError = typeof errorMessage === "string" && errorMessage.includes("لا يوجد لجنة تقييم");
 
-  if (isError && !dashboard?.current_stage) {
+  if (isError && !isNoCommitteeError && !dashboard?.current_stage) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4 p-4 text-center">
         <p className="text-red-500 font-bold text-lg">
-          {error?.data?.message || "حدث خطأ أثناء تحميل بيانات لوحة التحكم، أو أنك لم تقم بتسجيل فكرة بعد."}
+          {errorMessage || "حدث خطأ أثناء تحميل بيانات لوحة التحكم، أو أنك لم تقم بتسجيل فكرة بعد."}
         </p>
         <button
           onClick={() => refetch()}
@@ -51,20 +52,27 @@ const IncubationStagesPage = () => {
     );
   }
 
-  const serverStage = dashboard?.current_stage;
+  const serverStage = dashboard?.current_stage || "EVALUATION"; 
   const stageData = dashboard?.data;
-
-  const currentStageIndex = STAGE_INDEX_MAP[serverStage] ?? 0;
+  const currentStageIndex = STAGE_INDEX_MAP[serverStage] ?? 1;
 
   const renderStageComponent = () => {
-    // إذا لم تتوفر بيانات المرحلة أو كانت فارغة
-    if (!stageData && serverStage !== "GRADUATED_NEGATIVE") {
+    // التحقق مما إذا كانت البيانات فارغة أو تعود بخطأ عدم وجود لجنة
+    const isStageDataEmpty = 
+      isNoCommitteeError ||
+      !stageData || 
+      (Array.isArray(stageData) && stageData.length === 0) ||
+      (typeof stageData === "object" && Object.keys(stageData).length === 0);
+
+    if (isStageDataEmpty && serverStage !== "GRADUATED_NEGATIVE") {
       return (
         <div className="p-8 bg-blue-50 border border-blue-200 rounded-xl text-center max-w-2xl mx-auto my-8 shadow-sm">
           <div className="w-12 h-12 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-3 text-xl font-bold">
             ⏳
           </div>
-          <h3 className="text-lg font-bold text-blue-900 mb-2">المرحلة الحالية: {STEPPER_LABELS[currentStageIndex]}</h3>
+          <h3 className="text-lg font-bold text-blue-900 mb-2">
+            المرحلة الحالية: {STEPPER_LABELS[currentStageIndex]}
+          </h3>
           <p className="text-blue-700">
             أنت الآن في هذه المرحلة! لم يتم تحديد الموعد أو التفاصيل الخاصة بك بعد، يرجى الانتظار لحين تحديث الجدول من قبل الإدارة.
           </p>
@@ -104,7 +112,6 @@ const IncubationStagesPage = () => {
         تابع تقدم مشروعك خلال مراحل الاحتضان من المعسكر حتى المعرض النهائي
       </h1>
 
-      {/* الـ Stepper سينتقل لمرحلة التقييم بشكل طبيعي وسلس */}
       <Stepper
         steps={STEPPER_LABELS}
         current={currentStageIndex}

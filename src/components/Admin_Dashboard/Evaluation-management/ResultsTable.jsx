@@ -32,8 +32,8 @@ const ResultsTable = () => {
   const [selectedProject, setSelectedProject] =
     useState(null);
 
-  const [activeDropdown, setActiveDropdown] =
-    useState(null);
+  // const [activeDropdown, setActiveDropdown] =
+  //   useState(null);
 
   const [isAcceptModalOpen, setIsAcceptModalOpen] =
     useState(false);
@@ -73,13 +73,13 @@ const ResultsTable = () => {
     projects = projectsData.data;
   }
 
-  const toggleDropdown = (idea_id) => {
-    setActiveDropdown(
-      activeDropdown === idea_id
-        ? null
-        : idea_id
-    );
-  };
+  // const toggleDropdown = (idea_id) => {
+  //   setActiveDropdown(
+  //     activeDropdown === idea_id
+  //       ? null
+  //       : idea_id
+  //   );
+  // };
 
   const handleAccept = async () => {
     if (!selectedProject) return;
@@ -187,100 +187,39 @@ const ResultsTable = () => {
 
   // أعمدة الجدول
   const columns = [
-    {
-      key: "actions",
-      label: "الإجراءات",
-      render: (row) => {
-        const completed =
-          isEvaluationCompleted(
-            row
-          );
-
-        return (
-          <div className="relative inline-block text-left">
-            <button
-              onClick={() =>
-                toggleDropdown(
-                  row.idea_id
-                )
-              }
-              className="text-lg p-2 hover:text-blue-600"
-            >
-              ⋮
-            </button>
-
-            {activeDropdown ===
-              row.idea_id && (
-              <div className="absolute right-0 top-full mt-1 w-44 bg-white shadow-2xl rounded-lg p-2 flex flex-col gap-2 z-50">
-                {completed && (
-                  <button
-                    onClick={() => {
-                      setSelectedProject(
-                        row
-                      );
-                      setView(
-                        "details"
-                      );
-                      setActiveDropdown(
-                        null
-                      );
-                    }}
-                    className="bg-main-color text-white py-2 px-4 rounded-lg text-sm font-bold hover:bg-[#1e3356]"
-                  >
-                    تفاصيل التقييم
-                  </button>
-                )}
-
-                {completed && (
-                  <button
-                    onClick={() => {
-                      setSelectedProject(
-                        row
-                      );
-                      setIsAcceptModalOpen(
-                        true
-                      );
-                      setActiveDropdown(
-                        null
-                      );
-                    }}
-                    className="bg-green-600 text-white py-2 px-4 rounded-lg text-sm hover:bg-green-700"
-                  >
-                    قبول
-                  </button>
-                )}
-
-                {completed && (
-                  <button
-                    onClick={() => {
-                      setSelectedProject(
-                        row
-                      );
-                      setIsRejectModalOpen(
-                        true
-                      );
-                      setActiveDropdown(
-                        null
-                      );
-                    }}
-                    className="bg-red-600 text-white py-2 px-4 rounded-lg text-sm hover:bg-red-700"
-                  >
-                    رفض
-                  </button>
-                )}
-
-                {!completed && (
-                  <div className="text-center text-gray-500 text-sm py-2 px-4">
-                    ينتظر اكتمال
-                    التقييم
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
-        );
-      },
-    },
+   // خيار العرض المباشر (بدون أيقونة)
+{
+  key: "actions",
+  label: "الإجراءات",
+  render: (row) => {
+    const completed = isEvaluationCompleted(row);
+    if (!completed) {
+      return <span className="text-xs text-gray-400">ينتظر التقييم</span>;
+    }
+    return (
+      <div className="flex items-center gap-2">
+        <button
+          onClick={() => { setSelectedProject(row); setView("details"); }}
+          className="bg-main-color text-white px-2 py-1 rounded text-xs"
+        >
+          التفاصيل
+        </button>
+        <button
+          onClick={() => { setSelectedProject(row); setIsAcceptModalOpen(true); }}
+          className="bg-green-600 text-white px-2 py-1 rounded text-xs"
+        >
+          قبول
+        </button>
+        <button
+          onClick={() => { setSelectedProject(row); setIsRejectModalOpen(true); }}
+          className="bg-red-600 text-white px-2 py-1 rounded text-xs"
+        >
+          رفض
+        </button>
+      </div>
+    );
+  }
+},
     {
       key: "owner_email",
       label: "البريد الإلكتروني",
@@ -302,7 +241,7 @@ const ResultsTable = () => {
 
         return (
           <span
-            className={`px-2 py-1 rounded text-sm font-bold ${
+            className={`px-1 py-1 rounded text-sm font-bold ${
               completed
                 ? "bg-green-100 text-green-700"
                 : "bg-yellow-100 text-yellow-700"

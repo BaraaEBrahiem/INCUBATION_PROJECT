@@ -1,19 +1,18 @@
 import React, { useState } from "react";
-import { useNavigate} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { showPromise } from "../../../Utils/toast";
 import SearchBar from "../../SearchBar";
 import DataTable from "../DataTable";
 import Button from "../../Button";
 import { useGetSessionsQuery } from "../../../api/endpoints/admin/sessionsApi";
 
-const SessionsSection = ({seasonId}) => {
+const SessionsSection = ({ seasonId }) => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
 
   const { data: sessionsFromApi, isLoading, error, refetch } = useGetSessionsQuery();
 
   const sessions = sessionsFromApi || [];
-  console.log("=== 📅 SESSIONS FROM API ===", sessionsFromApi);
 
   // فلترة الجلسات حسب البحث
   const filtered = sessions.filter(
@@ -56,7 +55,7 @@ const SessionsSection = ({seasonId}) => {
   // حالة التحميل
   if (isLoading) {
     return (
-      <div className=" p-6 rounded-lg shadow">
+      <div className="p-6 rounded-lg shadow w-full">
         <h2 className="text-lg font-bold mb-4">قائمة الجلسات</h2>
         <div className="space-y-4">
           {[1, 2, 3].map((i) => (
@@ -70,7 +69,7 @@ const SessionsSection = ({seasonId}) => {
   // حالة الخطأ
   if (error) {
     return (
-      <div className="p-6 rounded-lg shadow">
+      <div className="p-6 rounded-lg shadow w-full">
         <h2 className="text-lg font-bold mb-4">قائمة الجلسات</h2>
         <div className="text-center py-6">
           <p className="text-red-500 mb-3">حدث خطأ في تحميل الجلسات</p>
@@ -86,7 +85,7 @@ const SessionsSection = ({seasonId}) => {
   }
 
   return (
-    <div className="p-6 rounded-lg">
+    <div className="p-6 rounded-lg w-full max-w-full">
       <h2 className="text-lg font-bold mb-4">قائمة الجلسات</h2>
 
       <SearchBar
@@ -99,7 +98,10 @@ const SessionsSection = ({seasonId}) => {
           لا توجد جلسات حالياً
         </div>
       ) : (
-        <DataTable columns={columns} data={filtered} />
+        /* حاوية تتكيف مع حجم الشاشة لإخفاء السكرول في للشاشات الكبيرة */
+        <div className="w-full overflow-x-auto md:overflow-x-visible">
+          <DataTable columns={columns} data={filtered} />
+        </div>
       )}
 
       <div className="flex justify-center mt-4">

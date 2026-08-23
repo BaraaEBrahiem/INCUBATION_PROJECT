@@ -16,10 +16,18 @@ import UserInfoCard from "../../components/Admin_Dashboard/Users/UserInfoCard";
 import UserMessagesSection from "../../components/Admin_Dashboard/Users/UserMessageSection";
 import VolunteerWorkshopsSection from "../../components/Admin_Dashboard/Users/VolunteerWorkshopSection";
 import EvaluationSection from "../../components/Admin_Dashboard/Users/EvaluationSection";
+import useConversationLauncher
+from "../../features/messaging/hooks/useConversationLauncher";
+
 
 const UserDetailsPage = () => {
+
   const { id } = useParams();
+
   const navigate = useNavigate();
+
+  const { launchConversation } =
+  useConversationLauncher();
 
   const {
     data: serverUser,
@@ -190,10 +198,15 @@ const UserDetailsPage = () => {
     }
   };
 
-  const handleMessageClick = () =>
-    navigate(
-      `/messagespage/${finalUser.basic_info.id}`
-    );
+  const handleMessageClick = async () => {
+    try {
+      await launchConversation(
+        finalUser.basic_info.id
+      );
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   const handleTaskClick = (taskId) =>
     navigate(`/workshopinfo/${taskId}`);
