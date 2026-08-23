@@ -9,7 +9,7 @@ import {
 import ProjectDetailsCard from "../../components/ProjectDetailsCard";
 import LoadingOverlay from "../../components/LoadingOverlay";
 
-import { showError } from "../../utils/toast";
+import { showError } from "../../Utils/toast";
 
 import {
   useGetProjectDetailsQuery,

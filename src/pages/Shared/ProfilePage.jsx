@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import girl from "../../assets/images/girl.jpg";
+import person1 from "../../assets/images/person1.jpg";
 
 import Input from "../../components/Input";
 import Button from "../../components/Button";
@@ -38,13 +38,14 @@ const ProfilePage = () => {
     useState(null);
 
   const [preview, setPreview] =
-    useState(girl);
+    useState(person1);
 
   // ==========================
   // Fill form from API
   // ==========================
   useEffect(() => {
     if (user) {
+      //eslint-disable-next-line
       setForm({
         full_name:
           user.full_name || "",
@@ -53,7 +54,7 @@ const ProfilePage = () => {
       });
 
       setPreview(
-        user.avatar || girl
+        user.avatar || person1
       );
     }
   }, [user]);

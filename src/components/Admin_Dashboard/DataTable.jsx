@@ -11,7 +11,7 @@ const DataTable = ({
     // الحاوية الخارجية
     <div className="bg-white rounded-lg shadow p-4 w-full overflow-hidden">
       {/* التمرير الأفقي للموبايل */}
-      <div className="w-full overflow-x-auto block whitespace-nowrap">
+      <div className="w-full overflow-x-auto block">
         <table className="w-full text-center" dir="ltr">
           <thead>
             <tr className="border-b border-second-color">
