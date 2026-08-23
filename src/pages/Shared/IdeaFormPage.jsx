@@ -65,8 +65,8 @@ const IdeaFormPage = () => {
         title="🎉 تم تسجيلك كصاحب فكرة!"
         footer={
           <Button
-            label="اذهب إلى تسجيل الدخول"
-            onClick={() => navigate("/login")}
+            label="اذهب إلى لوحة التحكم"
+            onClick={() => navigate("/profile")}
             className="bg-main-color"
           />
         }

@@ -96,6 +96,10 @@ const LoginPage = () => {
       updateRoles(user.roles);
 
       showSuccess(`مرحباً ${user.name}`);
+      if (response.force_password_change) {
+  navigate("/change-password");
+  return;
+}
       
       // التوجيه التلقائي بناءً على الدور المخزن
       if (user.roles.includes("admin") || user.roles.includes("secretary")) {

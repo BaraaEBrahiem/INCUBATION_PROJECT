@@ -58,33 +58,30 @@ const ExpertiseFieldsChart = ({
   // دمج بيانات الباك
   // =====================================
 
-  const chartData =
-    skillConfig.map(
-      (skill) => {
-        const skillData =
-          data?.skills?.find(
-            (item) =>
-              item.skill ===
-              skill.key
-          );
+  const chartData = skillConfig.map((skill) => {
+  const skillData = data?.skills?.find((item) => {
+    const skillMap = {
+      Backend: "backend",
+      Frontend: "frontend",
+      "UI/UX": "ui_ux",
+      Business: "business",
+      Marketing: "marketing",
+      Legal: "legal",
+    };
 
-        return {
-          name:
-            skill.label,
+    const normalizedSkill =
+      skillMap[item.skill] || item.skill;
 
-          value:
-            skillData?.count ||
-            0,
+    return normalizedSkill === skill.key;
+  });
 
-          percentage:
-            skillData?.percentage ||
-            0,
-
-          color:
-            skill.color,
-        };
-      }
-    );
+  return {
+    name: skill.label,
+    value: skillData?.count || 0,
+    percentage: skillData?.percentage || 0,
+    color: skill.color,
+  };
+});
 
   return (
     <div className="bg-white w-full max-w-[560px] p-4 sm:p-6 rounded-lg shadow mx-auto">

@@ -95,7 +95,11 @@ export default function EvalStatusTable() {
 
   const openScheduleModal = (project) => {
     setSelectedProject(project);
-    setSchedule(project.meeting_date || "");
+    setSchedule(
+  project.meeting_date?.trim()
+    ? project.meeting_date
+    : ""
+);
 
     setModals((prev) => ({
       ...prev,
@@ -105,19 +109,16 @@ export default function EvalStatusTable() {
 
   const handleSetMeeting = async () => {
   if (!schedule) {
-    showError("الرجاء تحديد تاريخ ووقت اللجنة");
+    showError("يرجى إدخال تاريخ ووقت اللجنة");
     return;
   }
 
   setIsSubmitting(true);
 
   try {
-    const [date, time] = schedule.split("T");
-
     await setMeetingDate({
       idea_id: selectedProject.id,
-      date,
-      time,
+      meetingDate: schedule,
     }).unwrap();
 
     showSuccess(
@@ -132,20 +133,11 @@ export default function EvalStatusTable() {
     setSelectedProject(null);
     setSchedule(null);
 
+    refetch();
   } catch (error) {
-  console.log("================================");
-  console.log("FULL ERROR:", error);
-  console.log("DATA:", error?.data);
-  console.log("DATA ERROR:", error?.data?.error);
-  console.log("STATUS:", error?.status);
-  console.log("================================");
-
-  showError(
-    error?.data?.error ||
-    "حدث خطأ في تعيين الموعد"
-  );
-
-
+    showError(
+      error?.data?.error || "حدث خطأ في تعيين الموعد"
+    );
   } finally {
     setIsSubmitting(false);
   }
@@ -350,13 +342,12 @@ export default function EvalStatusTable() {
         }
       >
         <Input
-          label="تاريخ ووقت اللجنة"
-          type="datetime-local"
-          onChange={(e) =>
-            setSchedule(e.target.value)
-          }
-          value={schedule || ""}
-        />
+  label="تاريخ ووقت اللجنة"
+  type="datetime-local"
+  required
+  onChange={(e) => setSchedule(e.target.value)}
+  value={schedule || ""}
+/>
 
         <p className="text-sm text-gray-500 text-right mt-2">
           سيتم إرسال إشعار للمستخدم بتعيين الموعد

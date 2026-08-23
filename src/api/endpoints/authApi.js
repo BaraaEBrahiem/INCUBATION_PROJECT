@@ -27,12 +27,7 @@ export const authApi = apiSlice.injectEndpoints({
       invalidatesTags: ["Auth", "User", "Roles"],
     }),
 
-    getMe: builder.query({
-  query: () => ({
-    url: "/accounts/me/",
-    method: "GET",
-  }),
-}),
+
 
     // -----------------------------
     // 3) Forgot Password
@@ -85,7 +80,6 @@ export const authApi = apiSlice.injectEndpoints({
 export const {
   useRegisterMutation,
   useLoginMutation,
-  useGetMeQuery,
   useForgotPasswordMutation,
   useVerifyOtpMutation,
   useNewPasswordMutation,

@@ -3,8 +3,6 @@ import { FavoritesProvider } from "./Context/FavoritesContext";
 import { RoleProvider } from "./Context/RoleContext";
 import RealtimeProvider from "./features/realtime/RealtimeProvider";
 import { Toaster } from "react-hot-toast";
-import RoleChecker from "./components/RoleChecker";
-
 
 function App() {
   return (
@@ -13,8 +11,6 @@ function App() {
       <RealtimeProvider>
 
         <FavoritesProvider>
-
-          <RoleChecker />
 
           <Toaster
             position="top-center"
@@ -31,6 +27,7 @@ function App() {
                 fontWeight: "500",
                 direction: "rtl",
               },
+
               success: {
                 duration: 2500,
                 iconTheme: {
@@ -38,6 +35,7 @@ function App() {
                   secondary: "#fff",
                 },
               },
+
               error: {
                 duration: 3000,
                 iconTheme: {
