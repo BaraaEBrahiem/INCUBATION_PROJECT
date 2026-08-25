@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useSendMessageMutation } from "../../../api/endpoints/messageApi";
-import { TfiLocationArrow } from "react-icons/tfi";
 
 export default function MessageComposer({ conversationId }) {
   const [content, setContent] = useState("");
@@ -26,22 +25,22 @@ export default function MessageComposer({ conversationId }) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="border-t border-second-color p-4 flex gap-2 bg-white">
+    <form onSubmit={handleSubmit} className="border-t p-4 flex gap-2 bg-white">
       <input
         value={content}
         onChange={(e) => setContent(e.target.value)}
         onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && handleSubmit(e)}
         placeholder="اكتب رسالة..."
-        className="flex-1 border border-second-color rounded-lg px-3 py-2 text-xl outline-none focus:border-teal-700"
+        className="flex-1 border border-second-color rounded-lg px-3 py-2 text-sm outline-none focus:border-teal-700"
         disabled={isLoading}
       />
 
       <button
         type="submit"
         disabled={isLoading || !content.trim()}
-        className="bg-main-color  text-white disabled:bg-gray-300 px-5 rounded-lg text-lg font-medium transition-colors"
+        className="bg-main-color  text-white disabled:bg-gray-300 px-5 rounded-lg text-sm font-medium transition-colors"
       >
-        {isLoading ? "جاري..." : <TfiLocationArrow size={30} />}
+        {isLoading ? "جاري..." : "إرسال"}
       </button>
     </form>
   );

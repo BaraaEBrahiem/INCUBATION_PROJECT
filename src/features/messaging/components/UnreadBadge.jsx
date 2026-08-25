@@ -17,11 +17,11 @@ const UnreadBadge = ({
       className="
         min-w-5
         h-5
-        px-2
+        px-1
         rounded-full
-        bg-second-color
+        bg-red-500
         text-white
-        text-sm
+        text-xs
         flex
         items-center
         justify-center
