@@ -4,6 +4,7 @@ import Textarea from '../../components/Textarea';
 import Button from '../../components/Button';
 import Select from '../../components/Select';
 import { useSendContactMessageMutation } from "../../api/endpoints/messageApi";
+import { showError, showInfo, showSuccess } from '../../Utils/toast';
 
 
 
@@ -51,12 +52,12 @@ const ContactPage = () => {
   const handleSubmit = async () => {
 
     if (!inquiryType) {
-      alert("اختر نوع الاستفسار");
+      showInfo("اختر نوع الاستفسار");
       return;
     }
 
     if (!message.trim()) {
-      alert("اكتب رسالتك");
+      showInfo("اكتب رسالتك");
       return;
     }
 
@@ -67,7 +68,7 @@ const ContactPage = () => {
         message,
       }).unwrap();
 
-      alert("تم إرسال رسالتك بنجاح.");
+      showSuccess("تم إرسال رسالتك بنجاح.");
 
       setInquiryType("");
       setMessage("");
@@ -76,7 +77,7 @@ const ContactPage = () => {
 
       console.error(error);
 
-      alert(
+      showError(
         error?.data?.detail ??
         "حدث خطأ أثناء الإرسال."
       );
