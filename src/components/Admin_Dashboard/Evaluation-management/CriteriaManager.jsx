@@ -89,12 +89,9 @@ const CriteriaManager = () => {
             max_score: Number(updatedCriterion.max_score),
           }).unwrap();
         } catch (err) {
-          console.error(err);
-          showError(
-            err?.data?.detail ||
-              err?.data?.message ||
-              "فشل تعديل المعيار"
-          );
+  console.error(err);
+  showError(err);
+
         }
       }, 700);
 
@@ -122,8 +119,7 @@ const CriteriaManager = () => {
       } catch (err) {
         console.error(err);
 
-        showError(
-          err?.data?.detail ||
+        showError(err ||
             "فشل حذف المعيار"
         );
       }
@@ -149,14 +145,9 @@ const CriteriaManager = () => {
           "تم إضافة معيار"
         );
       } catch (err) {
-        console.error(err);
-
-        showError(
-          err?.data?.detail ||
-            err?.data?.message ||
-            "فشل إضافة معيار"
-        );
-      }
+  console.error(err);
+  showError(err);
+}
     };
 
   // المجموع
@@ -206,13 +197,9 @@ const CriteriaManager = () => {
 
         refetch();
       } catch (err) {
-        console.error(err);
+  console.error(err);
+  showError(err);
 
-        showError(
-          err?.data?.detail ||
-            err?.data?.message ||
-            "حدث خطأ في النشر"
-        );
       } finally {
         setIsSubmitting(false);
       }

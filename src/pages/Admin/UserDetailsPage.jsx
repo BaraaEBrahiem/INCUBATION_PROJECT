@@ -13,11 +13,8 @@ import { showError, showSuccess } from "../../Utils/toast";
 
 import UserHeaderActions from "../../components/Admin_Dashboard/Users/UserHeaderActions";
 import UserInfoCard from "../../components/Admin_Dashboard/Users/UserInfoCard";
-import UserMessagesSection from "../../components/Admin_Dashboard/Users/UserMessageSection";
 import VolunteerWorkshopsSection from "../../components/Admin_Dashboard/Users/VolunteerWorkshopSection";
 import EvaluationSection from "../../components/Admin_Dashboard/Users/EvaluationSection";
-import useConversationLauncher
-from "../../features/messaging/hooks/useConversationLauncher";
 
 
 const UserDetailsPage = () => {
@@ -25,9 +22,6 @@ const UserDetailsPage = () => {
   const { id } = useParams();
 
   const navigate = useNavigate();
-
-  const { launchConversation } =
-  useConversationLauncher();
 
   const {
     data: serverUser,
@@ -46,74 +40,8 @@ const UserDetailsPage = () => {
   const [updateUserRoles] = useUpdateUserRolesMutation();
   const [sendNotification] = useSendNotificationToUserMutation();
 
-  const fallbackUser = {
-    basic_info: {
-      id,
-      full_name: "مايا المحمد",
-      email: "ahmadalmo12@gmail.com",
-      phone: "093883273883",
-      avatar: null,
-      joined_at: "12/03/2025",
-      is_active: false,
-      current_roles: ["VOLUNTEER", "EVALUATOR"],
-      all_roles: ["VOLUNTEER", "IDEA_OWNER"]
-    },
-    roles: ["VOLUNTEER", "IDEA_OWNER"],
-    sections: [
-      {
-        type: "VOLUNTEER",
-        data: {
-          workshops: [
-            {
-              id: 1,
-              title: "روبوت سابك الورشة الأولى",
-              start_date: "12/02/2024",
-              status: "قيد المراجعة"
-            },
-            {
-              id: 2,
-              title: "روبوت سابك الورشة الثانية",
-              start_date: "15/02/2024",
-              status: "مرفوض"
-            },
-            {
-              id: 3,
-              title: "روبوت سابك الورشة الثالثة",
-              start_date: "20/02/2024",
-              status: "مقبول"
-            }
-          ]
-        }
-      },
-      {
-        type: "IDEA_OWNER",
-        data: {
-          ideas: [
-            {
-              idea_id: 22,
-              title: "مشروع نظام الحواضن الذكي",
-              status: "INCUBATION",
-              commitment_percentage: 75.5,
-              evaluations: [
-                {
-                  evaluator_name: "سهيل أحمد",
-                  score: 40,
-                  note: "مشروع واعد جداً ومكتمل الأركان"
-                },
-                {
-                  evaluator_name: "رنا محمود",
-                  score: 38,
-                  note: "حضور متميز ومتابعة مستمرة"
-                }
-              ]
-            }
-          ]
-        }
-      }
-    ]
-  };
 
-  const finalUser = serverUser || fallbackUser;
+  const finalUser = serverUser ;
 
   const userRolesCodes =
     finalUser?.roles ||
@@ -198,16 +126,7 @@ const UserDetailsPage = () => {
     }
   };
 
-  const handleMessageClick = async () => {
-    try {
-      await launchConversation(
-        finalUser.basic_info.id
-      );
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
+  
   const handleTaskClick = (taskId) =>
     navigate(`/workshopinfo/${taskId}`);
 
@@ -261,17 +180,6 @@ const UserDetailsPage = () => {
 
         <UserInfoCard
           basicInfo={finalUser.basic_info}
-        />
-
-        <UserMessagesSection
-          lastMessage={
-            finalUser.basic_info
-              ?.last_message ||
-            "لا توجد رسائل جديدة غير مقروءة حالياً"
-          }
-          onMessageClick={
-            handleMessageClick
-          }
         />
 
         {userRolesCodes.includes(

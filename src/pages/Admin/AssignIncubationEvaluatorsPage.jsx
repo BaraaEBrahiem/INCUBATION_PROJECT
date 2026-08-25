@@ -6,13 +6,29 @@ import { showSuccess, showError } from "../../Utils/toast";
 
 import { useGetAvailableEvaluatorsQuery } from "../../api/endpoints/evaluationApi";
 import { useAssignIncubationEvaluatorsMutation } from "../../api/endpoints/publicProjectsApi";
+import { useGetIncubatedcampQuery } from "../../api/endpoints/admin/campApi";
 
 const AssignIncubationEvaluatorsPage = () => {
   const { id: projectId } = useParams();
   const navigate = useNavigate();
 
+  // 1. جلب قائمة المشاريع المحتضنة لجلب اسم المشروع المباشر بناءً على id
+  const { data: incubatedData, isLoading: isIncubatedLoading } =
+    useGetIncubatedcampQuery();
+
+  // 2. البحث عن المشروع المحدد بـ ID
+  const incubatedList = incubatedData?.results || [];
+  const currentProject = incubatedList.find(
+    (item) => String(item.idea_id) === String(projectId)
+  );
+
+  const projectName =
+    currentProject?.idea_title ||
+    currentProject?.project_title ||
+    `المشروع #${projectId}`;
+
   // جلب المقيمين
-  const { data: evaluatorsData, isLoading, error, refetch } =
+  const { data: evaluatorsData, isLoading: isEvaluatorsLoading, error, refetch } =
     useGetAvailableEvaluatorsQuery();
 
   // mutation
@@ -63,23 +79,22 @@ const AssignIncubationEvaluatorsPage = () => {
         navigate(-1);
       }, 1000);
     } catch (err) {
-  console.error("Assign evaluators error:", err);
+      console.error("Assign evaluators error:", err);
 
-  showError(
-    err?.data?.error ||
-    err?.data?.detail ||
-    err?.data?.message ||
-    "حدث خطأ في التعيين"
-  );
-
+      showError(
+        err?.data?.error ||
+        err?.data?.detail ||
+        err?.data?.message ||
+        "حدث خطأ في التعيين"
+      );
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  if (isLoading) {
+  if (isEvaluatorsLoading || isIncubatedLoading) {
     return (
-      <div className="p-6 text-center">جاري تحميل المقيمين...</div>
+      <div className="p-6 text-center">جاري التحميل...</div>
     );
   }
 
@@ -104,7 +119,6 @@ const AssignIncubationEvaluatorsPage = () => {
       key: "actions",
       label: "الإجراءات",
       render: (row) => {
-        console.log("ROW DATA:", row);
         return (
           <Checkbox
             name={`ev-${row.user_id}`}
@@ -136,7 +150,7 @@ const AssignIncubationEvaluatorsPage = () => {
     <div className="container relative w-full p-6">
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-xl font-bold">
-          تعيين مقيمي الاحتضان للمشروع #{projectId}
+          تعيين مقيمي الاحتضان للمشروع: <span className="text-main-color">{projectName}</span>
         </h2>
 
         <button

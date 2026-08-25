@@ -26,7 +26,7 @@ const VolunteerMainPage = () => {
            ✨ انقل فكرتك من <span className="text-second-color">الحلم</span> إلى <span className="text-second-color">الحقيقة</span>...
           </h1>
           <p className='mt-4 text-xl text-gray-600 leading-relaxed'>
-            تبدأ فترة الاحتضان من 15 الشهر الجاري وحتى نهايته قدم فكرتك الآن واجعلنا نحتضن نجاحك
+          قدم فكرتك الآن واجعلنا نحتضن نجاحك
           </p>
           <NavLinkUniversal 
             to="/ideaform" 

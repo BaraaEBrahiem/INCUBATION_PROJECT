@@ -23,23 +23,13 @@ const IdeaForm = ({ seasonId, onSubmit }) => {
     isError,
   } = useGetIdeaFormDesignQuery(seasonId);
 
-  const [saveFormStep] =
-    useSaveFormStepMutation();
+  //  استخراج حالات التحميل من الـ Mutations
+  const [saveFormStep, { isLoading: isSavingStep }] = useSaveFormStepMutation();
+  const [submitFinalIdea, { isLoading: isSubmitting }] = useSubmitFinalIdeaMutation();
 
-  const [submitFinalIdea] =
-    useSubmitFinalIdeaMutation();
-
-  const [form, dispatch] =
-    useReducer(
-      ideaReducer,
-      initialForm
-    );
-
-  const [errors, setErrors] =
-    useState({});
-
-  const [currentStep, setCurrentStep] =
-    useState(0);
+  const [form, dispatch] = useReducer(ideaReducer, initialForm);
+  const [errors, setErrors] = useState({});
+  const [currentStep, setCurrentStep] = useState(0);
 
   const steps = formData?.steps || [];
 
@@ -50,16 +40,11 @@ const IdeaForm = ({ seasonId, onSubmit }) => {
       type: "SET_DRAFT",
       payload: formData.draft_data || {},
     });
-    //eslint-disable-next-line react-hooks/exhaustive-deps
-    setCurrentStep(
-      (formData.current_step || 1) - 1
-    );
+    //eslint-disable-next-line
+    setCurrentStep((formData.current_step || 1) - 1);
   }, [formData]);
 
-  const handleChange = (
-    field,
-    value
-  ) => {
+  const handleChange = (field, value) => {
     dispatch({
       type: "UPDATE_FIELD",
       field,
@@ -75,65 +60,43 @@ const IdeaForm = ({ seasonId, onSubmit }) => {
   };
 
   const validateStep = () => {
-    const currentFields =
-      steps[currentStep]?.questions || [];
-
+    const currentFields = steps[currentStep]?.questions || [];
     const newErrors = {};
 
     currentFields.forEach((field) => {
-      const value =
-        form[field.key];
+      const value = form[field.key];
 
       if (
         field.required &&
-        (
-          value === undefined ||
+        (value === undefined ||
           value === null ||
           value === "" ||
-          (
-            Array.isArray(value) &&
-            value.length === 0
-          )
-        )
+          (Array.isArray(value) && value.length === 0))
       ) {
-        newErrors[field.key] =
-          `${field.label} مطلوب`;
+        newErrors[field.key] = `${field.label} مطلوب`;
       }
     });
 
-    if (
-      form.team === true
-    ) {
-      const teamMembers =
-        form.team_members;
+    if (form.team === true) {
+      const teamMembers = form.team_members;
 
-      if (
-        !Array.isArray(teamMembers) ||
-        teamMembers.length === 0
-      ) {
-        newErrors.team_members =
-          "يجب إدخال إيميلات أعضاء الفريق";
+      if (!Array.isArray(teamMembers) || teamMembers.length === 0) {
+        newErrors.team_members = "يجب إدخال إيميلات أعضاء الفريق";
       }
     }
 
     setErrors(newErrors);
-
-    return (
-      Object.keys(newErrors).length === 0
-    );
+    return Object.keys(newErrors).length === 0;
   };
 
   const handleNext = async () => {
     if (!validateStep()) return;
 
-    const currentFields =
-      steps[currentStep]?.questions || [];
-
+    const currentFields = steps[currentStep]?.questions || [];
     const payload = {};
 
     currentFields.forEach((field) => {
-      payload[field.key] =
-        form[field.key];
+      payload[field.key] = form[field.key];
     });
 
     try {
@@ -142,29 +105,15 @@ const IdeaForm = ({ seasonId, onSubmit }) => {
         step: currentStep + 1,
         data: payload,
       }).unwrap();
-      console.log("FORM DATA:", payload);
 
-      setCurrentStep(
-        (prev) => prev + 1
-      );
+      setCurrentStep((prev) => prev + 1);
     } catch (error) {
-      console.log("FULL ERROR", error);
-      console.log("ERROR DATA", error?.data);
-
-      showInfo(
-        JSON.stringify(
-          error?.data,
-          null,
-          2
-        )
-      );
+      showInfo(JSON.stringify(error?.data, null, 2));
     }
   };
 
   const handlePrevious = () => {
-    setCurrentStep(
-      (prev) => prev - 1
-    );
+    setCurrentStep((prev) => prev - 1);
   };
 
   const handleSubmit = async (e) => {
@@ -172,11 +121,20 @@ const IdeaForm = ({ seasonId, onSubmit }) => {
 
     if (!validateStep()) return;
 
+    const currentFields = steps[currentStep]?.questions || [];
+    const payload = {};
+    currentFields.forEach((field) => {
+      payload[field.key] = form[field.key];
+    });
+
     try {
-      const result =
-        await submitFinalIdea(
-          seasonId
-        ).unwrap();
+      await saveFormStep({
+        seasonId,
+        step: currentStep + 1,
+        data: payload,
+      }).unwrap();
+
+      const result = await submitFinalIdea(seasonId).unwrap();
 
       if (onSubmit) {
         onSubmit(result);
@@ -191,9 +149,7 @@ const IdeaForm = ({ seasonId, onSubmit }) => {
   if (isLoading) {
     return (
       <div className="container py-10">
-        <p className="text-center">
-          جاري تحميل الفورم...
-        </p>
+        <p className="text-center">جاري تحميل الفورم...</p>
       </div>
     );
   }
@@ -201,74 +157,58 @@ const IdeaForm = ({ seasonId, onSubmit }) => {
   if (isError) {
     return (
       <div className="container py-10">
-        <p className="text-center text-red-500">
-          فشل تحميل الفورم
-        </p>
+        <p className="text-center text-red-500">فشل تحميل الفورم</p>
       </div>
     );
   }
 
-  const currentFields =
-    steps[currentStep]?.questions || [];
+  const currentFields = steps[currentStep]?.questions || [];
+  const currentStepTitle = steps[currentStep]?.title || "";
+  const isLastStep = currentStep === steps.length - 1;
 
-  const currentStepTitle =
-    steps[currentStep]?.title || "";
-
-  const completedSteps =
-    formData?.completed_steps || [];
-
-  const totalSteps =
-    formData?.total_steps ||
-    steps.length;
-
-  const canSubmit =
-    currentStep === steps.length - 1 &&
-    completedSteps.length === totalSteps;
+  // تجميع حالة التحميل الكلية لمنع أي ضغط مكرر
+  const isPending = isSavingStep || isSubmitting;
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="container space-y-6"
-    >
+    <form onSubmit={handleSubmit} className="container space-y-6">
       <Stepper
-        steps={steps.map(
-          (step) => step.title
-        )}
-        current={canSubmit ? currentStep + 1 : currentStep}
+        steps={steps.map((step) => step.title)}
+        current={isLastStep ? currentStep + 1 : currentStep}
       />
 
       <DynamicStep
-        stepName={
-          currentStepTitle
-        }
+        stepName={currentStepTitle}
         fields={currentFields}
         form={form}
         errors={errors}
-        handleChange={
-          handleChange
-        }
+        handleChange={handleChange}
       />
 
       <div className="flex gap-4 mt-6">
-
         {currentStep > 0 && (
           <Button
             label="رجوع"
             type="button"
-            onClick={
-              handlePrevious
-            }
-            className="w-50 bg-gray-300 px-4 py-2 rounded"
+            disabled={isPending}
+            onClick={handlePrevious}
+            className="w-50 bg-main-color text-white px-4 py-2 rounded disabled:opacity-50"
           />
         )}
 
+        {/* إظهار نص جاري الإرسال وتطويل زر التفاعل أثناء عملية الحفظ أو الإرسال */}
         <Button
-          label={canSubmit ? "إرسال" : "التالي"}
-          type={canSubmit ? "submit" : "button"}
-          onClick={canSubmit ? undefined : handleNext}
-          className="w-50 bg-main-color text-white px-4 py-2 rounded"
+          label={
+            isPending
+              ? "جاري الإرسال..."
+              : isLastStep
+              ? "إرسال"
+              : "التالي"
+          }
+          type={isLastStep ? "submit" : "button"}
+          disabled={isPending}
+          onClick={isLastStep ? undefined : handleNext}
+          className="w-50 bg-main-color text-white px-4 py-2 rounded disabled:opacity-50 flex items-center justify-center gap-2"
         />
-
       </div>
     </form>
   );

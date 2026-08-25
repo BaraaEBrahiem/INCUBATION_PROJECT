@@ -1,5 +1,6 @@
 import React from "react";
 import { useGetUserPublicProjectsQuery } from "../api/endpoints/publicProjectsApi";
+import NavLinkUniversal from "./NavLinkUniversal";
 
 const LastExhibition = () => {
   const {
@@ -36,7 +37,7 @@ const LastExhibition = () => {
   }
 
   const latestExhibitions = exhibitions.slice(0, 4);
-
+  console.log("EXHIBITIONS:",exhibitions);
   return (
     <div>
       <h2 className="text-2xl font-bold mt-5">
@@ -45,11 +46,16 @@ const LastExhibition = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-3">
         {latestExhibitions.map((project) => (
+          <NavLinkUniversal 
+          key={project.id} 
+          to={`/ProjectDetails/${project.id}`} 
+          label={
           <img
-  src={project.image}
-  alt={project.title}
-  className="h-[200px] w-full object-cover rounded-md"
-/>
+             src={project.image}
+             alt={project.title}
+             className="h-[200px] w-full object-cover rounded-md"
+          />}
+        />
         ))}
       </div>
     </div>

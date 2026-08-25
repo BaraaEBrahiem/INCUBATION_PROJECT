@@ -172,7 +172,7 @@ const ProjectsManagementPage = () => {
         }}
         title={
           selectedIdeaId
-            ? `تعيين موعد التقييم - المشروع رقم ${selectedIdeaId}`
+            ? `تعيين موعد التقييم للمشروع `
             : "تعيين موعد التقييم"
         }
         footer={

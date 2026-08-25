@@ -9,6 +9,7 @@ import Stepper from "../../components/Stepper";
 const STAGE_INDEX_MAP = {
   BOOTCAMP: 0,
   EVALUATION: 1,
+  EVALUATED: 1,
   INCUBATION: 2,
   GRADUATED_POSITIVE: 3,
   GRADUATED_NEGATIVE: 3,
@@ -76,6 +77,7 @@ const IncubationStagesPage = () => {
       case "BOOTCAMP":
         return <CampStage data={stageData} onComplete={refetch} />;
       case "EVALUATION":
+      case "EVALUATED":
         return <CommitteeStage data={stageData} onComplete={refetch} />;
       case "INCUBATION":
         return <FollowupStage data={stageData} onComplete={refetch} />;

@@ -29,6 +29,7 @@ const WorkshopDetailsCard = ({
   ] = useState(false);
 
   const [
+    //eslint-disable-next-line
     actionType,
     setActionType,
   ] = useState(null);
@@ -49,11 +50,13 @@ const WorkshopDetailsCard = ({
 
   const [
     approveGeneral,
+    { isLoading: isApproving },
   ] =
     useApproveGeneralMutation();
 
   const [
     rejectGeneral,
+    { isLoading: isRejecting },
   ] =
     useRejectGeneralMutation();
 
@@ -139,7 +142,7 @@ const WorkshopDetailsCard = ({
 
             <p className="text-lg">
               <span className="font-bold">
-               📌 الفئة:
+                📌 الفئة:
               </span>{" "}
               {workshop?.category ||
                 "غير محدد"}
@@ -264,7 +267,7 @@ const WorkshopDetailsCard = ({
 
             <p className="text-lg">
               <span className="font-bold">
-               📌 عدد الجلسات:
+                📌 عدد الجلسات:
               </span>{" "}
               {workshop?.sessions ||
                 0}
@@ -392,7 +395,8 @@ const WorkshopDetailsCard = ({
 
               {/* قبول */}
               <Button
-                label="موافقة"
+                label={isApproving ? "جاري القبول..." : "موافقة"}
+                disabled={isApproving || isRejecting}
                 onClick={async () => {
                   try {
                     await approveGeneral(
@@ -418,18 +422,19 @@ const WorkshopDetailsCard = ({
                     );
                   }
                 }}
-                className="bg-green-600 text-white px-8 py-3"
+                className="bg-green-600 text-white px-8 py-3 disabled:opacity-50 disabled:cursor-not-allowed"
               />
 
               {/* رفض */}
               <Button
                 label="رفض"
+                disabled={isApproving || isRejecting}
                 onClick={() =>
                   openModal(
                     "reject"
                   )
                 }
-                className="bg-red-600 text-white px-8 py-3"
+                className="bg-red-600 text-white px-8 py-3 disabled:opacity-50 disabled:cursor-not-allowed"
               />
             </div>
           )}
@@ -448,11 +453,12 @@ const WorkshopDetailsCard = ({
         title="رفض الورشة"
         footer={
           <Button
-            label="إرسال"
+            label={isRejecting ? "جاري الإرسال..." : "إرسال"}
+            disabled={isRejecting}
             onClick={
               handleSubmit
             }
-            className="bg-main-color text-white px-5 py-2"
+            className="bg-main-color text-white px-5 py-2 disabled:opacity-50 disabled:cursor-not-allowed"
           />
         }
       >
