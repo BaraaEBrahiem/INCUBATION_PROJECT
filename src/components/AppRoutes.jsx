@@ -194,7 +194,7 @@ const AppRoutes = () => {
           <Route path="/workshopinfo/:id" element={<WorkshopInfoPage />} />
           <Route path="/assigned-projects-page" element={<AssignedProjectsPage />} />
           <Route path="/volunteer-request/:id" element={<VolunteerRequestDetailsPage />} />
-          <Route path="/CampWorkShopsPage" element={<CampWorkshopsPage />} />
+          
           <Route path="/CampProjectsPage/:workshopId" element={<CampProjectsPage />} />
         </Route>
       )}
@@ -210,7 +210,7 @@ const AppRoutes = () => {
         </Route>
       )}
       <Route path="/workshop-page" element={<WorkshopsPage />} />
-
+<Route path="/CampWorkShopsPage" element={<CampWorkshopsPage />} />
       {/* ---------------- EVALUATOR ---------------- */}
       {roles.includes("evaluator") && (
         <Route element={<MainLayout header={<UserNavbar navOptions={userNavOptions} />} footer={null} />}>

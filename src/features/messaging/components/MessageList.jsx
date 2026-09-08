@@ -2,7 +2,7 @@ import MessageBubble from "./MessageBubble";
 
 export default function MessageList({ messages = [] }) {
 
-  const reversedMessages = [...messages].reverse();
+  const reversedMessages = [...messages];
 
   return (
     <div className="flex flex-col w-full">

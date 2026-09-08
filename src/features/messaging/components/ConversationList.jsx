@@ -10,7 +10,7 @@ const ConversationList = ({ conversations = [], selectedId }) => {
   }
 
   return (
-    <div className="bg-white border rounded-lg overflow-hidden divide-y divide-gray-100">
+    <div className="bg-white  rounded-lg overflow-hidden divide-y divide-gray-100">
       {conversations.map((conversation) => (
         <ConversationItem
           key={conversation.id}

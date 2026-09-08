@@ -52,7 +52,7 @@ const FollowupStage = ({ data }) => {
           label={<Button label="طلب استشارة" className='bg-main-color' />}
           to="/consultants"
         />
-        {/* صندوق طلب فريق */}
+        صندوق طلب فريق
         {can_request_team && (
             <NavLinkUniversal
               label={<Button label="طلب فريق" className='bg-main-color px-8' />}

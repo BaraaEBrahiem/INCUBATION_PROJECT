@@ -3,12 +3,13 @@ import NearestWorkshopCard from '../../components/Workshop/NearestWorkshopCard';
 import LastWorkshops from '../../components/LastWorkshops';
 import ConsultationRequestBtn from '../../components/ConsultationRequestBtn';
 import NavLinkUniversal from '../../components/NavLinkUniversal';
+import LastExhibition from '../../components/LastExhibition';
 import Button from '../../components/Button';
 import { useRole } from "../../hooks/useRole";
 
 const IncubatedMainPage = () => {
   const { role } = useRole();
-  const isVolunteer = role === 'Volunteer';
+  const isVolunteer = role === 'VOLUNTEER';
   return (
     <div className='bg-white-color min-h-screen py-8'>
      <div className="container mt-10">
@@ -17,11 +18,10 @@ const IncubatedMainPage = () => {
             <p className='font-bold text-2xl'>
               كن جزءا من فريق الخبراء والمقيمين لدعم<br /> الابتكار في حاضنتنا
             </p>
-
-            <NavLinkUniversal
-              label={<Button label="تطوع الآن" className="bg-main-color" />}
-              to="/volunteerform"
-            />
+              <NavLinkUniversal
+                label={<Button label="تطوع الآن" className="bg-main-color" />}
+                to="/volunteerform"
+              />
           </div>
       )}
      {isVolunteer && (
@@ -42,6 +42,7 @@ const IncubatedMainPage = () => {
         </div>
         </div>
         <LastWorkshops />
+        <LastExhibition />
     </div>
 </div>
   )

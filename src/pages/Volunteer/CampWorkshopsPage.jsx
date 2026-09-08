@@ -19,8 +19,8 @@ const CampWorkshopsPage = () => {
   }
 
   return (
-    <div className="container  min-h-screen p-10 flex justify-center items-start">
-      <div className="w-full max-w-[1400px]">
+    <div className=" min-h-screen p-10 flex justify-center items-start">
+      <div className="w-full">
         
         {/* العناوين الخارجية */}
         <div className="flex flex-col items-start gap-2 mb-8" dir="rtl">
@@ -31,17 +31,17 @@ const CampWorkshopsPage = () => {
         {/* صندوق الجدول الرئيسي */}
         <div className="bg-white rounded-lg shadow-xl shadow-gray-200 border border-gray-100 p-10" dir='rtl'>
           
-          <div className="overflow-x-auto">
+          <div className="">
             {workshops.length > 0 ? (
-              <table className="w-full border-collapse">
+              <table className="w-full">
                 <thead>
                   <tr className="border-b-[3px] border-second-color text-right">
-                    <th className="font-bold text-black pb-5 pl-4 pr-1 text-xl">اسم الورشة</th>
-                    <th className="font-bold text-black pb-5 px-4 text-xl">التاريخ</th>
-                    <th className="font-bold text-black pb-5 px-4 text-xl">موقع المعسكر</th>
-                    <th className="font-bold text-black pb-5 px-4 text-xl">المهام المطلوبة</th>
-                    <th className="font-bold text-black pb-5 px-4 text-xl">الوقت</th>
-                    <th className="font-bold text-black pb-5 pl-1 pr-4 text-xl text-center">الاجراء</th>
+                    <th className="font-bold text-black  text-xl">اسم الورشة</th>
+                    <th className="font-bold text-black text-xl">التاريخ</th>
+                    <th className="font-bold text-black text-xl">موقع المعسكر</th>
+                    <th className="font-bold text-black text-xl">المهام المطلوبة</th>
+                    <th className="font-bold text-black text-xl">الوقت</th>
+                    <th className="font-bold text-black text-xl text-center">الاجراء</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100">

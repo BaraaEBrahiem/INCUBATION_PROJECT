@@ -3,10 +3,8 @@ import {
   useParams,
   useNavigate,
 } from "react-router-dom";
-
 import Modal from "../../components/Modal";
 import Input from "../../components/Input";
-
 import {
   IoImageOutline,
 } from "react-icons/io5";

@@ -18,7 +18,7 @@ export default function ChatWindow({
     
 
   return (
-    <div className="h-[80vh] flex flex-col border rounded-lg overflow-hidden bg-gray-50">
+    <div className="h-[80vh] flex flex-col overflow-hidden bg-gray-50">
 
       <ChatHeader conversation={conversation} />
 

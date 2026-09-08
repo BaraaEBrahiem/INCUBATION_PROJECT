@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import Button from "../../Button";
-import avatar from "../../../assets/images/avatar.jpg";
+import person1 from "../../../assets/images/person1.jpg";
 
 import {
   useGetExhibitionCardRequestsQuery,
@@ -139,7 +139,7 @@ export default function CardRequests() {
                 <img
                   src={
                     req.image ||
-                    avatar
+                    person1
                   }
                   alt={
                     req.owner_name
